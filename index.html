@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Travel App 0.10</title>
+    <title>Travel App 0.20</title>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
 
     <style>
       body {
@@ -76,6 +76,14 @@
     <script>
       // ↓ Leaflet Map ↓
 
+      let home_icon = L.icon({
+        iconUrl: "content/icons/home_icon.png",
+        iconSize: [48, 48],
+        iconAnchor: [24, 24],
+      });
+
+      active_Home_Marker = "";
+
       // // ↓ Leaflet Map / Initialization ↓
 
       let map = L.map("map").setView([50, 10], 6);
@@ -88,31 +96,18 @@
 
       // // ↑ Leaflet Map / Initialization ↑
 
-      // // ↓ Leaflet Map / Mouse Click Localization ↓
-
-      function MouseClickLocalization(e) {
-        let mouse_click_latitude = e.latlng.lat;
-        let mouse_click_longitude = e.latlng.lng;
-        console.log(" map mouse coords:", mouse_click_latitude, mouse_click_longitude);
-      }
-
-      map.on("click", MouseClickLocalization);
-
-      // // ↑ Leaflet Map / Mouse Click Localization ↑
-
       // ↑ Leaflet Map  ↑
 
       // ↓ Home ↓
 
-      // // ↓ Home / Home Main ↓
+      let home_button_manual_click = false;
+      let home_button_geolocation_click = false;
 
       let home_button_main = document.getElementById("home_button_main");
       let home_button_geolocation = document.getElementById("home_button_geolocation");
       let home_button_manual = document.getElementById("home_button_manual");
 
-      home_button_main.addEventListener("click", function () {
-        CoordsLog();
-      });
+      // // ↓ Home / Home Main ↓
 
       // // ↑ Home / Home Main ↑
 
@@ -120,65 +115,53 @@
 
       // ↓ GeoJSON ↓
 
-      active_Home_Marker = "";
-
-      let home_button_manual_click = false;
-
       let home_marker_latitude;
       let home_marker_longitude;
 
-      // // ↓ GeoJSON Initialization + default color ↓
+      let countriesLayers = "";
+
+      // // ↓ GeoJSON Initialization + color ↓
 
       fetch("content/data/countries.geojson")
         .then(function (response) {
           return response.json();
         })
         .then(function (data) {
-          const countriesLayers = L.geoJSON(data, {
+          countriesLayers = L.geoJSON(data, {
             style: function (feature) {
               return {
-                fillColor: "#3388ff",
+                fillColor: "red",
                 weight: 0,
-                opacity: 1,
+                opacity: 0,
                 fillOpacity: 0,
                 color: "#ffffff",
               };
             },
             onEachFeature: function (feature, layer) {
               layer.on("click", (event) => {
-                // Reset the style of all countries
-                countriesLayers.eachLayer(function (layer) {
-                  layer.setStyle({ fillOpacity: 0, color: "transparent", weight: 0 });
-                });
-
-                // Highlight the clicked country
-                layer.setStyle({ fillOpacity: 0.2, color: "green", weight: 0.5 });
+                if (home_button_manual_click == true) {
+                  layer.setStyle({ fillColor: "yellow", fillOpacity: 0.2, color: "red", weight: 0.5 });
+                }
               });
             },
           }).addTo(map);
         });
 
-      // // ↑ GeoJSON Initialization + default color ↑
+      // // ↑ GeoJSON Initialization + color ↑
 
       // // ↓ GeoJSON / Geolocation on Button Click ↓
 
-      let home_icon = L.icon({
-        iconUrl: "content/icons/home_icon.png",
-        iconSize: [48, 48],
-        iconAnchor: [24, 24],
-      });
-
       home_button_geolocation.addEventListener("click", function () {
         home_button_manual_click = false;
+        home_button_geolocation_click = true;
 
-        if (active_Home_Marker) {
-          active_Home_Marker.remove();
-          active_Home_Marker = null;
-        }
+        HomeMarkerClear();
+        HomeHighlightClear();
+
         if ("geolocation" in navigator) {
           navigator.geolocation.getCurrentPosition(function (position) {
             const { latitude, longitude } = position.coords;
-            console.log(" Current location:", latitude, longitude);
+            //         console.log(" Current location:", latitude, longitude);
 
             home_marker_latitude = latitude;
             home_marker_longitude = longitude;
@@ -186,43 +169,55 @@
             var latlng = L.latLng(latitude, longitude);
             var containerPoint = map.latLngToContainerPoint(latlng);
             const layerAtLatLng = map.getLayerAt(containerPoint);
-            layerAtLatLng.setStyle({ fillOpacity: 0.2, color: "green", weight: 0.5 });
+            layerAtLatLng.setStyle({ fillOpacity: 0.2, fillColor: "yellow", color: "green", weight: 0.5 });
 
-            active_Home_Marker = L.marker([latitude, longitude], { icon: home_icon, id: "home_marker" }).addTo(map); // Perform any desired actions with the obtained coordinates
+            active_Home_Marker = L.marker([latitude, longitude], { icon: home_icon, id: "home_marker" }).addTo(map);
           });
         }
       });
 
-      function CoordsLog() {
-        console.log(" home marker coords" + " " + home_marker_latitude + " " + home_marker_longitude);
+      // // ↑ GeoJSON / Geolocation on Button Click ↑
+
+      function HomeHighlightClear() {
+        if (home_button_manual_click == true || home_button_geolocation_click == true) {
+          countriesLayers.eachLayer(function (layer) {
+            layer.setStyle({ fillOpacity: 0, color: "transparent", weight: 0 });
+          });
+        }
       }
 
-      // // ↑ GeoJSON / Geolocation on Button Click ↑
+      function HomeMarkerClear() {
+        if (active_Home_Marker) {
+          active_Home_Marker.remove();
+          active_Home_Marker = null;
+        }
+      }
 
       // // ↓ GeoJSON / Manual Location ↓
 
       home_button_manual.addEventListener("click", function () {
         home_button_manual_click = true;
 
-        if (active_Home_Marker) {
-          active_Home_Marker.remove();
-          active_Home_Marker = null;
-        }
+        HomeMarkerClear();
 
-        let clickListener = function (e) {
+        HomeHighlightClear();
+
+        let mapClickListener = function (e) {
           let clickedLatLng = e.latlng;
 
           if (home_button_manual_click == true) {
             active_Home_Marker = L.marker(clickedLatLng, { icon: home_icon, id: "home_marker" }).addTo(map);
-
-            home_marker_latitude = clickedLatLng.lat;
-            home_marker_longitude = clickedLatLng.lng;
           }
 
-          map.off("click", clickListener);
+          home_marker_latitude = clickedLatLng.lat;
+          home_marker_longitude = clickedLatLng.lng;
+
+          home_button_manual_click = false;
+
+          map.off("click", mapClickListener);
         };
 
-        map.on("click", clickListener);
+        map.on("click", mapClickListener);
       });
 
       // // ↑ GeoJSON / Manual Location ↑
