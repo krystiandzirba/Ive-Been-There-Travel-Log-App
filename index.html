@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
 
     <style>
+      @import url("https://fonts.googleapis.com/css2?family=Dosis:wght@200&family=Righteous&display=swap");
+
       body {
         padding: 0px;
         margin: 0px;
@@ -16,6 +18,43 @@
 
       #map {
         height: 100vh;
+      }
+
+      .layer_button {
+        height: 50px;
+        width: 100px;
+        background-color: rgb(255, 162, 49);
+        position: absolute;
+        z-index: 999;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        text-align: center;
+        border: black, 2px, solid;
+      }
+
+      .layer_button:hover {
+        transform: translate(-50%, -50%) scale(1.1);
+      }
+
+      .layer_1 {
+        top: 5%;
+        left: 10%;
+        transform: translate(-50%, -50%);
+      }
+
+      .layer_2 {
+        top: 12.5%;
+        left: 10%;
+        transform: translate(-50%, -50%);
+      }
+
+      .layer_3 {
+        top: 20%;
+        left: 10%;
+        transform: translate(-50%, -50%);
       }
 
       .home_button {
@@ -60,41 +99,94 @@
         left: 20%;
         transform: translate(-50%, -50%);
       }
+
+      .app_version {
+        color: white;
+        top: 95%;
+        left: 94%;
+        height: 2vh;
+        width: 5vw;
+        position: absolute;
+        z-index: 999;
+        font-family: "Dosis", sans-serif;
+        text-align: center;
+      }
     </style>
   </head>
   <body>
-    <div id="map"></div>
-
-    <button id="home_button_main" class="home_button home_main">test</button>
-    <button id="home_button_geolocation" class="home_button home_geolocation hidden">location</button>
-    <button id="home_button_manual" class="home_button home_manual hidden">manual</button>
-
     <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/leaflet-ajax/dist/leaflet.ajax.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/leaflet.cheaplayerat@0.1.2/Leaflet.CheapLayerAt.min.js"></script>
 
+    <div id="map"></div>
+
+    <button id="map_tile_layer_1" class="layer_button layer_1">layer 1</button>
+    <button id="map_tile_layer_2" class="layer_button layer_2">layer 2</button>
+    <button id="map_tile_layer_3" class="layer_button layer_3">layer 3</button>
+
+    <button id="home_button_main" class="home_button home_main">main</button>
+    <button id="home_button_zoom" class="home_button home_zoom hidden">zoom</button>
+    <button id="home_button_geolocation" class="home_button home_geolocation hidden">location</button>
+    <button id="home_button_manual" class="home_button home_manual hidden">manual</button>
+
+    <div class="app_version">ver: 0 . 30</div>
+
     <script>
       // ↓ Leaflet Map ↓
 
-      let home_icon = L.icon({
+      const home_icon = L.icon({
         iconUrl: "content/icons/home_icon.png",
         iconSize: [48, 48],
         iconAnchor: [24, 24],
       });
 
-      active_Home_Marker = "";
-
-      // // ↓ Leaflet Map / Initialization ↓
-
       let map = L.map("map").setView([50, 10], 6);
 
-      let Stadia_Outdoors = L.tileLayer("https://tiles.stadiamaps.com/tiles/outdoors/{z}/{x}/{y}{r}.png", {
+      active_Home_Marker = "";
+
+      const map_tile_layer_1 = document.getElementById("map_tile_layer_1");
+      const map_tile_layer_2 = document.getElementById("map_tile_layer_2");
+      const map_tile_layer_3 = document.getElementById("map_tile_layer_3");
+
+      // // ↓ Leaflet Map / Tiles Change ↓
+
+      const mapTileLayer_1 = L.tileLayer("https://tiles.stadiamaps.com/tiles/outdoors/{z}/{x}/{y}{r}.png", {
         maxZoom: 10,
         attribution:
           '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
-      }).addTo(map);
+      });
 
-      // // ↑ Leaflet Map / Initialization ↑
+      const mapTileLayer_2 = L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { //prettier-ignore
+          maxZoom: 10,
+          attribution:
+            "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community",
+        }); //prettier-ignore
+
+      const mapTileLayer_3 = L.tileLayer(
+        "https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryTopo/MapServer/tile/{z}/{y}/{x}", { //prettier-ignore
+          maxZoom: 20,
+          attribution: 'Tiles courtesy of the <a href="https://usgs.gov/">U.S. Geological Survey</a>',
+        }); //prettier-ignore
+
+      mapTileLayer_3.addTo(map);
+
+      map_tile_layer_1.addEventListener("click", function (event) {
+        map.removeLayer(mapTileLayer_2) && map.removeLayer(mapTileLayer_3);
+        mapTileLayer_1.addTo(map);
+      });
+
+      map_tile_layer_2.addEventListener("click", function (event) {
+        map.removeLayer(mapTileLayer_1) && map.removeLayer(mapTileLayer_3);
+        mapTileLayer_2.addTo(map);
+      });
+
+      map_tile_layer_3.addEventListener("click", function (event) {
+        map.removeLayer(mapTileLayer_1) && map.removeLayer(mapTileLayer_2);
+        mapTileLayer_3.addTo(map);
+      });
+
+      // // ↑ Leaflet Map / Tiles Change ↑
 
       // ↑ Leaflet Map  ↑
 
@@ -103,13 +195,10 @@
       let home_button_manual_click = false;
       let home_button_geolocation_click = false;
 
-      let home_button_main = document.getElementById("home_button_main");
-      let home_button_geolocation = document.getElementById("home_button_geolocation");
-      let home_button_manual = document.getElementById("home_button_manual");
-
-      // // ↓ Home / Home Main ↓
-
-      // // ↑ Home / Home Main ↑
+      const home_button_main = document.getElementById("home_button_main");
+      const home_button_zoom = document.getElementById("home_button_zoom");
+      const home_button_geolocation = document.getElementById("home_button_geolocation");
+      const home_button_manual = document.getElementById("home_button_manual");
 
       // ↑ Home ↑
 
@@ -166,8 +255,8 @@
             home_marker_latitude = latitude;
             home_marker_longitude = longitude;
 
-            var latlng = L.latLng(latitude, longitude);
-            var containerPoint = map.latLngToContainerPoint(latlng);
+            let latlng = L.latLng(latitude, longitude);
+            let containerPoint = map.latLngToContainerPoint(latlng);
             const layerAtLatLng = map.getLayerAt(containerPoint);
             layerAtLatLng.setStyle({ fillOpacity: 0.2, fillColor: "yellow", color: "green", weight: 0.5 });
 
@@ -177,21 +266,6 @@
       });
 
       // // ↑ GeoJSON / Geolocation on Button Click ↑
-
-      function HomeHighlightClear() {
-        if (home_button_manual_click == true || home_button_geolocation_click == true) {
-          countriesLayers.eachLayer(function (layer) {
-            layer.setStyle({ fillOpacity: 0, color: "transparent", weight: 0 });
-          });
-        }
-      }
-
-      function HomeMarkerClear() {
-        if (active_Home_Marker) {
-          active_Home_Marker.remove();
-          active_Home_Marker = null;
-        }
-      }
 
       // // ↓ GeoJSON / Manual Location ↓
 
@@ -222,7 +296,39 @@
 
       // // ↑ GeoJSON / Manual Location ↑
 
+      // // ↓ GeoJSON / Home Button Center Marker ↓
+
+      home_button_zoom.addEventListener("click", () => {
+        if (active_Home_Marker) {
+          map.setView(active_Home_Marker.getLatLng(), 7);
+        } else {
+          alert("Home location is not set");
+        }
+      });
+
+      // // ↑ GeoJSON / Home Button Center Marker ↑
+
+      function HomeHighlightClear() {
+        if (home_button_manual_click == true || home_button_geolocation_click == true) {
+          countriesLayers.eachLayer(function (layer) {
+            layer.setStyle({ fillOpacity: 0, color: "transparent", weight: 0 });
+          });
+        }
+      }
+
+      function HomeMarkerClear() {
+        if (active_Home_Marker) {
+          active_Home_Marker.remove();
+          active_Home_Marker = null;
+        }
+      }
+
       // ↑ GeoJSON ↑
+
+      //   window.addEventListener("load", function () {
+      //       const cover = document.getElementById("cover");
+      //       cover.style.display = "none";
+      //   });
     </script>
   </body>
 </html>
