@@ -76,14 +76,6 @@ const AddonCycling = L.tileLayer('https://tile.waymarkedtrails.org/cycling/{z}/{
 mapTileLayer_B.addTo(map);
 //     train.addTo(map);
 
-function MapTileAddon(tile_addon) {
-  if (map.hasLayer(tile_addon)) {
-    tile_addon.removeFrom(map);
-  } else {
-    tile_addon.addTo(map);
-  }
-}
-
 // Array containing all tile map layers
 const mapTileLayers = L
   .layerGroup([mapTileLayer_A])
@@ -107,25 +99,26 @@ map_tile_layer_C.addEventListener('click', () => switchTileMap(mapTileLayer_C));
 const map_tile_layer_D = document.querySelector('#map_tile_layer_D');
 map_tile_layer_D.addEventListener('click', () => switchTileMap(mapTileLayer_D));
 
+// Turn on/off addons for tilemaps
+function switchTileAddon(tile_addon) {
+  if (map.hasLayer(tile_addon)) {
+    tile_addon.removeFrom(map);
+  } else {
+    tile_addon.addTo(map);
+  }
+}
+
 const map_tile_addon_train = document.querySelector('#map_tile_addon_train');
-map_tile_addon_train.addEventListener('click', () => {
-  MapTileAddon(AddonTrain);
-});
+map_tile_addon_train.addEventListener('click', () => switchTileAddon(AddonTrain));
 
 const map_tile_addon_cycling = document.querySelector('#map_tile_addon_cycling');
-map_tile_addon_cycling.addEventListener('click', () => {
-  MapTileAddon(AddonCycling);
-});
+map_tile_addon_cycling.addEventListener('click', () => switchTileAddon(AddonCycling));
 
 const map_tile_addon_borders = document.querySelector('#map_tile_addon_borders');
-map_tile_addon_borders.addEventListener('click', () => {
-  MapTileAddon(AddonBorders);
-});
+map_tile_addon_borders.addEventListener('click', () => switchTileAddon(AddonBorders));
 
 const map_tile_addon_labels = document.querySelector('#map_tile_addon_labels');
-map_tile_addon_labels.addEventListener('click', () => {
-  MapTileAddon(AddonLabels);
-});
+map_tile_addon_labels.addEventListener('click', () => switchTileAddon(AddonLabels));
 
 // // ↑ Leaflet Map / Tiles Change ↑
 
