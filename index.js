@@ -85,9 +85,6 @@ const home_button_manual = document.getElementById('home_button_manual');
 
 // ↓ GeoJSON ↓
 
-let home_marker_latitude;
-let home_marker_longitude;
-
 let countriesLayers = '';
 
 // // ↓ GeoJSON Initialization + color ↓
@@ -136,6 +133,11 @@ function HomeMarkerClear() {
   }
 }
 
+// Layer group containing all map markers
+const mapMarkers = L
+  .layerGroup()
+  .addTo(map);
+
 home_button_geolocation.addEventListener('click', () => {
   home_button_manual_click = false;
   home_button_geolocation_click = true;
@@ -146,10 +148,6 @@ home_button_geolocation.addEventListener('click', () => {
   if ('geolocation' in navigator) {
     navigator.geolocation.getCurrentPosition((position) => {
       const { latitude, longitude } = position.coords;
-      //         console.log(" Current location:", latitude, longitude);
-
-      home_marker_latitude = latitude;
-      home_marker_longitude = longitude;
 
       const latlng = L.latLng(latitude, longitude);
       const containerPoint = map.latLngToContainerPoint(latlng);
@@ -158,7 +156,7 @@ home_button_geolocation.addEventListener('click', () => {
         fillOpacity: 0.5, fillColor: 'lightblue', color: 'green', weight: 0.5,
       });
 
-      active_Home_Marker = L.marker([latitude, longitude], { icon: home_icon, id: 'home_marker' }).addTo(map);
+      active_Home_Marker = L.marker([latitude, longitude], { icon: home_icon, id: 'home_marker' }).addTo(mapMarkers);
     });
   }
 });
@@ -174,15 +172,12 @@ home_button_manual.addEventListener('click', () => {
 
   HomeHighlightClear();
 
-  const mapClickListener = function (e) {
+  const mapClickListener = (e) => {
     const clickedLatLng = e.latlng;
 
-    if (home_button_manual_click == true) {
-      active_Home_Marker = L.marker(clickedLatLng, { icon: home_icon, id: 'home_marker' }).addTo(map);
+    if (home_button_manual_click === true) {
+      active_Home_Marker = L.marker(clickedLatLng, { icon: home_icon, id: 'home_marker' }).addTo(mapMarkers);
     }
-
-    home_marker_latitude = clickedLatLng.lat;
-    home_marker_longitude = clickedLatLng.lng;
 
     home_button_manual_click = false;
 
