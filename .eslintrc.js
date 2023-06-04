@@ -13,5 +13,9 @@ module.exports = {
   rules: {
     camelcase: ['off'],
     'import/extensions': ['off'],
+    quotes: ['off'],
   },
+  plugins: [
+    'html',
+  ],
 };
