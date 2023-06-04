@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Travel App 0.20</title>
+    <title>Travel App 0.31</title>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,6 +10,7 @@
 
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Dosis:wght@200&family=Righteous&display=swap");
+      @import url("https://fonts.googleapis.com/css2?family=Lilita+One&display=swap");
 
       body {
         padding: 0px;
@@ -55,6 +56,40 @@
         top: 20%;
         left: 10%;
         transform: translate(-50%, -50%);
+      }
+
+      .layer_4 {
+        top: 27.5%;
+        left: 10%;
+        transform: translate(-50%, -50%);
+      }
+
+      .addon_labels {
+        top: 50%;
+        left: 10%;
+        transform: translate(-50%, -50%);
+      }
+
+      .addon_borders {
+        top: 57.5%;
+        left: 10%;
+        transform: translate(-50%, -50%);
+      }
+
+      .addon_train {
+        top: 65%;
+        left: 10%;
+        transform: translate(-50%, -50%);
+      }
+
+      .addon_cycling {
+        top: 72.5%;
+        left: 10%;
+        transform: translate(-50%, -50%);
+      }
+
+      .addon_clicked {
+        background-color: rgb(255, 225, 189);
       }
 
       .home_button {
@@ -103,12 +138,13 @@
       .app_version {
         color: white;
         top: 95%;
-        left: 94%;
+        left: 1%;
         height: 2vh;
         width: 5vw;
         position: absolute;
         z-index: 999;
         font-family: "Dosis", sans-serif;
+        /*       font-family: 'Lilita One', cursive; */
         text-align: center;
       }
     </style>
@@ -120,16 +156,22 @@
 
     <div id="map"></div>
 
-    <button id="map_tile_layer_1" class="layer_button layer_1">layer 1</button>
-    <button id="map_tile_layer_2" class="layer_button layer_2">layer 2</button>
-    <button id="map_tile_layer_3" class="layer_button layer_3">layer 3</button>
+    <button id="map_tile_layer_A" class="layer_button layer_1">layer 1</button>
+    <button id="map_tile_layer_B" class="layer_button layer_2">layer 2</button>
+    <button id="map_tile_layer_C" class="layer_button layer_3">layer 3</button>
+    <button id="map_tile_layer_D" class="layer_button layer_4">layer 4</button>
+
+    <button id="map_tile_addon_labels" class="layer_button addon_labels">labels</button>
+    <button id="map_tile_addon_borders" class="layer_button addon_borders">borders</button>
+    <button id="map_tile_addon_train" class="layer_button addon_train">train</button>
+    <button id="map_tile_addon_cycling" class="layer_button addon_cycling">cycling</button>
 
     <button id="home_button_main" class="home_button home_main">main</button>
     <button id="home_button_zoom" class="home_button home_zoom hidden">zoom</button>
     <button id="home_button_geolocation" class="home_button home_geolocation hidden">location</button>
     <button id="home_button_manual" class="home_button home_manual hidden">manual</button>
 
-    <div class="app_version">ver: 0 . 30</div>
+    <div class="app_version">ver: 0 . 31</div>
 
     <script>
       // ↓ Leaflet Map ↓
@@ -140,51 +182,121 @@
         iconAnchor: [24, 24],
       });
 
-      let map = L.map("map").setView([50, 10], 6);
+      let map = L.map("map", { zoomControl: false }).setView([50, 10], 6);
 
       active_Home_Marker = "";
 
-      const map_tile_layer_1 = document.getElementById("map_tile_layer_1");
-      const map_tile_layer_2 = document.getElementById("map_tile_layer_2");
-      const map_tile_layer_3 = document.getElementById("map_tile_layer_3");
-
       // // ↓ Leaflet Map / Tiles Change ↓
 
-      const mapTileLayer_1 = L.tileLayer("https://tiles.stadiamaps.com/tiles/outdoors/{z}/{x}/{y}{r}.png", {
-        maxZoom: 10,
+      const mapTileLayer_A = L.tileLayer("https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png", {
         attribution:
-          '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: "abcd",
+        maxZoom: 20,
       });
 
-      const mapTileLayer_2 = L.tileLayer(
+      const mapTileLayer_B = L.tileLayer(
         "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { //prettier-ignore
-          maxZoom: 10,
+          maxZoom: 15,
           attribution:
             "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community",
         }); //prettier-ignore
 
-      const mapTileLayer_3 = L.tileLayer(
-        "https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryTopo/MapServer/tile/{z}/{y}/{x}", { //prettier-ignore
-          maxZoom: 20,
-          attribution: 'Tiles courtesy of the <a href="https://usgs.gov/">U.S. Geological Survey</a>',
-        }); //prettier-ignore
-
-      mapTileLayer_3.addTo(map);
-
-      map_tile_layer_1.addEventListener("click", function (event) {
-        map.removeLayer(mapTileLayer_2) && map.removeLayer(mapTileLayer_3);
-        mapTileLayer_1.addTo(map);
+      const mapTileLayer_C = L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png", {
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: "abcd",
+        maxZoom: 20,
       });
 
-      map_tile_layer_2.addEventListener("click", function (event) {
-        map.removeLayer(mapTileLayer_1) && map.removeLayer(mapTileLayer_3);
-        mapTileLayer_2.addTo(map);
+      const mapTileLayer_D = L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}",
+        {
+          attribution:
+            "Tiles &copy; Esri &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC",
+          maxZoom: 16,
+        }
+      );
+
+      const AddonLabels = L.tileLayer("https://stamen-tiles-{s}.a.ssl.fastly.net/toner-labels/{z}/{x}/{y}{r}.{ext}", {
+        attribution:
+          'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        subdomains: "abcd",
+        minZoom: 0,
+        maxZoom: 20,
+        ext: "png",
       });
 
-      map_tile_layer_3.addEventListener("click", function (event) {
-        map.removeLayer(mapTileLayer_1) && map.removeLayer(mapTileLayer_2);
-        mapTileLayer_3.addTo(map);
+      const AddonBorders = L.tileLayer("https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lines/{z}/{x}/{y}{r}.{ext}", {
+        attribution:
+          'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        subdomains: "abcd",
+        minZoom: 0,
+        maxZoom: 20,
+        ext: "png",
       });
+
+      const AddonTrain = L.tileLayer("https://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution:
+          'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | Map style: &copy; <a href="https://www.OpenRailwayMap.org">OpenRailwayMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
+      });
+
+      const AddonCycling = L.tileLayer("https://tile.waymarkedtrails.org/cycling/{z}/{x}/{y}.png", {
+        maxZoom: 18,
+        attribution:
+          'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | Map style: &copy; <a href="https://waymarkedtrails.org">waymarkedtrails.org</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
+      });
+
+      mapTileLayer_B.addTo(map);
+      //     train.addTo(map);
+
+      map_tile_layer_A.addEventListener("click", () => {
+        MapTileSwitch(mapTileLayer_B, mapTileLayer_C, mapTileLayer_D, mapTileLayer_A);
+      });
+
+      map_tile_layer_B.addEventListener("click", () => {
+        MapTileSwitch(mapTileLayer_A, mapTileLayer_C, mapTileLayer_D, mapTileLayer_B);
+      });
+
+      map_tile_layer_C.addEventListener("click", () => {
+        MapTileSwitch(mapTileLayer_A, mapTileLayer_B, mapTileLayer_D, mapTileLayer_C);
+      });
+
+      map_tile_layer_D.addEventListener("click", () => {
+        MapTileSwitch(mapTileLayer_A, mapTileLayer_B, mapTileLayer_C, mapTileLayer_D);
+      });
+
+      map_tile_addon_train.addEventListener("click", () => {
+        MapTileAddon(AddonTrain);
+      });
+
+      map_tile_addon_cycling.addEventListener("click", () => {
+        MapTileAddon(AddonCycling);
+      });
+
+      map_tile_addon_borders.addEventListener("click", () => {
+        MapTileAddon(AddonBorders);
+      });
+
+      map_tile_addon_labels.addEventListener("click", () => {
+        MapTileAddon(AddonLabels);
+      });
+
+      function MapTileSwitch(RemoveLayer_1, RemoveLayer_2, RemoveLayer_3, AddLayer) {
+        map.removeLayer(RemoveLayer_1);
+        map.removeLayer(RemoveLayer_2);
+        map.removeLayer(RemoveLayer_3);
+        AddLayer.addTo(map);
+      }
+
+      function MapTileAddon(tile_addon) {
+        if (map.hasLayer(tile_addon)) {
+          tile_addon.removeFrom(map);
+        } else {
+          tile_addon.addTo(map);
+        }
+      }
 
       // // ↑ Leaflet Map / Tiles Change ↑
 
@@ -229,7 +341,7 @@
             onEachFeature: function (feature, layer) {
               layer.on("click", (event) => {
                 if (home_button_manual_click == true) {
-                  layer.setStyle({ fillColor: "yellow", fillOpacity: 0.2, color: "red", weight: 0.5 });
+                  layer.setStyle({ fillColor: "yellow", fillOpacity: 0.5, color: "red", weight: 0.5 });
                 }
               });
             },
@@ -258,7 +370,7 @@
             let latlng = L.latLng(latitude, longitude);
             let containerPoint = map.latLngToContainerPoint(latlng);
             const layerAtLatLng = map.getLayerAt(containerPoint);
-            layerAtLatLng.setStyle({ fillOpacity: 0.2, fillColor: "yellow", color: "green", weight: 0.5 });
+            layerAtLatLng.setStyle({ fillOpacity: 0.5, fillColor: "lightblue", color: "green", weight: 0.5 });
 
             active_Home_Marker = L.marker([latitude, longitude], { icon: home_icon, id: "home_marker" }).addTo(map);
           });
