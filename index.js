@@ -76,45 +76,6 @@ const AddonCycling = L.tileLayer('https://tile.waymarkedtrails.org/cycling/{z}/{
 mapTileLayer_B.addTo(map);
 //     train.addTo(map);
 
-map_tile_layer_A.addEventListener('click', () => {
-  MapTileSwitch(mapTileLayer_B, mapTileLayer_C, mapTileLayer_D, mapTileLayer_A);
-});
-
-map_tile_layer_B.addEventListener('click', () => {
-  MapTileSwitch(mapTileLayer_A, mapTileLayer_C, mapTileLayer_D, mapTileLayer_B);
-});
-
-map_tile_layer_C.addEventListener('click', () => {
-  MapTileSwitch(mapTileLayer_A, mapTileLayer_B, mapTileLayer_D, mapTileLayer_C);
-});
-
-map_tile_layer_D.addEventListener('click', () => {
-  MapTileSwitch(mapTileLayer_A, mapTileLayer_B, mapTileLayer_C, mapTileLayer_D);
-});
-
-map_tile_addon_train.addEventListener('click', () => {
-  MapTileAddon(AddonTrain);
-});
-
-map_tile_addon_cycling.addEventListener('click', () => {
-  MapTileAddon(AddonCycling);
-});
-
-map_tile_addon_borders.addEventListener('click', () => {
-  MapTileAddon(AddonBorders);
-});
-
-map_tile_addon_labels.addEventListener('click', () => {
-  MapTileAddon(AddonLabels);
-});
-
-function MapTileSwitch(RemoveLayer_1, RemoveLayer_2, RemoveLayer_3, AddLayer) {
-  map.removeLayer(RemoveLayer_1);
-  map.removeLayer(RemoveLayer_2);
-  map.removeLayer(RemoveLayer_3);
-  AddLayer.addTo(map);
-}
-
 function MapTileAddon(tile_addon) {
   if (map.hasLayer(tile_addon)) {
     tile_addon.removeFrom(map);
@@ -122,6 +83,49 @@ function MapTileAddon(tile_addon) {
     tile_addon.addTo(map);
   }
 }
+
+// Array containing all tile map layers
+const mapTileLayers = L
+  .layerGroup([mapTileLayer_A])
+  .addTo(map);
+
+// Clear layerGroup from tilemaps and load given one
+function switchTileMap(layer) {
+  mapTileLayers.clearLayers();
+  mapTileLayers.addLayer(layer);
+}
+
+const map_tile_layer_A = document.querySelector('#map_tile_layer_A');
+map_tile_layer_A.addEventListener('click', () => switchTileMap(mapTileLayer_A));
+
+const map_tile_layer_B = document.querySelector('#map_tile_layer_B');
+map_tile_layer_B.addEventListener('click', () => switchTileMap(mapTileLayer_B));
+
+const map_tile_layer_C = document.querySelector('#map_tile_layer_C');
+map_tile_layer_C.addEventListener('click', () => switchTileMap(mapTileLayer_C));
+
+const map_tile_layer_D = document.querySelector('#map_tile_layer_D');
+map_tile_layer_D.addEventListener('click', () => switchTileMap(mapTileLayer_D));
+
+const map_tile_addon_train = document.querySelector('#map_tile_addon_train');
+map_tile_addon_train.addEventListener('click', () => {
+  MapTileAddon(AddonTrain);
+});
+
+const map_tile_addon_cycling = document.querySelector('#map_tile_addon_cycling');
+map_tile_addon_cycling.addEventListener('click', () => {
+  MapTileAddon(AddonCycling);
+});
+
+const map_tile_addon_borders = document.querySelector('#map_tile_addon_borders');
+map_tile_addon_borders.addEventListener('click', () => {
+  MapTileAddon(AddonBorders);
+});
+
+const map_tile_addon_labels = document.querySelector('#map_tile_addon_labels');
+map_tile_addon_labels.addEventListener('click', () => {
+  MapTileAddon(AddonLabels);
+});
 
 // // ↑ Leaflet Map / Tiles Change ↑
 
