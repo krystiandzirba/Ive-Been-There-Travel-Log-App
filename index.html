@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Travel App 0.32</title>
+    <title>Travel App 0.33</title>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -135,6 +135,13 @@
         transform: translate(-50%, -50%);
       }
 
+      .home_color_picker {
+        top: 35%;
+        left: 20%;
+        position: absolute;
+        z-index: 999;
+      }
+
       .app_version {
         color: white;
         top: 95%;
@@ -171,7 +178,9 @@
     <button id="home_button_geolocation" class="home_button home_geolocation hidden">location</button>
     <button id="home_button_manual" class="home_button home_manual hidden">manual</button>
 
-    <div class="app_version">ver: 0 . 32</div>
+    <input type="color" id="home_color_picker" class="home_color_picker" value="#ffe11f">
+
+    <div class="app_version">ver: 0 . 33</div>
 
     <script type="module">
 
@@ -188,6 +197,8 @@
       });
 
       const map = L.map("map", { zoomControl: false }).setView([50, 10], 6);
+
+      let home_highlight_color = "#ffe11f";
 
       let active_Home_Marker = "";
 
@@ -209,6 +220,8 @@
       const map_tile_addon_borders = document.querySelector("#map_tile_addon_borders");
       const map_tile_addon_train = document.querySelector("#map_tile_addon_train");
       const map_tile_addon_cycling = document.querySelector("#map_tile_addon_cycling");
+
+      const home_color_picker = document.getElementById("home_color_picker");
 
       // // ↓ Leaflet Map / Tiles Change ↓
 
@@ -259,6 +272,15 @@
         mapTileLayers.addLayer(layer);
       }
 
+      // // ↓ Leaflet Map / Custom Home Highlight Color  ↓
+
+      home_color_picker.addEventListener("input", function() {
+          home_highlight_color = home_color_picker.value;
+          console.log(home_highlight_color);
+        });
+
+      // // ↑ Leaflet Map / Custom Home Highlight Color  ↑
+
       // ↑ Leaflet Map  ↑
 
       // ↓ Home ↓
@@ -284,7 +306,7 @@
           countriesLayers = L.geoJSON(data, {
             style() {
               return {
-                fillColor: "red",
+                fillColor: home_highlight_color,
                 weight: 0,
                 opacity: 0,
                 fillOpacity: 0,
@@ -295,7 +317,7 @@
               layer.on("click", () => {
                 if (home_button_manual_click === true) {
                   layer.setStyle({
-                    fillColor: "yellow",
+                    fillColor: home_highlight_color,
                     fillOpacity: 0.5,
                     color: "red",
                     weight: 0.5,
@@ -326,7 +348,7 @@
             const layerAtLatLng = map.getLayerAt(containerPoint);
             layerAtLatLng.setStyle({
               fillOpacity: 0.5,
-              fillColor: "lightblue",
+              fillColor: home_highlight_color,
               color: "green",
               weight: 0.5,
             });
