@@ -1,165 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Travel App 0.33</title>
+    <title>Travel App 0.34</title>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
 
-    <style>
-      @import url("https://fonts.googleapis.com/css2?family=Dosis:wght@200&family=Righteous&display=swap");
-      @import url("https://fonts.googleapis.com/css2?family=Lilita+One&display=swap");
+    <link rel="stylesheet" href="styles.css" />
 
-      body {
-        padding: 0px;
-        margin: 0px;
-      }
-
-      #map {
-        height: 100vh;
-      }
-
-      .layer_button {
-        height: 50px;
-        width: 100px;
-        background-color: rgb(255, 162, 49);
-        position: absolute;
-        z-index: 999;
-        cursor: pointer;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        text-align: center;
-        border: black, 2px, solid;
-      }
-
-      .layer_button:hover {
-        transform: translate(-50%, -50%) scale(1.1);
-      }
-
-      .layer_1 {
-        top: 5%;
-        left: 10%;
-        transform: translate(-50%, -50%);
-      }
-
-      .layer_2 {
-        top: 12.5%;
-        left: 10%;
-        transform: translate(-50%, -50%);
-      }
-
-      .layer_3 {
-        top: 20%;
-        left: 10%;
-        transform: translate(-50%, -50%);
-      }
-
-      .layer_4 {
-        top: 27.5%;
-        left: 10%;
-        transform: translate(-50%, -50%);
-      }
-
-      .addon_labels {
-        top: 50%;
-        left: 10%;
-        transform: translate(-50%, -50%);
-      }
-
-      .addon_borders {
-        top: 57.5%;
-        left: 10%;
-        transform: translate(-50%, -50%);
-      }
-
-      .addon_train {
-        top: 65%;
-        left: 10%;
-        transform: translate(-50%, -50%);
-      }
-
-      .addon_cycling {
-        top: 72.5%;
-        left: 10%;
-        transform: translate(-50%, -50%);
-      }
-
-      .addon_clicked {
-        background-color: rgb(255, 225, 189);
-      }
-
-      .home_button {
-        height: 50px;
-        width: 100px;
-        background-color: rgb(255, 162, 49);
-        position: absolute;
-        z-index: 999;
-        cursor: pointer;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        text-align: center;
-        border: black, 2px, solid;
-      }
-
-      .home_button:hover {
-        transform: translate(-50%, -50%) scale(1.1);
-      }
-
-      .home_main {
-        top: 5%;
-        left: 20%;
-        transform: translate(-50%, -50%);
-      }
-
-      .home_geolocation {
-        top: 12.5%;
-        left: 20%;
-        transform: translate(-50%, -50%);
-      }
-
-      .home_manual {
-        top: 20%;
-        left: 20%;
-        transform: translate(-50%, -50%);
-      }
-
-      .home_zoom {
-        top: 27.5%;
-        left: 20%;
-        transform: translate(-50%, -50%);
-      }
-
-      .home_color_picker {
-        top: 35%;
-        left: 20%;
-        position: absolute;
-        z-index: 999;
-      }
-
-      .app_version {
-        color: white;
-        top: 95%;
-        left: 1%;
-        height: 2vh;
-        width: 5vw;
-        position: absolute;
-        z-index: 999;
-        font-family: "Dosis", sans-serif;
-        /*       font-family: 'Lilita One', cursive; */
-        text-align: center;
-      }
-    </style>
   </head>
   <body>
     <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/leaflet-ajax/dist/leaflet.ajax.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/leaflet.cheaplayerat@0.1.2/Leaflet.CheapLayerAt.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/hosuaby/Leaflet.SmoothMarkerBouncing@v3.0.2/dist/bundle.js" crossorigin="anonymous"></script>
 
     <div id="map"></div>
 
@@ -178,11 +34,13 @@
     <button id="home_button_geolocation" class="home_button home_geolocation hidden">location</button>
     <button id="home_button_manual" class="home_button home_manual hidden">manual</button>
 
-    <input type="color" id="home_color_picker" class="home_color_picker" value="#ffe11f">
+    <input type="color" id="home_color_picker" class="home_color_picker" value="#8AFF14">
 
-    <div class="app_version">ver: 0 . 33</div>
+    <div class="app_version">ver: 0 . 34</div>
 
     <script type="module">
+
+      // ---------- 1. add animation to the home_marker icon 
 
       // ↓ Leaflet Map ↓
             
@@ -198,7 +56,7 @@
 
       const map = L.map("map", { zoomControl: false }).setView([50, 10], 6);
 
-      let home_highlight_color = "#ffe11f";
+      let home_highlight_color = "#8AFF14";
 
       let active_Home_Marker = "";
 
@@ -276,7 +134,7 @@
 
       home_color_picker.addEventListener("input", function() {
           home_highlight_color = home_color_picker.value;
-          console.log(home_highlight_color);
+          countriesLayers.setStyle({ fillColor: home_highlight_color });
         });
 
       // // ↑ Leaflet Map / Custom Home Highlight Color  ↑
@@ -356,7 +214,10 @@
             active_Home_Marker = L.marker([latitude, longitude], {
               icon: home_icon,
               id: "home_marker",
-            }).addTo(mapMarkers);
+            });
+            active_Home_Marker.addTo(mapMarkers).bounce(1);
+
+            
           });
         }
       });
@@ -378,7 +239,8 @@
             active_Home_Marker = L.marker(clickedLatLng, {
               icon: home_icon,
               id: "home_marker",
-            }).addTo(mapMarkers);
+            });
+            active_Home_Marker.addTo(mapMarkers).bounce(1);
           }
 
           home_button_manual_click = false;
