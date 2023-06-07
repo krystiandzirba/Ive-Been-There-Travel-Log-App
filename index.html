@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Travel App 0.34</title>
+    <title>Travel App 0.35</title>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,13 +9,13 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
 
     <link rel="stylesheet" href="styles.css" />
-
   </head>
   <body>
     <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/leaflet-ajax/dist/leaflet.ajax.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/leaflet.cheaplayerat@0.1.2/Leaflet.CheapLayerAt.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/hosuaby/Leaflet.SmoothMarkerBouncing@v3.0.2/dist/bundle.js" crossorigin="anonymous"></script>
+    <!-- prettier-ignore -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/hosuaby/Leaflet.SmoothMarkerBouncing@v3.0.2/dist/bundle.js" crossorigin="anonymous" ></script>
 
     <div id="map"></div>
 
@@ -34,16 +34,27 @@
     <button id="home_button_geolocation" class="home_button home_geolocation hidden">location</button>
     <button id="home_button_manual" class="home_button home_manual hidden">manual</button>
 
-    <input type="color" id="home_color_picker" class="home_color_picker" value="#8AFF14">
+    <input type="color" id="home_color_picker" value="#8AFF14" />
+    <div>
+      <input type="range" id="home_opacity_slider" min="0" max="1" step="0.05" value="0.5" />
+    </div>
 
-    <div class="app_version">ver: 0 . 34</div>
+    <div class="app_version">ver: 0 . 35</div>
+
+    <div id="info_popup" style="display: none">
+      <span id="close_info_popup">&times;</span>
+      <p id="info_popup_text"></p>
+    </div>
 
     <script type="module">
-
-      // ---------- 1. add animation to the home_marker icon 
+      // ---------- 1.
+      // ---------- 2.
+      // ---------- 3.
+      // ---------- 4.
+      // ---------- 5.
 
       // ↓ Leaflet Map ↓
-            
+
       import leafletConfig from "./leafletConfig.js";
 
       const { L } = window;
@@ -57,14 +68,12 @@
       const map = L.map("map", { zoomControl: false }).setView([50, 10], 6);
 
       let home_highlight_color = "#8AFF14";
+      let home_highlight_opacity = 0.5;
 
       let active_Home_Marker = "";
 
-      const { mapTileLayer_A, mapTileLayer_B, mapTileLayer_C, mapTileLayer_D } =
-        leafletConfig.tilemaps;
-
-      const { trainsAddon, cyclingAddon, bordersAddon, labelsAddon } =
-        leafletConfig.addons;
+      const { mapTileLayer_A, mapTileLayer_B, mapTileLayer_C, mapTileLayer_D } = leafletConfig.tilemaps;
+      const { trainsAddon, cyclingAddon, bordersAddon, labelsAddon } = leafletConfig.addons;
 
       const mapTileLayers = L.layerGroup([mapTileLayer_B]).addTo(map);
       const mapMarkers = L.layerGroup().addTo(map);
@@ -80,40 +89,23 @@
       const map_tile_addon_cycling = document.querySelector("#map_tile_addon_cycling");
 
       const home_color_picker = document.getElementById("home_color_picker");
+      const home_opacity_slider = document.getElementById("home_opacity_slider");
+
+      const popupDiv = document.getElementById("info_popup");
+      const info_popup_text = document.getElementById("info_popup_text");
+      const close_info_popup = document.getElementById("close_info_popup");
 
       // // ↓ Leaflet Map / Tiles Change ↓
 
-      map_tile_layer_A.addEventListener("click", () =>
-        switchTileMap(mapTileLayer_A)
-      );
+      map_tile_layer_A.addEventListener("click", () => switchTileMap(mapTileLayer_A));
+      map_tile_layer_B.addEventListener("click", () => switchTileMap(mapTileLayer_B));
+      map_tile_layer_C.addEventListener("click", () => switchTileMap(mapTileLayer_C));
+      map_tile_layer_D.addEventListener("click", () => switchTileMap(mapTileLayer_D));
 
-      map_tile_layer_B.addEventListener("click", () =>
-        switchTileMap(mapTileLayer_B)
-      );
-
-      map_tile_layer_C.addEventListener("click", () =>
-        switchTileMap(mapTileLayer_C)
-      );
-
-      map_tile_layer_D.addEventListener("click", () =>
-        switchTileMap(mapTileLayer_D)
-      );
-
-      map_tile_addon_labels.addEventListener("click", () =>
-        switchTileAddon(labelsAddon)
-      );
-
-      map_tile_addon_borders.addEventListener("click", () =>
-        switchTileAddon(bordersAddon)
-      );
-
-      map_tile_addon_train.addEventListener("click", () =>
-        switchTileAddon(trainsAddon)
-      );
-      
-      map_tile_addon_cycling.addEventListener("click", () =>
-        switchTileAddon(cyclingAddon)
-      );
+      map_tile_addon_labels.addEventListener("click", () => switchTileAddon(labelsAddon));
+      map_tile_addon_borders.addEventListener("click", () => switchTileAddon(bordersAddon));
+      map_tile_addon_train.addEventListener("click", () => switchTileAddon(trainsAddon));
+      map_tile_addon_cycling.addEventListener("click", () => switchTileAddon(cyclingAddon));
 
       // // ↑ Leaflet Map / Tiles Change ↑
 
@@ -130,14 +122,18 @@
         mapTileLayers.addLayer(layer);
       }
 
-      // // ↓ Leaflet Map / Custom Home Highlight Color  ↓
+      // // ↓ Leaflet Map / Custom Home Highlight Color + opacity ↓
 
-      home_color_picker.addEventListener("input", function() {
-          home_highlight_color = home_color_picker.value;
-          countriesLayers.setStyle({ fillColor: home_highlight_color });
-        });
+      home_color_picker.addEventListener("input", function () {
+        home_highlight_color = home_color_picker.value;
+        // countriesLayers.setStyle({ fillColor: home_highlight_color });  będzie w przyszłości problem z kolorowaniem wszystkich państw zamiast tylko jednego
+      });
 
-      // // ↑ Leaflet Map / Custom Home Highlight Color  ↑
+      home_opacity_slider.addEventListener("input", function () {
+        home_highlight_opacity = parseFloat(home_opacity_slider.value);
+      });
+
+      // // ↑ Leaflet Map / Custom Home Highlight Color + opacity ↑
 
       // ↑ Leaflet Map  ↑
 
@@ -149,6 +145,20 @@
       const home_button_zoom = document.getElementById("home_button_zoom");
       const home_button_geolocation = document.getElementById("home_button_geolocation");
       const home_button_manual = document.getElementById("home_button_manual");
+
+      // // ↓ Home / Info Popup ↓
+
+      function showInfoPopup(text) {
+        info_popup_text.textContent = text;
+        popupDiv.style.display = "block";
+      }
+
+      function closeInfoPopup() {
+        popupDiv.style.display = "none";
+      }
+      close_info_popup.addEventListener("click", closeInfoPopup);
+
+      // // ↑ Home / Info Popup ↑
 
       // ↑ Home ↑
 
@@ -176,7 +186,7 @@
                 if (home_button_manual_click === true) {
                   layer.setStyle({
                     fillColor: home_highlight_color,
-                    fillOpacity: 0.5,
+                    fillOpacity: home_highlight_opacity,
                     color: "red",
                     weight: 0.5,
                   });
@@ -205,7 +215,7 @@
             const containerPoint = map.latLngToContainerPoint(latlng);
             const layerAtLatLng = map.getLayerAt(containerPoint);
             layerAtLatLng.setStyle({
-              fillOpacity: 0.5,
+              fillOpacity: home_highlight_opacity,
               fillColor: home_highlight_color,
               color: "green",
               weight: 0.5,
@@ -216,8 +226,6 @@
               id: "home_marker",
             });
             active_Home_Marker.addTo(mapMarkers).bounce(1);
-
-            
           });
         }
       });
@@ -258,17 +266,14 @@
         if (active_Home_Marker) {
           map.setView(active_Home_Marker.getLatLng(), 7);
         } else {
-          alert("Home location is not set"); // change alert do div
+          showInfoPopup("Home location not set!");
         }
       });
 
       // // ↑ GeoJSON / Home Button Center Marker ↑
 
       function HomeHighlightClear() {
-        if (
-          home_button_manual_click === true ||
-          home_button_geolocation_click === true
-        ) {
+        if (home_button_manual_click === true || home_button_geolocation_click === true) {
           countriesLayers.eachLayer((layer) => {
             layer.setStyle({ fillOpacity: 0, color: "transparent", weight: 0 });
           });

@@ -4,6 +4,28 @@
 body {
   padding: 0px;
   margin: 0px;
+  overflow: hidden;
+}
+
+#info_popup {
+  z-index: 999;
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  width: 30vw;
+  transform: translate(-50%, -50%);
+  background-color: #ffffff;
+  padding: 20px;
+  border: 1px solid #ccc;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Styling for the close button */
+#close_info_popup {
+  z-index: 999;
+  float: right;
+  cursor: pointer;
+  font-size: 40px;
 }
 
 #map {
@@ -13,7 +35,7 @@ body {
 .layer_button {
   height: 50px;
   width: 100px;
-  background-color: rgb(255, 162, 49);
+  background-color: rgb(255, 255, 255);
   position: absolute;
   z-index: 999;
   cursor: pointer;
@@ -77,14 +99,10 @@ body {
   transform: translate(-50%, -50%);
 }
 
-.addon_clicked {
-  background-color: rgb(255, 225, 189);
-}
-
 .home_button {
   height: 50px;
   width: 100px;
-  background-color: rgb(255, 162, 49);
+  background-color: rgb(255, 255, 255);
   position: absolute;
   z-index: 999;
   cursor: pointer;
@@ -124,9 +142,16 @@ body {
   transform: translate(-50%, -50%);
 }
 
-.home_color_picker {
+#home_color_picker {
   top: 35%;
   left: 20%;
+  position: absolute;
+  z-index: 999;
+}
+
+#home_opacity_slider {
+  top: 40%;
+  left: 16%;
   position: absolute;
   z-index: 999;
 }
