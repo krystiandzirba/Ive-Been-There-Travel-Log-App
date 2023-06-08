@@ -4,22 +4,37 @@
 body {
   padding: 0px;
   margin: 0px;
+  overflow: hidden;
 }
 
 #map {
   height: 100vh;
 }
 
+.main_logs_container_arrow {
+  position: absolute;
+  top: 50%;
+  left: 70%;
+  z-index: 999;
+  height: 4vh;
+  transition: left 0.5s ease;
+}
+
+.main_logs_container_arrow img {
+  width: 6vw;
+  height: auto;
+}
+
 .main_logs_container {
   position: absolute;
   min-height: 1000px;
   width: 25vw;
-  left: 100%;
   z-index: 999;
   background-color: rgb(255, 255, 255);
   top: 0%;
   left: 75%;
   border: solid, black, 25px;
+  transition: left 0.5s ease;
 }
 
 .layer_button {

@@ -199,6 +199,11 @@
               id: "home_marker",
             });
             active_Home_Marker.addTo(mapMarkers).bounce(1);
+
+            homeCountryLayer = layerAtLatLng;
+            homeCountryLayer.defaultOptions.attribution = "home";
+            console.log(homeCountryLayer);
+
           });
         }
       });
@@ -263,6 +268,29 @@
 
       // ↑ GeoJSON ↑
 
+      // ↓ Main travel logs ↓
+
+      var main_logs_container_arrow = document.querySelector('.main_logs_container_arrow');
+      var main_logs_container = document.querySelector('.main_logs_container');
+      var main_logs_container_arrow_clicked = false;
+
+      // // ↓ Main travel logs / main menu ↓
+
+      main_logs_container_arrow.addEventListener('click', function () {
+        if (main_logs_container_arrow_clicked) {
+          main_logs_container_arrow.style.left = '70%';
+          main_logs_container.style.left = '75%';
+        } else {
+          main_logs_container_arrow.style.left = '95%';
+          main_logs_container.style.left = '100%';
+        }
+    
+        main_logs_container_arrow_clicked = !main_logs_container_arrow_clicked;
+      });
+
+      // // ↑ Main travel logs / main menu ↑
+
+
 
     // // ---------- TEST ---------- ↓
 
@@ -287,3 +315,6 @@
       //    }
       
 //      setTimeout(CleanHome, 5000);
+
+
+
