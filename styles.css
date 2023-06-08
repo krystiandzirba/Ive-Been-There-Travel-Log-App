@@ -4,32 +4,22 @@
 body {
   padding: 0px;
   margin: 0px;
-  overflow: hidden;
-}
-
-#info_popup {
-  z-index: 999;
-  position: fixed;
-  top: 20%;
-  left: 50%;
-  width: 30vw;
-  transform: translate(-50%, -50%);
-  background-color: #ffffff;
-  padding: 20px;
-  border: 1px solid #ccc;
-  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
-}
-
-/* Styling for the close button */
-#close_info_popup {
-  z-index: 999;
-  float: right;
-  cursor: pointer;
-  font-size: 40px;
 }
 
 #map {
   height: 100vh;
+}
+
+.main_logs_container {
+  position: absolute;
+  min-height: 1000px;
+  width: 25vw;
+  left: 100%;
+  z-index: 999;
+  background-color: rgb(255, 255, 255);
+  top: 0%;
+  left: 75%;
+  border: solid, black, 25px;
 }
 
 .layer_button {
@@ -167,4 +157,24 @@ body {
   font-family: "Dosis", sans-serif;
   /*       font-family: 'Lilita One', cursive; */
   text-align: center;
+}
+
+#info_popup {
+  z-index: 999;
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  width: 30vw;
+  transform: translate(-50%, -50%);
+  background-color: #ffffff;
+  padding: 20px;
+  border: 1px solid #ccc;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+#close_info_popup {
+  z-index: 999;
+  float: right;
+  cursor: pointer;
+  font-size: 40px;
 }
