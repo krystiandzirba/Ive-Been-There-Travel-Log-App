@@ -12,7 +12,8 @@
         // ---------- 3. Separate tab to calculate the "achievements": overall trips distance (divided on the trip type: bicycle, car, plane, boat), countries visited
         // ---------- 4. Add local storage to save the trip progress and settings 
         // ---------- 5. Add loading animation before the page load 
-        // ---------- 6. Rewrite to React
+        // ---------- 6. Add different page styles (font, animations, images, backgrounds, theme) - modern / middleage / other
+        // ---------- 7. Rewrite to React
 
 
       // ↓ Leaflet Map ↓
@@ -20,12 +21,6 @@
       import leafletConfig from "./leafletConfig.js";
 
       const { L } = window;
-
-      const home_icon = L.icon({
-        iconUrl: "content/icons/home_icon.png",
-        iconSize: [48, 48],
-        iconAnchor: [24, 24],
-      });
 
       const maxBounds = L.latLngBounds(L.latLng(-90, -180), L.latLng(90, 180));
       const map = L.map("map", {
@@ -40,6 +35,7 @@
       let active_Home_Marker = "";
 
       const { mapTileLayer_A, mapTileLayer_B, mapTileLayer_C, mapTileLayer_D } = leafletConfig.tilemaps;
+      const { home_icon, car_icon, plane_icon } = leafletConfig.marker_icons;
       const { trainsAddon, cyclingAddon, bordersAddon, labelsAddon } = leafletConfig.addons;
 
       const mapTileLayers = L.layerGroup([mapTileLayer_B]).addTo(map);
@@ -268,13 +264,13 @@
 
       // ↑ GeoJSON ↑
 
-      // ↓ Main travel logs ↓
+      // ↓ Travel Log ↓
 
       var main_logs_container_arrow = document.querySelector('.main_logs_container_arrow');
       var main_logs_container = document.querySelector('.main_logs_container');
       var main_logs_container_arrow_clicked = false;
 
-      // // ↓ Main travel logs / main menu ↓
+      // // ↓ Travel Log / main menu ↓
 
       main_logs_container_arrow.addEventListener('click', function () {
         if (main_logs_container_arrow_clicked) {
@@ -288,7 +284,65 @@
         main_logs_container_arrow_clicked = !main_logs_container_arrow_clicked;
       });
 
-      // // ↑ Main travel logs / main menu ↑
+      // // ↑ Travel Log / main menu ↑
+
+      // // ↓ Travel Log / CRUD setup ↓
+
+      let TravelLogsArray = [];
+
+      function TravelLogSubmit(event) {
+        event.preventDefault();
+  
+        const travel_logs_input = document.getElementById('travel_logs_input');
+        const travel_log_name = travel_logs_input.value;
+  
+        const new_log_div = document.createElement('div');
+        new_log_div.className = 'log';
+  
+        const log_name = document.createElement('span');
+        log_name.textContent = travel_log_name;
+        new_log_div.appendChild(log_name);
+  
+        const travel_logs_edit = document.createElement('button');
+        travel_logs_edit.textContent = 'Edit';
+        travel_logs_edit.addEventListener('click', function() {
+
+          const newText = prompt('Enter new text:');
+          if (newText !== null) {
+            log_name.textContent = newText;
+          }
+
+        });
+        new_log_div.appendChild(travel_logs_edit);
+  
+        const travel_logs_delete = document.createElement('button');
+        travel_logs_delete.textContent = 'Delete';
+        travel_logs_delete.addEventListener('click', function() {
+          const index = TravelLogsArray.indexOf(travel_log_name);
+          if (index !== -1) {
+            TravelLogsArray.splice(index, 1);
+          }
+          new_log_div.remove();
+        });
+        new_log_div.appendChild(travel_logs_delete);
+  
+        const logs_list = document.getElementById('logs_list');
+        logs_list.appendChild(new_log_div);
+  
+        TravelLogsArray.push(travel_log_name);
+  
+        travel_logs_input.value = '';
+  
+        console.log('Items Array:', TravelLogsArray);
+      }
+  
+      const travel_log_form = document.getElementById('travel_log_form');
+      travel_log_form.addEventListener('submit', TravelLogSubmit);
+
+
+      // // ↑ Travel Log / CRUD setup ↑
+
+      // ↑ Travel Log ↑
 
 
 
@@ -315,6 +369,7 @@
       //    }
       
 //      setTimeout(CleanHome, 5000);
+
 
 
 

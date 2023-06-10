@@ -27,6 +27,24 @@ export default {
     }),
   },
 
+  marker_icons: {
+     home_icon: L.icon({
+      iconUrl: "content/icons/home_icon.png",
+      iconSize: [48, 48],
+      iconAnchor: [24, 24],
+    }),
+    car_icon: L.icon({
+      iconUrl: "content/icons/car_icon.png",
+      iconSize: [48, 48],
+      iconAnchor: [24, 24],
+    }),
+    plane_icon: L.icon({
+      iconUrl: "content/icons/plane_icon.png",
+      iconSize: [48, 48],
+      iconAnchor: [24, 24],
+    }),
+  },
+
   addons: {
     labelsAddon: L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-labels/{z}/{x}/{y}{r}.{ext}', {
       attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',

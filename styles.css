@@ -7,34 +7,10 @@ body {
   overflow: hidden;
 }
 
+/* ↓ Map layer ↓  */
+
 #map {
   height: 100vh;
-}
-
-.main_logs_container_arrow {
-  position: absolute;
-  top: 50%;
-  left: 70%;
-  z-index: 999;
-  height: 4vh;
-  transition: left 0.5s ease;
-}
-
-.main_logs_container_arrow img {
-  width: 6vw;
-  height: auto;
-}
-
-.main_logs_container {
-  position: absolute;
-  min-height: 1000px;
-  width: 25vw;
-  z-index: 999;
-  background-color: rgb(255, 255, 255);
-  top: 0%;
-  left: 75%;
-  border: solid, black, 25px;
-  transition: left 0.5s ease;
 }
 
 .layer_button {
@@ -80,6 +56,10 @@ body {
   transform: translate(-50%, -50%);
 }
 
+/* ↑ Map layer ↑  */
+
+/* ↓ Map addon layer ↓  */
+
 .addon_labels {
   top: 50%;
   left: 10%;
@@ -103,6 +83,10 @@ body {
   left: 10%;
   transform: translate(-50%, -50%);
 }
+
+/* ↑ Map addon layer ↑  */
+
+/* ↓ Home ↓  */
 
 .home_button {
   height: 50px;
@@ -161,6 +145,72 @@ body {
   z-index: 999;
 }
 
+/* ↑ Home ↑  */
+
+/* ↓ Logs container ↓  */
+
+.main_logs_container_arrow {
+  position: absolute;
+  top: 50%;
+  left: 70%;
+  z-index: 999;
+  height: 4vh;
+  transition: left 0.5s ease;
+}
+
+.main_logs_container_arrow img {
+  width: 6vw;
+  height: auto;
+}
+
+.main_logs_container {
+  position: absolute;
+  height: 100%;
+  width: 25vw;
+  z-index: 900;
+  background-color: rgb(255, 255, 255);
+  top: 0%;
+  left: 75%;
+  border: solid, black, 25px;
+  transition: left 0.5s ease;
+}
+
+.main_travel_settings_container {
+  position: absolute;
+  width: 30vw;
+  min-height: 20vh;
+  background-color: rgb(255, 255, 188);
+  top: 10%;
+  left: 50%;
+  transform: translate(-50%, 10%);
+  z-index: 999;
+}
+
+.add_travel {
+  width: 90%;
+  height: 20%;
+  z-index: 950;
+  background-color: rgb(255, 255, 196);
+
+  top: 20%;
+  right: 5%;
+  transform: translate(5%, 10%);
+}
+
+.travel_logs {
+  width: 90%;
+  min-height: 600px;
+  z-index: 950;
+  background-color: rgb(255, 255, 172);
+  top: 20%;
+  right: 5%;
+  transform: translate(5%, 10%);
+}
+
+/* ↑ Logs container ↑  */
+
+/* ↓ Other ↓  */
+
 .app_version {
   color: white;
   top: 95%;
@@ -192,4 +242,15 @@ body {
   float: right;
   cursor: pointer;
   font-size: 40px;
+}
+
+/* ↑ Other ↑  */
+
+.log {
+  border: 2px solid black;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+.log button {
+  margin-right: 5px;
 }

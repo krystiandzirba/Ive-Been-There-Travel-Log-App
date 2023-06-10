@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Travel App 0.40</title>
+    <title>Travel App 0.41</title>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -44,9 +44,27 @@
     <div class="main_logs_container_arrow">
       <img src="content/icons/main_logs_container_arrow.png" />
     </div>
-    <div class="main_logs_container"></div>
 
-    <div class="app_version">ver: 0 . 40</div>
+    <div class="main_logs_container">
+      <button class="add_travel">add travel</button>
+
+      <div class="travel_logs">
+        <div id="logs_list"></div>
+      </div>
+    </div>
+
+    <div class="main_travel_settings_container">
+      <!--aa-->
+
+      <form id="travel_log_form">
+        <input type="text" id="travel_logs_input" placeholder="Enter the travel name" />
+        <button type="submit">Add</button>
+      </form>
+
+      <!--aa-->
+    </div>
+
+    <div class="app_version">ver: 0 . 41</div>
 
     <div id="info_popup" style="display: none">
       <span id="close_info_popup">&times;</span>
