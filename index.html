@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Travel App 0.41</title>
+    <title>Travel App 0.42</title>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -16,6 +16,11 @@
     <script src="https://cdn.jsdelivr.net/npm/leaflet.cheaplayerat@0.1.2/Leaflet.CheapLayerAt.min.js"></script>
     <!-- prettier-ignore -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/hosuaby/Leaflet.SmoothMarkerBouncing@v3.0.2/dist/bundle.js" crossorigin="anonymous" ></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
     <script type="module" src="script.js"></script>
 
@@ -59,12 +64,13 @@
       <form id="travel_log_form">
         <input type="text" id="travel_logs_input" placeholder="Enter the travel name" />
         <button type="submit">Add</button>
+        <input type="text" name="daterange" id="daterange" value="" />
       </form>
 
       <!--aa-->
     </div>
 
-    <div class="app_version">ver: 0 . 41</div>
+    <div class="app_version">ver: 0 . 42</div>
 
     <div id="info_popup" style="display: none">
       <span id="close_info_popup">&times;</span>

@@ -18,7 +18,7 @@
 
       // ↓ Leaflet Map ↓
 
-      import leafletConfig from "./leafletConfig.js";
+      import leafletConfig from "./LeafletConfig.js";
 
       const { L } = window;
 
@@ -288,6 +288,9 @@
 
       // // ↓ Travel Log / CRUD setup ↓
 
+      let travel_date_start = "";
+      let travel_date_end = "";
+
       let TravelLogsArray = [];
 
       function TravelLogSubmit(event) {
@@ -295,6 +298,18 @@
   
         const travel_logs_input = document.getElementById('travel_logs_input');
         const travel_log_name = travel_logs_input.value;
+
+        
+
+        if (travel_log_name === '') {
+          showInfoPopup("Please enter valid name");
+          return;
+        }
+
+        if (travel_date_start === '' || travel_date_end === '') {
+          showInfoPopup("Please select a valid date range");
+          return;
+        }
   
         const new_log_div = document.createElement('div');
         new_log_div.className = 'log';
@@ -302,22 +317,30 @@
         const log_name = document.createElement('span');
         log_name.textContent = travel_log_name;
         new_log_div.appendChild(log_name);
+
+//      const log_date = document.createElement('span');
+//      log_date.textContent = travel_date_start + ' - ' + travel_date_end;
+//      new_log_div.appendChild(log_date);
   
         const travel_logs_edit = document.createElement('button');
         travel_logs_edit.textContent = 'Edit';
-        travel_logs_edit.addEventListener('click', function() {
+        travel_logs_edit.addEventListener('click', () => {
 
-          const newText = prompt('Enter new text:');
-          if (newText !== null) {
+         const newText = prompt('Enter new text:');
+
+        if (newText == null || newText == "") {
+          showInfoPopup("Please enter a valid name");
+          } else {
             log_name.textContent = newText;
           }
+
 
         });
         new_log_div.appendChild(travel_logs_edit);
   
         const travel_logs_delete = document.createElement('button');
         travel_logs_delete.textContent = 'Delete';
-        travel_logs_delete.addEventListener('click', function() {
+        travel_logs_delete.addEventListener('click', () => {
           const index = TravelLogsArray.indexOf(travel_log_name);
           if (index !== -1) {
             TravelLogsArray.splice(index, 1);
@@ -329,9 +352,11 @@
         const logs_list = document.getElementById('logs_list');
         logs_list.appendChild(new_log_div);
   
-        TravelLogsArray.push(travel_log_name);
-  
+        TravelLogsArray.push({ name: travel_log_name, date: travel_date_start + ' - ' + travel_date_end });
+
         travel_logs_input.value = '';
+        travel_date_start = '';
+        travel_date_end = '';
   
         console.log('Items Array:', TravelLogsArray);
       }
@@ -341,6 +366,26 @@
 
 
       // // ↑ Travel Log / CRUD setup ↑
+
+      // // ↓ Travel Log / Date picker ↓
+
+      $(function() {
+        $('input[name="daterange"]').daterangepicker({
+          opens: 'left',
+          locale: {
+            format: 'DD/MM/YYYY'
+          }
+        }, function(start, end, label) {
+
+          travel_date_start = start.format('YYYY-MM-DD');
+          travel_date_end = end.format('YYYY-MM-DD');
+          
+          console.log("Start Date: " + travel_date_start);
+          console.log("End Date: " + travel_date_end);
+        });
+      });
+
+      // // ↑ Travel Log / Date picker ↑
 
       // ↑ Travel Log ↑
 
