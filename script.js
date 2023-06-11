@@ -4,6 +4,8 @@
 
         // ---------- 1. Major bug: Geolocation and home marker bugs when the device location is out of the leaflet map bounds
         // ---------- 2. Bug: Home highlight color update causes every leaflet highlight to appear or change 
+        // ---------- 3. Bug: (Travel CRUD + date picker), setting a date for a travel, based on the date of the previous one causes an error,
+        // ----------    removing the if condition, lets the date pass, but as an empty string.
 
 // Features to add:
 
@@ -109,19 +111,16 @@
       const home_button_geolocation = document.getElementById("home_button_geolocation");
       const home_button_manual = document.getElementById("home_button_manual");
 
-      // // ↓ Home / Info Popup ↓
+      const main_logs_container = document.querySelector('.main_logs_container');
 
-      function showInfoPopup(text) {
-        info_popup_text.textContent = text;
-        popupDiv.style.display = "block";
-      }
+      const check_icon = document.getElementById("check_icon");
 
-      function closeInfoPopup() {
-        popupDiv.style.display = "none";
-      }
-      close_info_popup.addEventListener("click", closeInfoPopup);
+      // // ↓ Home / Basic interactiveness ↓
 
-      // // ↑ Home / Info Popup ↑
+check_icon.addEventListener('click', TravelLogSubmit);
+
+
+      // // ↑ Home / Basic interactiveness ↑
 
       // ↑ Home ↑
 
@@ -266,9 +265,9 @@
 
       // ↓ Travel Log ↓
 
-      var main_logs_container_arrow = document.querySelector('.main_logs_container_arrow');
-      var main_logs_container = document.querySelector('.main_logs_container');
-      var main_logs_container_arrow_clicked = false;
+      const main_logs_container_arrow = document.querySelector('.main_logs_container_arrow');
+      let main_logs_container_arrow_clicked = false;
+      let TravelID = "";
 
       // // ↓ Travel Log / main menu ↓
 
@@ -295,11 +294,9 @@
 
       function TravelLogSubmit(event) {
         event.preventDefault();
-  
+
         const travel_logs_input = document.getElementById('travel_logs_input');
         const travel_log_name = travel_logs_input.value;
-
-        
 
         if (travel_log_name === '') {
           showInfoPopup("Please enter valid name");
@@ -307,7 +304,7 @@
         }
 
         if (travel_date_start === '' || travel_date_end === '') {
-          showInfoPopup("Please select a valid date range");
+         showInfoPopup("Please select a valid date range");
           return;
         }
   
@@ -318,7 +315,7 @@
         log_name.textContent = travel_log_name;
         new_log_div.appendChild(log_name);
 
-//      const log_date = document.createElement('span');
+//      const log_date = document.createElement('span');                          // travel log, make the travel date visible / not needed now
 //      log_date.textContent = travel_date_start + ' - ' + travel_date_end;
 //      new_log_div.appendChild(log_date);
   
@@ -333,7 +330,6 @@
           } else {
             log_name.textContent = newText;
           }
-
 
         });
         new_log_div.appendChild(travel_logs_edit);
@@ -352,43 +348,96 @@
         const logs_list = document.getElementById('logs_list');
         logs_list.appendChild(new_log_div);
   
-        TravelLogsArray.push({ name: travel_log_name, date: travel_date_start + ' - ' + travel_date_end });
+        TravelID = RandomTravelId();
+        TravelLogsArray.push({ name: travel_log_name, ID: TravelID, date: travel_date_start + ' - ' + travel_date_end });
+//        console.log(TravelID);
 
         travel_logs_input.value = '';
-        travel_date_start = '';
-        travel_date_end = '';
+//        travel_date_start = '';
+//        travel_date_end = '';
+        TravelID = '';
   
         console.log('Items Array:', TravelLogsArray);
       }
-  
-      const travel_log_form = document.getElementById('travel_log_form');
-      travel_log_form.addEventListener('submit', TravelLogSubmit);
-
 
       // // ↑ Travel Log / CRUD setup ↑
 
       // // ↓ Travel Log / Date picker ↓
 
+      
       $(function() {
         $('input[name="daterange"]').daterangepicker({
           opens: 'left',
           locale: {
             format: 'DD/MM/YYYY'
           }
+          
         }, function(start, end, label) {
 
           travel_date_start = start.format('YYYY-MM-DD');
           travel_date_end = end.format('YYYY-MM-DD');
-          
+
           console.log("Start Date: " + travel_date_start);
           console.log("End Date: " + travel_date_end);
+
         });
+        
       });
 
       // // ↑ Travel Log / Date picker ↑
 
+      // // ↓ Travel Log / Travel ID generator ↓
+
+      function RandomTravelId() {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
+      
+        for (let i = 0; i < 10; i++) {
+          const randomIndex = Math.floor(Math.random() * characters.length);
+          TravelID += characters[randomIndex];
+        }
+      
+        return TravelID;
+      }
+
+      // // ↑ Travel Log / Travel ID generator ↑
+
       // ↑ Travel Log ↑
 
+      // ↓ Other ↓
+
+      // ↓ Other / Info popup ↓
+
+      function showInfoPopup(text) {
+        info_popup_text.textContent = text;
+        popupDiv.style.display = "block";
+      }
+
+      function closeInfoPopup() {
+        popupDiv.style.display = "none";
+      }
+      close_info_popup.addEventListener("click", closeInfoPopup);
+
+      // ↑ Other / Info popup ↑
+
+      // ↓ Other / Toggle visibility ↓
+
+//      function toggleContainerVisibility(container_id) { // requires rewriting 
+//        for (let i = 0; i < container_id.length; i++) {
+//          let container_visibility = document.getElementById(container_id[i]);
+//          if (
+//            container_visibility.style.display === "" ||
+//            container_visibility.style.display === "none"
+//          ) {
+//            container_visibility.style.display = "block";
+//          } else {
+//            container_visibility.style.display = "none";
+//          }
+//        }
+//     }
+
+      // ↑ Other / Toggle visibility ↑
+
+      // ↑ Other ↑
 
 
     // // ---------- TEST ---------- ↓
@@ -414,7 +463,6 @@
       //    }
       
 //      setTimeout(CleanHome, 5000);
-
 
 
 

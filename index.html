@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Travel App 0.42</title>
+    <title>Travel App 0.43</title>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -26,6 +26,7 @@
 
     <div id="map"></div>
 
+    <button id="layers_button" class="layer_button layer_0">layers</button>
     <button id="map_tile_layer_A" class="layer_button layer_1">layer 1</button>
     <button id="map_tile_layer_B" class="layer_button layer_2">layer 2</button>
     <button id="map_tile_layer_C" class="layer_button layer_3">layer 3</button>
@@ -52,25 +53,22 @@
 
     <div class="main_logs_container">
       <button class="add_travel">add travel</button>
-
       <div class="travel_logs">
         <div id="logs_list"></div>
       </div>
     </div>
 
-    <div class="main_travel_settings_container">
-      <!--aa-->
-
+    <div class="main_travel_settings_container" id="main_travel_settings">
       <form id="travel_log_form">
         <input type="text" id="travel_logs_input" placeholder="Enter the travel name" />
-        <button type="submit">Add</button>
+        <!--        <button type="submit">Add</button>-->
         <input type="text" name="daterange" id="daterange" value="" />
       </form>
-
-      <!--aa-->
     </div>
+    <button id="check_icon" class="settings_container_icon check_icon">OK</button>
+    <button id="close_icon" class="settings_container_icon close_icon">X</button>
 
-    <div class="app_version">ver: 0 . 42</div>
+    <div class="app_version">ver: 0 . 43</div>
 
     <div id="info_popup" style="display: none">
       <span id="close_info_popup">&times;</span>
