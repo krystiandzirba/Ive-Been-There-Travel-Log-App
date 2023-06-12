@@ -68,25 +68,25 @@ body {
 /* ↓ Map addon layer ↓  */
 
 .addon_labels {
-  top: 50%;
+  top: 42.5%;
   left: 10%;
   transform: translate(-50%, -50%);
 }
 
 .addon_borders {
-  top: 57.5%;
+  top: 50%;
   left: 10%;
   transform: translate(-50%, -50%);
 }
 
 .addon_train {
-  top: 65%;
+  top: 57.5%;
   left: 10%;
   transform: translate(-50%, -50%);
 }
 
 .addon_cycling {
-  top: 72.5%;
+  top: 65%;
   left: 10%;
   transform: translate(-50%, -50%);
 }
@@ -153,6 +153,14 @@ body {
   z-index: 999;
 }
 
+.layers_container {
+  display: none;
+}
+
+.location_container {
+  display: none;
+}
+
 /* ↑ Home ↑  */
 
 /* ↓ Logs container ↓  */
@@ -183,34 +191,6 @@ body {
   transition: left 0.5s ease;
 }
 
-.main_travel_settings_container {
-  position: absolute;
-  width: 30vw;
-  min-height: 20vh;
-  background-color: rgb(255, 255, 188);
-  top: 10%;
-  left: 50%;
-  transform: translate(-50%, 10%);
-  z-index: 990;
-}
-
-.settings_container_icon {
-  position: absolute;
-  width: 5vw;
-  top: 32.5%;
-  transform: translate(-50%, 50%);
-  z-index: 999;
-  background-color: white;
-}
-
-.check_icon {
-  left: 40%;
-}
-
-.close_icon {
-  left: 60%;
-}
-
 .add_travel {
   width: 90%;
   height: 10%;
@@ -233,6 +213,66 @@ body {
 }
 
 /* ↑ Logs container ↑  */
+
+/* ↓ Travel Settings container ↓  */
+
+.main_travel_settings_container {
+  position: absolute;
+  width: 30vw;
+  min-height: 20vh;
+  background-color: rgb(255, 255, 188);
+  top: 10%;
+  left: 50%;
+  transform: translate(-50%, 10%);
+  z-index: 990;
+  display: none;
+}
+
+.settings_container_icon {
+  position: absolute;
+  width: 5vw;
+  top: 32.5%;
+  transform: translate(-50%, 50%);
+  z-index: 999;
+  background-color: white;
+}
+
+.check_icon {
+  left: 40%;
+  display: none;
+}
+
+.close_icon {
+  left: 60%;
+  display: none;
+}
+
+.main_travel_settings_icon_container {
+  position: absolute;
+  width: 27.5vw;
+  min-height: 7vh;
+  /*  background-color: rgb(172, 255, 70); */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, 10%);
+  z-index: 995;
+
+  display: flex;
+  justify-content: space-around;
+}
+
+.travel_button {
+  display: inline-block;
+  width: 17%;
+  height: 100%;
+  text-align: center;
+  line-height: 5vh;
+  background-color: #fff;
+  border: 2px solid black;
+  cursor: pointer;
+}
+
+/* ↑ Travel Settings container ↑  */
 
 /* ↓ Other ↓  */
 
