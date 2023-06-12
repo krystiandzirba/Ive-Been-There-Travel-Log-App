@@ -267,7 +267,6 @@ check_icon.addEventListener('click', TravelLogSubmit);
 
       const main_logs_container_arrow = document.querySelector('.main_logs_container_arrow');
       let main_logs_container_arrow_clicked = false;
-      let TravelID = "";
 
       // // ↓ Travel Log / main menu ↓
 
@@ -348,8 +347,8 @@ check_icon.addEventListener('click', TravelLogSubmit);
         const logs_list = document.getElementById('logs_list');
         logs_list.appendChild(new_log_div);
   
-        TravelID = RandomTravelId();
-        TravelLogsArray.push({ name: travel_log_name, ID: TravelID, date: travel_date_start + ' - ' + travel_date_end });
+        const travelID = RandomTravelId();
+        TravelLogsArray.push({ name: travel_log_name, ID: travelID, date: travel_date_start + ' - ' + travel_date_end });
 //        console.log(TravelID);
 
         travel_logs_input.value = '';
@@ -390,13 +389,13 @@ check_icon.addEventListener('click', TravelLogSubmit);
 
       function RandomTravelId() {
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
-      
+        let id = "";
         for (let i = 0; i < 10; i++) {
           const randomIndex = Math.floor(Math.random() * characters.length);
-          TravelID += characters[randomIndex];
+          id += characters[randomIndex];
         }
       
-        return TravelID;
+        return id;
       }
 
       // // ↑ Travel Log / Travel ID generator ↑
