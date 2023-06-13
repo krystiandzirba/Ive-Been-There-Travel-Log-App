@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Travel App 0.44</title>
+    <title>Travel App 0.45</title>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -63,23 +63,35 @@
     </div>
 
     <div class="main_travel_settings_container" id="main_travel_settings_container">
-      <form id="travel_log_form">
-        <input type="text" id="travel_logs_input" placeholder="Enter the travel name" />
-        <input type="text" name="daterange" id="daterange" value="" />
-      </form>
-      <div class="main_travel_settings_icon_container">
-        <button id="travel_type_car" class="travel_button">Car</button>
-        <button id="travel_type_plane" class="travel_button">Plane</button>
-        <button id="travel_type_boat" class="travel_button">Boat</button>
-        <button id="travel_type_walk" class="travel_button">Walk</button>
-        <!--       <button id="travel_type_motorcycle" class="travel_button">Motorcycle</button> -->
-        <button id="travel_type_bicycle" class="travel_button">Bicycle</button>
+      <div class="travel_settings_data_input_container">
+        <form id="travel_log_form">
+          <input type="text" id="travel_logs_input" placeholder="Enter the travel name" />
+          <input type="text" name="daterange" id="daterange" value="" />
+        </form>
+      </div>
+      <div class="travel_settings_icon_container">
+        <button id="travel_type_car" class="travel_type_button">
+          <img src="/content/icons/car_icon_small.png" alt="Car Icon" />
+        </button>
+        <button id="travel_type_plane" class="travel_type_button">
+          <img src="/content/icons/plane_icon_small.png" alt="plane Icon" />
+        </button>
+        <button id="travel_type_boat" class="travel_type_button">
+          <img src="/content/icons/boat_icon_small.png" alt="boat Icon" />
+        </button>
+        <button id="travel_type_walk" class="travel_type_button">
+          <img src="/content/icons/walk_icon_small.png" alt="walk Icon" />
+        </button>
+        <!--       <button id="travel_type_motorcycle" class="travel_type_button">Motorcycle</button> -->
+        <button id="travel_type_bicycle" class="travel_type_button">
+          <img src="/content/icons/bicycle_icon_small.png" alt="bicycle Icon" />
+        </button>
       </div>
     </div>
-    <button id="check_icon" class="settings_container_icon check_icon">OK</button>
-    <button id="close_icon" class="settings_container_icon close_icon">X</button>
+    <button id="check_icon" class="settings_container_icon check_icon">&#10003;</button>
+    <button id="close_icon" class="settings_container_icon close_icon">&#10006;</button>
 
-    <div class="app_version">ver: 0 . 44</div>
+    <div class="app_version">ver: 0 . 45</div>
 
     <div id="info_popup" style="display: none">
       <span id="close_info_popup">&times;</span>

@@ -2,8 +2,6 @@
 
 // ---------- 1. Major bug: Geolocation and home marker bugs when the device location is out of the leaflet map bounds
 // ---------- 2. Bug: Home highlight color update causes every leaflet highlight to appear or change
-// ---------- 3. Bug: (Travel CRUD + date picker), setting a date for a travel, based on the date of the previous one causes an error,
-// ----------    removing the if condition, lets the date pass, but as an empty string.
 
 // Features to add:
 
@@ -16,6 +14,69 @@
 // ---------- 5. Add loading animation before the page load
 // ---------- 6. Add different page styles (font, animations, images, backgrounds, theme) - modern / middleage / other
 // ---------- 7. Rewrite to React
+
+// ↓ Home ↓
+
+const layers_button = document.getElementById("layers_button");
+const home_button_main = document.getElementById("home_button_main");
+
+const add_travel = document.getElementById("add_travel");
+const main_logs_container = document.querySelector(".main_logs_container");
+
+const main_travel_settings_container = document.getElementById("main_travel_settings_container");
+const travel_type_car = document.getElementById("travel_type_car");
+const travel_type_plane = document.getElementById("travel_type_plane");
+const travel_type_boat = document.getElementById("travel_type_boat");
+const check_icon = document.getElementById("check_icon");
+const close_icon = document.getElementById("close_icon");
+
+// // ↓ Home / Basic interactiveness ↓
+
+check_icon.addEventListener("click", TravelLogSubmit);
+
+layers_button.addEventListener("click", () => {
+  if (layers_container.style.display === "none" || layers_container.style.display === "") {
+    layers_container.style.display = "block";
+  } else {
+    layers_container.style.display = "none";
+  }
+});
+
+home_button_main.addEventListener("click", () => {
+  if (location_container.style.display === "none" || location_container.style.display === "") {
+    location_container.style.display = "block";
+  } else {
+    location_container.style.display = "none";
+  }
+});
+
+add_travel.addEventListener("click", () => {
+  if (main_travel_settings_container.style.display === "none" || main_travel_settings_container.style.display === "") {
+    main_travel_settings_container.style.display = "block";
+    check_icon.style.display = "block";
+    close_icon.style.display = "block";
+  } else {
+    main_travel_settings_container.style.display = "none";
+    check_icon.style.display = "none";
+    close_icon.style.display = "none";
+  }
+});
+
+close_icon.addEventListener("click", () => {
+  if (main_travel_settings_container.style.display === "none" || main_travel_settings_container.style.display === "") {
+    main_travel_settings_container.style.display = "block";
+    check_icon.style.display = "block";
+    close_icon.style.display = "block";
+  } else {
+    main_travel_settings_container.style.display = "none";
+    check_icon.style.display = "none";
+    close_icon.style.display = "none";
+  }
+});
+
+// // ↑ Home / Basic interactiveness ↑
+
+// ↑ Home ↑
 
 // ↓ Leaflet Map ↓
 
@@ -34,6 +95,9 @@ let home_highlight_color = "#8AFF14";
 let home_highlight_opacity = 0.5;
 
 let active_Home_Marker = "";
+
+let home_button_manual_click = false;
+let home_button_geolocation_click = false;
 
 const { mapTileLayer_A, mapTileLayer_B, mapTileLayer_C, mapTileLayer_D } = leafletConfig.tilemaps;
 const { home_icon, car_icon, plane_icon } = leafletConfig.marker_icons;
@@ -105,60 +169,6 @@ home_opacity_slider.addEventListener("input", function () {
 // // ↑ Leaflet Map / Custom Home Highlight Color + opacity ↑
 
 // ↑ Leaflet Map  ↑
-
-// ↓ Home ↓
-
-let home_button_manual_click = false;
-let home_button_geolocation_click = false;
-
-const layers_button = document.getElementById("layers_button");
-const home_button_main = document.getElementById("home_button_main");
-
-const add_travel = document.getElementById("add_travel");
-const main_logs_container = document.querySelector(".main_logs_container");
-
-const main_travel_settings_container = document.getElementById("main_travel_settings_container");
-const travel_type_car = document.getElementById("travel_type_car");
-const travel_type_plane = document.getElementById("travel_type_plane");
-const travel_type_boat = document.getElementById("travel_type_boat");
-const check_icon = document.getElementById("check_icon");
-const close_icon = document.getElementById("close_icon");
-
-// // ↓ Home / Basic interactiveness ↓
-
-check_icon.addEventListener("click", TravelLogSubmit);
-
-layers_button.addEventListener("click", () => {
-  if (layers_container.style.display === "none" || layers_container.style.display === "") {
-    layers_container.style.display = "block";
-  } else {
-    layers_container.style.display = "none";
-  }
-});
-
-home_button_main.addEventListener("click", () => {
-  if (location_container.style.display === "none" || location_container.style.display === "") {
-    location_container.style.display = "block";
-  } else {
-    location_container.style.display = "none";
-  }
-});
-
-add_travel.addEventListener("click", () => {
-  if (main_travel_settings_container.style.display === "none" || main_travel_settings_container.style.display === "") {
-    main_travel_settings_container.style.display = "block";
-    check_icon.style.display = "block";
-    close_icon.style.display = "block";
-  } else {
-    main_travel_settings_container.style.display = "none";
-    check_icon.style.display = "none";
-    close_icon.style.display = "none";
-  }
-});
-
-// // ↑ Home / Basic interactiveness ↑
-
-// ↑ Home ↑
 
 // ↓ GeoJSON ↓
 
@@ -353,7 +363,7 @@ function TravelLogSubmit(event) {
   //      new_log_div.appendChild(log_date);
 
   const travel_logs_edit = document.createElement("button");
-  travel_logs_edit.textContent = "Edit";
+  travel_logs_edit.textContent = "\u270E";
   travel_logs_edit.addEventListener("click", () => {
     const newText = prompt("Enter new text:");
 
@@ -381,11 +391,8 @@ function TravelLogSubmit(event) {
 
   TravelID = RandomTravelId();
   TravelLogsArray.push({ name: travel_log_name, ID: TravelID, date: travel_date_start + " - " + travel_date_end });
-  //        console.log(TravelID);
 
   travel_logs_input.value = "";
-  //        travel_date_start = '';
-  //        travel_date_end = '';
   TravelID = "";
 
   console.log("Items Array:", TravelLogsArray);
@@ -396,16 +403,24 @@ function TravelLogSubmit(event) {
 // // ↓ Travel Log / Date picker ↓
 
 $(function () {
+  const startDate = moment().startOf("day").format("YYYY/MM/DD");
+  const endDate = moment().startOf("day").add(1, "day").format("YYYY/MM/DD");
+
+  travel_date_start = startDate;
+  travel_date_end = endDate;
+
   $('input[name="daterange"]').daterangepicker(
     {
       opens: "left",
+      startDate,
+      endDate,
       locale: {
-        format: "DD/MM/YYYY",
+        format: "YYYY/MM/DD",
       },
     },
     function (start, end, label) {
-      travel_date_start = start.format("YYYY-MM-DD");
-      travel_date_end = end.format("YYYY-MM-DD");
+      travel_date_start = start.format("YYYY/MM/DD");
+      travel_date_end = end.format("YYYY/MM/DD");
 
       console.log("Start Date: " + travel_date_start);
       console.log("End Date: " + travel_date_end);

@@ -218,7 +218,7 @@ body {
 
 .main_travel_settings_container {
   position: absolute;
-  width: 30vw;
+  width: 40vw;
   min-height: 20vh;
   background-color: rgb(255, 255, 188);
   top: 10%;
@@ -226,6 +226,20 @@ body {
   transform: translate(-50%, 10%);
   z-index: 990;
   display: none;
+}
+
+.travel_settings_data_input_container {
+  margin: 15px;
+  padding: 10px;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+#travel_logs_input,
+#daterange {
+  width: 220px;
+  height: 40px;
 }
 
 .settings_container_icon {
@@ -238,20 +252,20 @@ body {
 }
 
 .check_icon {
-  left: 40%;
+  left: 35%;
   display: none;
 }
 
 .close_icon {
-  left: 60%;
+  left: 65%;
   display: none;
 }
 
-.main_travel_settings_icon_container {
+.travel_settings_icon_container {
   position: absolute;
-  width: 27.5vw;
+  width: 35vw;
   min-height: 7vh;
-  /*  background-color: rgb(172, 255, 70); */
+  /* background-color: rgb(172, 255, 70);  */
   top: 50%;
   left: 50%;
   transform: translate(-50%, 10%);
@@ -261,15 +275,23 @@ body {
   justify-content: space-around;
 }
 
-.travel_button {
+.travel_type_button {
   display: inline-block;
   width: 17%;
-  height: 100%;
   text-align: center;
-  line-height: 5vh;
+  line-height: 3vh;
   background-color: #fff;
   border: 2px solid black;
   cursor: pointer;
+}
+
+.travel_type_button:hover {
+  transform: scale(1.1);
+}
+
+.pen-icon {
+  font-size: 24px;
+  color: black;
 }
 
 /* ↑ Travel Settings container ↑  */
