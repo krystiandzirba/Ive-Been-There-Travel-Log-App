@@ -7,7 +7,6 @@
 // ---------- 1. Functional right side menu with travel logs divided on every trip (CRUD), new menu popup with a new trip settings, name, date, customizable markers and colors
 //               - make a small pen icon to edit the travel name and separate icon to edit/delete markers and highlights
 //               - prevent generating the new travel id, if travel_settings_container is present
-//               - store all of the markers in separated array
 
 // ---------- 2. Interactive timeline at the bottom of the page, with highlighted date of every travel ...
 // ---------- 3. Separate tab to calculate the "achievements": overall trips distance (divided on the trip type: bicycle, car, plane, boat), countries visited
@@ -93,9 +92,11 @@ home_button_main.addEventListener("click", () => {
 });
 
 add_travel.addEventListener("click", () => {
-  TravelID = "";
-  TravelID = RandomTravelId();
-  console.log(TravelID);
+  travelID = "";
+  travelID = RandomtravelID();
+  console.log(travelID);
+
+  CreateArrayObjectID();
 
   if (main_travel_settings_container.style.display === "none" || main_travel_settings_container.style.display === "") {
     main_travel_settings_container.style.display = "block";
@@ -252,7 +253,7 @@ fetch("content/data/countries.geojson")
 
             homeCountryLayer = layer;
             homeCountryLayer.defaultOptions.attribution = "home";
-            console.log(homeCountryLayer);
+            console.log("home layer:", homeCountryLayer);
           }
           if (travel_type_car_click == true) {
             layer.setStyle({
@@ -264,7 +265,8 @@ fetch("content/data/countries.geojson")
 
             carCountryLayer = layer;
             carCountryLayer.defaultOptions.attribution = "car";
-            console.log(carCountryLayer);
+            carCountryLayer.defaultOptions.id = travelID;
+            console.log("car layer:", carCountryLayer);
           }
         });
       },
@@ -305,7 +307,7 @@ home_button_geolocation.addEventListener("click", () => {
 
       homeCountryLayer = layerAtLatLng;
       homeCountryLayer.defaultOptions.attribution = "home";
-      console.log(homeCountryLayer);
+      console.log("home layer:", homeCountryLayer);
     });
   }
 });
@@ -374,7 +376,9 @@ function HomeMarkerClear() {
 
 // ↓ Travel Log ↓
 
-let TravelID = "";
+let travelID = "";
+
+let travelMarkersArray = [];
 
 // // ↓ Travel Log / Log markers ↓
 
@@ -389,10 +393,15 @@ travel_type_car.addEventListener("click", () => {
 
       marker = L.marker([lat, lng], {
         icon: car_icon,
-        id: "car_marker",
-      })
-        .addTo(map)
-        .bounce(1);
+        travelType: "car",
+      });
+      marker.addTo(map).bounce(1);
+
+      var currentTravelIDObject = travelMarkersArray.find((obj) => obj.hasOwnProperty(travelID));
+
+      currentTravelIDObject[travelID].push(marker);
+
+      console.log("marker array:", travelMarkersArray);
     }
 
     map.on("click", onMapClick);
@@ -400,6 +409,13 @@ travel_type_car.addEventListener("click", () => {
 });
 
 // // ↑ Travel Log / Log markers ↑
+
+function CreateArrayObjectID() {
+  const newTravelObject = {};
+  newTravelObject[travelID] = [];
+  travelMarkersArray.push(newTravelObject);
+  console.log(travelMarkersArray);
+}
 
 // // ↓ Travel Log / CRUD setup ↓
 
@@ -462,12 +478,12 @@ function TravelLogSubmit(event) {
   const logs_list = document.getElementById("logs_list");
   logs_list.appendChild(new_log_div);
 
-  TravelLogsArray.push({ name: travel_log_name, ID: TravelID, date: travel_date_start + " - " + travel_date_end });
+  TravelLogsArray.push({ name: travel_log_name, ID: travelID, date: travel_date_start + " - " + travel_date_end });
 
   travel_logs_input.value = "";
-  console.log(TravelID);
-  TravelID = "travel ID is empty";
-  console.log(TravelID);
+  console.log(travelID);
+  travelID = "travel ID is empty";
+  console.log(travelID);
 
   console.log("Items Array:", TravelLogsArray);
 }
@@ -506,15 +522,15 @@ $(function () {
 
 // // ↓ Travel Log / Travel ID generator ↓
 
-function RandomTravelId() {
+function RandomtravelID() {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
 
   for (let i = 0; i < 10; i++) {
     const randomIndex = Math.floor(Math.random() * characters.length);
-    TravelID += characters[randomIndex];
+    travelID += characters[randomIndex];
   }
 
-  return TravelID;
+  return travelID;
 }
 
 // // ↑ Travel Log / Travel ID generator ↑
