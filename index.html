@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Travel App 0.45</title>
+    <title>Travel App 0.4.6</title>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -41,14 +41,12 @@
 
     <button id="home_button_main" class="home_button home_main">main</button>
     <div id="location_container" class="location_container">
-      <button id="home_button_geolocation" class="home_button home_geolocation hidden">location</button>
-      <button id="home_button_manual" class="home_button home_manual hidden">manual</button>
-      <button id="home_button_zoom" class="home_button home_zoom hidden">zoom</button>
+      <button id="home_button_geolocation" class="home_button home_geolocation">location</button>
+      <button id="home_button_manual" class="home_button home_manual">manual</button>
+      <button id="home_button_zoom" class="home_button home_zoom">zoom</button>
 
       <input type="color" id="home_color_picker" value="#8AFF14" />
-      <div>
-        <input type="range" id="home_opacity_slider" min="0" max="1" step="0.05" value="0.5" />
-      </div>
+      <input type="range" id="home_opacity_slider" min="0" max="1" step="0.05" value="0.5" />
     </div>
 
     <div class="main_logs_container_arrow">
@@ -69,6 +67,8 @@
           <input type="text" name="daterange" id="daterange" value="" />
         </form>
       </div>
+      <input type="color" id="marker_color_picker" value="#1495ED" />
+      <input type="range" id="marker_opacity_slider" min="0" max="1" step="0.05" value="0.5" />
       <div class="travel_settings_icon_container">
         <button id="travel_type_car" class="travel_type_button">
           <img src="/content/icons/car_icon_small.png" alt="Car Icon" />
@@ -91,7 +91,7 @@
     <button id="check_icon" class="settings_container_icon check_icon">&#10003;</button>
     <button id="close_icon" class="settings_container_icon close_icon">&#10006;</button>
 
-    <div class="app_version">ver: 0 . 45</div>
+    <div class="app_version">ver: 0.4.6</div>
 
     <div id="info_popup" style="display: none">
       <span id="close_info_popup">&times;</span>
