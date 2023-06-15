@@ -204,21 +204,35 @@ body {
 
 .travel_logs {
   width: 90%;
-  min-height: 850px;
+  height: 85vh;
   z-index: 950;
   background-color: rgb(255, 255, 172);
   top: 10%;
   right: 5%;
   transform: translate(5%, 5%);
+  overflow-y: scroll;
 }
 
 .log {
+  height: 10vh;
   border: 2px solid black;
   padding: 10px;
   margin-bottom: 10px;
 }
 .log button {
   margin-right: 25px;
+}
+
+.log_name {
+  font-size: 2vw;
+  padding: 0.5vw;
+  margin: 1vw;
+  color: white;
+  background-color: rgb(129, 129, 129);
+}
+
+.log_pen_icon {
+  font-size: 2vw;
 }
 
 /* ↑ Logs container ↑  */
@@ -310,11 +324,6 @@ body {
 
 .travel_type_button:hover {
   transform: scale(1.1);
-}
-
-.pen-icon {
-  font-size: 24px;
-  color: black;
 }
 
 /* ↑ Travel Settings container ↑  */

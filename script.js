@@ -7,6 +7,7 @@
 // ---------- 1. Functional right side menu with travel logs divided on every trip (CRUD), new menu popup with a new trip settings, name, date, customizable markers and colors
 //               - make a small pen icon to edit the travel name and separate icon to edit/delete markers and highlights
 //               - prevent generating the new travel id, if travel_settings_container is present
+//               - travel logs, make it display only the travel name, name edit ( and maybe date ), on click make it extend to show all the log options (edit, markers, highlights ...)
 
 // ---------- 2. Interactive timeline at the bottom of the page, with highlighted date of every travel ...
 // ---------- 3. Separate tab to calculate the "achievements": overall trips distance (divided on the trip type: bicycle, car, plane, boat), countries visited
@@ -43,11 +44,14 @@ const close_info_popup = document.getElementById("close_info_popup");
 
 const add_travel = document.getElementById("add_travel");
 const main_logs_container = document.querySelector(".main_logs_container");
-
 const main_travel_settings_container = document.getElementById("main_travel_settings_container");
+
 const travel_type_car = document.getElementById("travel_type_car");
 const travel_type_plane = document.getElementById("travel_type_plane");
 const travel_type_boat = document.getElementById("travel_type_boat");
+const travel_type_walk = document.getElementById("travel_type_walk");
+const travel_type_bicycle = document.getElementById("travel_type_bicycle");
+
 const check_icon = document.getElementById("check_icon");
 const close_icon = document.getElementById("close_icon");
 const marker_color_picker = document.getElementById("marker_color_picker");
@@ -64,6 +68,10 @@ let travel_log_name = "";
 check_icon.addEventListener("click", (event) => {
   map.off("click");
   travel_type_car_click = false;
+  travel_type_plane_click = false;
+  travel_type_boat_click = false;
+  travel_type_walk_click = false;
+  travel_type_bicycle_click = false;
   TravelLogSubmit(event);
 
   if (travel_log_name !== "") {
@@ -71,6 +79,13 @@ check_icon.addEventListener("click", (event) => {
     check_icon.style.display = "none";
     close_icon.style.display = "none";
   }
+  console.log("car layer:", carCountryLayer);
+  console.log("plane layer:", planeCountryLayer);
+  console.log("boat array:", boatCountryLayer);
+  console.log("walk array:", walkCountryLayer);
+  console.log("bicycle array:", bicycleCountryLayer);
+
+  console.log("marker array:", travelMarkersArray);
 });
 
 layers_button.addEventListener("click", () => {
@@ -84,6 +99,10 @@ layers_button.addEventListener("click", () => {
 home_button_main.addEventListener("click", () => {
   map.off("click");
   travel_type_car_click = false;
+  travel_type_plane_click = false;
+  travel_type_boat_click = false;
+  travel_type_walk_click = false;
+  travel_type_bicycle_click = false;
   if (location_container.style.display === "none" || location_container.style.display === "") {
     location_container.style.display = "block";
   } else {
@@ -107,6 +126,11 @@ add_travel.addEventListener("click", () => {
 
 close_icon.addEventListener("click", () => {
   travel_type_car_click = false;
+  travel_type_plane_click = false;
+  travel_type_boat_click = false;
+  travel_type_walk_click = false;
+  travel_type_bicycle_click = false;
+
   if (main_travel_settings_container.style.display === "none" || main_travel_settings_container.style.display === "") {
     main_travel_settings_container.style.display = "block";
     check_icon.style.display = "block";
@@ -165,7 +189,7 @@ let travel_type_walk_click = false;
 let travel_type_bicycle_click = false;
 
 const { mapTileLayer_A, mapTileLayer_B, mapTileLayer_C, mapTileLayer_D } = leafletConfig.tilemaps;
-const { home_icon, car_icon, plane_icon } = leafletConfig.marker_icons;
+const { home_icon, car_icon, plane_icon, boat_icon, walk_icon, bicycle_icon } = leafletConfig.marker_icons;
 const { trainsAddon, cyclingAddon, bordersAddon, labelsAddon } = leafletConfig.addons;
 
 const mapTileLayers = L.layerGroup([mapTileLayer_B]).addTo(map);
@@ -225,6 +249,10 @@ marker_opacity_slider.addEventListener("input", function () {
 let countriesLayers = "";
 let homeCountryLayer = null;
 let carCountryLayer = null;
+let planeCountryLayer = null;
+let boatCountryLayer = null;
+let walkCountryLayer = null;
+let bicycleCountryLayer = null;
 
 // // ↓ GeoJSON Initialization + color ↓
 
@@ -266,7 +294,63 @@ fetch("content/data/countries.geojson")
             carCountryLayer = layer;
             carCountryLayer.defaultOptions.attribution = "car";
             carCountryLayer.defaultOptions.id = travelID;
-            console.log("car layer:", carCountryLayer);
+            //            console.log("car layer:", carCountryLayer);
+          }
+
+          if (travel_type_plane_click == true) {
+            layer.setStyle({
+              fillColor: marker_highlight_color,
+              fillOpacity: marker_highlight_opacity,
+              color: "red",
+              weight: 0.5,
+            });
+
+            planeCountryLayer = layer;
+            planeCountryLayer.defaultOptions.attribution = "plane";
+            planeCountryLayer.defaultOptions.id = travelID;
+            //            console.log("plane layer:", planeCountryLayer);
+          }
+
+          if (travel_type_boat_click == true) {
+            layer.setStyle({
+              fillColor: marker_highlight_color,
+              fillOpacity: marker_highlight_opacity,
+              color: "red",
+              weight: 0.5,
+            });
+
+            boatCountryLayer = layer;
+            boatCountryLayer.defaultOptions.attribution = "boat";
+            boatCountryLayer.defaultOptions.id = travelID;
+            //            console.log("boat layer:", boatCountryLayer);
+          }
+
+          if (travel_type_walk_click == true) {
+            layer.setStyle({
+              fillColor: marker_highlight_color,
+              fillOpacity: marker_highlight_opacity,
+              color: "red",
+              weight: 0.5,
+            });
+
+            walkCountryLayer = layer;
+            walkCountryLayer.defaultOptions.attribution = "walk";
+            walkCountryLayer.defaultOptions.id = travelID;
+            //            console.log("walk layer:", walkCountryLayer);
+          }
+
+          if (travel_type_bicycle_click == true) {
+            layer.setStyle({
+              fillColor: marker_highlight_color,
+              fillOpacity: marker_highlight_opacity,
+              color: "red",
+              weight: 0.5,
+            });
+
+            bicycleCountryLayer = layer;
+            bicycleCountryLayer.defaultOptions.attribution = "bicycle";
+            bicycleCountryLayer.defaultOptions.id = travelID;
+            //            console.log("bicycle layer:", bicycleCountryLayer);
           }
         });
       },
@@ -280,6 +364,10 @@ fetch("content/data/countries.geojson")
 home_button_geolocation.addEventListener("click", () => {
   home_button_manual_click = false;
   travel_type_car_click = false;
+  travel_type_plane_click = false;
+  travel_type_boat_click = false;
+  travel_type_walk_click = false;
+  travel_type_bicycle_click = false;
   home_button_geolocation_click = true;
 
   HomeMarkerClear();
@@ -319,6 +407,10 @@ home_button_geolocation.addEventListener("click", () => {
 home_button_manual.addEventListener("click", () => {
   home_button_manual_click = true;
   travel_type_car_click = false;
+  travel_type_plane_click = false;
+  travel_type_boat_click = false;
+  travel_type_walk_click = false;
+  travel_type_bicycle_click = false;
 
   HomeMarkerClear();
   HomeHighlightClear();
@@ -384,12 +476,18 @@ let travelMarkersArray = [];
 
 travel_type_car.addEventListener("click", () => {
   travel_type_car_click = true;
+
   home_button_manual_click = false;
+  travel_type_plane_click = false;
+  travel_type_boat_click = false;
+  travel_type_walk_click = false;
+  travel_type_bicycle_click = false;
 
   if (travel_type_car_click == true) {
+    map.off("click");
     function onMapClick(e) {
-      var lat = e.latlng.lat;
-      var lng = e.latlng.lng;
+      let lat = e.latlng.lat;
+      let lng = e.latlng.lng;
 
       marker = L.marker([lat, lng], {
         icon: car_icon,
@@ -397,11 +495,139 @@ travel_type_car.addEventListener("click", () => {
       });
       marker.addTo(map).bounce(1);
 
-      var currentTravelIDObject = travelMarkersArray.find((obj) => obj.hasOwnProperty(travelID));
+      let currentTravelIDObject = travelMarkersArray.find((obj) => obj.hasOwnProperty(travelID));
 
       currentTravelIDObject[travelID].push(marker);
 
-      console.log("marker array:", travelMarkersArray);
+      //      console.log("marker array:", travelMarkersArray);
+    }
+
+    map.on("click", onMapClick);
+  }
+});
+
+travel_type_plane.addEventListener("click", () => {
+  travel_type_plane_click = true;
+
+  home_button_manual_click = false;
+  travel_type_car_click = false;
+  travel_type_boat_click = false;
+  travel_type_walk_click = false;
+  travel_type_bicycle_click = false;
+
+  if (travel_type_plane_click == true) {
+    map.off("click");
+    function onMapClick(e) {
+      let lat = e.latlng.lat;
+      let lng = e.latlng.lng;
+
+      marker = L.marker([lat, lng], {
+        icon: plane_icon,
+        travelType: "plane",
+      });
+      marker.addTo(map).bounce(1);
+
+      let currentTravelIDObject = travelMarkersArray.find((obj) => obj.hasOwnProperty(travelID));
+
+      currentTravelIDObject[travelID].push(marker);
+
+      //      console.log("travel markers array:", travelMarkersArray);
+    }
+
+    map.on("click", onMapClick);
+  }
+});
+
+travel_type_boat.addEventListener("click", () => {
+  travel_type_boat_click = true;
+
+  home_button_manual_click = false;
+  travel_type_car_click = false;
+  travel_type_plane_click = false;
+  travel_type_walk_click = false;
+  travel_type_bicycle_click = false;
+
+  if (travel_type_boat_click == true) {
+    map.off("click");
+    function onMapClick(e) {
+      let lat = e.latlng.lat;
+      let lng = e.latlng.lng;
+
+      marker = L.marker([lat, lng], {
+        icon: boat_icon,
+        travelType: "boat",
+      });
+      marker.addTo(map).bounce(1);
+
+      let currentTravelIDObject = travelMarkersArray.find((obj) => obj.hasOwnProperty(travelID));
+
+      currentTravelIDObject[travelID].push(marker);
+
+      //      console.log("travel markers array:", travelMarkersArray);
+    }
+
+    map.on("click", onMapClick);
+  }
+});
+
+travel_type_walk.addEventListener("click", () => {
+  travel_type_walk_click = true;
+
+  home_button_manual_click = false;
+  travel_type_car_click = false;
+  travel_type_plane_click = false;
+  travel_type_boat_click = false;
+  travel_type_bicycle_click = false;
+
+  if (travel_type_walk_click == true) {
+    map.off("click");
+    function onMapClick(e) {
+      let lat = e.latlng.lat;
+      let lng = e.latlng.lng;
+
+      marker = L.marker([lat, lng], {
+        icon: walk_icon,
+        travelType: "walk",
+      });
+      marker.addTo(map).bounce(1);
+
+      let currentTravelIDObject = travelMarkersArray.find((obj) => obj.hasOwnProperty(travelID));
+
+      currentTravelIDObject[travelID].push(marker);
+
+      //      console.log("travel markers array:", travelMarkersArray);
+    }
+
+    map.on("click", onMapClick);
+  }
+});
+
+travel_type_bicycle.addEventListener("click", () => {
+  travel_type_bicycle_click = true;
+
+  home_button_manual_click = false;
+  travel_type_car_click = false;
+  travel_type_plane_click = false;
+  travel_type_boat_click = false;
+  travel_type_walk_click = false;
+
+  if (travel_type_bicycle_click == true) {
+    map.off("click");
+    function onMapClick(e) {
+      let lat = e.latlng.lat;
+      let lng = e.latlng.lng;
+
+      marker = L.marker([lat, lng], {
+        icon: bicycle_icon,
+        travelType: "bicycle",
+      });
+      marker.addTo(map).bounce(1);
+
+      let currentTravelIDObject = travelMarkersArray.find((obj) => obj.hasOwnProperty(travelID));
+
+      currentTravelIDObject[travelID].push(marker);
+
+      //      console.log("travel markers array:", travelMarkersArray);
     }
 
     map.on("click", onMapClick);
@@ -414,7 +640,7 @@ function CreateArrayObjectID() {
   const newTravelObject = {};
   newTravelObject[travelID] = [];
   travelMarkersArray.push(newTravelObject);
-  console.log(travelMarkersArray);
+  //  console.log("travel markers array:", travelMarkersArray);
 }
 
 // // ↓ Travel Log / CRUD setup ↓
@@ -440,52 +666,54 @@ function TravelLogSubmit(event) {
     return;
   }
 
-  const new_log_div = document.createElement("div");
-  new_log_div.className = "log";
+  const $new_log_div = document.createElement("div");
+  $new_log_div.className = "log";
 
-  const log_name = document.createElement("span");
-  log_name.textContent = travel_log_name;
-  new_log_div.appendChild(log_name);
+  const $log_name = document.createElement("span");
+  $log_name.textContent = travel_log_name;
+  $log_name.classList.add("log_name");
+  $new_log_div.appendChild($log_name);
 
   //      const log_date = document.createElement('span');                          // travel log, make the travel date visible / not needed now
   //      log_date.textContent = travel_date_start + ' - ' + travel_date_end;
   //      new_log_div.appendChild(log_date);
 
-  const travel_logs_edit = document.createElement("button");
-  travel_logs_edit.textContent = "\u270E";
-  travel_logs_edit.addEventListener("click", () => {
-    const newText = prompt("Enter new text:");
+  const $travel_logs_edit = document.createElement("button");
+  $travel_logs_edit.textContent = "\u270E";
+  $travel_logs_edit.classList.add("log_pen_icon");
+  $travel_logs_edit.addEventListener("click", () => {
+    const $newText = prompt("Enter new text:");
 
-    if (newText == null || newText == "") {
+    if ($newText == null || $newText == "") {
       showInfoPopup("Please enter a valid name");
     } else {
-      log_name.textContent = newText;
+      $log_name.textContent = $newText;
     }
   });
-  new_log_div.appendChild(travel_logs_edit);
+  $new_log_div.appendChild($travel_logs_edit);
 
-  const travel_logs_delete = document.createElement("button");
-  travel_logs_delete.textContent = "Delete";
-  travel_logs_delete.addEventListener("click", () => {
+  const $travel_logs_delete = document.createElement("button");
+  $travel_logs_delete.textContent = "Delete";
+  $travel_logs_delete.addEventListener("click", () => {
     const index = TravelLogsArray.indexOf(travel_log_name);
     if (index !== -1) {
       TravelLogsArray.splice(index, 1);
     }
-    new_log_div.remove();
+    $new_log_div.remove();
   });
-  new_log_div.appendChild(travel_logs_delete);
+  $new_log_div.appendChild($travel_logs_delete);
 
-  const logs_list = document.getElementById("logs_list");
-  logs_list.appendChild(new_log_div);
+  const $logs_list = document.getElementById("logs_list");
+  $logs_list.appendChild($new_log_div);
 
   TravelLogsArray.push({ name: travel_log_name, ID: travelID, date: travel_date_start + " - " + travel_date_end });
 
   travel_logs_input.value = "";
-  console.log(travelID);
+  //  console.log(travelID);
   travelID = "travel ID is empty";
   console.log(travelID);
 
-  console.log("Items Array:", TravelLogsArray);
+  console.log("Logs Array:", TravelLogsArray);
 }
 
 // // ↑ Travel Log / CRUD setup ↑
