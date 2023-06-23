@@ -75,14 +75,6 @@ check_icon.addEventListener("click", (event) => {
     main_travel_settings_container.style.display = "none";
     check_icon.style.display = "none";
     close_icon.style.display = "none";
-
-    console.log("car layer:", carCountryLayer);
-    console.log("plane layer:", planeCountryLayer);
-    console.log("boat array:", boatCountryLayer);
-    console.log("walk array:", walkCountryLayer);
-    console.log("bicycle array:", bicycleCountryLayer);
-
-    console.log("marker array:", travelMarkersArray);
   }
 });
 
@@ -106,11 +98,9 @@ home_button_main.addEventListener("click", () => {
 });
 
 add_travel.addEventListener("click", () => {
-  travelID = "";
-  travelID = RandomtravelID();
-  console.log(travelID);
-
-  CreateArrayObjectID();
+  random_id = "";
+  random_id = random_id_generator();
+  console.log(random_id);
 
   if (main_travel_settings_container.style.display === "none" || main_travel_settings_container.style.display === "") {
     main_travel_settings_container.style.display = "block";
@@ -237,20 +227,17 @@ marker_opacity_slider.addEventListener("input", function () {
 
 // ↓ GeoJSON ↓
 
-let countriesLayers = "";
-let homeCountryLayer = null;
-let carCountryLayer = null;
-let planeCountryLayer = null;
-let boatCountryLayer = null;
-let walkCountryLayer = null;
-let bicycleCountryLayer = null;
+let defaultCountryHighlight = 0;
+let random_id = "";
+let highlightLayersArray = [];
+let markerLayersArray = [];
 
 // // ↓ GeoJSON Initialization + color ↓
 
 fetch("content/data/countries.geojson")
   .then((response) => response.json())
   .then((data) => {
-    countriesLayers = L.geoJSON(data, {
+    highlightLayersArray[defaultCountryHighlight] = L.geoJSON(data, {
       style: {
         fillColor: "",
         weight: 0,
@@ -262,33 +249,27 @@ fetch("content/data/countries.geojson")
         layer.on("click", () => {
           if (home_button_manual_click) {
             setLayerStyle(layer, home_highlight_color, home_highlight_opacity, "home");
-            homeCountryLayer = layer;
-            //            console.log("home layer:", homeCountryLayer);
+            highlightLayersArray.push({ type: "home", layer });
           }
           if (travel_type_car_click) {
-            setLayerStyle(layer, marker_highlight_color, marker_highlight_opacity, "car", travelID);
-            carCountryLayer = layer;
-            //            console.log("car layer:", carCountryLayer);
+            setLayerStyle(layer, marker_highlight_color, marker_highlight_opacity, "car", random_id);
+            highlightLayersArray.push({ type: "car", random_id, layer });
           }
           if (travel_type_plane_click) {
-            setLayerStyle(layer, marker_highlight_color, marker_highlight_opacity, "plane", travelID);
-            planeCountryLayer = layer;
-            //            console.log("plane layer:", planeCountryLayer);
+            setLayerStyle(layer, marker_highlight_color, marker_highlight_opacity, "plane", random_id);
+            highlightLayersArray.push({ type: "plane", random_id, layer });
           }
           if (travel_type_boat_click) {
-            setLayerStyle(layer, marker_highlight_color, marker_highlight_opacity, "boat", travelID);
-            boatCountryLayer = layer;
-            //            console.log("boat layer:", boatCountryLayer);
+            setLayerStyle(layer, marker_highlight_color, marker_highlight_opacity, "boat", random_id);
+            highlightLayersArray.push({ type: "boat", random_id, layer });
           }
           if (travel_type_walk_click) {
-            setLayerStyle(layer, marker_highlight_color, marker_highlight_opacity, "walk", travelID);
-            walkCountryLayer = layer;
-            //            console.log("walk layer:", walkCountryLayer);
+            setLayerStyle(layer, marker_highlight_color, marker_highlight_opacity, "walk", random_id);
+            highlightLayersArray.push({ type: "walk", random_id, layer });
           }
           if (travel_type_bicycle_click) {
-            setLayerStyle(layer, marker_highlight_color, marker_highlight_opacity, "bicycle", travelID);
-            bicycleCountryLayer = layer;
-            //            console.log("bicycle layer:", bicycleCountryLayer);
+            setLayerStyle(layer, marker_highlight_color, marker_highlight_opacity, "bicycle", random_id);
+            highlightLayersArray.push({ type: "bicycle", random_id, layer });
           }
         });
       },
@@ -297,7 +278,7 @@ fetch("content/data/countries.geojson")
 
 // // ↑ GeoJSON Initialization + color ↑
 
-function setLayerStyle(layer, fillColor, fillOpacity, attribution, travelID) {
+function setLayerStyle(layer, fillColor, fillOpacity, attribution, random_id) {
   layer.setStyle({
     fillColor: fillColor,
     fillOpacity: fillOpacity,
@@ -305,7 +286,7 @@ function setLayerStyle(layer, fillColor, fillOpacity, attribution, travelID) {
     weight: 0.5,
   });
   layer.defaultOptions.attribution = attribution;
-  layer.defaultOptions.id = travelID;
+  layer.defaultOptions.id = random_id;
 }
 
 // // ↓ GeoJSON / Geolocation on Button Click ↓
@@ -321,6 +302,7 @@ home_button_geolocation.addEventListener("click", () => {
       const { latitude, longitude } = position.coords;
 
       const latlng = L.latLng(latitude, longitude);
+
       const containerPoint = map.latLngToContainerPoint(latlng);
       const layerAtLatLng = map.getLayerAt(containerPoint);
       layerAtLatLng.setStyle({
@@ -336,9 +318,9 @@ home_button_geolocation.addEventListener("click", () => {
       });
       active_Home_Marker.addTo(mapMarkers).bounce(1);
 
-      homeCountryLayer = layerAtLatLng;
-      homeCountryLayer.defaultOptions.attribution = "home";
-      console.log("home layer:", homeCountryLayer);
+      //   highlightLayersArray = layerAtLatLng;
+      //  highlightLayersArray.defaultOptions.attribution = "home";
+      // console.log("highlight layer:", highlightLayersArray);
     });
   }
 });
@@ -387,7 +369,7 @@ home_button_zoom.addEventListener("click", () => {
 
 function HomeHighlightClear() {
   if (home_button_manual_click === true || home_button_geolocation_click === true) {
-    countriesLayers.eachLayer((layer) => {
+    highlightLayersArray[defaultCountryHighlight].eachLayer((layer) => {
       if (layer.defaultOptions.attribution === "home") {
         layer.setStyle({ fillOpacity: 0, color: "transparent", weight: 0 });
       }
@@ -406,10 +388,6 @@ function HomeMarkerClear() {
 
 // ↓ Travel Log ↓
 
-let travelID = "";
-
-let travelMarkersArray = [];
-
 // // ↓ Travel Log / Log markers ↓
 
 travel_type_car.addEventListener("click", () => {
@@ -424,14 +402,10 @@ travel_type_car.addEventListener("click", () => {
       marker = L.marker([lat, lng], {
         icon: car_icon,
         travelType: "car",
+        id: random_id,
       });
       marker.addTo(map).bounce(1);
-
-      let currentTravelIDObject = travelMarkersArray.find((obj) => obj.hasOwnProperty(travelID));
-
-      currentTravelIDObject[travelID].push(marker);
-
-      //      console.log("marker array:", travelMarkersArray);
+      markerLayersArray.push(marker);
     }
 
     map.on("click", onMapClick);
@@ -450,14 +424,10 @@ travel_type_plane.addEventListener("click", () => {
       marker = L.marker([lat, lng], {
         icon: plane_icon,
         travelType: "plane",
+        id: random_id,
       });
       marker.addTo(map).bounce(1);
-
-      let currentTravelIDObject = travelMarkersArray.find((obj) => obj.hasOwnProperty(travelID));
-
-      currentTravelIDObject[travelID].push(marker);
-
-      //      console.log("travel markers array:", travelMarkersArray);
+      markerLayersArray.push(marker);
     }
 
     map.on("click", onMapClick);
@@ -476,14 +446,10 @@ travel_type_boat.addEventListener("click", () => {
       marker = L.marker([lat, lng], {
         icon: boat_icon,
         travelType: "boat",
+        id: random_id,
       });
       marker.addTo(map).bounce(1);
-
-      let currentTravelIDObject = travelMarkersArray.find((obj) => obj.hasOwnProperty(travelID));
-
-      currentTravelIDObject[travelID].push(marker);
-
-      //      console.log("travel markers array:", travelMarkersArray);
+      markerLayersArray.push(marker);
     }
 
     map.on("click", onMapClick);
@@ -502,14 +468,10 @@ travel_type_walk.addEventListener("click", () => {
       marker = L.marker([lat, lng], {
         icon: walk_icon,
         travelType: "walk",
+        id: random_id,
       });
       marker.addTo(map).bounce(1);
-
-      let currentTravelIDObject = travelMarkersArray.find((obj) => obj.hasOwnProperty(travelID));
-
-      currentTravelIDObject[travelID].push(marker);
-
-      //      console.log("travel markers array:", travelMarkersArray);
+      markerLayersArray.push(marker);
     }
 
     map.on("click", onMapClick);
@@ -528,14 +490,10 @@ travel_type_bicycle.addEventListener("click", () => {
       marker = L.marker([lat, lng], {
         icon: bicycle_icon,
         travelType: "bicycle",
+        id: random_id,
       });
       marker.addTo(map).bounce(1);
-
-      let currentTravelIDObject = travelMarkersArray.find((obj) => obj.hasOwnProperty(travelID));
-
-      currentTravelIDObject[travelID].push(marker);
-
-      //      console.log("travel markers array:", travelMarkersArray);
+      markerLayersArray.push(marker);
     }
 
     map.on("click", onMapClick);
@@ -553,19 +511,11 @@ function travelTypeValueUpdate(geolocation, manual, car, plane, boat, walk, bicy
 }
 
 // // ↑ Travel Log / Log markers ↑
-
-function CreateArrayObjectID() {
-  const newTravelObject = {};
-  newTravelObject[travelID] = [];
-  travelMarkersArray.push(newTravelObject);
-  //  console.log("travel markers array:", travelMarkersArray);
-}
-
 // // ↓ Travel Log / CRUD setup ↓
 
 let travel_date_start = "";
 let travel_date_end = "";
-
+let stored_log_id = "";
 let TravelLogsArray = [];
 
 function TravelLogSubmit(event) {
@@ -597,11 +547,12 @@ function TravelLogSubmit(event) {
   $log_name.classList.add("log_name");
   $new_log_div.appendChild($log_name);
 
+  // travel name
+
   //      const log_date = document.createElement('span');                          // travel log, make the travel date visible / not needed now
   //      log_date.textContent = travel_date_start + ' - ' + travel_date_end;
   //      new_log_div.appendChild(log_date);
 
-  // travel name
   // travel name edit
 
   const $travel_logs_edit = document.createElement("button");
@@ -622,7 +573,7 @@ function TravelLogSubmit(event) {
   // travel id
 
   const $log_id = document.createElement("span");
-  $log_id.textContent = travelID;
+  $log_id.textContent = random_id;
   $new_log_div.appendChild($log_id);
   console.log("log id", $log_id);
 
@@ -632,6 +583,9 @@ function TravelLogSubmit(event) {
   const $travel_logs_delete = document.createElement("button");
   $travel_logs_delete.textContent = "Delete";
   $travel_logs_delete.addEventListener("click", () => {
+    stored_log_id = $log_id.textContent;
+    removeMarkers();
+
     const index = TravelLogsArray.indexOf(travel_log_name);
     if (index !== -1) {
       TravelLogsArray.splice(index, 1);
@@ -641,6 +595,20 @@ function TravelLogSubmit(event) {
   $new_log_div.appendChild($travel_logs_delete);
 
   // delete log
+  // test button
+
+  const $travel_logs_test = document.createElement("button");
+  $travel_logs_test.textContent = "logs test";
+  $travel_logs_test.addEventListener("click", () => {
+    stored_log_id = $log_id.textContent;
+    console.log(stored_log_id);
+    console.log(typeof stored_log_id);
+    console.log(typeof $log_id);
+    console.log(typeof random_id);
+  });
+  $new_log_div.appendChild($travel_logs_test);
+
+  // test button
   // display the log
 
   const $logs_list = document.getElementById("logs_list");
@@ -648,17 +616,25 @@ function TravelLogSubmit(event) {
 
   // display the log
 
-  TravelLogsArray.push({ name: travel_log_name, ID: travelID, date: travel_date_start + " - " + travel_date_end });
+  TravelLogsArray.push({ name: travel_log_name, ID: random_id, date: travel_date_start + " - " + travel_date_end });
 
   travel_logs_input.value = "";
-  //  console.log(travelID);
-  travelID = "travel ID is empty";
-  //  console.log(travelID);
+  random_id = "";
 
   console.log("Logs Array:", TravelLogsArray);
 }
 
 // // ↑ Travel Log / CRUD setup ↑
+
+function removeMarkers() {
+  for (let i = markerLayersArray.length - 1; i >= 0; i--) {
+    const marker = markerLayersArray[i];
+    if (marker.options.id === stored_log_id) {
+      map.removeLayer(marker);
+      markerLayersArray.splice(i, 1);
+    }
+  }
+}
 
 // // ↓ Travel Log / Date picker ↓
 
@@ -692,15 +668,15 @@ $(function () {
 
 // // ↓ Travel Log / Travel ID generator ↓
 
-function RandomtravelID() {
+function random_id_generator() {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
   for (let i = 0; i < 10; i++) {
     const randomIndex = Math.floor(Math.random() * characters.length);
-    travelID += characters[randomIndex];
+    random_id += characters[randomIndex];
   }
 
-  return travelID;
+  return random_id;
 }
 
 // // ↑ Travel Log / Travel ID generator ↑
@@ -752,12 +728,35 @@ close_info_popup.addEventListener("click", closeInfoPopup);
 //       cover.style.display = "none";
 //   });
 
-// // ---------- Clear highlight with specific attribution  ---------- ↓
+test_button.addEventListener("click", () => {
+  console.log("highlight array", highlightLayersArray);
+  console.log("markers array", markerLayersArray);
+  console.log("random id", random_id);
+});
 
-//   function ClearHighlight() {
-//     if (homeCountryLayer.defaultOptions.id === "$log_id") {
-//       countriesLayers.eachLayer((layer) => {
-//         homeCountryLayer.setStyle({ fillOpacity: 0, color: "transparent", weight: 0 });
-//        });
-//      }
-//    }
+test_button_2.addEventListener("click", () => {
+  removeMarkers();
+  // removeHighlights();
+  // defaultHighlights();
+});
+
+function removeHighlights() {
+  const filteredArray = highlightLayersArray.filter((obj) => obj.type !== "car");
+  const removedLayers = highlightLayersArray.filter((obj) => obj.type === "car");
+
+  highlightLayersArray = filteredArray;
+
+  removedLayers.forEach((removedLayer) => {
+    map.removeLayer(removedLayer.layer);
+  });
+}
+
+function defaultHighlights() {
+  highlightLayersArray.forEach((highlightLayer) => {
+    highlightLayer.eachLayer((layer) => {
+      if (layer.defaultOptions.attribution === "car") {
+        layer.setStyle({ fillOpacity: 0, color: "transparent", weight: 0 });
+      }
+    });
+  });
+}

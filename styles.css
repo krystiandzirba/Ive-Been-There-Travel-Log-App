@@ -364,3 +364,26 @@ body {
 }
 
 /* ↑ Other ↑  */
+
+.test_button {
+  height: 50px;
+  width: 100px;
+  position: absolute;
+  z-index: 999;
+  cursor: pointer;
+  display: flex;
+  text-align: center;
+  border: black, 2px, solid;
+  transform: translate(-50%, -50%);
+  background-color: rgb(255, 128, 126);
+}
+
+.t1 {
+  top: 5%;
+  left: 60%;
+}
+
+.t2 {
+  top: 15%;
+  left: 60%;
+}
