@@ -1,10 +1,10 @@
-// ver: 0.4.11
+// ver: 0.4.12
 
 // Bugs:
 
 // ---------- 1. Major bug: Geolocation and home marker bugs when the device location is out of the leaflet map bounds
-// ---------- 2. bug: home highlight not stored in the highlightsLayersArray when using the geolocation, causing the highlight to not be removed with the
-// ----------         HomeHighlightClear(), + rewrite the HomeHighlightClear()
+// ---------- 2. bug: home highlight not stored in the highlightsLayers when using the geolocation, causing the highlight to not be removed with the
+// ----------         homeHighlightClear(), + rewrite the homeHighlightClear()
 
 // Features to add:
 
@@ -12,6 +12,7 @@
 //               - make a small pen icon to edit the travel name and separate icon to edit/delete markers and highlights
 //               - prevent generating the new travel id, if travel_settings_container is present
 //               - travel logs, make it display only the travel name, name edit ( and maybe date ), on click make it extend to show all the log options (edit, markers, highlights ...)
+//               - add a polyline to every log, divided on trip type and random_id
 
 // ---------- 2. Interactive timeline at the bottom of the page, with highlighted date of every travel ...
 // ---------- 3. Separate tab to calculate the "achievements": overall trips distance (divided on the trip type: bicycle, car, plane, boat), countries visited
@@ -71,6 +72,7 @@ let travel_log_name = "";
 
 check_icon.addEventListener("click", (event) => {
   map.off("click");
+
   travelTypeValueUpdate(false, false, false, false, false, false, false);
 
   TravelLogSubmit(event);
@@ -102,6 +104,7 @@ home_button_main.addEventListener("click", () => {
 });
 
 add_travel.addEventListener("click", () => {
+  markersCoordinates.push([]);
   random_id = "";
   random_id = random_id_generator();
   console.log(random_id);
@@ -192,8 +195,6 @@ map_tile_addon_borders.addEventListener("click", () => switchTileAddon(bordersAd
 map_tile_addon_train.addEventListener("click", () => switchTileAddon(trainsAddon));
 map_tile_addon_cycling.addEventListener("click", () => switchTileAddon(cyclingAddon));
 
-// // ↑ Leaflet Map / Tiles Change ↑
-
 function switchTileAddon(tile_addon) {
   if (map.hasLayer(tile_addon)) {
     tile_addon.removeFrom(map);
@@ -206,6 +207,8 @@ function switchTileMap(layer) {
   mapTileLayers.clearLayers();
   mapTileLayers.addLayer(layer);
 }
+
+// // ↑ Leaflet Map / Tiles Change ↑
 
 // // ↓ Leaflet Map / Custom Home + marker Highlight Color + opacity ↓
 
@@ -233,15 +236,18 @@ marker_opacity_slider.addEventListener("input", function () {
 
 let defaultCountryHighlight = 0;
 let random_id = "";
-let highlightsLayersArray = [];
-let markersLayersArray = [];
+let highlightsLayers = [];
+let markersLayers = [];
+
+let markersCoordinates = [];
+let polylines = [];
 
 // // ↓ GeoJSON Initialization + color ↓
 
 fetch("content/data/countries.geojson")
   .then((response) => response.json())
   .then((data) => {
-    highlightsLayersArray[defaultCountryHighlight] = L.geoJSON(data, {
+    highlightsLayers[defaultCountryHighlight] = L.geoJSON(data, {
       style: {
         fillColor: "",
         weight: 0,
@@ -252,34 +258,32 @@ fetch("content/data/countries.geojson")
         layer.on("click", () => {
           if (home_button_manual_click) {
             setLayerStyle(layer, home_highlight_color, home_highlight_opacity, "home");
-            highlightsLayersArray.push({ type: "home", layer });
+            highlightsLayers.push({ type: "home", layer });
           }
           if (travel_type_car_click) {
             setLayerStyle(layer, marker_highlight_color, marker_highlight_opacity, "car", random_id);
-            highlightsLayersArray.push({ type: "car", random_id, layer });
+            highlightsLayers.push({ type: "car", random_id, layer });
           }
           if (travel_type_plane_click) {
             setLayerStyle(layer, marker_highlight_color, marker_highlight_opacity, "plane", random_id);
-            highlightsLayersArray.push({ type: "plane", random_id, layer });
+            highlightsLayers.push({ type: "plane", random_id, layer });
           }
           if (travel_type_boat_click) {
             setLayerStyle(layer, marker_highlight_color, marker_highlight_opacity, "boat", random_id);
-            highlightsLayersArray.push({ type: "boat", random_id, layer });
+            highlightsLayers.push({ type: "boat", random_id, layer });
           }
           if (travel_type_walk_click) {
             setLayerStyle(layer, marker_highlight_color, marker_highlight_opacity, "walk", random_id);
-            highlightsLayersArray.push({ type: "walk", random_id, layer });
+            highlightsLayers.push({ type: "walk", random_id, layer });
           }
           if (travel_type_bicycle_click) {
             setLayerStyle(layer, marker_highlight_color, marker_highlight_opacity, "bicycle", random_id);
-            highlightsLayersArray.push({ type: "bicycle", random_id, layer });
+            highlightsLayers.push({ type: "bicycle", random_id, layer });
           }
         });
       },
     }).addTo(map);
   });
-
-// // ↑ GeoJSON Initialization + color ↑
 
 function setLayerStyle(layer, fillColor, fillOpacity, attribution, random_id) {
   layer.setStyle({
@@ -293,13 +297,15 @@ function setLayerStyle(layer, fillColor, fillOpacity, attribution, random_id) {
   layer.defaultOptions.id = random_id;
 }
 
+// // ↑ GeoJSON Initialization + color ↑
+
 // // ↓ GeoJSON / Geolocation on Button Click ↓
 
 home_button_geolocation.addEventListener("click", () => {
   travelTypeValueUpdate(true, false, false, false, false, false, false);
 
-  HomeMarkerClear();
-  HomeHighlightClear();
+  homeMarkerClear();
+  homeHighlightClear();
 
   if ("geolocation" in navigator) {
     navigator.geolocation.getCurrentPosition((position) => {
@@ -322,7 +328,7 @@ home_button_geolocation.addEventListener("click", () => {
         id: "home_marker",
       });
       home_marker.addTo(mapMarkers).bounce(1);
-      markersLayersArray.push(home_marker);
+      markersLayers.push(home_marker);
     });
   }
 });
@@ -334,8 +340,8 @@ home_button_geolocation.addEventListener("click", () => {
 home_button_manual.addEventListener("click", () => {
   travelTypeValueUpdate(false, true, false, false, false, false, false);
 
-  HomeMarkerClear();
-  HomeHighlightClear();
+  homeMarkerClear();
+  homeHighlightClear();
 
   const mapClickListener = (e) => {
     const clickedLatLng = e.latlng;
@@ -346,7 +352,7 @@ home_button_manual.addEventListener("click", () => {
         id: "home_marker",
       });
       home_marker.addTo(mapMarkers).bounce(1);
-      markersLayersArray.push(home_marker);
+      markersLayers.push(home_marker);
     }
 
     home_button_manual_click = false;
@@ -370,9 +376,9 @@ home_button_zoom.addEventListener("click", () => {
 
 // // ↑ GeoJSON / Home Button Center Marker ↑
 
-function HomeHighlightClear() {
+function homeHighlightClear() {
   if (home_button_manual_click === true || home_button_geolocation_click === true) {
-    highlightsLayersArray[defaultCountryHighlight].eachLayer((layer) => {
+    highlightsLayers[defaultCountryHighlight].eachLayer((layer) => {
       if (layer.defaultOptions.attribution === "home") {
         layer.setStyle({ fillOpacity: 0, color: "transparent", weight: 0 });
       }
@@ -380,7 +386,7 @@ function HomeHighlightClear() {
   }
 }
 
-function HomeMarkerClear() {
+function homeMarkerClear() {
   if (home_marker) {
     home_marker.remove();
     home_marker = null;
@@ -407,8 +413,12 @@ travel_type_car.addEventListener("click", () => {
         travelType: "car",
         id: random_id,
       });
+
       marker.addTo(map).bounce(1);
-      markersLayersArray.push(marker);
+      markersLayers.push(marker);
+
+      markersCoordinates[markersCoordinates.length - 1].push([lat, lng, random_id]);
+      drawPolyline();
     }
 
     map.on("click", onMapClick);
@@ -429,8 +439,11 @@ travel_type_plane.addEventListener("click", () => {
         travelType: "plane",
         id: random_id,
       });
+
       marker.addTo(map).bounce(1);
-      markersLayersArray.push(marker);
+      markersLayers.push(marker);
+      markersCoordinates[markersCoordinates.length - 1].push([lat, lng, random_id]);
+      drawPolyline();
     }
 
     map.on("click", onMapClick);
@@ -451,8 +464,11 @@ travel_type_boat.addEventListener("click", () => {
         travelType: "boat",
         id: random_id,
       });
+
       marker.addTo(map).bounce(1);
-      markersLayersArray.push(marker);
+      markersLayers.push(marker);
+      markersCoordinates[markersCoordinates.length - 1].push([lat, lng, random_id]);
+      drawPolyline();
     }
 
     map.on("click", onMapClick);
@@ -473,8 +489,11 @@ travel_type_walk.addEventListener("click", () => {
         travelType: "walk",
         id: random_id,
       });
+
       marker.addTo(map).bounce(1);
-      markersLayersArray.push(marker);
+      markersLayers.push(marker);
+      markersCoordinates[markersCoordinates.length - 1].push([lat, lng, random_id]);
+      drawPolyline();
     }
 
     map.on("click", onMapClick);
@@ -495,8 +514,11 @@ travel_type_bicycle.addEventListener("click", () => {
         travelType: "bicycle",
         id: random_id,
       });
+
       marker.addTo(map).bounce(1);
-      markersLayersArray.push(marker);
+      markersLayers.push(marker);
+      markersCoordinates[markersCoordinates.length - 1].push([lat, lng, random_id]);
+      drawPolyline();
     }
 
     map.on("click", onMapClick);
@@ -589,6 +611,8 @@ function TravelLogSubmit(event) {
     stored_log_id = $log_id.textContent;
     removeMarkers();
     removeHighlight();
+    removeMarkersCoordinates();
+    drawPolyline();
 
     const index = TravelLogsArray.indexOf(travel_log_name);
     if (index !== -1) {
@@ -631,24 +655,30 @@ function TravelLogSubmit(event) {
 // // ↑ Travel Log / CRUD setup ↑
 
 function removeMarkers() {
-  for (let i = markersLayersArray.length - 1; i >= 0; i--) {
-    const marker = markersLayersArray[i];
+  for (let i = markersLayers.length - 1; i >= 0; i--) {
+    const marker = markersLayers[i];
     if (marker.options.id === stored_log_id) {
       map.removeLayer(marker);
-      markersLayersArray.splice(i, 1);
+      markersLayers.splice(i, 1);
     }
   }
 }
 
+function removeMarkersCoordinates() {
+  markersCoordinates = markersCoordinates.filter((array) => {
+    return !array.some((item) => item[2] === stored_log_id);
+  });
+}
+
 function removeHighlight() {
   try {
-    for (let i = 0; i < highlightsLayersArray.length; i++) {
-      if (highlightsLayersArray[i].random_id === stored_log_id) {
-        highlightsLayersArray[i].random_id = "removed";
+    for (let i = 0; i < highlightsLayers.length; i++) {
+      if (highlightsLayers[i].random_id === stored_log_id) {
+        highlightsLayers[i].random_id = "removed";
       }
     }
 
-    highlightsLayersArray.forEach((highlightLayer) => {
+    highlightsLayers.forEach((highlightLayer) => {
       highlightLayer.eachLayer((layer) => {
         if (layer.defaultOptions.id === stored_log_id) {
           layer.setStyle({ fillOpacity: 0, color: "transparent", weight: 0 });
@@ -708,6 +738,37 @@ function random_id_generator() {
 
 // ↑ Travel Log ↑
 
+// ↓ Leaflet Polyline ↓
+
+let polyline = null;
+
+function clearPolylines() {
+  for (let i = 0; i < polylines.length; i++) {
+    map.removeLayer(polylines[i][0]);
+  }
+  polylines = [];
+}
+
+function drawPolyline() {
+  for (let i = 0; i < polylines.length; i++) {
+    map.removeLayer(polylines[i][0]);
+  }
+  polylines = [];
+
+  polyline = L.polyline(markersCoordinates, {
+    color: "red",
+    opacity: 0.5,
+    weight: 5,
+    dashArray: "10, 20",
+  })
+
+    .bindPopup("polygon")
+    .addTo(map);
+  polylines.push([polyline, random_id]);
+}
+
+// ↑ Leaflet Polyline ↑
+
 // ↓ Other ↓
 
 // ↓ Other / Info popup ↓
@@ -754,9 +815,71 @@ close_info_popup.addEventListener("click", closeInfoPopup);
 //   });
 
 test_button.addEventListener("click", () => {
-  console.log("highlight array", highlightsLayersArray);
-  console.log("markers array", markersLayersArray);
+  console.log("highlight array", highlightsLayers);
+  console.log("markers array", markersLayers);
   //console.log("random id", random_id);
+  console.log("marker coordinates", markersCoordinates);
+  console.log("polylines", polylines);
+  // console.log("mapMarkers", mapMarkers);
 });
 
-test_button_2.addEventListener("click", () => {});
+test_button_2.addEventListener("click", () => {
+  clearPolylines();
+  console.log("polylines cleared");
+});
+
+function drawPolyline_old() {
+  if (travel_type_car_click === true) {
+    polyline = L.polyline(markersCoordinates, {
+      color: "red",
+      opacity: 1,
+      weight: 5,
+      dashArray: "10, 20",
+    })
+
+      .bindPopup("polygon")
+      .addTo(map);
+    polylines.push([polyline, random_id]);
+  }
+
+  if (travel_type_plane_click === true) {
+    polyline = L.polyline(markersCoordinates, {
+      color: "blue",
+      opacity: 1,
+      weight: 5,
+      dashArray: "10, 10",
+    })
+      .bindPopup("polygon")
+      .addTo(map);
+    polylines.push([polyline, random_id]);
+  }
+}
+
+/*
+
+function polylinetest() {
+  var polyline = L.polyline(markersCoordinates).addTo(map);
+
+  // Create a decorator for the polyline
+  var decorator = L.polylineDecorator(polyline, {
+    patterns: [
+      {
+        offset: "50%", // Position the pattern at the middle of the line
+        repeat: "100px", // Repeat the pattern every 100 pixels
+        color: "red",
+        weight: 10,
+        symbol: L.Symbol.arrowHead({
+          pixelSize: 15, // Adjust the size of the plane symbol
+          polygon: false, // Set to true if you want a polygon shape for the plane
+          pathOptions: {
+            color: "red", // Change the color of the plane
+            weight: 5, // Adjust the thickness of the line
+            opacity: 1, // Set the opacity of the line
+          },
+        }),
+      },
+    ],
+  }).addTo(map);
+}
+
+*/
