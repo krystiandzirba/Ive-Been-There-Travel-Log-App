@@ -91,6 +91,12 @@ body {
   transform: translate(-50%, -50%);
 }
 
+.markers_toggle {
+  top: 72.5%;
+  left: 10%;
+  transform: translate(-50%, -50%);
+}
+
 /* ↑ Map addon layer ↑  */
 
 /* ↓ Home ↓  */
@@ -314,7 +320,7 @@ body {
 
 .travel_type_button {
   display: inline-block;
-  width: 17%;
+  width: 15%;
   text-align: center;
   line-height: 3vh;
   background-color: #fff;
