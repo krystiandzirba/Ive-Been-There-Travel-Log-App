@@ -1,4 +1,4 @@
-// ver: 0.4.13
+// ver: 0.4.14
 
 // Bugs:
 
@@ -12,6 +12,9 @@
 //               - prevent generating the new travel id, if travel_settings_container is present
 //               - travel logs, make it display only the travel name, name edit ( and maybe date ), on click make it extend to show all the log options (edit, markers, highlights ...)
 //               - multi options polyline / leaflet motion
+//               - divide the travel logs on "main" travel destination / make the current travel logs, part of the main one /
+//                        (add travel > name of the travel > main travel destination stored in the travel log container > adding multiple travels to the main one
+//                        to prevent the travel types to mix and overlap in the same array)
 
 // ---------- 2. Interactive timeline at the bottom of the page, with highlighted date of every travel ...
 // ---------- 3. Separate tab to calculate the "achievements": overall trips distance (divided on the trip type: bicycle, car, plane, boat, motorcycle, walk), countries visited
@@ -215,9 +218,6 @@ function switchTileMap(layer) {
 // // ↓ Leaflet Map / Marker + Polyline visibility toggle ↓
 
 markers_toggle.addEventListener("click", () => {
-  transparencyToggle = !transparencyToggle;
-  transparentPolyline();
-
   markers.forEach((marker) => {
     if (map.hasLayer(marker)) {
       marker.removeFrom(map);
@@ -225,29 +225,16 @@ markers_toggle.addEventListener("click", () => {
       marker.addTo(map);
     }
   });
-});
 
-let transparencyToggle = false;
-
-function transparentPolyline() {
   for (let i = 0; i < polylines.length; i++) {
-    map.removeLayer(polylines[i][0]);
+    const polyline = polylines[i][0];
+    if (map.hasLayer(polyline)) {
+      map.removeLayer(polyline);
+    } else {
+      map.addLayer(polyline);
+    }
   }
-
-  const opacity = transparencyToggle ? home_circle_opacity : 0;
-
-  polyline = L.polyline(markersCoordinates, {
-    color: "red",
-    opacity: opacity,
-    weight: 5,
-    dashArray: "10, 20",
-  })
-    .bindPopup("polygon")
-    .addTo(map);
-  polylines.push([polyline, random_id]);
-}
-
-transparencyToggle = !transparencyToggle;
+});
 
 // // ↑ Leaflet Map / Marker + Polyline visibility toggle ↑
 
@@ -443,6 +430,8 @@ function homeMarkerClear() {
 
 // // ↓ Travel Log / Log markers ↓
 
+let type = "";
+
 travel_type_car.addEventListener("click", () => {
   travelTypeValueUpdate(false, false, true, false, false, false, false, false);
 
@@ -461,7 +450,9 @@ travel_type_car.addEventListener("click", () => {
       marker.addTo(map).bounce(1);
       markers.push(marker);
 
-      markersCoordinates[markersCoordinates.length - 1].push([lat, lng, random_id]);
+      type = "car";
+
+      markersCoordinates[markersCoordinates.length - 1].push([lat, lng, [random_id, type]]);
       drawPolyline();
     }
 
@@ -486,7 +477,9 @@ travel_type_plane.addEventListener("click", () => {
 
       marker.addTo(map).bounce(1);
       markers.push(marker);
-      markersCoordinates[markersCoordinates.length - 1].push([lat, lng, random_id]);
+
+      type = "plane";
+      markersCoordinates[markersCoordinates.length - 1].push([lat, lng, [random_id, type]]);
       drawPolyline();
     }
 
@@ -511,7 +504,9 @@ travel_type_boat.addEventListener("click", () => {
 
       marker.addTo(map).bounce(1);
       markers.push(marker);
-      markersCoordinates[markersCoordinates.length - 1].push([lat, lng, random_id]);
+
+      type = "boat";
+      markersCoordinates[markersCoordinates.length - 1].push([lat, lng, [random_id, type]]);
       drawPolyline();
     }
 
@@ -536,7 +531,9 @@ travel_type_walk.addEventListener("click", () => {
 
       marker.addTo(map).bounce(1);
       markers.push(marker);
-      markersCoordinates[markersCoordinates.length - 1].push([lat, lng, random_id]);
+
+      type = "walk";
+      markersCoordinates[markersCoordinates.length - 1].push([lat, lng, [random_id, type]]);
       drawPolyline();
     }
 
@@ -561,7 +558,9 @@ travel_type_bicycle.addEventListener("click", () => {
 
       marker.addTo(map).bounce(1);
       markers.push(marker);
-      markersCoordinates[markersCoordinates.length - 1].push([lat, lng, random_id]);
+
+      type = "bicycle";
+      markersCoordinates[markersCoordinates.length - 1].push([lat, lng, [random_id, type]]);
       drawPolyline();
     }
 
@@ -587,7 +586,8 @@ travel_type_motorcycle.addEventListener("click", () => {
       marker.addTo(map).bounce(1);
       markers.push(marker);
 
-      markersCoordinates[markersCoordinates.length - 1].push([lat, lng, random_id]);
+      type = "motorcycle";
+      markersCoordinates[markersCoordinates.length - 1].push([lat, lng, [random_id, type]]);
       drawPolyline();
     }
 
@@ -737,7 +737,7 @@ function removeMarkers() {
 
 function removeMarkersCoordinates() {
   markersCoordinates = markersCoordinates.filter((array) => {
-    return !array.some((item) => item[2] === stored_log_id);
+    return !array.some((item) => item[2][0] === stored_log_id);
   });
 }
 
@@ -811,24 +811,50 @@ function random_id_generator() {
 
 // ↓ Leaflet Polyline ↓
 
-let polyline = null;
-
 function drawPolyline() {
   for (let i = 0; i < polylines.length; i++) {
     map.removeLayer(polylines[i][0]);
   }
   polylines = [];
 
-  polyline = L.polyline(markersCoordinates, {
-    color: "red",
-    opacity: 0.5,
-    weight: 5,
-    dashArray: "10, 20",
-  })
+  for (let i = 0; i < markersCoordinates.length; i++) {
+    const coordinates = markersCoordinates[i];
+    if (coordinates && coordinates.length > 1) {
+      let color = "";
+      let popupText = "";
 
-    .bindPopup("polygon")
-    .addTo(map);
-  polylines.push([polyline, random_id]);
+      if (coordinates[0][2][1] === "car") {
+        color = "red";
+        popupText = "car";
+      } else if (coordinates[0][2][1] === "plane") {
+        color = "white";
+        popupText = "plane";
+      } else if (coordinates[0][2][1] === "boat") {
+        color = "blue";
+        popupText = "boat";
+      } else if (coordinates[0][2][1] === "walk") {
+        color = "brown";
+        popupText = "walk";
+      } else if (coordinates[0][2][1] === "bicycle") {
+        color = "green";
+        popupText = "bicycle";
+      } else if (coordinates[0][2][1] === "motorcycle") {
+        color = "yellow";
+        popupText = "motorcycle";
+      }
+
+      const polyline = L.polyline(coordinates, {
+        color: color,
+        opacity: 0.5,
+        weight: 5,
+        dashArray: "10, 20",
+      })
+        .bindPopup(popupText)
+        .addTo(map);
+
+      polylines.push([polyline, random_id]);
+    }
+  }
 }
 
 // ↑ Leaflet Polyline ↑
