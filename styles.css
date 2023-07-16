@@ -212,24 +212,25 @@ body {
   width: 90%;
   height: 85vh;
   z-index: 950;
-  background-color: rgb(255, 255, 172);
+  background-color: rgb(255, 175, 134);
   top: 10%;
   right: 5%;
   transform: translate(5%, 5%);
   overflow-y: scroll;
 }
 
-.log {
+.travel_logs_individual_div_main {
   height: 20vh;
   border: 2px solid black;
   padding: 10px;
   margin-bottom: 10px;
 }
-.log button {
+
+.travel_logs_individual_div_main button {
   margin-right: 25px;
 }
 
-.log_name {
+.travel_logs_individual_name {
   font-size: 2vw;
   padding: 0.5vw;
   margin: 1vw;
@@ -237,15 +238,39 @@ body {
   background-color: rgb(129, 129, 129);
 }
 
-.log_pen_icon {
+.travel_logs_individual_name_edit {
   font-size: 2vw;
+}
+
+.travel_logs_group_div_main {
+  height: 70vh;
+  border: 2px solid black;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: rgb(220, 251, 255);
+}
+
+.travel_logs_group_div_settings {
+  height: 5vh;
+  border: 2px solid black;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: rgb(164, 255, 196);
+}
+
+.travel_logs_group_div_content {
+  height: 50vh;
+  border: 2px solid black;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: rgb(243, 207, 255);
 }
 
 /* ↑ Logs container ↑  */
 
 /* ↓ Travel Settings container ↓  */
 
-.main_travel_settings_container {
+.travel_logs_individual_main_container {
   position: absolute;
   width: 40vw;
   min-height: 22.5vh;
@@ -257,7 +282,7 @@ body {
   display: none;
 }
 
-.travel_settings_data_input_container {
+.travel_logs_individual_data_input_container {
   margin: 10px;
   padding: 0px;
   display: flex;
@@ -265,7 +290,7 @@ body {
   align-items: center;
 }
 
-#travel_logs_input,
+#travel_logs_individual_input,
 #daterange {
   width: 220px;
   height: 40px;
@@ -285,7 +310,7 @@ body {
   z-index: 999;
 }
 
-.settings_container_icon {
+.icon_settings_container {
   position: absolute;
   width: 5vw;
   top: 32.5%;
@@ -294,17 +319,41 @@ body {
   background-color: white;
 }
 
-.check_icon {
+.check_icon_individual {
   left: 35%;
   display: none;
 }
 
-.close_icon {
+.close_icon_individual {
   left: 65%;
   display: none;
 }
 
-.travel_settings_icon_container {
+.travel_logs_group_main_container {
+  position: absolute;
+  width: 40vw;
+  min-height: 10vh;
+  background-color: rgb(255, 255, 188);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, 10%);
+  z-index: 990;
+  display: none;
+}
+
+.check_icon_group {
+  left: 32.5%;
+  top: 62.5%;
+  display: none;
+}
+
+.close_icon_group {
+  left: 67.5%;
+  top: 62.5%;
+  display: none;
+}
+
+.travel_logs_individual_icon_container {
   position: absolute;
   width: 35vw;
   min-height: 7vh;

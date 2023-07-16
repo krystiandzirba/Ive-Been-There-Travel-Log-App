@@ -1,17 +1,17 @@
-// ver: 0.4.14
+// ver: 0.4.15
 
 // Bugs:
 
 // ---------- 1. Deleting the travel log causes other travel logs highlights to be deleted (rewrite the highlights to update, based on the markers coordinates)
-// ---------- 2.
+// ---------- 2. Closing the individual travel menu while selecting markers, brakes the travel logs
 
 // Features to add:
 
 // ---------- 1. Functional right side menu with travel logs divided on every trip (CRUD), new menu popup with a new trip settings, name, date, customizable markers and colors
-//               - make a small pen icon to edit the travel name and separate icon to edit/delete markers and highlights
 //               - prevent generating the new travel id, if travel_settings_container is present
 //               - travel logs, make it display only the travel name, name edit ( and maybe date ), on click make it extend to show all the log options (edit, markers, highlights ...)
 //               - multi options polyline / leaflet motion
+//               - when travel type is selected, make a jpg follow the mouse until the log is finished
 //               - divide the travel logs on "main" travel destination / make the current travel logs, part of the main one /
 //                        (add travel > name of the travel > main travel destination stored in the travel log container > adding multiple travels to the main one
 //                        to prevent the travel types to mix and overlap in the same array)
@@ -22,6 +22,8 @@
 // ---------- 5. Add loading animation before the page load
 // ---------- 6. Add different page styles (font, animations, images, backgrounds, theme) - modern / middleage / other
 // ---------- 7. Rewrite to React
+
+// download the polyline offset, polyline snake anim / polyline decorator
 
 // ↓ Home ↓
 
@@ -45,13 +47,13 @@ const home_button_zoom = document.getElementById("home_button_zoom");
 const home_color_picker = document.getElementById("home_color_picker");
 const home_opacity_slider = document.getElementById("home_opacity_slider");
 
-const popupDiv = document.getElementById("info_popup");
+const info_popup = document.getElementById("info_popup");
 const info_popup_text = document.getElementById("info_popup_text");
 const close_info_popup = document.getElementById("close_info_popup");
 
 const add_travel = document.getElementById("add_travel");
 const main_logs_container = document.querySelector(".main_logs_container");
-const main_travel_settings_container = document.getElementById("main_travel_settings_container");
+const travel_logs_individual_main_container = document.getElementById("travel_logs_individual_main_container");
 
 const travel_type_car = document.getElementById("travel_type_car");
 const travel_type_plane = document.getElementById("travel_type_plane");
@@ -60,32 +62,27 @@ const travel_type_walk = document.getElementById("travel_type_walk");
 const travel_type_bicycle = document.getElementById("travel_type_bicycle");
 const travel_type_motorcycle = document.getElementById("travel_type_motorcycle");
 
-const check_icon = document.getElementById("check_icon");
-const close_icon = document.getElementById("close_icon");
+const check_icon_group = document.getElementById("check_icon_group");
+const close_icon_group = document.getElementById("close_icon_group");
+
+const check_icon_individual = document.getElementById("check_icon_individual");
+const close_icon_individual = document.getElementById("close_icon_individual");
+
 const marker_color_picker = document.getElementById("marker_color_picker");
 const marker_opacity_slider = document.getElementById("marker_opacity_slider");
 
 const main_logs_container_arrow = document.querySelector(".main_logs_container_arrow");
 let main_logs_container_arrow_clicked = false;
 
-let travel_logs_input = "";
-let travel_log_name = "";
+let travel_logs_individual_input = "";
+let travel_logs_individual_name = "";
+travel_logs_individual_input = document.getElementById("travel_logs_individual_input");
+
+let travel_logs_group_input = "";
+let travel_logs_group_name = "";
+travel_logs_group_input = document.getElementById("travel_logs_group_input");
 
 // // ↓ Home / Basic interactiveness ↓
-
-check_icon.addEventListener("click", (event) => {
-  map.off("click");
-
-  travelTypeValueUpdate(false, false, false, false, false, false, false);
-
-  TravelLogSubmit(event);
-
-  if (travel_log_name !== "") {
-    main_travel_settings_container.style.display = "none";
-    check_icon.style.display = "none";
-    close_icon.style.display = "none";
-  }
-});
 
 layers_button.addEventListener("click", () => {
   if (layers_container.style.display === "none" || layers_container.style.display === "") {
@@ -97,7 +94,7 @@ layers_button.addEventListener("click", () => {
 
 home_button_main.addEventListener("click", () => {
   map.off("click");
-  travelTypeValueUpdate(false, false, false, false, false, false, false);
+  travelTypeValueUpdate(false, false, false, false, false, false);
 
   if (location_container.style.display === "none" || location_container.style.display === "") {
     location_container.style.display = "block";
@@ -107,29 +104,15 @@ home_button_main.addEventListener("click", () => {
 });
 
 add_travel.addEventListener("click", () => {
-  markersCoordinates.push([]);
-  random_id = "";
-  random_id = random_id_generator();
-  console.log(random_id);
-
-  if (main_travel_settings_container.style.display === "none" || main_travel_settings_container.style.display === "") {
-    main_travel_settings_container.style.display = "block";
-    check_icon.style.display = "block";
-    close_icon.style.display = "block";
-  }
-});
-
-close_icon.addEventListener("click", () => {
-  travelTypeValueUpdate(false, false, false, false, false, false, false);
-
-  if (main_travel_settings_container.style.display === "none" || main_travel_settings_container.style.display === "") {
-    main_travel_settings_container.style.display = "block";
-    check_icon.style.display = "block";
-    close_icon.style.display = "block";
-  } else {
-    main_travel_settings_container.style.display = "none";
-    check_icon.style.display = "none";
-    close_icon.style.display = "none";
+  travel_logs_group_input.value = "";
+  travel_logs_individual_input.value = "";
+  if (
+    travel_logs_group_main_container.style.display === "none" ||
+    travel_logs_group_main_container.style.display === ""
+  ) {
+    travel_logs_group_main_container.style.display = "block";
+    check_icon_group.style.display = "block";
+    close_icon_group.style.display = "block";
   }
 });
 
@@ -146,10 +129,15 @@ main_logs_container_arrow.addEventListener("click", function () {
 });
 
 // // ↑ Home / Basic interactiveness ↑
-
 // ↑ Home ↑
-
 // ↓ Leaflet Map ↓
+
+let highlights = [];
+let markers = [];
+let markersCoordinates = [];
+let polylines = [];
+let travelLogs = [];
+let random_id = "";
 
 import leafletConfig from "./LeafletConfig.js";
 
@@ -171,7 +159,6 @@ let home_marker = "";
 let marker = "";
 
 let home_button_manual_click = false;
-let home_button_geolocation_click = false;
 let home_circle = null;
 
 let travel_type_car_click = false;
@@ -214,7 +201,6 @@ function switchTileMap(layer) {
 }
 
 // // ↑ Leaflet Map / Tiles Change ↑
-
 // // ↓ Leaflet Map / Marker + Polyline visibility toggle ↓
 
 markers_toggle.addEventListener("click", () => {
@@ -237,7 +223,6 @@ markers_toggle.addEventListener("click", () => {
 });
 
 // // ↑ Leaflet Map / Marker + Polyline visibility toggle ↑
-
 // // ↓ Leaflet Map / Custom Home + marker Highlight Color + opacity ↓
 
 home_color_picker.addEventListener("input", function () {
@@ -257,20 +242,11 @@ marker_opacity_slider.addEventListener("input", function () {
 });
 
 // // ↑ Leaflet Map / Custom Home + marker Highlight Color + opacity ↑
-
 // ↑ Leaflet Map  ↑
-
 // ↓ GeoJSON ↓
+// // ↓ GeoJSON Initialization + country highlight ↓
 
 let defaultCountryHighlight = 0;
-let random_id = "";
-
-let highlights = [];
-let markers = [];
-let markersCoordinates = [];
-let polylines = [];
-
-// // ↓ GeoJSON Initialization + color ↓
 
 fetch("content/data/countries.geojson")
   .then((response) => response.json())
@@ -325,12 +301,12 @@ function setLayerStyle(layer, fillColor, fillOpacity, attribution, random_id) {
   layer.defaultOptions.id = random_id;
 }
 
-// // ↑ GeoJSON Initialization + color ↑
+// // ↓ GeoJSON Initialization + country highlight ↓
 
 // // ↓ GeoJSON / Geolocation on Button Click ↓
 
 home_button_geolocation.addEventListener("click", () => {
-  travelTypeValueUpdate(true, false, false, false, false, false, false);
+  travelTypeValueUpdate(false, false, false, false, false, false);
 
   homeMarkerClear();
 
@@ -340,8 +316,8 @@ home_button_geolocation.addEventListener("click", () => {
 
       const latlng = L.latLng(latitude, longitude);
 
-      const containerPoint = map.latLngToContainerPoint(latlng);
-      const layerAtLatLng = map.getLayerAt(containerPoint);
+      // const containerPoint = map.latLngToContainerPoint(latlng);
+      // const layerAtLatLng = map.getLayerAt(containerPoint);
 
       home_marker = L.marker([latitude, longitude], {
         icon: home_icon,
@@ -361,11 +337,10 @@ home_button_geolocation.addEventListener("click", () => {
 });
 
 // // ↑ GeoJSON / Geolocation on Button Click ↑
-
 // // ↓ GeoJSON / Manual Location ↓
 
 home_button_manual.addEventListener("click", () => {
-  travelTypeValueUpdate(false, true, false, false, false, false, false);
+  travelTypeValueUpdate(true, false, false, false, false, false);
 
   homeMarkerClear();
 
@@ -395,20 +370,11 @@ home_button_manual.addEventListener("click", () => {
 });
 
 // // ↑ GeoJSON / Manual Location ↑
-
 // // ↓ GeoJSON / Home Button Center Marker ↓
 
 home_button_zoom.addEventListener("click", () => {
   homeMarkerZoom();
 });
-
-function homeMarkerZoom() {
-  if (home_marker) {
-    map.setView(home_marker.getLatLng(), 7);
-  } else {
-    showInfoPopup("Home location not set!");
-  }
-}
 
 // // ↑ GeoJSON / Home Button Center Marker ↑
 
@@ -424,16 +390,22 @@ function homeMarkerClear() {
   }
 }
 
+function homeMarkerZoom() {
+  if (home_marker) {
+    map.setView(home_marker.getLatLng(), 7);
+  } else {
+    showInfoPopup("Home location not set!");
+  }
+}
+
 // ↑ GeoJSON ↑
-
 // ↓ Travel Log ↓
-
 // // ↓ Travel Log / Log markers ↓
 
 let type = "";
 
 travel_type_car.addEventListener("click", () => {
-  travelTypeValueUpdate(false, false, true, false, false, false, false, false);
+  travelTypeValueUpdate(false, true, false, false, false, false, false);
 
   if (travel_type_car_click == true) {
     map.off("click");
@@ -461,7 +433,7 @@ travel_type_car.addEventListener("click", () => {
 });
 
 travel_type_plane.addEventListener("click", () => {
-  travelTypeValueUpdate(false, false, false, true, false, false, false, false);
+  travelTypeValueUpdate(false, false, true, false, false, false, false);
 
   if (travel_type_plane_click == true) {
     map.off("click");
@@ -488,7 +460,7 @@ travel_type_plane.addEventListener("click", () => {
 });
 
 travel_type_boat.addEventListener("click", () => {
-  travelTypeValueUpdate(false, false, false, false, true, false, false, false);
+  travelTypeValueUpdate(false, false, false, true, false, false, false);
 
   if (travel_type_boat_click == true) {
     map.off("click");
@@ -515,7 +487,7 @@ travel_type_boat.addEventListener("click", () => {
 });
 
 travel_type_walk.addEventListener("click", () => {
-  travelTypeValueUpdate(false, false, false, false, false, true, false, false);
+  travelTypeValueUpdate(false, false, false, false, true, false, false);
 
   if (travel_type_walk_click == true) {
     map.off("click");
@@ -542,7 +514,7 @@ travel_type_walk.addEventListener("click", () => {
 });
 
 travel_type_bicycle.addEventListener("click", () => {
-  travelTypeValueUpdate(false, false, false, false, false, false, true, false);
+  travelTypeValueUpdate(false, false, false, false, false, true, false);
 
   if (travel_type_bicycle_click == true) {
     map.off("click");
@@ -569,7 +541,7 @@ travel_type_bicycle.addEventListener("click", () => {
 });
 
 travel_type_motorcycle.addEventListener("click", () => {
-  travelTypeValueUpdate(false, false, false, false, false, false, false, true);
+  travelTypeValueUpdate(false, false, false, false, false, false, true);
 
   if (travel_type_motorcycle_click == true) {
     map.off("click");
@@ -595,8 +567,7 @@ travel_type_motorcycle.addEventListener("click", () => {
   }
 });
 
-function travelTypeValueUpdate(geolocation, manual, car, plane, boat, walk, bicycle, motorcycle) {
-  home_button_geolocation_click = geolocation;
+function travelTypeValueUpdate(manual, car, plane, boat, walk, bicycle, motorcycle) {
   home_button_manual_click = manual;
   travel_type_car_click = car;
   travel_type_plane_click = plane;
@@ -612,15 +583,77 @@ function travelTypeValueUpdate(geolocation, manual, car, plane, boat, walk, bicy
 let travel_date_start = "";
 let travel_date_end = "";
 let stored_log_id = "";
-let TravelLogsArray = [];
+let stored_group_id = "";
 
-function TravelLogSubmit(event) {
+check_icon_group.addEventListener("click", (event) => {
+  random_id = "";
+  random_id = random_id_generator();
+  console.log(random_id);
+
+  travelLogGroupSubmit(event);
+
+  if (travel_logs_group_name !== "") {
+    travel_logs_group_main_container.style.display = "none";
+    check_icon_group.style.display = "none";
+    close_icon_group.style.display = "none";
+  }
+});
+
+close_icon_group.addEventListener("click", () => {
+  travel_logs_group_input.value = "";
+  if (
+    travel_logs_group_main_container.style.display === "none" ||
+    travel_logs_group_main_container.style.display === ""
+  ) {
+    travel_logs_group_main_container.style.display = "block";
+    check_icon_group.style.display = "block";
+    close_icon_group.style.display = "block";
+  } else {
+    travel_logs_group_main_container.style.display = "none";
+    check_icon_group.style.display = "none";
+    close_icon_group.style.display = "none";
+  }
+});
+
+check_icon_individual.addEventListener("click", (event) => {
+  map.off("click");
+
+  travelTypeValueUpdate(false, false, false, false, false, false);
+
+  travelLogIndividualSubmit(event);
+
+  if (travel_logs_individual_name !== "") {
+    travel_logs_individual_main_container.style.display = "none";
+    check_icon_individual.style.display = "none";
+    close_icon_individual.style.display = "none";
+  }
+});
+
+close_icon_individual.addEventListener("click", () => {
+  travelTypeValueUpdate(false, false, false, false, false, false);
+
+  travel_logs_individual_input.value = "";
+
+  if (
+    travel_logs_individual_main_container.style.display === "none" ||
+    travel_logs_individual_main_container.style.display === ""
+  ) {
+    travel_logs_individual_main_container.style.display = "block";
+    check_icon_individual.style.display = "block";
+    close_icon_individual.style.display = "block";
+  } else {
+    travel_logs_individual_main_container.style.display = "none";
+    check_icon_individual.style.display = "none";
+    close_icon_individual.style.display = "none";
+  }
+});
+
+function travelLogIndividualSubmit(event) {
   event.preventDefault();
 
-  travel_logs_input = document.getElementById("travel_logs_input");
-  travel_log_name = travel_logs_input.value;
+  travel_logs_individual_name = travel_logs_individual_input.value;
 
-  if (travel_log_name === "") {
+  if (travel_logs_individual_name === "") {
     showInfoPopup("Please enter valid name");
     return;
   }
@@ -632,45 +665,50 @@ function TravelLogSubmit(event) {
 
   // div
 
-  const $new_log_div = document.createElement("div");
-  $new_log_div.className = "log";
+  const $travel_logs_individual_div_main = document.createElement("div");
+  $travel_logs_individual_div_main.className = "travel_logs_individual_div_main";
 
   // div
   // travel name
 
-  const $log_name = document.createElement("span");
-  $log_name.textContent = travel_log_name;
-  $log_name.classList.add("log_name");
-  $new_log_div.appendChild($log_name);
+  const $travel_logs_individual_name = document.createElement("span");
+  $travel_logs_individual_name.textContent = travel_logs_individual_name;
+  $travel_logs_individual_name.classList.add("travel_logs_individual_name");
+  $travel_logs_individual_div_main.appendChild($travel_logs_individual_name);
 
   // travel name
 
   //      const log_date = document.createElement('span');                          // travel log, make the travel date visible / not needed now
   //      log_date.textContent = travel_date_start + ' - ' + travel_date_end;
-  //      new_log_div.appendChild(log_date);
+  //      travel_logs_individual_div_main.appendChild(log_date);
 
   // travel name edit
 
-  const $travel_logs_edit = document.createElement("button");
-  $travel_logs_edit.textContent = "\u270E";
-  $travel_logs_edit.classList.add("log_pen_icon");
-  $travel_logs_edit.addEventListener("click", () => {
-    const $newText = prompt("Enter new text:");
+  const $travel_logs_individual_name_edit = document.createElement("button");
+  $travel_logs_individual_name_edit.textContent = "\u270E";
+  $travel_logs_individual_name_edit.classList.add("travel_logs_individual_name_edit");
+  $travel_logs_individual_name_edit.addEventListener("click", () => {
+    const $travel_logs_individual_name_new = prompt("Enter new text:");
 
-    if ($newText == null || $newText == "") {
+    if ($travel_logs_individual_name_new == null || $travel_logs_individual_name_new == "") {
       showInfoPopup("Please enter a valid name");
     } else {
-      $log_name.textContent = $newText;
+      $travel_logs_individual_name.textContent = $travel_logs_individual_name_new;
+      const logId = $log_id.textContent;
+      const logIndex = travelLogs.findIndex((log) => log[1] === logId);
+      if (logIndex !== -1) {
+        travelLogs[logIndex][0] = $travel_logs_individual_name_new;
+      }
     }
   });
-  $new_log_div.appendChild($travel_logs_edit);
+  $travel_logs_individual_div_main.appendChild($travel_logs_individual_name_edit);
 
   // travel name edit
   // travel id
 
   const $log_id = document.createElement("span");
   $log_id.textContent = random_id;
-  $new_log_div.appendChild($log_id);
+  $travel_logs_individual_div_main.appendChild($log_id);
   console.log("log id", $log_id);
 
   // travel id
@@ -684,43 +722,180 @@ function TravelLogSubmit(event) {
     removeHighlight();
     removeMarkersCoordinates();
     drawPolyline();
+    removeTravelLogs();
 
-    const index = TravelLogsArray.indexOf(travel_log_name);
+    const index = travelLogs.indexOf(travel_logs_individual_name);
     if (index !== -1) {
-      TravelLogsArray.splice(index, 1);
+      travelLogs.splice(index, 1);
     }
-    $new_log_div.remove();
+    $travel_logs_individual_div_main.remove();
   });
-  $new_log_div.appendChild($travel_logs_delete);
+  $travel_logs_individual_div_main.appendChild($travel_logs_delete);
 
   // delete log
   // test button
 
-  const $travel_logs_test = document.createElement("button");
-  $travel_logs_test.textContent = "logs test";
-  $travel_logs_test.addEventListener("click", () => {
+  const $travel_logs_individual_test_button = document.createElement("button");
+  $travel_logs_individual_test_button.textContent = "logs test";
+  $travel_logs_individual_test_button.addEventListener("click", () => {
     stored_log_id = $log_id.textContent;
     console.log(stored_log_id);
-    console.log(typeof stored_log_id);
-    console.log(typeof $log_id);
-    console.log(typeof random_id);
   });
-  $new_log_div.appendChild($travel_logs_test);
+  $travel_logs_individual_div_main.appendChild($travel_logs_individual_test_button);
+
+  // test button
+  // display the log
+
+  // const $logs_list = document.getElementById("logs_list");
+  // $logs_list.appendChild($travel_logs_individual_div_main);
+
+  const $content_div = document.getElementById(stored_group_id);
+  $content_div.appendChild($travel_logs_individual_div_main);
+
+  // display the log
+
+  travelLogs.push([travel_logs_individual_name, random_id, travel_date_start + " - " + travel_date_end]);
+
+  travel_logs_individual_input.value = "";
+  random_id = "";
+
+  console.log("Logs Array:", travelLogs);
+}
+
+function travelLogGroupSubmit(event) {
+  event.preventDefault();
+
+  travel_logs_group_name = travel_logs_group_input.value;
+
+  if (travel_logs_group_name === "") {
+    showInfoPopup("Please enter valid name");
+    return;
+  }
+
+  if (travel_date_start === "" || travel_date_end === "") {
+    showInfoPopup("Please select a valid date range");
+    return;
+  }
+
+  // div
+
+  stored_group_id = random_id;
+
+  const $travel_logs_group_div_main = document.createElement("div");
+  $travel_logs_group_div_main.className = "travel_logs_group_div_main";
+
+  const $travel_logs_group_div_settings = document.createElement("div");
+  $travel_logs_group_div_settings.className = "travel_logs_group_div_settings";
+
+  const $travel_logs_group_content = document.createElement("div");
+  $travel_logs_group_content.className = "travel_logs_group_div_content";
+  $travel_logs_group_content.id = stored_group_id;
+
+  // div
+  // travel name
+
+  const $travel_logs_group_name = document.createElement("span");
+  $travel_logs_group_name.textContent = travel_logs_group_name;
+  $travel_logs_group_name.classList.add("travel_logs_group_name");
+  $travel_logs_group_div_settings.appendChild($travel_logs_group_name);
+
+  // travel name
+  // travel name edit
+
+  const $travel_logs_group_name_edit = document.createElement("button");
+  $travel_logs_group_name_edit.textContent = "\u270E";
+  $travel_logs_group_name_edit.classList.add("travel_logs_group_name_edit");
+  $travel_logs_group_name_edit.addEventListener("click", () => {
+    const $travel_logs_group_name_new = prompt("Enter new text:");
+
+    if ($travel_logs_group_name_new == null || $travel_logs_group_name_new == "") {
+      showInfoPopup("Please enter a valid name");
+    } else {
+      $travel_logs_group_name.textContent = $travel_logs_group_name_new;
+      const logId = $log_id.textContent;
+      const logIndex = travelLogs.findIndex((log) => log[1] === logId);
+      if (logIndex !== -1) {
+        travelLogs[logIndex][0] = $travel_logs_group_name_new;
+      }
+    }
+  });
+  $travel_logs_group_div_settings.appendChild($travel_logs_group_name_edit);
+
+  // travel name edit
+  // travel id
+
+  const $log_id = document.createElement("span");
+  $log_id.textContent = random_id;
+  $travel_logs_group_div_settings.appendChild($log_id);
+  console.log("log id", $log_id);
+
+  // travel id
+  // delete log
+
+  const $travel_logs_delete = document.createElement("button");
+  $travel_logs_delete.textContent = "Delete";
+  $travel_logs_delete.addEventListener("click", () => {
+    const index = travelLogs.indexOf(travel_logs_group_name);
+    if (index !== -1) {
+      travelLogs.splice(index, 1);
+    }
+    $travel_logs_group_div_main.remove();
+  });
+  $travel_logs_group_div_settings.appendChild($travel_logs_delete);
+
+  // delete log
+  // add individual travel button
+
+  const $travel_logs_group_add_travel_button = document.createElement("button");
+  $travel_logs_group_add_travel_button.textContent = "add individual travel";
+  $travel_logs_group_add_travel_button.addEventListener("click", () => {
+    stored_group_id = $log_id.textContent;
+    console.log(stored_group_id);
+    markersCoordinates.push([]);
+    random_id = "";
+    random_id = random_id_generator();
+
+    if (
+      travel_logs_individual_main_container.style.display === "none" ||
+      travel_logs_individual_main_container.style.display === ""
+    ) {
+      travel_logs_individual_main_container.style.display = "block";
+      check_icon_individual.style.display = "block";
+      close_icon_individual.style.display = "block";
+    }
+    console.log(stored_group_id);
+  });
+  $travel_logs_group_div_settings.appendChild($travel_logs_group_add_travel_button);
+
+  // add individual travel button
+  // test button
+
+  const $travel_logs_group_test_button = document.createElement("button");
+  $travel_logs_group_test_button.textContent = "test";
+  $travel_logs_group_test_button.addEventListener("click", () => {
+    stored_group_id = $log_id.textContent;
+    console.log(stored_group_id);
+    console.log($travel_logs_group_content.id);
+  });
+
+  $travel_logs_group_div_settings.appendChild($travel_logs_group_test_button);
 
   // test button
   // display the log
 
   const $logs_list = document.getElementById("logs_list");
-  $logs_list.appendChild($new_log_div);
+  $logs_list.appendChild($travel_logs_group_div_main);
+  $travel_logs_group_div_main.appendChild($travel_logs_group_div_settings);
+  $travel_logs_group_div_main.appendChild($travel_logs_group_content);
 
   // display the log
 
-  TravelLogsArray.push({ name: travel_log_name, ID: random_id, date: travel_date_start + " - " + travel_date_end });
+  travelLogs.push([travel_logs_group_name, random_id, travel_date_start + " - " + travel_date_end]);
 
-  travel_logs_input.value = "";
+  travel_logs_group_input.value = "";
   random_id = "";
 
-  console.log("Logs Array:", TravelLogsArray);
+  console.log("Logs Array:", travelLogs);
 }
 
 // // ↑ Travel Log / CRUD setup ↑
@@ -759,6 +934,16 @@ function removeHighlight() {
     });
   } catch (error) {
     console.error("Error: ", error);
+  }
+}
+
+function removeTravelLogs() {
+  for (let i = 0; i < travelLogs.length; i++) {
+    const logArray = travelLogs[i];
+    if (logArray.includes(stored_log_id)) {
+      travelLogs.splice(i, 1);
+      break;
+    }
   }
 }
 
@@ -821,36 +1006,27 @@ function drawPolyline() {
     const coordinates = markersCoordinates[i];
     if (coordinates && coordinates.length > 1) {
       let color = "";
-      let popupText = "";
 
       if (coordinates[0][2][1] === "car") {
         color = "red";
-        popupText = "car";
       } else if (coordinates[0][2][1] === "plane") {
         color = "white";
-        popupText = "plane";
       } else if (coordinates[0][2][1] === "boat") {
         color = "blue";
-        popupText = "boat";
       } else if (coordinates[0][2][1] === "walk") {
         color = "brown";
-        popupText = "walk";
       } else if (coordinates[0][2][1] === "bicycle") {
         color = "green";
-        popupText = "bicycle";
       } else if (coordinates[0][2][1] === "motorcycle") {
         color = "yellow";
-        popupText = "motorcycle";
       }
 
       const polyline = L.polyline(coordinates, {
         color: color,
-        opacity: 0.5,
+        opacity: 1,
         weight: 5,
         dashArray: "10, 20",
-      })
-        .bindPopup(popupText)
-        .addTo(map);
+      }).addTo(map);
 
       polylines.push([polyline, random_id]);
     }
@@ -865,11 +1041,11 @@ function drawPolyline() {
 
 function showInfoPopup(text) {
   info_popup_text.textContent = text;
-  popupDiv.style.display = "block";
+  info_popup.style.display = "block";
 }
 
 function closeInfoPopup() {
-  popupDiv.style.display = "none";
+  info_popup.style.display = "none";
 }
 close_info_popup.addEventListener("click", closeInfoPopup);
 
@@ -889,9 +1065,9 @@ close_info_popup.addEventListener("click", closeInfoPopup);
 test_button.addEventListener("click", () => {
   console.log("highlight array", highlights);
   console.log("markers array", markers);
-  //console.log("random id", random_id);
   console.log("marker coordinates", markersCoordinates);
   console.log("polylines", polylines);
+  console.log("Logs Array:", travelLogs);
 });
 
 test_button_2.addEventListener("click", () => {});
