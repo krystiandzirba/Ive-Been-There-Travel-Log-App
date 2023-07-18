@@ -1,4 +1,4 @@
-// ver: 0.4.15
+// ver: 0.4.16
 
 // Bugs:
 
@@ -137,6 +137,7 @@ let markers = [];
 let markersCoordinates = [];
 let polylines = [];
 let travelLogs = [];
+let storedIds = [];
 let random_id = "";
 
 import leafletConfig from "./LeafletConfig.js";
@@ -583,12 +584,10 @@ function travelTypeValueUpdate(manual, car, plane, boat, walk, bicycle, motorcyc
 let travel_date_start = "";
 let travel_date_end = "";
 let stored_log_id = "";
-let stored_group_id = "";
 
 check_icon_group.addEventListener("click", (event) => {
   random_id = "";
-  random_id = random_id_generator();
-  console.log(random_id);
+  random_id = randomIdGenerator();
 
   travelLogGroupSubmit(event);
 
@@ -709,7 +708,6 @@ function travelLogIndividualSubmit(event) {
   const $log_id = document.createElement("span");
   $log_id.textContent = random_id;
   $travel_logs_individual_div_main.appendChild($log_id);
-  console.log("log id", $log_id);
 
   // travel id
   // delete log
@@ -723,6 +721,7 @@ function travelLogIndividualSubmit(event) {
     removeMarkersCoordinates();
     drawPolyline();
     removeTravelLogs();
+    removeStoredId();
 
     const index = travelLogs.indexOf(travel_logs_individual_name);
     if (index !== -1) {
@@ -737,19 +736,13 @@ function travelLogIndividualSubmit(event) {
 
   const $travel_logs_individual_test_button = document.createElement("button");
   $travel_logs_individual_test_button.textContent = "logs test";
-  $travel_logs_individual_test_button.addEventListener("click", () => {
-    stored_log_id = $log_id.textContent;
-    console.log(stored_log_id);
-  });
+  $travel_logs_individual_test_button.addEventListener("click", () => {});
   $travel_logs_individual_div_main.appendChild($travel_logs_individual_test_button);
 
   // test button
   // display the log
 
-  // const $logs_list = document.getElementById("logs_list");
-  // $logs_list.appendChild($travel_logs_individual_div_main);
-
-  const $content_div = document.getElementById(stored_group_id);
+  const $content_div = document.getElementById(stored_log_id);
   $content_div.appendChild($travel_logs_individual_div_main);
 
   // display the log
@@ -758,8 +751,6 @@ function travelLogIndividualSubmit(event) {
 
   travel_logs_individual_input.value = "";
   random_id = "";
-
-  console.log("Logs Array:", travelLogs);
 }
 
 function travelLogGroupSubmit(event) {
@@ -779,7 +770,7 @@ function travelLogGroupSubmit(event) {
 
   // div
 
-  stored_group_id = random_id;
+  stored_log_id = random_id;
 
   const $travel_logs_group_div_main = document.createElement("div");
   $travel_logs_group_div_main.className = "travel_logs_group_div_main";
@@ -789,7 +780,7 @@ function travelLogGroupSubmit(event) {
 
   const $travel_logs_group_content = document.createElement("div");
   $travel_logs_group_content.className = "travel_logs_group_div_content";
-  $travel_logs_group_content.id = stored_group_id;
+  $travel_logs_group_content.id = stored_log_id;
 
   // div
   // travel name
@@ -827,14 +818,16 @@ function travelLogGroupSubmit(event) {
   const $log_id = document.createElement("span");
   $log_id.textContent = random_id;
   $travel_logs_group_div_settings.appendChild($log_id);
-  console.log("log id", $log_id);
 
   // travel id
-  // delete log
+  // delete log group
 
   const $travel_logs_delete = document.createElement("button");
   $travel_logs_delete.textContent = "Delete";
   $travel_logs_delete.addEventListener("click", () => {
+    stored_log_id = $log_id.textContent;
+    removeTravelLogs();
+    removeStoredId();
     const index = travelLogs.indexOf(travel_logs_group_name);
     if (index !== -1) {
       travelLogs.splice(index, 1);
@@ -849,11 +842,11 @@ function travelLogGroupSubmit(event) {
   const $travel_logs_group_add_travel_button = document.createElement("button");
   $travel_logs_group_add_travel_button.textContent = "add individual travel";
   $travel_logs_group_add_travel_button.addEventListener("click", () => {
-    stored_group_id = $log_id.textContent;
-    console.log(stored_group_id);
+    stored_log_id = $log_id.textContent;
+    markersCoordinates = markersCoordinates.filter((coordinatesArray) => coordinatesArray.length > 0);
     markersCoordinates.push([]);
     random_id = "";
-    random_id = random_id_generator();
+    random_id = randomIdGenerator();
 
     if (
       travel_logs_individual_main_container.style.display === "none" ||
@@ -863,7 +856,6 @@ function travelLogGroupSubmit(event) {
       check_icon_individual.style.display = "block";
       close_icon_individual.style.display = "block";
     }
-    console.log(stored_group_id);
   });
   $travel_logs_group_div_settings.appendChild($travel_logs_group_add_travel_button);
 
@@ -872,11 +864,7 @@ function travelLogGroupSubmit(event) {
 
   const $travel_logs_group_test_button = document.createElement("button");
   $travel_logs_group_test_button.textContent = "test";
-  $travel_logs_group_test_button.addEventListener("click", () => {
-    stored_group_id = $log_id.textContent;
-    console.log(stored_group_id);
-    console.log($travel_logs_group_content.id);
-  });
+  $travel_logs_group_test_button.addEventListener("click", () => {});
 
   $travel_logs_group_div_settings.appendChild($travel_logs_group_test_button);
 
@@ -894,8 +882,6 @@ function travelLogGroupSubmit(event) {
 
   travel_logs_group_input.value = "";
   random_id = "";
-
-  console.log("Logs Array:", travelLogs);
 }
 
 // // ↑ Travel Log / CRUD setup ↑
@@ -947,6 +933,13 @@ function removeTravelLogs() {
   }
 }
 
+function removeStoredId() {
+  const idToRemove = storedIds.indexOf(stored_log_id);
+  if (idToRemove !== -1) {
+    storedIds.splice(idToRemove, 1);
+  }
+}
+
 // // ↓ Travel Log / Date picker ↓
 
 $(function () {
@@ -979,14 +972,19 @@ $(function () {
 
 // // ↓ Travel Log / Travel ID generator ↓
 
-function random_id_generator() {
+function randomIdGenerator() {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let random_id = "";
 
-  for (let i = 0; i < 10; i++) {
-    const randomIndex = Math.floor(Math.random() * characters.length);
-    random_id += characters[randomIndex];
-  }
+  do {
+    random_id = "";
+    for (let i = 0; i < 10; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      random_id += characters[randomIndex];
+    }
+  } while (storedIds.includes(random_id));
 
+  storedIds.push(random_id);
   return random_id;
 }
 
@@ -1068,6 +1066,7 @@ test_button.addEventListener("click", () => {
   console.log("marker coordinates", markersCoordinates);
   console.log("polylines", polylines);
   console.log("Logs Array:", travelLogs);
+  console.log("stored ids", storedIds);
 });
 
 test_button_2.addEventListener("click", () => {});
