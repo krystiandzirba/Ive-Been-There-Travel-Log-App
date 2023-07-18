@@ -1,4 +1,4 @@
-// ver: 0.4.16
+// ver: 0.4.17
 
 // Bugs:
 
@@ -104,6 +104,8 @@ home_button_main.addEventListener("click", () => {
 });
 
 add_travel.addEventListener("click", () => {
+  travel_type_selecting = true;
+  travelTypeButtonsColor();
   travel_logs_group_input.value = "";
   travel_logs_individual_input.value = "";
   if (
@@ -168,6 +170,8 @@ let travel_type_boat_click = false;
 let travel_type_walk_click = false;
 let travel_type_bicycle_click = false;
 let travel_type_motorcycle_click = false;
+
+let travel_type_selecting = true;
 
 const { mapTileLayer_A, mapTileLayer_B, mapTileLayer_C, mapTileLayer_D } = leafletConfig.tilemaps;
 const { home_icon, car_icon, plane_icon, boat_icon, walk_icon, bicycle_icon, motorcycle_icon } =
@@ -403,168 +407,221 @@ function homeMarkerZoom() {
 // ↓ Travel Log ↓
 // // ↓ Travel Log / Log markers ↓
 
+const travelTypeButtonImages = new Map();
+travelTypeButtonImages.set(travel_type_car, "/content/icons/car_icon_small.png");
+travelTypeButtonImages.set(travel_type_plane, "/content/icons/plane_icon_small.png");
+travelTypeButtonImages.set(travel_type_boat, "/content/icons/boat_icon_small.png");
+travelTypeButtonImages.set(travel_type_walk, "/content/icons/walk_icon_small.png");
+travelTypeButtonImages.set(travel_type_bicycle, "/content/icons/bicycle_icon_small.png");
+travelTypeButtonImages.set(travel_type_motorcycle, "/content/icons/motorcycle_icon_small.png");
+
+const travelTypeButtons = [
+  travel_type_car,
+  travel_type_plane,
+  travel_type_boat,
+  travel_type_walk,
+  travel_type_bicycle,
+  travel_type_motorcycle,
+];
+
 let type = "";
 
 travel_type_car.addEventListener("click", () => {
-  travelTypeValueUpdate(false, true, false, false, false, false, false);
+  if (travel_type_selecting == true) {
+    travelTypeButtonsGrayscale();
+    travel_type_car.querySelector("img").src = travelTypeButtonImages.get(travel_type_car);
 
-  if (travel_type_car_click == true) {
-    map.off("click");
-    function onMapClick(e) {
-      let lat = e.latlng.lat;
-      let lng = e.latlng.lng;
+    travelTypeValueUpdate(false, true, false, false, false, false, false);
 
-      marker = L.marker([lat, lng], {
-        icon: car_icon,
-        travelType: "car",
-        id: random_id,
-      });
+    if (travel_type_car_click == true) {
+      map.off("click");
+      function onMapClick(e) {
+        travel_type_selecting = false;
+        let lat = e.latlng.lat;
+        let lng = e.latlng.lng;
 
-      marker.addTo(map).bounce(1);
-      markers.push(marker);
+        marker = L.marker([lat, lng], {
+          icon: car_icon,
+          travelType: "car",
+          id: random_id,
+        });
 
-      type = "car";
+        marker.addTo(map).bounce(1);
+        markers.push(marker);
 
-      markersCoordinates[markersCoordinates.length - 1].push([lat, lng, [random_id, type]]);
-      drawPolyline();
+        type = "car";
+
+        markersCoordinates[markersCoordinates.length - 1].push([lat, lng, [random_id, type]]);
+        drawPolyline();
+      }
+
+      map.on("click", onMapClick);
     }
-
-    map.on("click", onMapClick);
   }
 });
 
 travel_type_plane.addEventListener("click", () => {
-  travelTypeValueUpdate(false, false, true, false, false, false, false);
+  if (travel_type_selecting == true) {
+    travelTypeButtonsGrayscale();
+    travel_type_plane.querySelector("img").src = travelTypeButtonImages.get(travel_type_plane);
 
-  if (travel_type_plane_click == true) {
-    map.off("click");
-    function onMapClick(e) {
-      let lat = e.latlng.lat;
-      let lng = e.latlng.lng;
+    travelTypeValueUpdate(false, false, true, false, false, false, false);
 
-      marker = L.marker([lat, lng], {
-        icon: plane_icon,
-        travelType: "plane",
-        id: random_id,
-      });
+    if (travel_type_plane_click == true) {
+      map.off("click");
+      function onMapClick(e) {
+        travel_type_selecting = false;
+        let lat = e.latlng.lat;
+        let lng = e.latlng.lng;
 
-      marker.addTo(map).bounce(1);
-      markers.push(marker);
+        marker = L.marker([lat, lng], {
+          icon: plane_icon,
+          travelType: "plane",
+          id: random_id,
+        });
 
-      type = "plane";
-      markersCoordinates[markersCoordinates.length - 1].push([lat, lng, [random_id, type]]);
-      drawPolyline();
+        marker.addTo(map).bounce(1);
+        markers.push(marker);
+
+        type = "plane";
+        markersCoordinates[markersCoordinates.length - 1].push([lat, lng, [random_id, type]]);
+        drawPolyline();
+      }
+
+      map.on("click", onMapClick);
     }
-
-    map.on("click", onMapClick);
   }
 });
 
 travel_type_boat.addEventListener("click", () => {
-  travelTypeValueUpdate(false, false, false, true, false, false, false);
+  if (travel_type_selecting == true) {
+    travelTypeButtonsGrayscale();
+    travel_type_boat.querySelector("img").src = travelTypeButtonImages.get(travel_type_boat);
 
-  if (travel_type_boat_click == true) {
-    map.off("click");
-    function onMapClick(e) {
-      let lat = e.latlng.lat;
-      let lng = e.latlng.lng;
+    travelTypeValueUpdate(false, false, false, true, false, false, false);
 
-      marker = L.marker([lat, lng], {
-        icon: boat_icon,
-        travelType: "boat",
-        id: random_id,
-      });
+    if (travel_type_boat_click == true) {
+      map.off("click");
+      function onMapClick(e) {
+        travel_type_selecting = false;
+        let lat = e.latlng.lat;
+        let lng = e.latlng.lng;
 
-      marker.addTo(map).bounce(1);
-      markers.push(marker);
+        marker = L.marker([lat, lng], {
+          icon: boat_icon,
+          travelType: "boat",
+          id: random_id,
+        });
 
-      type = "boat";
-      markersCoordinates[markersCoordinates.length - 1].push([lat, lng, [random_id, type]]);
-      drawPolyline();
+        marker.addTo(map).bounce(1);
+        markers.push(marker);
+
+        type = "boat";
+        markersCoordinates[markersCoordinates.length - 1].push([lat, lng, [random_id, type]]);
+        drawPolyline();
+      }
+
+      map.on("click", onMapClick);
     }
-
-    map.on("click", onMapClick);
   }
 });
 
 travel_type_walk.addEventListener("click", () => {
-  travelTypeValueUpdate(false, false, false, false, true, false, false);
+  if (travel_type_selecting == true) {
+    travelTypeButtonsGrayscale();
+    travel_type_walk.querySelector("img").src = travelTypeButtonImages.get(travel_type_walk);
 
-  if (travel_type_walk_click == true) {
-    map.off("click");
-    function onMapClick(e) {
-      let lat = e.latlng.lat;
-      let lng = e.latlng.lng;
+    travelTypeValueUpdate(false, false, false, false, true, false, false);
 
-      marker = L.marker([lat, lng], {
-        icon: walk_icon,
-        travelType: "walk",
-        id: random_id,
-      });
+    if (travel_type_walk_click == true) {
+      map.off("click");
+      function onMapClick(e) {
+        travel_type_selecting = false;
+        let lat = e.latlng.lat;
+        let lng = e.latlng.lng;
 
-      marker.addTo(map).bounce(1);
-      markers.push(marker);
+        marker = L.marker([lat, lng], {
+          icon: walk_icon,
+          travelType: "walk",
+          id: random_id,
+        });
 
-      type = "walk";
-      markersCoordinates[markersCoordinates.length - 1].push([lat, lng, [random_id, type]]);
-      drawPolyline();
+        marker.addTo(map).bounce(1);
+        markers.push(marker);
+
+        type = "walk";
+        markersCoordinates[markersCoordinates.length - 1].push([lat, lng, [random_id, type]]);
+        drawPolyline();
+      }
+
+      map.on("click", onMapClick);
     }
-
-    map.on("click", onMapClick);
   }
 });
 
 travel_type_bicycle.addEventListener("click", () => {
-  travelTypeValueUpdate(false, false, false, false, false, true, false);
+  if (travel_type_selecting == true) {
+    travelTypeButtonsGrayscale();
+    travel_type_bicycle.querySelector("img").src = travelTypeButtonImages.get(travel_type_bicycle);
 
-  if (travel_type_bicycle_click == true) {
-    map.off("click");
-    function onMapClick(e) {
-      let lat = e.latlng.lat;
-      let lng = e.latlng.lng;
+    travelTypeValueUpdate(false, false, false, false, false, true, false);
 
-      marker = L.marker([lat, lng], {
-        icon: bicycle_icon,
-        travelType: "bicycle",
-        id: random_id,
-      });
+    if (travel_type_bicycle_click == true) {
+      map.off("click");
+      function onMapClick(e) {
+        travel_type_selecting = false;
+        let lat = e.latlng.lat;
+        let lng = e.latlng.lng;
 
-      marker.addTo(map).bounce(1);
-      markers.push(marker);
+        marker = L.marker([lat, lng], {
+          icon: bicycle_icon,
+          travelType: "bicycle",
+          id: random_id,
+        });
 
-      type = "bicycle";
-      markersCoordinates[markersCoordinates.length - 1].push([lat, lng, [random_id, type]]);
-      drawPolyline();
+        marker.addTo(map).bounce(1);
+        markers.push(marker);
+
+        type = "bicycle";
+        markersCoordinates[markersCoordinates.length - 1].push([lat, lng, [random_id, type]]);
+        drawPolyline();
+      }
+
+      map.on("click", onMapClick);
     }
-
-    map.on("click", onMapClick);
   }
 });
 
 travel_type_motorcycle.addEventListener("click", () => {
-  travelTypeValueUpdate(false, false, false, false, false, false, true);
+  if (travel_type_selecting == true) {
+    travelTypeButtonsGrayscale();
+    travel_type_motorcycle.querySelector("img").src = travelTypeButtonImages.get(travel_type_motorcycle);
 
-  if (travel_type_motorcycle_click == true) {
-    map.off("click");
-    function onMapClick(e) {
-      let lat = e.latlng.lat;
-      let lng = e.latlng.lng;
+    travelTypeValueUpdate(false, false, false, false, false, false, true);
 
-      marker = L.marker([lat, lng], {
-        icon: motorcycle_icon,
-        travelType: "motorcycle",
-        id: random_id,
-      });
+    if (travel_type_motorcycle_click == true) {
+      map.off("click");
+      function onMapClick(e) {
+        travel_type_selecting = false;
+        let lat = e.latlng.lat;
+        let lng = e.latlng.lng;
 
-      marker.addTo(map).bounce(1);
-      markers.push(marker);
+        marker = L.marker([lat, lng], {
+          icon: motorcycle_icon,
+          travelType: "motorcycle",
+          id: random_id,
+        });
 
-      type = "motorcycle";
-      markersCoordinates[markersCoordinates.length - 1].push([lat, lng, [random_id, type]]);
-      drawPolyline();
+        marker.addTo(map).bounce(1);
+        markers.push(marker);
+
+        type = "motorcycle";
+        markersCoordinates[markersCoordinates.length - 1].push([lat, lng, [random_id, type]]);
+        drawPolyline();
+      }
+
+      map.on("click", onMapClick);
     }
-
-    map.on("click", onMapClick);
   }
 });
 
@@ -576,6 +633,20 @@ function travelTypeValueUpdate(manual, car, plane, boat, walk, bicycle, motorcyc
   travel_type_walk_click = walk;
   travel_type_bicycle_click = bicycle;
   travel_type_motorcycle_click = motorcycle;
+}
+
+function travelTypeButtonsGrayscale() {
+  for (const button of travelTypeButtons) {
+    const img = button.querySelector("img");
+    img.src = travelTypeButtonImages.get(button).replace(".png", "_grayscale.png");
+  }
+}
+
+function travelTypeButtonsColor() {
+  for (const button of travelTypeButtons) {
+    const img = button.querySelector("img");
+    img.src = travelTypeButtonImages.get(button);
+  }
 }
 
 // // ↑ Travel Log / Log markers ↑
@@ -842,6 +913,8 @@ function travelLogGroupSubmit(event) {
   const $travel_logs_group_add_travel_button = document.createElement("button");
   $travel_logs_group_add_travel_button.textContent = "add individual travel";
   $travel_logs_group_add_travel_button.addEventListener("click", () => {
+    travel_type_selecting = true;
+    travelTypeButtonsColor();
     stored_log_id = $log_id.textContent;
     markersCoordinates = markersCoordinates.filter((coordinatesArray) => coordinatesArray.length > 0);
     markersCoordinates.push([]);
