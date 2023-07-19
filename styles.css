@@ -418,6 +418,20 @@ body {
   font-size: 40px;
 }
 
+.custom_cursor {
+  height: 50px;
+  width: 50px;
+  position: absolute;
+  z-index: 999;
+  cursor: pointer;
+  display: none;
+  text-align: center;
+  transform: translate(-50%, -50%);
+  top: -25%;
+  left: 50%;
+  pointer-events: none;
+}
+
 /* ↑ Other ↑  */
 
 .test_button {

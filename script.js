@@ -1,4 +1,4 @@
-// ver: 0.4.17
+// ver: 0.4.18
 
 // Bugs:
 
@@ -9,6 +9,7 @@
 
 // ---------- 1. Functional right side menu with travel logs divided on every trip (CRUD), new menu popup with a new trip settings, name, date, customizable markers and colors
 //               - prevent generating the new travel id, if travel_settings_container is present
+//               - disable all left side buttons when selecting the travel type
 //               - travel logs, make it display only the travel name, name edit ( and maybe date ), on click make it extend to show all the log options (edit, markers, highlights ...)
 //               - multi options polyline / leaflet motion
 //               - when travel type is selected, make a jpg follow the mouse until the log is finished
@@ -74,13 +75,13 @@ const marker_opacity_slider = document.getElementById("marker_opacity_slider");
 const main_logs_container_arrow = document.querySelector(".main_logs_container_arrow");
 let main_logs_container_arrow_clicked = false;
 
-let travel_logs_individual_input = "";
 let travel_logs_individual_name = "";
-travel_logs_individual_input = document.getElementById("travel_logs_individual_input");
+let travel_logs_individual_input = document.getElementById("travel_logs_individual_input");
 
-let travel_logs_group_input = "";
 let travel_logs_group_name = "";
-travel_logs_group_input = document.getElementById("travel_logs_group_input");
+let travel_logs_group_input = document.getElementById("travel_logs_group_input");
+
+const custom_cursor = document.getElementById("custom_cursor");
 
 // // ↓ Home / Basic interactiveness ↓
 
@@ -120,17 +121,26 @@ add_travel.addEventListener("click", () => {
 
 main_logs_container_arrow.addEventListener("click", function () {
   if (main_logs_container_arrow_clicked) {
-    main_logs_container_arrow.style.left = "70%";
-    main_logs_container.style.left = "75%";
+    showMainLogContainer();
   } else {
-    main_logs_container_arrow.style.left = "95%";
-    main_logs_container.style.left = "100%";
+    hideMainLogContainer();
   }
 
   main_logs_container_arrow_clicked = !main_logs_container_arrow_clicked;
 });
 
 // // ↑ Home / Basic interactiveness ↑
+
+function showMainLogContainer() {
+  main_logs_container_arrow.style.left = "70%";
+  main_logs_container.style.left = "75%";
+}
+
+function hideMainLogContainer() {
+  main_logs_container_arrow.style.left = "95%";
+  main_logs_container.style.left = "100%";
+}
+
 // ↑ Home ↑
 // ↓ Leaflet Map ↓
 
@@ -428,6 +438,7 @@ let type = "";
 
 travel_type_car.addEventListener("click", () => {
   if (travel_type_selecting == true) {
+    updateCursorImage("/content/icons/car_icon_small.png");
     travelTypeButtonsGrayscale();
     travel_type_car.querySelector("img").src = travelTypeButtonImages.get(travel_type_car);
 
@@ -462,6 +473,7 @@ travel_type_car.addEventListener("click", () => {
 
 travel_type_plane.addEventListener("click", () => {
   if (travel_type_selecting == true) {
+    updateCursorImage("/content/icons/plane_icon_small.png");
     travelTypeButtonsGrayscale();
     travel_type_plane.querySelector("img").src = travelTypeButtonImages.get(travel_type_plane);
 
@@ -495,6 +507,7 @@ travel_type_plane.addEventListener("click", () => {
 
 travel_type_boat.addEventListener("click", () => {
   if (travel_type_selecting == true) {
+    updateCursorImage("/content/icons/boat_icon_small.png");
     travelTypeButtonsGrayscale();
     travel_type_boat.querySelector("img").src = travelTypeButtonImages.get(travel_type_boat);
 
@@ -528,6 +541,7 @@ travel_type_boat.addEventListener("click", () => {
 
 travel_type_walk.addEventListener("click", () => {
   if (travel_type_selecting == true) {
+    updateCursorImage("/content/icons/walk_icon_small.png");
     travelTypeButtonsGrayscale();
     travel_type_walk.querySelector("img").src = travelTypeButtonImages.get(travel_type_walk);
 
@@ -561,6 +575,7 @@ travel_type_walk.addEventListener("click", () => {
 
 travel_type_bicycle.addEventListener("click", () => {
   if (travel_type_selecting == true) {
+    updateCursorImage("/content/icons/bicycle_icon_small.png");
     travelTypeButtonsGrayscale();
     travel_type_bicycle.querySelector("img").src = travelTypeButtonImages.get(travel_type_bicycle);
 
@@ -594,6 +609,7 @@ travel_type_bicycle.addEventListener("click", () => {
 
 travel_type_motorcycle.addEventListener("click", () => {
   if (travel_type_selecting == true) {
+    updateCursorImage("/content/icons/motorcycle_icon_small.png");
     travelTypeButtonsGrayscale();
     travel_type_motorcycle.querySelector("img").src = travelTypeButtonImages.get(travel_type_motorcycle);
 
@@ -649,12 +665,31 @@ function travelTypeButtonsColor() {
   }
 }
 
+function updateCursorImage(icon) {
+  const custom_cursor_image = document.getElementById("custom_cursor_image");
+  custom_cursor_image.src = icon;
+  document.addEventListener("mousemove", pngMouseTracking);
+  custom_cursor.style.display = "flex";
+}
+
+function pngMouseTracking(e) {
+  const offsetX = custom_cursor.offsetWidth / 80;
+  const offsetY = custom_cursor.offsetHeight / 80;
+
+  const leftPos = e.clientX - offsetX;
+  const topPos = e.clientY - offsetY;
+
+  custom_cursor.style.left = `${leftPos}px`;
+  custom_cursor.style.top = `${topPos}px`;
+}
+
 // // ↑ Travel Log / Log markers ↑
 // // ↓ Travel Log / CRUD setup ↓
 
 let travel_date_start = "";
 let travel_date_end = "";
 let stored_log_id = "";
+let isTravelGroupEmpty = "";
 
 check_icon_group.addEventListener("click", (event) => {
   random_id = "";
@@ -686,13 +721,15 @@ close_icon_group.addEventListener("click", () => {
 });
 
 check_icon_individual.addEventListener("click", (event) => {
-  map.off("click");
-
   travelTypeValueUpdate(false, false, false, false, false, false);
 
   travelLogIndividualSubmit(event);
 
   if (travel_logs_individual_name !== "") {
+    document.removeEventListener("mousemove", pngMouseTracking);
+    custom_cursor.style.display = "none";
+    map.off("click");
+    showMainLogContainer();
     travel_logs_individual_main_container.style.display = "none";
     check_icon_individual.style.display = "none";
     close_icon_individual.style.display = "none";
@@ -700,7 +737,18 @@ check_icon_individual.addEventListener("click", (event) => {
 });
 
 close_icon_individual.addEventListener("click", () => {
+  document.removeEventListener("mousemove", pngMouseTracking);
+  custom_cursor.style.display = "none";
+  map.off("click");
   travelTypeValueUpdate(false, false, false, false, false, false);
+
+  stored_log_id = random_id;
+  removeMarkers();
+  removeHighlight();
+  removeMarkersCoordinates();
+  drawPolyline();
+  removeTravelLogs();
+  removeStoredId();
 
   travel_logs_individual_input.value = "";
 
@@ -724,7 +772,7 @@ function travelLogIndividualSubmit(event) {
   travel_logs_individual_name = travel_logs_individual_input.value;
 
   if (travel_logs_individual_name === "") {
-    showInfoPopup("Please enter valid name");
+    showInfoPopup("Please enter travel name");
     return;
   }
 
@@ -897,13 +945,18 @@ function travelLogGroupSubmit(event) {
   $travel_logs_delete.textContent = "Delete";
   $travel_logs_delete.addEventListener("click", () => {
     stored_log_id = $log_id.textContent;
-    removeTravelLogs();
-    removeStoredId();
-    const index = travelLogs.indexOf(travel_logs_group_name);
-    if (index !== -1) {
-      travelLogs.splice(index, 1);
+    isGroupContentDivEmpty();
+    if (isTravelGroupEmpty == true) {
+      removeTravelLogs();
+      removeStoredId();
+      const index = travelLogs.indexOf(travel_logs_group_name);
+      if (index !== -1) {
+        travelLogs.splice(index, 1);
+      }
+      $travel_logs_group_div_main.remove();
+    } else if (isTravelGroupEmpty == false) {
+      showInfoPopup("Travel group is not empty, please remove remaining travel logs");
     }
-    $travel_logs_group_div_main.remove();
   });
   $travel_logs_group_div_settings.appendChild($travel_logs_delete);
 
@@ -913,6 +966,7 @@ function travelLogGroupSubmit(event) {
   const $travel_logs_group_add_travel_button = document.createElement("button");
   $travel_logs_group_add_travel_button.textContent = "add individual travel";
   $travel_logs_group_add_travel_button.addEventListener("click", () => {
+    hideMainLogContainer();
     travel_type_selecting = true;
     travelTypeButtonsColor();
     stored_log_id = $log_id.textContent;
@@ -1011,6 +1065,12 @@ function removeStoredId() {
   if (idToRemove !== -1) {
     storedIds.splice(idToRemove, 1);
   }
+}
+
+function isGroupContentDivEmpty() {
+  let storedContentDiv = document.getElementById(stored_log_id);
+  isTravelGroupEmpty = storedContentDiv.innerHTML.trim() === "";
+  return isTravelGroupEmpty;
 }
 
 // // ↓ Travel Log / Date picker ↓
