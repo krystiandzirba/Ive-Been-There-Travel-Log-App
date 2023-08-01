@@ -456,3 +456,13 @@ body {
   top: 15%;
   left: 60%;
 }
+
+#timeline {
+  height: 25vh;
+  width: 100vw;
+  position: absolute;
+  z-index: 800;
+  top: 86%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}

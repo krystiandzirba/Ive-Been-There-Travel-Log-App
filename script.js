@@ -1,4 +1,4 @@
-// ver: 0.4.18
+// ver: 0.5.01
 
 // Bugs:
 
@@ -12,10 +12,6 @@
 //               - disable all left side buttons when selecting the travel type
 //               - travel logs, make it display only the travel name, name edit ( and maybe date ), on click make it extend to show all the log options (edit, markers, highlights ...)
 //               - multi options polyline / leaflet motion
-//               - when travel type is selected, make a jpg follow the mouse until the log is finished
-//               - divide the travel logs on "main" travel destination / make the current travel logs, part of the main one /
-//                        (add travel > name of the travel > main travel destination stored in the travel log container > adding multiple travels to the main one
-//                        to prevent the travel types to mix and overlap in the same array)
 
 // ---------- 2. Interactive timeline at the bottom of the page, with highlighted date of every travel ...
 // ---------- 3. Separate tab to calculate the "achievements": overall trips distance (divided on the trip type: bicycle, car, plane, boat, motorcycle, walk), countries visited
@@ -105,6 +101,10 @@ home_button_main.addEventListener("click", () => {
 });
 
 add_travel.addEventListener("click", () => {
+  random_id = "";
+  random_id = randomIdGenerator();
+  timeline_start = "";
+  timeline_end = "";
   travel_type_selecting = true;
   travelTypeButtonsColor();
   travel_logs_group_input.value = "";
@@ -150,6 +150,9 @@ let markersCoordinates = [];
 let polylines = [];
 let travelLogs = [];
 let storedIds = [];
+let timelineData = {
+  events: [],
+};
 let random_id = "";
 
 import leafletConfig from "./LeafletConfig.js";
@@ -688,12 +691,15 @@ function pngMouseTracking(e) {
 
 let travel_date_start = "";
 let travel_date_end = "";
+let timeline_start = "";
+let timeline_end = "";
+
 let stored_log_id = "";
 let isTravelGroupEmpty = "";
 
 check_icon_group.addEventListener("click", (event) => {
-  random_id = "";
-  random_id = randomIdGenerator();
+  //  random_id = "";
+  //  random_id = randomIdGenerator();
 
   travelLogGroupSubmit(event);
 
@@ -841,6 +847,8 @@ function travelLogIndividualSubmit(event) {
     drawPolyline();
     removeTravelLogs();
     removeStoredId();
+    removeTimelineData(timelineData, stored_log_id);
+    window.timeline = new TL.Timeline("timeline", timelineData);
 
     const index = travelLogs.indexOf(travel_logs_individual_name);
     if (index !== -1) {
@@ -867,6 +875,10 @@ function travelLogIndividualSubmit(event) {
   // display the log
 
   travelLogs.push([travel_logs_individual_name, random_id, travel_date_start + " - " + travel_date_end]);
+
+  splitDates(timeline_start, timeline_end);
+  createTimelineData(travel_logs_individual_name);
+  window.timeline = new TL.Timeline("timeline", timelineData);
 
   travel_logs_individual_input.value = "";
   random_id = "";
@@ -949,6 +961,8 @@ function travelLogGroupSubmit(event) {
     if (isTravelGroupEmpty == true) {
       removeTravelLogs();
       removeStoredId();
+      removeTimelineData(timelineData, stored_log_id);
+      window.timeline = new TL.Timeline("timeline", timelineData);
       const index = travelLogs.indexOf(travel_logs_group_name);
       if (index !== -1) {
         travelLogs.splice(index, 1);
@@ -1006,6 +1020,10 @@ function travelLogGroupSubmit(event) {
   // display the log
 
   travelLogs.push([travel_logs_group_name, random_id, travel_date_start + " - " + travel_date_end]);
+
+  splitDates(timeline_start, timeline_end);
+  createTimelineData(travel_logs_group_name);
+  window.timeline = new TL.Timeline("timeline", timelineData);
 
   travel_logs_group_input.value = "";
   random_id = "";
@@ -1165,6 +1183,58 @@ function drawPolyline() {
 }
 
 // ↑ Leaflet Polyline ↑
+// ↓ TimelineJS ↓
+
+function splitDates(timeline_start, timeline_end) {
+  const [startYear, startMonth, startDay] = timeline_start.split("/").map(Number);
+  const [endYear, endMonth, endDay] = timeline_end.split("/").map(Number);
+
+  return {
+    startYear,
+    startMonth,
+    startDay,
+    endYear,
+    endMonth,
+    endDay,
+  };
+}
+
+function createTimelineData(headline) {
+  timeline_start = travel_date_start;
+  timeline_end = travel_date_end;
+
+  const { startYear, startMonth, startDay, endYear, endMonth, endDay } = splitDates(timeline_start, timeline_end);
+
+  let timeline_date_start = {
+    year: startYear,
+    month: startMonth,
+    day: startDay,
+  };
+
+  let timeline_date_end = {
+    year: endYear,
+    month: endMonth,
+    day: endDay,
+  };
+
+  const newEvent = {
+    unique_id: random_id,
+    start_date: timeline_date_start,
+    end_date: timeline_date_end,
+    text: {
+      headline: headline,
+    },
+  };
+
+  timelineData.events.push(newEvent);
+}
+
+function removeTimelineData(timelineData, stored_log_id) {
+  timelineData.events = timelineData.events.filter((event) => event.unique_id !== stored_log_id);
+  return timelineData;
+}
+
+// ↑ TimelineJS ↑
 
 // ↓ Other ↓
 
@@ -1200,6 +1270,9 @@ test_button.addEventListener("click", () => {
   console.log("polylines", polylines);
   console.log("Logs Array:", travelLogs);
   console.log("stored ids", storedIds);
+  console.log("timeline", timelineData);
 });
 
-test_button_2.addEventListener("click", () => {});
+test_button_2.addEventListener("click", () => {
+  window.timeline = new TL.Timeline("timeline", timelineData);
+});
