@@ -1,4 +1,4 @@
-// ver: 0.5.01
+// ver: 0.5.02
 
 // Bugs:
 
@@ -35,6 +35,8 @@ const map_tile_addon_labels = document.querySelector("#map_tile_addon_labels");
 const map_tile_addon_borders = document.querySelector("#map_tile_addon_borders");
 const map_tile_addon_train = document.querySelector("#map_tile_addon_train");
 const map_tile_addon_cycling = document.querySelector("#map_tile_addon_cycling");
+const markers_toggle = document.querySelector("#markers_toggle");
+const timeline_toggle = document.querySelector("#timeline_toggle");
 
 const home_button_main = document.getElementById("home_button_main");
 const location_container = document.getElementById("location_container");
@@ -49,7 +51,6 @@ const info_popup_text = document.getElementById("info_popup_text");
 const close_info_popup = document.getElementById("close_info_popup");
 
 const add_travel = document.getElementById("add_travel");
-const main_logs_container = document.querySelector(".main_logs_container");
 const travel_logs_individual_main_container = document.getElementById("travel_logs_individual_main_container");
 
 const travel_type_car = document.getElementById("travel_type_car");
@@ -68,8 +69,14 @@ const close_icon_individual = document.getElementById("close_icon_individual");
 const marker_color_picker = document.getElementById("marker_color_picker");
 const marker_opacity_slider = document.getElementById("marker_opacity_slider");
 
+const main_logs_container = document.querySelector(".main_logs_container");
 const main_logs_container_arrow = document.querySelector(".main_logs_container_arrow");
+const timeline_container = document.querySelector(".timeline_container");
+const timeline = document.querySelector("#timeline");
+const timeline_container_arrow = document.querySelector(".timeline_container_arrow");
 let main_logs_container_arrow_clicked = false;
+let timeline_container_arrow_clicked = false;
+let timeline_enabled = true;
 
 let travel_logs_individual_name = "";
 let travel_logs_individual_input = document.getElementById("travel_logs_individual_input");
@@ -121,9 +128,9 @@ add_travel.addEventListener("click", () => {
 
 main_logs_container_arrow.addEventListener("click", function () {
   if (main_logs_container_arrow_clicked) {
-    showMainLogContainer();
+    toggleMainLogContainerVisibility(true);
   } else {
-    hideMainLogContainer();
+    toggleMainLogContainerVisibility(false);
   }
 
   main_logs_container_arrow_clicked = !main_logs_container_arrow_clicked;
@@ -131,14 +138,14 @@ main_logs_container_arrow.addEventListener("click", function () {
 
 // // ↑ Home / Basic interactiveness ↑
 
-function showMainLogContainer() {
-  main_logs_container_arrow.style.left = "70%";
-  main_logs_container.style.left = "75%";
-}
-
-function hideMainLogContainer() {
-  main_logs_container_arrow.style.left = "95%";
-  main_logs_container.style.left = "100%";
+function toggleMainLogContainerVisibility(toggle) {
+  if (toggle) {
+    main_logs_container_arrow.style.left = "70%";
+    main_logs_container.style.left = "75%";
+  } else {
+    main_logs_container_arrow.style.left = "95%";
+    main_logs_container.style.left = "100%";
+  }
 }
 
 // ↑ Home ↑
@@ -735,7 +742,7 @@ check_icon_individual.addEventListener("click", (event) => {
     document.removeEventListener("mousemove", pngMouseTracking);
     custom_cursor.style.display = "none";
     map.off("click");
-    showMainLogContainer();
+    toggleMainLogContainerVisibility(true);
     travel_logs_individual_main_container.style.display = "none";
     check_icon_individual.style.display = "none";
     close_icon_individual.style.display = "none";
@@ -848,8 +855,9 @@ function travelLogIndividualSubmit(event) {
     removeTravelLogs();
     removeStoredId();
     removeTimelineData(timelineData, stored_log_id);
-    window.timeline = new TL.Timeline("timeline", timelineData);
-
+    if (timeline_enabled === true) {
+      window.timeline = new TL.Timeline("timeline", timelineData);
+    }
     const index = travelLogs.indexOf(travel_logs_individual_name);
     if (index !== -1) {
       travelLogs.splice(index, 1);
@@ -878,8 +886,9 @@ function travelLogIndividualSubmit(event) {
 
   splitDates(timeline_start, timeline_end);
   createTimelineData(travel_logs_individual_name);
-  window.timeline = new TL.Timeline("timeline", timelineData);
-
+  if (timeline_enabled === true) {
+    window.timeline = new TL.Timeline("timeline", timelineData);
+  }
   travel_logs_individual_input.value = "";
   random_id = "";
 }
@@ -962,7 +971,9 @@ function travelLogGroupSubmit(event) {
       removeTravelLogs();
       removeStoredId();
       removeTimelineData(timelineData, stored_log_id);
-      window.timeline = new TL.Timeline("timeline", timelineData);
+      if (timeline_enabled === true) {
+        window.timeline = new TL.Timeline("timeline", timelineData);
+      }
       const index = travelLogs.indexOf(travel_logs_group_name);
       if (index !== -1) {
         travelLogs.splice(index, 1);
@@ -980,7 +991,7 @@ function travelLogGroupSubmit(event) {
   const $travel_logs_group_add_travel_button = document.createElement("button");
   $travel_logs_group_add_travel_button.textContent = "add individual travel";
   $travel_logs_group_add_travel_button.addEventListener("click", () => {
-    hideMainLogContainer();
+    toggleMainLogContainerVisibility(false);
     travel_type_selecting = true;
     travelTypeButtonsColor();
     stored_log_id = $log_id.textContent;
@@ -1023,8 +1034,9 @@ function travelLogGroupSubmit(event) {
 
   splitDates(timeline_start, timeline_end);
   createTimelineData(travel_logs_group_name);
-  window.timeline = new TL.Timeline("timeline", timelineData);
-
+  if (timeline_enabled === true) {
+    window.timeline = new TL.Timeline("timeline", timelineData);
+  }
   travel_logs_group_input.value = "";
   random_id = "";
 }
@@ -1185,6 +1197,20 @@ function drawPolyline() {
 // ↑ Leaflet Polyline ↑
 // ↓ TimelineJS ↓
 
+timeline_toggle.addEventListener("click", () => {
+  toggleTimeline();
+});
+
+timeline_container_arrow.addEventListener("click", () => {
+  if (timeline_container_arrow_clicked) {
+    toggleTimelineContainerVisibility(true);
+  } else {
+    toggleTimelineContainerVisibility(false);
+  }
+
+  timeline_container_arrow_clicked = !timeline_container_arrow_clicked;
+});
+
 function splitDates(timeline_start, timeline_end) {
   const [startYear, startMonth, startDay] = timeline_start.split("/").map(Number);
   const [endYear, endMonth, endDay] = timeline_end.split("/").map(Number);
@@ -1234,6 +1260,30 @@ function removeTimelineData(timelineData, stored_log_id) {
   return timelineData;
 }
 
+function toggleTimelineContainerVisibility(toggle) {
+  if (toggle) {
+    timeline_container.style.transform = "translate(-50%, -50%)";
+    timeline_container_arrow.style.transform = "translate(-50%, -50%)";
+  } else {
+    timeline_container.style.transform = "translate(-50%, 60%)";
+    timeline_container_arrow.style.transform = "translate(-50%, 600%)";
+  }
+}
+
+function toggleTimeline() {
+  if (timeline_enabled) {
+    while (timeline.firstChild) {
+      timeline.removeChild(timeline.firstChild);
+    }
+  } else {
+    window.timeline = new TL.Timeline("timeline", timelineData);
+  }
+
+  timeline_enabled = !timeline_enabled;
+
+  timeline_toggle.textContent = timeline_enabled ? "Disable Timeline" : "Enable Timeline";
+}
+
 // ↑ TimelineJS ↑
 
 // ↓ Other ↓
@@ -1273,6 +1323,4 @@ test_button.addEventListener("click", () => {
   console.log("timeline", timelineData);
 });
 
-test_button_2.addEventListener("click", () => {
-  window.timeline = new TL.Timeline("timeline", timelineData);
-});
+test_button_2.addEventListener("click", () => {});

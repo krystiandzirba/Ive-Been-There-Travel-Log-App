@@ -97,6 +97,12 @@ body {
   transform: translate(-50%, -50%);
 }
 
+.timeline_toggle {
+  top: 80%;
+  left: 10%;
+  transform: translate(-50%, -50%);
+}
+
 /* ↑ Map addon layer ↑  */
 
 /* ↓ Home ↓  */
@@ -457,12 +463,37 @@ body {
   left: 60%;
 }
 
-#timeline {
-  height: 25vh;
-  width: 100vw;
+.timeline_container {
   position: absolute;
-  z-index: 800;
+  min-height: 25vh;
+  width: 100%;
+  background-color: rgb(255, 255, 255);
+  z-index: 850;
   top: 86%;
   left: 50%;
   transform: translate(-50%, -50%);
+  transition: transform 0.5s ease;
+}
+
+#timeline {
+  height: 25vh;
+  width: 100%;
+  position: absolute;
+  z-index: 800;
+}
+
+.timeline_container_arrow {
+  position: absolute;
+  z-index: 999;
+  height: 4vh;
+  top: 65%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: transform 0.5s ease;
+}
+
+.timeline_container_arrow img {
+  width: 6vw;
+  height: auto;
+  transform: rotate(90deg);
 }
