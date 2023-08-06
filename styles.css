@@ -23,6 +23,9 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  font-family: "Dosis", sans-serif;
+  font-weight: 700;
+  font-size: 1vw;
 
   text-align: center;
   border: black, 2px, solid;
@@ -101,6 +104,7 @@ body {
   top: 80%;
   left: 10%;
   transform: translate(-50%, -50%);
+  background-color: rgb(193, 255, 162);
 }
 
 /* ↑ Map addon layer ↑  */
@@ -117,6 +121,9 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  font-family: "Dosis", sans-serif;
+  font-weight: 700;
+  font-size: 1vw;
 
   text-align: center;
   border: black, 2px, solid;
@@ -249,7 +256,7 @@ body {
 }
 
 .travel_logs_group_div_main {
-  height: 70vh;
+  height: 62.5vh;
   border: 2px solid black;
   padding: 10px;
   margin-bottom: 10px;
@@ -270,6 +277,7 @@ body {
   padding: 10px;
   margin-bottom: 10px;
   background-color: rgb(243, 207, 255);
+  overflow: auto;
 }
 
 /* ↑ Logs container ↑  */
@@ -363,7 +371,6 @@ body {
   position: absolute;
   width: 35vw;
   min-height: 7vh;
-  /* background-color: rgb(172, 255, 70);  */
   top: 50%;
   left: 50%;
   transform: translate(-50%, 10%);
@@ -388,6 +395,53 @@ body {
 }
 
 /* ↑ Travel Settings container ↑  */
+
+/* ↓ TimelineJS ↓ */
+.timeline_container {
+  position: absolute;
+  min-height: 25vh;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.433);
+  z-index: 850;
+  top: 90%;
+  left: 50%;
+  transform: translate(-150%, -67.5%);
+  transition: transform 0.5s ease;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+  font-size: 4vw;
+  font-family: "Dosis", sans-serif;
+  font-weight: 400;
+}
+
+#timeline {
+  height: 25vh;
+  width: 100%;
+  position: absolute;
+  z-index: 800;
+  display: block;
+}
+
+.timeline_container_arrow {
+  position: absolute;
+  z-index: 999;
+  height: 4vh;
+  top: 84%;
+  left: 5%;
+  transform: translate(-50%, -50%);
+  transition: transform 0.5s ease;
+}
+
+.timeline_container_arrow img {
+  width: 10vh;
+  height: auto;
+  transform: rotate(180deg);
+}
+/* ↑ TimelineJS ↑ */
 
 /* ↓ Other ↓  */
 
@@ -461,39 +515,4 @@ body {
 .t2 {
   top: 15%;
   left: 60%;
-}
-
-.timeline_container {
-  position: absolute;
-  min-height: 25vh;
-  width: 100%;
-  background-color: rgb(255, 255, 255);
-  z-index: 850;
-  top: 86%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  transition: transform 0.5s ease;
-}
-
-#timeline {
-  height: 25vh;
-  width: 100%;
-  position: absolute;
-  z-index: 800;
-}
-
-.timeline_container_arrow {
-  position: absolute;
-  z-index: 999;
-  height: 4vh;
-  top: 65%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  transition: transform 0.5s ease;
-}
-
-.timeline_container_arrow img {
-  width: 6vw;
-  height: auto;
-  transform: rotate(90deg);
 }

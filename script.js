@@ -1,4 +1,4 @@
-// ver: 0.5.02
+// ver: 0.5.03
 
 // Bugs:
 
@@ -75,7 +75,6 @@ const timeline_container = document.querySelector(".timeline_container");
 const timeline = document.querySelector("#timeline");
 const timeline_container_arrow = document.querySelector(".timeline_container_arrow");
 let main_logs_container_arrow_clicked = false;
-let timeline_container_arrow_clicked = false;
 let timeline_enabled = true;
 
 let travel_logs_individual_name = "";
@@ -127,24 +126,23 @@ add_travel.addEventListener("click", () => {
 });
 
 main_logs_container_arrow.addEventListener("click", function () {
+  main_logs_container_arrow_clicked = !main_logs_container_arrow_clicked;
   if (main_logs_container_arrow_clicked) {
     toggleMainLogContainerVisibility(true);
   } else {
     toggleMainLogContainerVisibility(false);
   }
-
-  main_logs_container_arrow_clicked = !main_logs_container_arrow_clicked;
 });
 
 // // ↑ Home / Basic interactiveness ↑
 
 function toggleMainLogContainerVisibility(toggle) {
   if (toggle) {
-    main_logs_container_arrow.style.left = "70%";
-    main_logs_container.style.left = "75%";
-  } else {
     main_logs_container_arrow.style.left = "95%";
     main_logs_container.style.left = "100%";
+  } else {
+    main_logs_container_arrow.style.left = "70%";
+    main_logs_container.style.left = "75%";
   }
 }
 
@@ -192,6 +190,7 @@ let travel_type_bicycle_click = false;
 let travel_type_motorcycle_click = false;
 
 let travel_type_selecting = true;
+let timeline_visibility = false;
 
 const { mapTileLayer_A, mapTileLayer_B, mapTileLayer_C, mapTileLayer_D } = leafletConfig.tilemaps;
 const { home_icon, car_icon, plane_icon, boat_icon, walk_icon, bicycle_icon, motorcycle_icon } =
@@ -705,9 +704,6 @@ let stored_log_id = "";
 let isTravelGroupEmpty = "";
 
 check_icon_group.addEventListener("click", (event) => {
-  //  random_id = "";
-  //  random_id = randomIdGenerator();
-
   travelLogGroupSubmit(event);
 
   if (travel_logs_group_name !== "") {
@@ -742,7 +738,9 @@ check_icon_individual.addEventListener("click", (event) => {
     document.removeEventListener("mousemove", pngMouseTracking);
     custom_cursor.style.display = "none";
     map.off("click");
-    toggleMainLogContainerVisibility(true);
+
+    toggleMainLogContainerVisibility(false);
+    toggleTimelineVisibility(true);
     travel_logs_individual_main_container.style.display = "none";
     check_icon_individual.style.display = "none";
     close_icon_individual.style.display = "none";
@@ -796,6 +794,8 @@ function travelLogIndividualSubmit(event) {
 
   // div
 
+  let stored_timeline_id = random_id;
+
   const $travel_logs_individual_div_main = document.createElement("div");
   $travel_logs_individual_div_main.className = "travel_logs_individual_div_main";
 
@@ -830,6 +830,15 @@ function travelLogIndividualSubmit(event) {
       if (logIndex !== -1) {
         travelLogs[logIndex][0] = $travel_logs_individual_name_new;
       }
+    }
+    for (let i = 0; i < timelineData.events.length; i++) {
+      if (timelineData.events[i].unique_id === stored_timeline_id) {
+        timelineData.events[i].text.headline = $travel_logs_individual_name_new;
+        break;
+      }
+    }
+    if (timeline_enabled === true) {
+      window.timeline = new TL.Timeline("timeline", timelineData);
     }
   });
   $travel_logs_individual_div_main.appendChild($travel_logs_individual_name_edit);
@@ -949,6 +958,15 @@ function travelLogGroupSubmit(event) {
         travelLogs[logIndex][0] = $travel_logs_group_name_new;
       }
     }
+    for (let i = 0; i < timelineData.events.length; i++) {
+      if (timelineData.events[i].unique_id === stored_log_id) {
+        timelineData.events[i].text.headline = $travel_logs_group_name_new;
+        break;
+      }
+    }
+    if (timeline_enabled === true) {
+      window.timeline = new TL.Timeline("timeline", timelineData);
+    }
   });
   $travel_logs_group_div_settings.appendChild($travel_logs_group_name_edit);
 
@@ -991,7 +1009,8 @@ function travelLogGroupSubmit(event) {
   const $travel_logs_group_add_travel_button = document.createElement("button");
   $travel_logs_group_add_travel_button.textContent = "add individual travel";
   $travel_logs_group_add_travel_button.addEventListener("click", () => {
-    toggleMainLogContainerVisibility(false);
+    toggleMainLogContainerVisibility(true);
+    toggleTimelineVisibility(false);
     travel_type_selecting = true;
     travelTypeButtonsColor();
     stored_log_id = $log_id.textContent;
@@ -1198,17 +1217,16 @@ function drawPolyline() {
 // ↓ TimelineJS ↓
 
 timeline_toggle.addEventListener("click", () => {
+  toggleTimelineVisibility(false);
   toggleTimeline();
 });
 
 timeline_container_arrow.addEventListener("click", () => {
-  if (timeline_container_arrow_clicked) {
-    toggleTimelineContainerVisibility(true);
+  if (timeline_visibility == true) {
+    toggleTimelineVisibility(false);
   } else {
-    toggleTimelineContainerVisibility(false);
+    toggleTimelineVisibility(true);
   }
-
-  timeline_container_arrow_clicked = !timeline_container_arrow_clicked;
 });
 
 function splitDates(timeline_start, timeline_end) {
@@ -1260,13 +1278,13 @@ function removeTimelineData(timelineData, stored_log_id) {
   return timelineData;
 }
 
-function toggleTimelineContainerVisibility(toggle) {
-  if (toggle) {
-    timeline_container.style.transform = "translate(-50%, -50%)";
-    timeline_container_arrow.style.transform = "translate(-50%, -50%)";
+function toggleTimelineVisibility(toggle) {
+  if (toggle && timeline_enabled) {
+    timeline_container.style.transform = "translate(-50%, -67.5%)";
+    timeline_visibility = true;
   } else {
-    timeline_container.style.transform = "translate(-50%, 60%)";
-    timeline_container_arrow.style.transform = "translate(-50%, 600%)";
+    timeline_container.style.transform = "translate(-150%, -67.5%)";
+    timeline_visibility = false;
   }
 }
 
@@ -1279,9 +1297,9 @@ function toggleTimeline() {
     window.timeline = new TL.Timeline("timeline", timelineData);
   }
 
+  timeline_toggle.textContent = timeline_enabled ? "Timeline Disabled" : "Timeline Enabled";
+  timeline_toggle.style.backgroundColor = timeline_enabled ? "rgb(255, 162, 162)" : "rgb(193, 255, 162)";
   timeline_enabled = !timeline_enabled;
-
-  timeline_toggle.textContent = timeline_enabled ? "Disable Timeline" : "Enable Timeline";
 }
 
 // ↑ TimelineJS ↑
@@ -1323,4 +1341,6 @@ test_button.addEventListener("click", () => {
   console.log("timeline", timelineData);
 });
 
-test_button_2.addEventListener("click", () => {});
+test_button_2.addEventListener("click", () => {
+  console.log(timeline_visibility);
+});
