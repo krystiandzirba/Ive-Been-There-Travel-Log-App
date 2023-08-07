@@ -405,7 +405,7 @@ body {
   z-index: 850;
   top: 90%;
   left: 50%;
-  transform: translate(-150%, -67.5%);
+  transform: translate(-50%, 40%);
   transition: transform 0.5s ease;
 
   display: flex;
@@ -430,17 +430,22 @@ body {
   position: absolute;
   z-index: 999;
   height: 4vh;
-  top: 84%;
-  left: 5%;
-  transform: translate(-50%, -50%);
+  top: 90%;
+  left: 50%;
+  transform: translate(-50%, 0%);
   transition: transform 0.5s ease;
 }
 
 .timeline_container_arrow img {
   width: 10vh;
   height: auto;
-  transform: rotate(180deg);
+  transform: rotate(90deg);
 }
+.tl-timeaxis-background {
+  background-color: rgb(255, 167, 167);
+  color: yellow;
+}
+
 /* ↑ TimelineJS ↑ */
 
 /* ↓ Other ↓  */

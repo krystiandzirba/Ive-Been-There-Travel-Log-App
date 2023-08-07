@@ -1,4 +1,4 @@
-// ver: 0.5.03
+// ver: 0.5.04
 
 // Bugs:
 
@@ -157,6 +157,13 @@ let travelLogs = [];
 let storedIds = [];
 let timelineData = {
   events: [],
+};
+
+let timelineOptions = {
+  initial_zoom: 1,
+  timenav_position: "bottom",
+  optimal_tick_width: 100,
+  duration: 400,
 };
 let random_id = "";
 
@@ -838,7 +845,7 @@ function travelLogIndividualSubmit(event) {
       }
     }
     if (timeline_enabled === true) {
-      window.timeline = new TL.Timeline("timeline", timelineData);
+      window.timeline = new TL.Timeline("timeline", timelineData, timelineOptions);
     }
   });
   $travel_logs_individual_div_main.appendChild($travel_logs_individual_name_edit);
@@ -865,7 +872,7 @@ function travelLogIndividualSubmit(event) {
     removeStoredId();
     removeTimelineData(timelineData, stored_log_id);
     if (timeline_enabled === true) {
-      window.timeline = new TL.Timeline("timeline", timelineData);
+      window.timeline = new TL.Timeline("timeline", timelineData, timelineOptions);
     }
     const index = travelLogs.indexOf(travel_logs_individual_name);
     if (index !== -1) {
@@ -896,7 +903,7 @@ function travelLogIndividualSubmit(event) {
   splitDates(timeline_start, timeline_end);
   createTimelineData(travel_logs_individual_name);
   if (timeline_enabled === true) {
-    window.timeline = new TL.Timeline("timeline", timelineData);
+    window.timeline = new TL.Timeline("timeline", timelineData, timelineOptions);
   }
   travel_logs_individual_input.value = "";
   random_id = "";
@@ -965,7 +972,7 @@ function travelLogGroupSubmit(event) {
       }
     }
     if (timeline_enabled === true) {
-      window.timeline = new TL.Timeline("timeline", timelineData);
+      window.timeline = new TL.Timeline("timeline", timelineData, timelineOptions);
     }
   });
   $travel_logs_group_div_settings.appendChild($travel_logs_group_name_edit);
@@ -990,7 +997,7 @@ function travelLogGroupSubmit(event) {
       removeStoredId();
       removeTimelineData(timelineData, stored_log_id);
       if (timeline_enabled === true) {
-        window.timeline = new TL.Timeline("timeline", timelineData);
+        window.timeline = new TL.Timeline("timeline", timelineData, timelineOptions);
       }
       const index = travelLogs.indexOf(travel_logs_group_name);
       if (index !== -1) {
@@ -1054,7 +1061,7 @@ function travelLogGroupSubmit(event) {
   splitDates(timeline_start, timeline_end);
   createTimelineData(travel_logs_group_name);
   if (timeline_enabled === true) {
-    window.timeline = new TL.Timeline("timeline", timelineData);
+    window.timeline = new TL.Timeline("timeline", timelineData, timelineOptions);
   }
   travel_logs_group_input.value = "";
   random_id = "";
@@ -1281,9 +1288,11 @@ function removeTimelineData(timelineData, stored_log_id) {
 function toggleTimelineVisibility(toggle) {
   if (toggle && timeline_enabled) {
     timeline_container.style.transform = "translate(-50%, -67.5%)";
+    timeline_container_arrow.style.transform = "translate(-50%, -630%)";
     timeline_visibility = true;
   } else {
-    timeline_container.style.transform = "translate(-150%, -67.5%)";
+    timeline_container.style.transform = "translate(-50%, 40%)";
+    timeline_container_arrow.style.transform = "translate(-50%, 0%)";
     timeline_visibility = false;
   }
 }
@@ -1294,7 +1303,7 @@ function toggleTimeline() {
       timeline.removeChild(timeline.firstChild);
     }
   } else {
-    window.timeline = new TL.Timeline("timeline", timelineData);
+    window.timeline = new TL.Timeline("timeline", timelineData, timelineOptions);
   }
 
   timeline_toggle.textContent = timeline_enabled ? "Timeline Disabled" : "Timeline Enabled";
