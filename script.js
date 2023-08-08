@@ -1,9 +1,8 @@
-// ver: 0.5.04
+// ver: 0.5.05
 
 // Bugs:
 
 // ---------- 1. Deleting the travel log causes other travel logs highlights to be deleted (rewrite the highlights to update, based on the markers coordinates)
-// ---------- 2. Closing the individual travel menu while selecting markers, brakes the travel logs
 
 // Features to add:
 
@@ -88,21 +87,28 @@ const custom_cursor = document.getElementById("custom_cursor");
 // // ↓ Home / Basic interactiveness ↓
 
 layers_button.addEventListener("click", () => {
-  if (layers_container.style.display === "none" || layers_container.style.display === "") {
-    layers_container.style.display = "block";
+  if (travel_log_individual_container_active) {
+    return;
+  }
+
+  if (layers_container.style.display === "none" || location_container.style.display === "") {
+    toggleLayersButtonVisibility(true);
   } else {
-    layers_container.style.display = "none";
+    toggleLayersButtonVisibility(false);
   }
 });
 
 home_button_main.addEventListener("click", () => {
+  if (travel_log_individual_container_active) {
+    return;
+  }
   map.off("click");
   travelTypeValueUpdate(false, false, false, false, false, false);
 
   if (location_container.style.display === "none" || location_container.style.display === "") {
-    location_container.style.display = "block";
+    toggleLocationContainerVisibility(true);
   } else {
-    location_container.style.display = "none";
+    toggleLocationContainerVisibility(false);
   }
 });
 
@@ -119,18 +125,16 @@ add_travel.addEventListener("click", () => {
     travel_logs_group_main_container.style.display === "none" ||
     travel_logs_group_main_container.style.display === ""
   ) {
-    travel_logs_group_main_container.style.display = "block";
-    check_icon_group.style.display = "block";
-    close_icon_group.style.display = "block";
+    toggleTravelLogsGroupMainContainerVisibility(true);
   }
 });
 
 main_logs_container_arrow.addEventListener("click", function () {
   main_logs_container_arrow_clicked = !main_logs_container_arrow_clicked;
   if (main_logs_container_arrow_clicked) {
-    toggleMainLogContainerVisibility(true);
-  } else {
     toggleMainLogContainerVisibility(false);
+  } else {
+    toggleMainLogContainerVisibility(true);
   }
 });
 
@@ -138,11 +142,11 @@ main_logs_container_arrow.addEventListener("click", function () {
 
 function toggleMainLogContainerVisibility(toggle) {
   if (toggle) {
-    main_logs_container_arrow.style.left = "95%";
-    main_logs_container.style.left = "100%";
-  } else {
     main_logs_container_arrow.style.left = "70%";
     main_logs_container.style.left = "75%";
+  } else {
+    main_logs_container_arrow.style.left = "95%";
+    main_logs_container.style.left = "100%";
   }
 }
 
@@ -198,6 +202,7 @@ let travel_type_motorcycle_click = false;
 
 let travel_type_selecting = true;
 let timeline_visibility = false;
+let travel_log_individual_container_active = false;
 
 const { mapTileLayer_A, mapTileLayer_B, mapTileLayer_C, mapTileLayer_D } = leafletConfig.tilemaps;
 const { home_icon, car_icon, plane_icon, boat_icon, walk_icon, bicycle_icon, motorcycle_icon } =
@@ -685,7 +690,7 @@ function updateCursorImage(icon) {
   const custom_cursor_image = document.getElementById("custom_cursor_image");
   custom_cursor_image.src = icon;
   document.addEventListener("mousemove", pngMouseTracking);
-  custom_cursor.style.display = "flex";
+  toggleCustomCursorVisibility(true);
 }
 
 function pngMouseTracking(e) {
@@ -714,9 +719,8 @@ check_icon_group.addEventListener("click", (event) => {
   travelLogGroupSubmit(event);
 
   if (travel_logs_group_name !== "") {
-    travel_logs_group_main_container.style.display = "none";
-    check_icon_group.style.display = "none";
-    close_icon_group.style.display = "none";
+    toggleTimelineVisibility(true);
+    toggleTravelLogsGroupMainContainerVisibility(false);
   }
 });
 
@@ -726,37 +730,35 @@ close_icon_group.addEventListener("click", () => {
     travel_logs_group_main_container.style.display === "none" ||
     travel_logs_group_main_container.style.display === ""
   ) {
-    travel_logs_group_main_container.style.display = "block";
-    check_icon_group.style.display = "block";
-    close_icon_group.style.display = "block";
+    toggleTravelLogsGroupMainContainerVisibility(true);
   } else {
-    travel_logs_group_main_container.style.display = "none";
-    check_icon_group.style.display = "none";
-    close_icon_group.style.display = "none";
+    toggleTravelLogsGroupMainContainerVisibility(false);
   }
 });
 
 check_icon_individual.addEventListener("click", (event) => {
+  travel_log_individual_container_active = false;
   travelTypeValueUpdate(false, false, false, false, false, false);
 
   travelLogIndividualSubmit(event);
 
   if (travel_logs_individual_name !== "") {
     document.removeEventListener("mousemove", pngMouseTracking);
-    custom_cursor.style.display = "none";
+    toggleCustomCursorVisibility(false);
     map.off("click");
 
-    toggleMainLogContainerVisibility(false);
+    toggleMainLogContainerVisibility(true);
     toggleTimelineVisibility(true);
-    travel_logs_individual_main_container.style.display = "none";
-    check_icon_individual.style.display = "none";
-    close_icon_individual.style.display = "none";
+    toggleTravelLogsIndividualMainContainerVisibility(false);
   }
 });
 
 close_icon_individual.addEventListener("click", () => {
+  travel_log_individual_container_active = false;
+  toggleMainLogContainerVisibility(true);
+  toggleTimelineVisibility(true);
   document.removeEventListener("mousemove", pngMouseTracking);
-  custom_cursor.style.display = "none";
+  toggleCustomCursorVisibility(false);
   map.off("click");
   travelTypeValueUpdate(false, false, false, false, false, false);
 
@@ -774,13 +776,9 @@ close_icon_individual.addEventListener("click", () => {
     travel_logs_individual_main_container.style.display === "none" ||
     travel_logs_individual_main_container.style.display === ""
   ) {
-    travel_logs_individual_main_container.style.display = "block";
-    check_icon_individual.style.display = "block";
-    close_icon_individual.style.display = "block";
+    toggleTravelLogsIndividualMainContainerVisibility(true);
   } else {
-    travel_logs_individual_main_container.style.display = "none";
-    check_icon_individual.style.display = "none";
-    close_icon_individual.style.display = "none";
+    toggleTravelLogsIndividualMainContainerVisibility(false);
   }
 });
 
@@ -1010,13 +1008,16 @@ function travelLogGroupSubmit(event) {
   });
   $travel_logs_group_div_settings.appendChild($travel_logs_delete);
 
-  // delete log
-  // add individual travel button
+  // delete log group
+  // add group travel button
 
   const $travel_logs_group_add_travel_button = document.createElement("button");
   $travel_logs_group_add_travel_button.textContent = "add individual travel";
   $travel_logs_group_add_travel_button.addEventListener("click", () => {
-    toggleMainLogContainerVisibility(true);
+    travel_log_individual_container_active = true;
+    toggleLocationContainerVisibility(false);
+    toggleLayersButtonVisibility(false);
+    toggleMainLogContainerVisibility(false);
     toggleTimelineVisibility(false);
     travel_type_selecting = true;
     travelTypeButtonsColor();
@@ -1030,14 +1031,12 @@ function travelLogGroupSubmit(event) {
       travel_logs_individual_main_container.style.display === "none" ||
       travel_logs_individual_main_container.style.display === ""
     ) {
-      travel_logs_individual_main_container.style.display = "block";
-      check_icon_individual.style.display = "block";
-      close_icon_individual.style.display = "block";
+      toggleTravelLogsIndividualMainContainerVisibility(true);
     }
   });
   $travel_logs_group_div_settings.appendChild($travel_logs_group_add_travel_button);
 
-  // add individual travel button
+  // add group travel button
   // test button
 
   const $travel_logs_group_test_button = document.createElement("button");
@@ -1143,6 +1142,7 @@ $(function () {
       opens: "left",
       startDate,
       endDate,
+      showDropdowns: true,
       locale: {
         format: "YYYY/MM/DD",
       },
@@ -1351,5 +1351,53 @@ test_button.addEventListener("click", () => {
 });
 
 test_button_2.addEventListener("click", () => {
-  console.log(timeline_visibility);
+  console.log(travel_log_individual_container_active);
 });
+
+function toggleTravelLogsGroupMainContainerVisibility(toggle) {
+  if (toggle) {
+    travel_logs_group_main_container.style.display = "block";
+    check_icon_group.style.display = "block";
+    close_icon_group.style.display = "block";
+  } else {
+    travel_logs_group_main_container.style.display = "none";
+    check_icon_group.style.display = "none";
+    close_icon_group.style.display = "none";
+  }
+}
+
+function toggleTravelLogsIndividualMainContainerVisibility(toggle) {
+  if (toggle) {
+    travel_logs_individual_main_container.style.display = "block";
+    check_icon_individual.style.display = "block";
+    close_icon_individual.style.display = "block";
+  } else {
+    travel_logs_individual_main_container.style.display = "none";
+    check_icon_individual.style.display = "none";
+    close_icon_individual.style.display = "none";
+  }
+}
+
+function toggleLayersButtonVisibility(toggle) {
+  if (toggle) {
+    layers_container.style.display = "block";
+  } else {
+    layers_container.style.display = "none";
+  }
+}
+
+function toggleLocationContainerVisibility(toggle) {
+  if (toggle) {
+    location_container.style.display = "block";
+  } else {
+    location_container.style.display = "none";
+  }
+}
+
+function toggleCustomCursorVisibility(toggle) {
+  if (toggle) {
+    custom_cursor.style.display = "flex";
+  } else {
+    custom_cursor.style.display = "none";
+  }
+}
