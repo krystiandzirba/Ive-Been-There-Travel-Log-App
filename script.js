@@ -1,4 +1,4 @@
-// ver: 0.5.05
+// ver: 0.5.06
 
 // Bugs:
 
@@ -7,8 +7,6 @@
 // Features to add:
 
 // ---------- 1. Functional right side menu with travel logs divided on every trip (CRUD), new menu popup with a new trip settings, name, date, customizable markers and colors
-//               - prevent generating the new travel id, if travel_settings_container is present
-//               - disable all left side buttons when selecting the travel type
 //               - travel logs, make it display only the travel name, name edit ( and maybe date ), on click make it extend to show all the log options (edit, markers, highlights ...)
 //               - multi options polyline / leaflet motion
 
@@ -71,10 +69,18 @@ const marker_opacity_slider = document.getElementById("marker_opacity_slider");
 const main_logs_container = document.querySelector(".main_logs_container");
 const main_logs_container_arrow = document.querySelector(".main_logs_container_arrow");
 const timeline_container = document.querySelector(".timeline_container");
+const timeline_info = document.querySelector(".timeline_info");
 const timeline = document.querySelector("#timeline");
 const timeline_container_arrow = document.querySelector(".timeline_container_arrow");
-let main_logs_container_arrow_clicked = false;
+
+let timeline_visibility = false;
 let timeline_enabled = true;
+
+let is_travel_creator_active = false;
+let travel_log_individual_container_active = false;
+let layers_button_active = false;
+let home_button_active = false;
+let main_logs_container_arrow_clicked = false;
 
 let travel_logs_individual_name = "";
 let travel_logs_individual_input = document.getElementById("travel_logs_individual_input");
@@ -92,9 +98,9 @@ layers_button.addEventListener("click", () => {
   }
 
   if (layers_container.style.display === "none" || location_container.style.display === "") {
-    toggleLayersButtonVisibility(true);
+    toggleLayersButtonVisibility();
   } else {
-    toggleLayersButtonVisibility(false);
+    toggleLayersButtonVisibility();
   }
 });
 
@@ -106,26 +112,31 @@ home_button_main.addEventListener("click", () => {
   travelTypeValueUpdate(false, false, false, false, false, false);
 
   if (location_container.style.display === "none" || location_container.style.display === "") {
-    toggleLocationContainerVisibility(true);
+    toggleLocationContainerVisibility();
   } else {
-    toggleLocationContainerVisibility(false);
+    toggleLocationContainerVisibility();
   }
 });
 
 add_travel.addEventListener("click", () => {
-  random_id = "";
-  random_id = randomIdGenerator();
-  timeline_start = "";
-  timeline_end = "";
-  travel_type_selecting = true;
-  travelTypeButtonsColor();
-  travel_logs_group_input.value = "";
-  travel_logs_individual_input.value = "";
-  if (
-    travel_logs_group_main_container.style.display === "none" ||
-    travel_logs_group_main_container.style.display === ""
-  ) {
-    toggleTravelLogsGroupMainContainerVisibility(true);
+  home_button_main.style.backgroundColor = "rgb(180, 180, 180, 0.5)";
+  layers_button.style.backgroundColor = "rgb(180, 180, 180, 0.5)";
+  add_travel.style.backgroundColor = "rgb(180, 180, 180, 0.5)";
+  if (!is_travel_creator_active) {
+    random_id = "";
+    random_id = randomIdGenerator();
+    timeline_start = "";
+    timeline_end = "";
+    travelTypeButtonsColor();
+    travel_logs_group_input.value = "";
+    travel_logs_individual_input.value = "";
+    if (
+      travel_logs_group_main_container.style.display === "none" ||
+      travel_logs_group_main_container.style.display === ""
+    ) {
+      toggleTravelLogsGroupMainContainerVisibility(true);
+    }
+    is_travel_creator_active = !is_travel_creator_active;
   }
 });
 
@@ -199,10 +210,6 @@ let travel_type_boat_click = false;
 let travel_type_walk_click = false;
 let travel_type_bicycle_click = false;
 let travel_type_motorcycle_click = false;
-
-let travel_type_selecting = true;
-let timeline_visibility = false;
-let travel_log_individual_container_active = false;
 
 const { mapTileLayer_A, mapTileLayer_B, mapTileLayer_C, mapTileLayer_D } = leafletConfig.tilemaps;
 const { home_icon, car_icon, plane_icon, boat_icon, walk_icon, bicycle_icon, motorcycle_icon } =
@@ -458,7 +465,7 @@ const travelTypeButtons = [
 let type = "";
 
 travel_type_car.addEventListener("click", () => {
-  if (travel_type_selecting == true) {
+  if (is_travel_creator_active == true) {
     updateCursorImage("/content/icons/car_icon_small.png");
     travelTypeButtonsGrayscale();
     travel_type_car.querySelector("img").src = travelTypeButtonImages.get(travel_type_car);
@@ -468,7 +475,6 @@ travel_type_car.addEventListener("click", () => {
     if (travel_type_car_click == true) {
       map.off("click");
       function onMapClick(e) {
-        travel_type_selecting = false;
         let lat = e.latlng.lat;
         let lng = e.latlng.lng;
 
@@ -493,7 +499,7 @@ travel_type_car.addEventListener("click", () => {
 });
 
 travel_type_plane.addEventListener("click", () => {
-  if (travel_type_selecting == true) {
+  if (is_travel_creator_active == true) {
     updateCursorImage("/content/icons/plane_icon_small.png");
     travelTypeButtonsGrayscale();
     travel_type_plane.querySelector("img").src = travelTypeButtonImages.get(travel_type_plane);
@@ -503,7 +509,6 @@ travel_type_plane.addEventListener("click", () => {
     if (travel_type_plane_click == true) {
       map.off("click");
       function onMapClick(e) {
-        travel_type_selecting = false;
         let lat = e.latlng.lat;
         let lng = e.latlng.lng;
 
@@ -527,7 +532,7 @@ travel_type_plane.addEventListener("click", () => {
 });
 
 travel_type_boat.addEventListener("click", () => {
-  if (travel_type_selecting == true) {
+  if (is_travel_creator_active == true) {
     updateCursorImage("/content/icons/boat_icon_small.png");
     travelTypeButtonsGrayscale();
     travel_type_boat.querySelector("img").src = travelTypeButtonImages.get(travel_type_boat);
@@ -537,7 +542,6 @@ travel_type_boat.addEventListener("click", () => {
     if (travel_type_boat_click == true) {
       map.off("click");
       function onMapClick(e) {
-        travel_type_selecting = false;
         let lat = e.latlng.lat;
         let lng = e.latlng.lng;
 
@@ -561,7 +565,7 @@ travel_type_boat.addEventListener("click", () => {
 });
 
 travel_type_walk.addEventListener("click", () => {
-  if (travel_type_selecting == true) {
+  if (is_travel_creator_active == true) {
     updateCursorImage("/content/icons/walk_icon_small.png");
     travelTypeButtonsGrayscale();
     travel_type_walk.querySelector("img").src = travelTypeButtonImages.get(travel_type_walk);
@@ -571,7 +575,6 @@ travel_type_walk.addEventListener("click", () => {
     if (travel_type_walk_click == true) {
       map.off("click");
       function onMapClick(e) {
-        travel_type_selecting = false;
         let lat = e.latlng.lat;
         let lng = e.latlng.lng;
 
@@ -595,7 +598,7 @@ travel_type_walk.addEventListener("click", () => {
 });
 
 travel_type_bicycle.addEventListener("click", () => {
-  if (travel_type_selecting == true) {
+  if (is_travel_creator_active == true) {
     updateCursorImage("/content/icons/bicycle_icon_small.png");
     travelTypeButtonsGrayscale();
     travel_type_bicycle.querySelector("img").src = travelTypeButtonImages.get(travel_type_bicycle);
@@ -605,7 +608,6 @@ travel_type_bicycle.addEventListener("click", () => {
     if (travel_type_bicycle_click == true) {
       map.off("click");
       function onMapClick(e) {
-        travel_type_selecting = false;
         let lat = e.latlng.lat;
         let lng = e.latlng.lng;
 
@@ -629,7 +631,7 @@ travel_type_bicycle.addEventListener("click", () => {
 });
 
 travel_type_motorcycle.addEventListener("click", () => {
-  if (travel_type_selecting == true) {
+  if (is_travel_creator_active == true) {
     updateCursorImage("/content/icons/motorcycle_icon_small.png");
     travelTypeButtonsGrayscale();
     travel_type_motorcycle.querySelector("img").src = travelTypeButtonImages.get(travel_type_motorcycle);
@@ -639,7 +641,6 @@ travel_type_motorcycle.addEventListener("click", () => {
     if (travel_type_motorcycle_click == true) {
       map.off("click");
       function onMapClick(e) {
-        travel_type_selecting = false;
         let lat = e.latlng.lat;
         let lng = e.latlng.lng;
 
@@ -716,15 +717,26 @@ let stored_log_id = "";
 let isTravelGroupEmpty = "";
 
 check_icon_group.addEventListener("click", (event) => {
+  home_button_main.style.backgroundColor = "rgb(255, 255, 190)";
+  layers_button.style.backgroundColor = "rgb(255, 255, 190)";
+  add_travel.style.backgroundColor = "rgb(255, 255, 190)";
+  is_travel_creator_active = false;
   travelLogGroupSubmit(event);
 
   if (travel_logs_group_name !== "") {
     toggleTimelineVisibility(true);
     toggleTravelLogsGroupMainContainerVisibility(false);
+    timelineInfoToggle();
   }
 });
 
 close_icon_group.addEventListener("click", () => {
+  home_button_main.style.backgroundColor = "rgb(255, 255, 190)";
+  layers_button.style.backgroundColor = "rgb(255, 255, 190)";
+  add_travel.style.backgroundColor = "rgb(255, 255, 190)";
+  is_travel_creator_active = false;
+  stored_log_id = random_id;
+  removeStoredId();
   travel_logs_group_input.value = "";
   if (
     travel_logs_group_main_container.style.display === "none" ||
@@ -741,7 +753,6 @@ check_icon_individual.addEventListener("click", (event) => {
   travelTypeValueUpdate(false, false, false, false, false, false);
 
   travelLogIndividualSubmit(event);
-
   if (travel_logs_individual_name !== "") {
     document.removeEventListener("mousemove", pngMouseTracking);
     toggleCustomCursorVisibility(false);
@@ -750,6 +761,10 @@ check_icon_individual.addEventListener("click", (event) => {
     toggleMainLogContainerVisibility(true);
     toggleTimelineVisibility(true);
     toggleTravelLogsIndividualMainContainerVisibility(false);
+    timelineInfoToggle();
+    home_button_main.style.backgroundColor = "rgb(255, 255, 190)";
+    layers_button.style.backgroundColor = "rgb(255, 255, 190)";
+    is_travel_creator_active = false;
   }
 });
 
@@ -780,6 +795,9 @@ close_icon_individual.addEventListener("click", () => {
   } else {
     toggleTravelLogsIndividualMainContainerVisibility(false);
   }
+  home_button_main.style.backgroundColor = "rgb(255, 255, 190)";
+  layers_button.style.backgroundColor = "rgb(255, 255, 190)";
+  is_travel_creator_active = false;
 });
 
 function travelLogIndividualSubmit(event) {
@@ -869,6 +887,7 @@ function travelLogIndividualSubmit(event) {
     removeTravelLogs();
     removeStoredId();
     removeTimelineData(timelineData, stored_log_id);
+    timelineInfoToggle();
     if (timeline_enabled === true) {
       window.timeline = new TL.Timeline("timeline", timelineData, timelineOptions);
     }
@@ -994,6 +1013,7 @@ function travelLogGroupSubmit(event) {
       removeTravelLogs();
       removeStoredId();
       removeTimelineData(timelineData, stored_log_id);
+      timelineInfoToggle();
       if (timeline_enabled === true) {
         window.timeline = new TL.Timeline("timeline", timelineData, timelineOptions);
       }
@@ -1014,13 +1034,18 @@ function travelLogGroupSubmit(event) {
   const $travel_logs_group_add_travel_button = document.createElement("button");
   $travel_logs_group_add_travel_button.textContent = "add individual travel";
   $travel_logs_group_add_travel_button.addEventListener("click", () => {
+    layers_button_active = false;
+    home_button_active = false;
     travel_log_individual_container_active = true;
-    toggleLocationContainerVisibility(false);
-    toggleLayersButtonVisibility(false);
+    is_travel_creator_active = true;
+    toggleLocationContainerVisibility();
+    toggleLayersButtonVisibility();
+    toggleLocationContainerVisibility();
+    toggleLayersButtonVisibility();
+    travelTypeButtonsColor();
     toggleMainLogContainerVisibility(false);
     toggleTimelineVisibility(false);
-    travel_type_selecting = true;
-    travelTypeButtonsColor();
+
     stored_log_id = $log_id.textContent;
     markersCoordinates = markersCoordinates.filter((coordinatesArray) => coordinatesArray.length > 0);
     markersCoordinates.push([]);
@@ -1126,6 +1151,48 @@ function isGroupContentDivEmpty() {
   let storedContentDiv = document.getElementById(stored_log_id);
   isTravelGroupEmpty = storedContentDiv.innerHTML.trim() === "";
   return isTravelGroupEmpty;
+}
+
+function toggleTravelLogsGroupMainContainerVisibility(toggle) {
+  if (toggle) {
+    travel_logs_group_main_container.style.display = "block";
+    check_icon_group.style.display = "block";
+    close_icon_group.style.display = "block";
+  } else {
+    travel_logs_group_main_container.style.display = "none";
+    check_icon_group.style.display = "none";
+    close_icon_group.style.display = "none";
+  }
+}
+
+function toggleTravelLogsIndividualMainContainerVisibility(toggle) {
+  if (toggle) {
+    travel_logs_individual_main_container.style.display = "block";
+    check_icon_individual.style.display = "block";
+    close_icon_individual.style.display = "block";
+  } else {
+    travel_logs_individual_main_container.style.display = "none";
+    check_icon_individual.style.display = "none";
+    close_icon_individual.style.display = "none";
+  }
+}
+function toggleLayersButtonVisibility() {
+  layers_container.style.display = !layers_button_active ? "block" : "none";
+  layers_button_active = !layers_button_active;
+}
+
+function toggleLocationContainerVisibility() {
+  location_container.style.display = !home_button_active ? "block" : "none";
+  if (is_travel_creator_active) {
+    home_button_main.style.backgroundColor = "rgb(180, 180, 180, 0.5)";
+    layers_button.style.backgroundColor = "rgb(180, 180, 180, 0.5)";
+  }
+
+  home_button_active = !home_button_active;
+}
+
+function toggleCustomCursorVisibility(toggle) {
+  custom_cursor.style.display = toggle ? "flex" : "none";
 }
 
 // // ↓ Travel Log / Date picker ↓
@@ -1311,6 +1378,14 @@ function toggleTimeline() {
   timeline_enabled = !timeline_enabled;
 }
 
+function timelineInfoToggle() {
+  if (timelineData.events.length === 0) {
+    timeline_info.style.opacity = "1";
+  } else {
+    timeline_info.style.opacity = "0";
+  }
+}
+
 // ↑ TimelineJS ↑
 
 // ↓ Other ↓
@@ -1351,53 +1426,5 @@ test_button.addEventListener("click", () => {
 });
 
 test_button_2.addEventListener("click", () => {
-  console.log(travel_log_individual_container_active);
+  console.log(is_travel_creator_active);
 });
-
-function toggleTravelLogsGroupMainContainerVisibility(toggle) {
-  if (toggle) {
-    travel_logs_group_main_container.style.display = "block";
-    check_icon_group.style.display = "block";
-    close_icon_group.style.display = "block";
-  } else {
-    travel_logs_group_main_container.style.display = "none";
-    check_icon_group.style.display = "none";
-    close_icon_group.style.display = "none";
-  }
-}
-
-function toggleTravelLogsIndividualMainContainerVisibility(toggle) {
-  if (toggle) {
-    travel_logs_individual_main_container.style.display = "block";
-    check_icon_individual.style.display = "block";
-    close_icon_individual.style.display = "block";
-  } else {
-    travel_logs_individual_main_container.style.display = "none";
-    check_icon_individual.style.display = "none";
-    close_icon_individual.style.display = "none";
-  }
-}
-
-function toggleLayersButtonVisibility(toggle) {
-  if (toggle) {
-    layers_container.style.display = "block";
-  } else {
-    layers_container.style.display = "none";
-  }
-}
-
-function toggleLocationContainerVisibility(toggle) {
-  if (toggle) {
-    location_container.style.display = "block";
-  } else {
-    location_container.style.display = "none";
-  }
-}
-
-function toggleCustomCursorVisibility(toggle) {
-  if (toggle) {
-    custom_cursor.style.display = "flex";
-  } else {
-    custom_cursor.style.display = "none";
-  }
-}
