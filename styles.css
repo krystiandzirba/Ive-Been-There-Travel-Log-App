@@ -16,6 +16,7 @@ body {
 .layer_button {
   height: 50px;
   width: 100px;
+  left: 10%;
   background-color: rgb(255, 255, 255);
   position: absolute;
   z-index: 999;
@@ -37,32 +38,27 @@ body {
 
 .layer_0 {
   top: 5%;
-  left: 10%;
   transform: translate(-50%, -50%);
   background-color: rgb(255, 255, 190);
 }
 
 .layer_1 {
-  top: 12.5%;
-  left: 10%;
+  top: 11%;
   transform: translate(-50%, -50%);
 }
 
 .layer_2 {
-  top: 20%;
-  left: 10%;
+  top: 17%;
   transform: translate(-50%, -50%);
 }
 
 .layer_3 {
-  top: 27.5%;
-  left: 10%;
+  top: 23%;
   transform: translate(-50%, -50%);
 }
 
 .layer_4 {
-  top: 35%;
-  left: 10%;
+  top: 29%;
   transform: translate(-50%, -50%);
 }
 
@@ -71,38 +67,37 @@ body {
 /* ↓ Map addon layer ↓  */
 
 .addon_labels {
-  top: 42.5%;
-  left: 10%;
+  top: 35%;
   transform: translate(-50%, -50%);
 }
 
 .addon_borders {
-  top: 50%;
-  left: 10%;
+  top: 41%;
   transform: translate(-50%, -50%);
 }
 
 .addon_train {
-  top: 57.5%;
-  left: 10%;
+  top: 47%;
   transform: translate(-50%, -50%);
 }
 
 .addon_cycling {
-  top: 65%;
-  left: 10%;
+  top: 53%;
   transform: translate(-50%, -50%);
 }
 
 .markers_toggle {
-  top: 72.5%;
-  left: 10%;
+  top: 59%;
+  transform: translate(-50%, -50%);
+}
+
+.polylines_toggle {
+  top: 65%;
   transform: translate(-50%, -50%);
 }
 
 .timeline_toggle {
-  top: 80%;
-  left: 10%;
+  top: 71%;
   transform: translate(-50%, -50%);
   background-color: rgb(193, 255, 162);
 }
@@ -419,6 +414,7 @@ body {
 }
 
 .timeline_info {
+  pointer-events: none;
   display: block;
   padding: 0;
   margin: 0;
@@ -453,10 +449,6 @@ body {
   width: 10vh;
   height: auto;
   transform: rotate(90deg);
-}
-.tl-timeaxis-background {
-  background-color: rgb(255, 167, 167);
-  color: yellow;
 }
 
 /* ↑ TimelineJS ↑ */

@@ -1,8 +1,8 @@
-// ver: 0.5.07
+// ver: 0.5.08
 
 // Bugs:
 
-// ---------- 1. Travel logs interactions (delete, add, whatever) while markers and polylines are toggled off, causes both to break
+// ---
 
 // Features to add:
 
@@ -10,12 +10,12 @@
 //               - multi options polyline / leaflet motion
 //               - add a CRUD button to hide the visiblity of linked travel logs (highlights, markers etc.)
 
-// ---------- 2. Interactive timeline at the bottom of the page, with highlighted date of every travel ...
 // ---------- 3. Separate tab to calculate the "achievements": overall trips distance (divided on the trip type: bicycle, car, plane, boat, motorcycle, walk), countries visited
 // ---------- 4. Add local storage to save the trip progress and settings
 // ---------- 5. new UI / Add loading animations before the page/content load
 // ---------- 6. Add different page styles (font, animations, images, backgrounds, theme) - modern / middleage / other
-// ---------- 7. Rewrite to React
+// ---------- 7. Add different languages
+// ---------- 8. Rewrite to React
 
 // download the polyline offset, polyline snake anim / polyline decorator
 
@@ -33,6 +33,7 @@ const map_tile_addon_borders = document.querySelector("#map_tile_addon_borders")
 const map_tile_addon_train = document.querySelector("#map_tile_addon_train");
 const map_tile_addon_cycling = document.querySelector("#map_tile_addon_cycling");
 const markers_toggle = document.querySelector("#markers_toggle");
+const polylines_toggle = document.querySelector("#polylines_toggle");
 const timeline_toggle = document.querySelector("#timeline_toggle");
 
 const home_button_main = document.getElementById("home_button_main");
@@ -77,6 +78,8 @@ const custom_cursor = document.getElementById("custom_cursor");
 
 let timeline_visibility = false;
 let timeline_enabled = true;
+let markers_visibility = true;
+let polyline_visibility = true;
 
 let is_travel_creator_active = false;
 let travel_log_individual_container_active = false;
@@ -182,6 +185,7 @@ let timelineOptions = {
   timenav_position: "bottom",
   optimal_tick_width: 100,
   duration: 400,
+  font: "bitter-raleway",
 };
 let random_id = "";
 
@@ -250,23 +254,35 @@ function switchTileMap(layer) {
 // // ↓ Leaflet Map / Marker + Polyline visibility toggle ↓
 
 markers_toggle.addEventListener("click", () => {
+  toggleMarkersVisibility();
+});
+
+polylines_toggle.addEventListener("click", () => {
+  togglePolylineVisibility();
+});
+
+function toggleMarkersVisibility() {
   markers.forEach((marker) => {
-    if (map.hasLayer(marker)) {
+    if (map.hasLayer(marker) && markers_visibility) {
       marker.removeFrom(map);
     } else {
       marker.addTo(map);
     }
   });
+  markers_visibility = !markers_visibility;
+}
 
+function togglePolylineVisibility() {
   for (let i = 0; i < polylines.length; i++) {
     const polyline = polylines[i][0];
-    if (map.hasLayer(polyline)) {
+    if (map.hasLayer(polyline) && polyline_visibility) {
       map.removeLayer(polyline);
     } else {
       map.addLayer(polyline);
     }
   }
-});
+  polyline_visibility = !polyline_visibility;
+}
 
 // // ↑ Leaflet Map / Marker + Polyline visibility toggle ↑
 // // ↓ Leaflet Map / Custom Home + marker Highlight Color + opacity ↓
@@ -745,6 +761,7 @@ check_icon_group.addEventListener("click", (event) => {
     toggleTimelineVisibility(true);
     toggleTravelLogsGroupMainContainerVisibility(false);
     timelineInfoToggle();
+    closeInfoPopup();
   }
 });
 
@@ -755,6 +772,7 @@ close_icon_group.addEventListener("click", () => {
   is_travel_creator_active = false;
   stored_log_id = random_id;
   removeStoredId();
+  closeInfoPopup();
   travel_logs_group_input.value = "";
   if (
     travel_logs_group_main_container.style.display === "none" ||
@@ -782,6 +800,7 @@ check_icon_individual.addEventListener("click", (event) => {
     toggleTimelineVisibility(true);
     toggleTravelLogsIndividualMainContainerVisibility(false);
     timelineInfoToggle();
+    closeInfoPopup();
     home_button_main.style.backgroundColor = "rgb(255, 255, 190)";
     layers_button.style.backgroundColor = "rgb(255, 255, 190)";
     is_travel_creator_active = false;
@@ -792,6 +811,7 @@ close_icon_individual.addEventListener("click", () => {
   travel_log_individual_container_active = false;
   toggleMainLogContainerVisibility(true);
   toggleTimelineVisibility(true);
+  closeInfoPopup();
   document.removeEventListener("mousemove", pngMouseTracking);
   toggleCustomCursorVisibility(false);
   map.off("click");
@@ -891,7 +911,6 @@ function travelLogIndividualSubmit(event) {
 
   const $log_id = document.createElement("span");
   $log_id.textContent = random_id;
-  $travel_logs_individual_div_main.appendChild($log_id);
 
   // travel id
   // delete log
@@ -900,6 +919,10 @@ function travelLogIndividualSubmit(event) {
   $travel_logs_delete.textContent = "Delete";
   $travel_logs_delete.addEventListener("click", () => {
     stored_log_id = $log_id.textContent;
+    markers_visibility = false;
+    polyline_visibility = false;
+    toggleMarkersVisibility();
+    togglePolylineVisibility();
     removeMarkers();
     removeHighlights();
     removeMarkersCoordinates();
@@ -920,14 +943,6 @@ function travelLogIndividualSubmit(event) {
   $travel_logs_individual_div_main.appendChild($travel_logs_delete);
 
   // delete log
-  // test button
-
-  const $travel_logs_individual_test_button = document.createElement("button");
-  $travel_logs_individual_test_button.textContent = "logs test";
-  $travel_logs_individual_test_button.addEventListener("click", () => {});
-  $travel_logs_individual_div_main.appendChild($travel_logs_individual_test_button);
-
-  // test button
   // display the log
 
   const $content_div = document.getElementById(stored_log_id);
@@ -1019,7 +1034,6 @@ function travelLogGroupSubmit(event) {
 
   const $log_id = document.createElement("span");
   $log_id.textContent = random_id;
-  $travel_logs_group_div_settings.appendChild($log_id);
 
   // travel id
   // delete log group
@@ -1058,6 +1072,10 @@ function travelLogGroupSubmit(event) {
     home_button_active = false;
     travel_log_individual_container_active = true;
     is_travel_creator_active = true;
+    markers_visibility = false;
+    polyline_visibility = false;
+    toggleMarkersVisibility();
+    togglePolylineVisibility();
     toggleLocationContainerVisibility();
     toggleLayersButtonVisibility();
     toggleLocationContainerVisibility();
@@ -1082,15 +1100,6 @@ function travelLogGroupSubmit(event) {
   $travel_logs_group_div_settings.appendChild($travel_logs_group_add_travel_button);
 
   // add group travel button
-  // test button
-
-  const $travel_logs_group_test_button = document.createElement("button");
-  $travel_logs_group_test_button.textContent = "test";
-  $travel_logs_group_test_button.addEventListener("click", () => {});
-
-  $travel_logs_group_div_settings.appendChild($travel_logs_group_test_button);
-
-  // test button
   // display the log
 
   const $logs_list = document.getElementById("logs_list");
@@ -1228,9 +1237,6 @@ $(function () {
     function (start, end, label) {
       travel_date_start = start.format("YYYY/MM/DD");
       travel_date_end = end.format("YYYY/MM/DD");
-
-      console.log("Start Date: " + travel_date_start);
-      console.log("End Date: " + travel_date_end);
     }
   );
 });
