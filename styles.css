@@ -452,6 +452,44 @@ body {
 }
 
 /* ↑ TimelineJS ↑ */
+/* ↓ Travel stats ↓ */
+
+.main_statistics_container {
+  background-color: rgb(255, 255, 255);
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translate(-50%, -150%);
+  z-index: 999;
+  min-height: 30vh;
+  width: 40vw;
+  display: grid;
+  grid-template-columns: repeat(1, 3fr);
+  grid-gap: 10px;
+  transition: transform 0.5s ease;
+}
+.grid_item {
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+
+.main_statistics_container_arrow {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -800%);
+  z-index: 999;
+  height: 4vh;
+  transition: transform 0.5s ease;
+}
+
+.main_statistics_container_arrow img {
+  width: 10vh;
+  height: auto;
+  transform: rotate(270deg);
+}
+
+/* ↑ Travel stats ↑ */
 
 /* ↓ Other ↓  */
 

@@ -1,4 +1,4 @@
-// ver: 0.5.08
+// ver: 0.6.01
 
 // Bugs:
 
@@ -73,6 +73,8 @@ const timeline_container = document.querySelector(".timeline_container");
 const timeline_info = document.querySelector(".timeline_info");
 const timeline = document.querySelector("#timeline");
 const timeline_container_arrow = document.querySelector(".timeline_container_arrow");
+const main_statistics_container = document.querySelector(".main_statistics_container");
+const main_statistics_container_arrow = document.querySelector(".main_statistics_container_arrow");
 
 const custom_cursor = document.getElementById("custom_cursor");
 
@@ -86,6 +88,7 @@ let travel_log_individual_container_active = false;
 let layers_button_active = false;
 let home_button_active = false;
 let main_logs_container_arrow_clicked = false;
+let main_statistics_container_arrow_clicked = false;
 
 let travel_logs_individual_name = "";
 let travel_logs_group_name = "";
@@ -170,15 +173,16 @@ function toggleMainLogContainerVisibility(toggle) {
 // ↑ Home ↑
 // ↓ Leaflet Map ↓
 
-let highlights = [];
-let markers = [];
-let markersCoordinates = [];
-let polylines = [];
-let travelLogs = [];
-let storedIds = [];
-let timelineData = {
+/* LS */ let highlights = [];
+/* LS */ let markers = [];
+/* LS */ let markersCoordinates = [];
+/* TP */ let polylines = [];
+/* LS */ let travelLogs = [];
+/* LS */ let storedIds = [];
+/* LS */ let timelineData = {
   events: [],
 };
+/* TP */ let rawCoordinatesDistances = [];
 
 let timelineOptions = {
   initial_zoom: 1,
@@ -1407,6 +1411,23 @@ function timelineInfoToggle() {
 
 // ↑ TimelineJS ↑
 
+// ↓ Travel Statistics ↓
+
+main_statistics_container_arrow.addEventListener("click", () => {
+  if (!is_travel_creator_active) {
+    main_statistics_container_arrow_clicked = !main_statistics_container_arrow_clicked;
+    if (main_statistics_container_arrow_clicked) {
+      console.log(main_statistics_container_arrow_clicked);
+      toggleStatisticsVisibility(true);
+    } else {
+      toggleStatisticsVisibility(false);
+      console.log(main_statistics_container_arrow_clicked);
+    }
+  }
+});
+
+// ↑ Travel Statistics ↑
+
 // ↓ Other ↓
 
 // ↓ Other / Info popup ↓
@@ -1445,5 +1466,83 @@ test_button.addEventListener("click", () => {
 });
 
 test_button_2.addEventListener("click", () => {
-  console.log();
+  calculateDistances();
+  const distance_breakdown = analyzeDistances(rawCoordinatesDistances);
+
+  console.log("Highest Distance:", distance_breakdown.highest_distance);
+  console.log("Lowest Distance:", distance_breakdown.lowest_distance);
+  console.log("Total Distance:", distance_breakdown.total_distance);
+  updateTravelStats();
 });
+
+let highest_distance = 0;
+let lowest_distance = 0;
+let total_distance = 0;
+
+function calculateDistance(coord_1, coord_2) {
+  return L.latLng(coord_1).distanceTo(L.latLng(coord_2));
+}
+
+function calculateDistances() {
+  rawCoordinatesDistances = [];
+
+  for (let i = 0; i < markersCoordinates.length; i++) {
+    let subDistances = [];
+
+    for (let j = 0; j < markersCoordinates[i].length - 1; j++) {
+      let distance = calculateDistance(markersCoordinates[i][j], markersCoordinates[i][j + 1]);
+      subDistances.push(distance);
+    }
+
+    rawCoordinatesDistances.push(subDistances);
+  }
+
+  console.log(rawCoordinatesDistances);
+}
+
+function analyzeDistances(distances) {
+  let allDistances = [];
+  highest_distance = Number.NEGATIVE_INFINITY;
+  lowest_distance = Number.POSITIVE_INFINITY;
+
+  for (let i = 0; i < distances.length; i++) {
+    for (let j = 0; j < distances[i].length; j++) {
+      const distance = distances[i][j];
+      allDistances.push(distance);
+
+      if (distance > highest_distance) {
+        highest_distance = distance;
+      }
+
+      if (distance < lowest_distance) {
+        lowest_distance = distance;
+      }
+    }
+  }
+
+  total_distance = allDistances.reduce((sum, distance) => sum + distance, 0);
+
+  return {
+    //   highest_distance,
+    //   lowest_distance,
+    //   total_distance,
+  };
+}
+
+function updateTravelStats() {
+  document.getElementById("highest_distance").textContent = highest_distance;
+  document.getElementById("lowest_distance").textContent = lowest_distance;
+  document.getElementById("total_distance").textContent = total_distance;
+}
+
+function toggleStatisticsVisibility(toggle) {
+  if (toggle) {
+    main_statistics_container.style.transform = "translate(-50%, -50%)";
+    main_statistics_container_arrow.style.transform = "translate(-50%, -50%)";
+    main_statistics_container_arrow_clicked = true;
+  } else {
+    main_statistics_container.style.transform = "translate(-50%, -150%)";
+    main_statistics_container_arrow.style.transform = "translate(-50%, -800%)";
+    main_statistics_container_arrow_clicked = false;
+  }
+}
