@@ -1,4 +1,4 @@
-// ver: 0.6.01
+// ver: 0.6.02
 
 // Bugs:
 
@@ -126,6 +126,7 @@ home_button_main.addEventListener("click", () => {
 add_travel.addEventListener("click", () => {
   toggleMainLogContainerVisibility(false);
   toggleTimelineVisibility(false);
+  toggleStatisticsVisibility(false);
   home_button_main.style.backgroundColor = "rgb(180, 180, 180, 0.5)";
   layers_button.style.backgroundColor = "rgb(180, 180, 180, 0.5)";
   add_travel.style.backgroundColor = "rgb(180, 180, 180, 0.5)";
@@ -1087,6 +1088,7 @@ function travelLogGroupSubmit(event) {
     travelTypeButtonsColor();
     toggleMainLogContainerVisibility(false);
     toggleTimelineVisibility(false);
+    toggleStatisticsVisibility(false);
 
     stored_log_id = $log_id.textContent;
     markersCoordinates = markersCoordinates.filter((coordinatesArray) => coordinatesArray.length > 0);
@@ -1463,15 +1465,25 @@ test_button.addEventListener("click", () => {
   console.log("Logs Array:", travelLogs);
   console.log("stored ids", storedIds);
   console.log("timeline", timelineData);
+
+  console.log("raw coordinates distances", rawCoordinatesDistances);
+
+  console.log("Highest Distance:", highest_distance.toFixed(2), "km");
+  console.log("Lowest Distance:", lowest_distance.toFixed(2), "km");
+  console.log("Total Distance:", total_distance.toFixed(2), "km");
+
+  console.log("Total Car Distance:", total_car_distance.toFixed(2), "km");
+  console.log("Total Plane Distance:", total_plane_distance.toFixed(2), "km");
+  console.log("Total Boat Distance:", total_boat_distance.toFixed(2), "km");
+  console.log("Total Walk Distance:", total_walk_distance.toFixed(2), "km");
+  console.log("Total Bicycle Distance:", total_bicycle_distance.toFixed(2), "km");
+  console.log("Total Motorcycle Distance:", total_motorcycle_distance.toFixed(2), "km");
 });
 
 test_button_2.addEventListener("click", () => {
   calculateDistances();
-  const distance_breakdown = analyzeDistances(rawCoordinatesDistances);
-
-  console.log("Highest Distance:", distance_breakdown.highest_distance);
-  console.log("Lowest Distance:", distance_breakdown.lowest_distance);
-  console.log("Total Distance:", distance_breakdown.total_distance);
+  distancesBreakdown(rawCoordinatesDistances);
+  calculateTotalDistances(rawCoordinatesDistances);
   updateTravelStats();
 });
 
@@ -1479,35 +1491,42 @@ let highest_distance = 0;
 let lowest_distance = 0;
 let total_distance = 0;
 
-function calculateDistance(coord_1, coord_2) {
-  return L.latLng(coord_1).distanceTo(L.latLng(coord_2));
-}
+let total_car_distance = 0;
+let total_plane_distance = 0;
+let total_boat_distance = 0;
+let total_walk_distance = 0;
+let total_bicycle_distance = 0;
+let total_motorcycle_distance = 0;
 
 function calculateDistances() {
   rawCoordinatesDistances = [];
 
   for (let i = 0; i < markersCoordinates.length; i++) {
-    let subDistances = [];
+    let sub_distances = [];
 
     for (let j = 0; j < markersCoordinates[i].length - 1; j++) {
       let distance = calculateDistance(markersCoordinates[i][j], markersCoordinates[i][j + 1]);
-      subDistances.push(distance);
+      let distance_info = markersCoordinates[i][j][2];
+      sub_distances.push({ distance, distance_info });
     }
 
-    rawCoordinatesDistances.push(subDistances);
+    rawCoordinatesDistances.push(sub_distances);
   }
-
-  console.log(rawCoordinatesDistances);
 }
 
-function analyzeDistances(distances) {
+function calculateDistance(coord_1, coord_2) {
+  return L.latLng(coord_1[0], coord_1[1]).distanceTo(L.latLng(coord_2[0], coord_2[1])) / 1000;
+}
+
+function distancesBreakdown(distances) {
+  total_distance = 0;
   let allDistances = [];
   highest_distance = Number.NEGATIVE_INFINITY;
   lowest_distance = Number.POSITIVE_INFINITY;
 
   for (let i = 0; i < distances.length; i++) {
     for (let j = 0; j < distances[i].length; j++) {
-      const distance = distances[i][j];
+      const { distance, distance_info } = distances[i][j];
       allDistances.push(distance);
 
       if (distance > highest_distance) {
@@ -1517,32 +1536,82 @@ function analyzeDistances(distances) {
       if (distance < lowest_distance) {
         lowest_distance = distance;
       }
+
+      total_distance += distance;
     }
   }
 
-  total_distance = allDistances.reduce((sum, distance) => sum + distance, 0);
-
   return {
-    //   highest_distance,
-    //   lowest_distance,
-    //   total_distance,
+    highest_distance,
+    lowest_distance,
+    total_distance,
   };
 }
 
 function updateTravelStats() {
-  document.getElementById("highest_distance").textContent = highest_distance;
-  document.getElementById("lowest_distance").textContent = lowest_distance;
-  document.getElementById("total_distance").textContent = total_distance;
+  document.getElementById("highest_distance").textContent = highest_distance.toFixed(2);
+  document.getElementById("lowest_distance").textContent = lowest_distance.toFixed(2);
+  document.getElementById("total_distance").textContent = total_distance.toFixed(2);
+
+  document.getElementById("total_car_distance").textContent = total_car_distance.toFixed(2);
+  document.getElementById("total_plane_distance").textContent = total_plane_distance.toFixed(2);
+  document.getElementById("total_boat_distance").textContent = total_boat_distance.toFixed(2);
+  document.getElementById("total_walk_distance").textContent = total_walk_distance.toFixed(2);
+  document.getElementById("total_bicycle_distance").textContent = total_bicycle_distance.toFixed(2);
+  document.getElementById("total_motorcycle_distance").textContent = total_motorcycle_distance.toFixed(2);
 }
 
 function toggleStatisticsVisibility(toggle) {
   if (toggle) {
-    main_statistics_container.style.transform = "translate(-50%, -50%)";
-    main_statistics_container_arrow.style.transform = "translate(-50%, -50%)";
+    main_statistics_container.style.transform = "translate(-50%, -25%)";
+    main_statistics_container_arrow.style.transform = "translate(-50%, 27vh)";
     main_statistics_container_arrow_clicked = true;
   } else {
-    main_statistics_container.style.transform = "translate(-50%, -150%)";
-    main_statistics_container_arrow.style.transform = "translate(-50%, -800%)";
+    main_statistics_container.style.transform = "translate(-50%, -130%)";
+    main_statistics_container_arrow.style.transform = "translate(-50%, -32vh)";
     main_statistics_container_arrow_clicked = false;
   }
+}
+
+function calculateTotalDistances(distances) {
+  total_car_distance = 0;
+  total_plane_distance = 0;
+  total_boat_distance = 0;
+  total_walk_distance = 0;
+  total_bicycle_distance = 0;
+  total_motorcycle_distance = 0;
+
+  for (let i = 0; i < distances.length; i++) {
+    for (let j = 0; j < distances[i].length; j++) {
+      const { distance, distance_info } = distances[i][j];
+
+      if (distance_info.includes("car")) {
+        total_car_distance += distance;
+      }
+      if (distance_info.includes("plane")) {
+        total_plane_distance += distance;
+      }
+      if (distance_info.includes("boat")) {
+        total_boat_distance += distance;
+      }
+      if (distance_info.includes("walk")) {
+        total_walk_distance += distance;
+      }
+      if (distance_info.includes("bicycle")) {
+        total_bicycle_distance += distance;
+      }
+      if (distance_info.includes("motorcycle")) {
+        total_motorcycle_distance += distance;
+      }
+    }
+  }
+
+  return {
+    total_car_distance,
+    total_plane_distance,
+    total_boat_distance,
+    total_walk_distance,
+    total_bicycle_distance,
+    total_motorcycle_distance,
+  };
 }
