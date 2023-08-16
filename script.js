@@ -1,4 +1,4 @@
-// ver: 0.6.02
+// ver: 0.6.03
 
 // Bugs:
 
@@ -751,17 +751,27 @@ let travel_date_end = "";
 let timeline_start = "";
 let timeline_end = "";
 
-let stored_log_id = "";
+let stored_group_log_id = "";
+let stored_individual_log_id = "";
 let isTravelGroupEmpty = "";
 
 check_icon_group.addEventListener("click", (event) => {
-  home_button_main.style.backgroundColor = "rgb(255, 255, 190)";
-  layers_button.style.backgroundColor = "rgb(255, 255, 190)";
-  add_travel.style.backgroundColor = "rgb(255, 255, 190)";
-  is_travel_creator_active = false;
-  travelLogGroupSubmit(event);
+  travel_logs_group_name = travel_logs_group_input.value;
+  if (travel_logs_group_name === "") {
+    showInfoPopup("Please enter valid name");
+    return;
+  }
+  if (travel_date_start === "" || travel_date_end === "") {
+    showInfoPopup("Please select a valid date range");
+    return;
+  }
 
   if (travel_logs_group_name !== "") {
+    home_button_main.style.backgroundColor = "rgb(255, 255, 190)";
+    layers_button.style.backgroundColor = "rgb(255, 255, 190)";
+    add_travel.style.backgroundColor = "rgb(255, 255, 190)";
+    is_travel_creator_active = false;
+    travelLogGroupSubmit(event);
     toggleMainLogContainerVisibility(true);
     toggleTimelineVisibility(true);
     toggleTravelLogsGroupMainContainerVisibility(false);
@@ -775,8 +785,8 @@ close_icon_group.addEventListener("click", () => {
   layers_button.style.backgroundColor = "rgb(255, 255, 190)";
   add_travel.style.backgroundColor = "rgb(255, 255, 190)";
   is_travel_creator_active = false;
-  stored_log_id = random_id;
-  removeStoredId();
+  stored_group_log_id = random_id;
+  removeStoredId(stored_group_log_id);
   closeInfoPopup();
   travel_logs_group_input.value = "";
   if (
@@ -792,11 +802,20 @@ close_icon_group.addEventListener("click", () => {
 });
 
 check_icon_individual.addEventListener("click", (event) => {
-  travel_log_individual_container_active = false;
-  travelTypeValueUpdate(false, false, false, false, false, false);
+  travel_logs_individual_name = travel_logs_individual_input.value;
+  if (travel_logs_individual_name === "") {
+    showInfoPopup("Please enter travel name");
+    return;
+  }
+  if (travel_date_start === "" || travel_date_end === "") {
+    showInfoPopup("Please select a valid date range");
+    return;
+  }
 
-  travelLogIndividualSubmit(event);
   if (travel_logs_individual_name !== "") {
+    travel_log_individual_container_active = false;
+    travelTypeValueUpdate(false, false, false, false, false, false);
+    travelLogIndividualSubmit(event);
     document.removeEventListener("mousemove", pngMouseTracking);
     toggleCustomCursorVisibility(false);
     map.off("click");
@@ -822,13 +841,13 @@ close_icon_individual.addEventListener("click", () => {
   map.off("click");
   travelTypeValueUpdate(false, false, false, false, false, false);
 
-  stored_log_id = random_id;
-  removeMarkers();
-  removeHighlights();
-  removeMarkersCoordinates();
+  stored_individual_log_id = random_id;
+  removeMarkers(stored_individual_log_id);
+  removeHighlights(stored_individual_log_id);
+  removeMarkersCoordinates(stored_individual_log_id);
   drawPolyline();
-  removeTravelLogs();
-  removeStoredId();
+  removeTravelLogs(stored_individual_log_id);
+  removeStoredId(stored_individual_log_id);
 
   travel_logs_individual_input.value = "";
 
@@ -847,41 +866,30 @@ close_icon_individual.addEventListener("click", () => {
 
 function travelLogIndividualSubmit(event) {
   event.preventDefault();
+  let stored_individual_id = random_id;
 
-  travel_logs_individual_name = travel_logs_individual_input.value;
-
-  if (travel_logs_individual_name === "") {
-    showInfoPopup("Please enter travel name");
-    return;
-  }
-
-  if (travel_date_start === "" || travel_date_end === "") {
-    showInfoPopup("Please select a valid date range");
-    return;
-  }
-
-  // div
-
-  let stored_timeline_id = random_id;
+  // main individual div
 
   const $travel_logs_individual_div_main = document.createElement("div");
   $travel_logs_individual_div_main.className = "travel_logs_individual_div_main";
 
-  // div
-  // travel name
+  // main individual div
+  // individual travel id
+
+  const $individual_log_id = document.createElement("span");
+  $individual_log_id.textContent = random_id;
+  $travel_logs_individual_div_main.appendChild($individual_log_id);
+
+  // individual travel id
+  // individual travel name
 
   const $travel_logs_individual_name = document.createElement("span");
   $travel_logs_individual_name.textContent = travel_logs_individual_name;
   $travel_logs_individual_name.classList.add("travel_logs_individual_name");
   $travel_logs_individual_div_main.appendChild($travel_logs_individual_name);
 
-  // travel name
-
-  //      const log_date = document.createElement('span');                          // travel log, make the travel date visible / not needed now
-  //      log_date.textContent = travel_date_start + ' - ' + travel_date_end;
-  //      travel_logs_individual_div_main.appendChild(log_date);
-
-  // travel name edit
+  // individual travel name
+  // individual travel name edit
 
   const $travel_logs_individual_name_edit = document.createElement("button");
   $travel_logs_individual_name_edit.textContent = "\u270E";
@@ -893,14 +901,14 @@ function travelLogIndividualSubmit(event) {
       showInfoPopup("Please enter a valid name");
     } else {
       $travel_logs_individual_name.textContent = $travel_logs_individual_name_new;
-      const logId = $log_id.textContent;
+      const logId = $individual_log_id.textContent;
       const logIndex = travelLogs.findIndex((log) => log[1] === logId);
       if (logIndex !== -1) {
         travelLogs[logIndex][0] = $travel_logs_individual_name_new;
       }
     }
     for (let i = 0; i < timelineData.events.length; i++) {
-      if (timelineData.events[i].unique_id === stored_timeline_id) {
+      if (timelineData.events[i].unique_id === stored_individual_id) {
         timelineData.events[i].text.headline = $travel_logs_individual_name_new;
         break;
       }
@@ -911,30 +919,24 @@ function travelLogIndividualSubmit(event) {
   });
   $travel_logs_individual_div_main.appendChild($travel_logs_individual_name_edit);
 
-  // travel name edit
-  // travel id
-
-  const $log_id = document.createElement("span");
-  $log_id.textContent = random_id;
-
-  // travel id
-  // delete log
+  // individual travel name edit
+  // delete individual log
 
   const $travel_logs_delete = document.createElement("button");
   $travel_logs_delete.textContent = "Delete";
   $travel_logs_delete.addEventListener("click", () => {
-    stored_log_id = $log_id.textContent;
+    stored_individual_log_id = $individual_log_id.textContent;
     markers_visibility = false;
     polyline_visibility = false;
     toggleMarkersVisibility();
     togglePolylineVisibility();
-    removeMarkers();
-    removeHighlights();
-    removeMarkersCoordinates();
+    removeMarkers(stored_individual_log_id);
+    removeHighlights(stored_individual_log_id);
+    removeMarkersCoordinates(stored_individual_log_id);
     drawPolyline();
-    removeTravelLogs();
-    removeStoredId();
-    removeTimelineData(timelineData, stored_log_id);
+    removeTravelLogs(stored_individual_log_id);
+    removeStoredId(stored_individual_log_id);
+    removeTimelineData(timelineData, stored_individual_log_id);
     timelineInfoToggle();
     if (timeline_enabled === true) {
       window.timeline = new TL.Timeline("timeline", timelineData, timelineOptions);
@@ -947,15 +949,15 @@ function travelLogIndividualSubmit(event) {
   });
   $travel_logs_individual_div_main.appendChild($travel_logs_delete);
 
-  // delete log
-  // display the log
+  // delete individual log
+  // display the individual log
 
-  const $content_div = document.getElementById(stored_log_id);
+  const $content_div = document.getElementById(stored_group_log_id);
   $content_div.appendChild($travel_logs_individual_div_main);
 
-  // display the log
+  // display the individual log
 
-  travelLogs.push([travel_logs_individual_name, random_id, travel_date_start + " - " + travel_date_end]);
+  travelLogs.push([travel_logs_individual_name, stored_individual_id, travel_date_start + " - " + travel_date_end]);
 
   splitDates(timeline_start, timeline_end);
   createTimelineData(travel_logs_individual_name);
@@ -968,22 +970,9 @@ function travelLogIndividualSubmit(event) {
 
 function travelLogGroupSubmit(event) {
   event.preventDefault();
+  stored_group_log_id = random_id;
 
-  travel_logs_group_name = travel_logs_group_input.value;
-
-  if (travel_logs_group_name === "") {
-    showInfoPopup("Please enter valid name");
-    return;
-  }
-
-  if (travel_date_start === "" || travel_date_end === "") {
-    showInfoPopup("Please select a valid date range");
-    return;
-  }
-
-  // div
-
-  stored_log_id = random_id;
+  // main group div
 
   const $travel_logs_group_div_main = document.createElement("div");
   $travel_logs_group_div_main.className = "travel_logs_group_div_main";
@@ -993,18 +982,25 @@ function travelLogGroupSubmit(event) {
 
   const $travel_logs_group_content = document.createElement("div");
   $travel_logs_group_content.className = "travel_logs_group_div_content";
-  $travel_logs_group_content.id = stored_log_id;
+  $travel_logs_group_content.id = stored_group_log_id;
 
-  // div
-  // travel name
+  // main group div
+  // group travel id
+
+  const $group_log_id = document.createElement("span");
+  $group_log_id.textContent = stored_group_log_id;
+  $travel_logs_group_div_settings.appendChild($group_log_id);
+
+  // group travel id
+  // travel name div
 
   const $travel_logs_group_name = document.createElement("span");
   $travel_logs_group_name.textContent = travel_logs_group_name;
   $travel_logs_group_name.classList.add("travel_logs_group_name");
   $travel_logs_group_div_settings.appendChild($travel_logs_group_name);
 
-  // travel name
-  // travel name edit
+  // travel name div
+  // travel name edit button
 
   const $travel_logs_group_name_edit = document.createElement("button");
   $travel_logs_group_name_edit.textContent = "\u270E";
@@ -1016,14 +1012,14 @@ function travelLogGroupSubmit(event) {
       showInfoPopup("Please enter a valid name");
     } else {
       $travel_logs_group_name.textContent = $travel_logs_group_name_new;
-      const logId = $log_id.textContent;
+      const logId = $group_log_id.textContent;
       const logIndex = travelLogs.findIndex((log) => log[1] === logId);
       if (logIndex !== -1) {
         travelLogs[logIndex][0] = $travel_logs_group_name_new;
       }
     }
     for (let i = 0; i < timelineData.events.length; i++) {
-      if (timelineData.events[i].unique_id === stored_log_id) {
+      if (timelineData.events[i].unique_id === stored_group_log_id) {
         timelineData.events[i].text.headline = $travel_logs_group_name_new;
         break;
       }
@@ -1034,24 +1030,18 @@ function travelLogGroupSubmit(event) {
   });
   $travel_logs_group_div_settings.appendChild($travel_logs_group_name_edit);
 
-  // travel name edit
-  // travel id
-
-  const $log_id = document.createElement("span");
-  $log_id.textContent = random_id;
-
-  // travel id
-  // delete log group
+  // travel name edit button
+  // delete log group button
 
   const $travel_logs_delete = document.createElement("button");
   $travel_logs_delete.textContent = "Delete";
   $travel_logs_delete.addEventListener("click", () => {
-    stored_log_id = $log_id.textContent;
+    stored_group_log_id = $group_log_id.textContent;
     isGroupContentDivEmpty();
     if (isTravelGroupEmpty == true) {
-      removeTravelLogs();
-      removeStoredId();
-      removeTimelineData(timelineData, stored_log_id);
+      removeTravelLogs(stored_group_log_id);
+      removeStoredId(stored_group_log_id);
+      removeTimelineData(timelineData, stored_group_log_id);
       timelineInfoToggle();
       if (timeline_enabled === true) {
         window.timeline = new TL.Timeline("timeline", timelineData, timelineOptions);
@@ -1067,7 +1057,7 @@ function travelLogGroupSubmit(event) {
   });
   $travel_logs_group_div_settings.appendChild($travel_logs_delete);
 
-  // delete log group
+  // delete log group button
   // add group travel button
 
   const $travel_logs_group_add_travel_button = document.createElement("button");
@@ -1090,7 +1080,7 @@ function travelLogGroupSubmit(event) {
     toggleTimelineVisibility(false);
     toggleStatisticsVisibility(false);
 
-    stored_log_id = $log_id.textContent;
+    stored_group_log_id = $group_log_id.textContent;
     markersCoordinates = markersCoordinates.filter((coordinatesArray) => coordinatesArray.length > 0);
     markersCoordinates.push([]);
     random_id = "";
@@ -1128,24 +1118,24 @@ function travelLogGroupSubmit(event) {
 
 // // ↑ Travel Log / CRUD setup ↑
 
-function removeMarkers() {
+function removeMarkers(id) {
   for (let i = markers.length - 1; i >= 0; i--) {
     const marker = markers[i];
-    if (marker.options.id === stored_log_id) {
+    if (marker.options.id === id) {
       map.removeLayer(marker);
       markers.splice(i, 1);
     }
   }
 }
 
-function removeMarkersCoordinates() {
+function removeMarkersCoordinates(id) {
   markersCoordinates = markersCoordinates.filter((array) => {
-    return !array.some((item) => item[2][0] === stored_log_id);
+    return !array.some((item) => item[2][0] === id);
   });
 }
 
-function removeHighlights() {
-  const highlightsToRemove = highlights.filter((highlight) => highlight.random_id === stored_log_id);
+function removeHighlights(id) {
+  const highlightsToRemove = highlights.filter((highlight) => highlight.random_id === id);
 
   highlightsToRemove.forEach((highlight) => {
     map.removeLayer(highlight.layer);
@@ -1156,25 +1146,25 @@ function removeHighlights() {
   });
 }
 
-function removeTravelLogs() {
+function removeTravelLogs(id) {
   for (let i = 0; i < travelLogs.length; i++) {
     const logArray = travelLogs[i];
-    if (logArray.includes(stored_log_id)) {
+    if (logArray.includes(id)) {
       travelLogs.splice(i, 1);
       break;
     }
   }
 }
 
-function removeStoredId() {
-  const idToRemove = storedIds.indexOf(stored_log_id);
+function removeStoredId(id) {
+  const idToRemove = storedIds.indexOf(id);
   if (idToRemove !== -1) {
     storedIds.splice(idToRemove, 1);
   }
 }
 
 function isGroupContentDivEmpty() {
-  let storedContentDiv = document.getElementById(stored_log_id);
+  let storedContentDiv = document.getElementById(stored_group_log_id);
   isTravelGroupEmpty = storedContentDiv.innerHTML.trim() === "";
   return isTravelGroupEmpty;
 }
@@ -1262,7 +1252,6 @@ function randomIdGenerator() {
       random_id += characters[randomIndex];
     }
   } while (storedIds.includes(random_id));
-
   storedIds.push(random_id);
   return random_id;
 }
@@ -1372,8 +1361,8 @@ function createTimelineData(headline) {
   timelineData.events.push(newEvent);
 }
 
-function removeTimelineData(timelineData, stored_log_id) {
-  timelineData.events = timelineData.events.filter((event) => event.unique_id !== stored_log_id);
+function removeTimelineData(timelineData, id) {
+  timelineData.events = timelineData.events.filter((event) => event.unique_id !== id);
   return timelineData;
 }
 
@@ -1419,11 +1408,9 @@ main_statistics_container_arrow.addEventListener("click", () => {
   if (!is_travel_creator_active) {
     main_statistics_container_arrow_clicked = !main_statistics_container_arrow_clicked;
     if (main_statistics_container_arrow_clicked) {
-      console.log(main_statistics_container_arrow_clicked);
       toggleStatisticsVisibility(true);
     } else {
       toggleStatisticsVisibility(false);
-      console.log(main_statistics_container_arrow_clicked);
     }
   }
 });
@@ -1466,18 +1453,18 @@ test_button.addEventListener("click", () => {
   console.log("stored ids", storedIds);
   console.log("timeline", timelineData);
 
-  console.log("raw coordinates distances", rawCoordinatesDistances);
+  // console.log("raw coordinates distances", rawCoordinatesDistances);
 
-  console.log("Highest Distance:", highest_distance.toFixed(2), "km");
-  console.log("Lowest Distance:", lowest_distance.toFixed(2), "km");
-  console.log("Total Distance:", total_distance.toFixed(2), "km");
+  // console.log("Highest Distance:", highest_distance.toFixed(2), "km");
+  // console.log("Lowest Distance:", lowest_distance.toFixed(2), "km");
+  // console.log("Total Distance:", total_distance.toFixed(2), "km");
 
-  console.log("Total Car Distance:", total_car_distance.toFixed(2), "km");
-  console.log("Total Plane Distance:", total_plane_distance.toFixed(2), "km");
-  console.log("Total Boat Distance:", total_boat_distance.toFixed(2), "km");
-  console.log("Total Walk Distance:", total_walk_distance.toFixed(2), "km");
-  console.log("Total Bicycle Distance:", total_bicycle_distance.toFixed(2), "km");
-  console.log("Total Motorcycle Distance:", total_motorcycle_distance.toFixed(2), "km");
+  //console.log("Total Car Distance:", total_car_distance.toFixed(2), "km");
+  //console.log("Total Plane Distance:", total_plane_distance.toFixed(2), "km");
+  //console.log("Total Boat Distance:", total_boat_distance.toFixed(2), "km");
+  //console.log("Total Walk Distance:", total_walk_distance.toFixed(2), "km");
+  //console.log("Total Bicycle Distance:", total_bicycle_distance.toFixed(2), "km");
+  // console.log("Total Motorcycle Distance:", total_motorcycle_distance.toFixed(2), "km");
 });
 
 test_button_2.addEventListener("click", () => {
@@ -1549,16 +1536,16 @@ function distancesBreakdown(distances) {
 }
 
 function updateTravelStats() {
-  document.getElementById("highest_distance").textContent = highest_distance.toFixed(2);
-  document.getElementById("lowest_distance").textContent = lowest_distance.toFixed(2);
-  document.getElementById("total_distance").textContent = total_distance.toFixed(2);
+  document.getElementById("highest_distance").textContent = highest_distance.toFixed(2) + " km";
+  document.getElementById("lowest_distance").textContent = lowest_distance.toFixed(2) + " km";
+  document.getElementById("total_distance").textContent = total_distance.toFixed(2) + " km";
 
-  document.getElementById("total_car_distance").textContent = total_car_distance.toFixed(2);
-  document.getElementById("total_plane_distance").textContent = total_plane_distance.toFixed(2);
-  document.getElementById("total_boat_distance").textContent = total_boat_distance.toFixed(2);
-  document.getElementById("total_walk_distance").textContent = total_walk_distance.toFixed(2);
-  document.getElementById("total_bicycle_distance").textContent = total_bicycle_distance.toFixed(2);
-  document.getElementById("total_motorcycle_distance").textContent = total_motorcycle_distance.toFixed(2);
+  document.getElementById("total_car_distance").textContent = total_car_distance.toFixed(2) + " km";
+  document.getElementById("total_plane_distance").textContent = total_plane_distance.toFixed(2) + " km";
+  document.getElementById("total_boat_distance").textContent = total_boat_distance.toFixed(2) + " km";
+  document.getElementById("total_walk_distance").textContent = total_walk_distance.toFixed(2) + " km";
+  document.getElementById("total_bicycle_distance").textContent = total_bicycle_distance.toFixed(2) + " km";
+  document.getElementById("total_motorcycle_distance").textContent = total_motorcycle_distance.toFixed(2) + " km";
 }
 
 function toggleStatisticsVisibility(toggle) {
