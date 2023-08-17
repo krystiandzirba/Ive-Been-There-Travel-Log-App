@@ -72,6 +72,16 @@ export default {
       iconSize: [48, 48],
       iconAnchor: [24, 24],
     }),
+    train_icon: L.icon({
+      iconUrl: "content/icons/train_icon.png",
+      iconSize: [48, 48],
+      iconAnchor: [24, 24],
+    }),
+    bus_icon: L.icon({
+      iconUrl: "content/icons/bus_icon.png",
+      iconSize: [48, 48],
+      iconAnchor: [24, 24],
+    }),
   },
 
   addons: {

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Travel App 0.6.03</title>
+    <title>Travel App 0.6.04</title>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -101,6 +101,12 @@
         <button id="travel_type_motorcycle" class="travel_type_button">
           <img src="/content/icons/motorcycle_icon_small.png" alt="motorcycle Icon" />
         </button>
+        <button id="travel_type_train" class="travel_type_button">
+          <img src="/content/icons/train_icon_small.png" alt="train Icon" />
+        </button>
+        <button id="travel_type_bus" class="travel_type_button">
+          <img src="/content/icons/bus_icon_small.png" alt="bus Icon" />
+        </button>
       </div>
     </div>
     <button id="check_icon_individual" class="icon_settings_container check_icon_individual">&#10003;</button>
@@ -147,13 +153,19 @@
       <div class="grid_item">
         <p>motorcycle distance: <span id="total_motorcycle_distance"></span></p>
       </div>
+      <div class="grid_item">
+        <p>train distance: <span id="total_train_distance"></span></p>
+      </div>
+      <div class="grid_item">
+        <p>bus distance: <span id="total_bus_distance"></span></p>
+      </div>
     </div>
 
     <div id="custom_cursor" class="custom_cursor">
       <img id="custom_cursor_image" src="/content/icons/car_icon_small.png" />
     </div>
 
-    <div class="app_version">ver: 0.6.03</div>
+    <div class="app_version">ver: 0.6.04</div>
 
     <div id="info_popup" style="display: none">
       <span id="close_info_popup">&times;</span>

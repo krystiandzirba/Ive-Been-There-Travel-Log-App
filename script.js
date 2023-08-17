@@ -1,16 +1,14 @@
-// ver: 0.6.03
+// ver: 0.6.04
 
 // Bugs:
 
-// ---
-
 // Features to add:
 
+//               - make the storedIds[] load the id data from the travelLogs[] on page load, instead of storing it in a local storage in the future
 //               - travel logs, make it display only the travel name, name edit ( and maybe date ), on click make it extend to show all the log options (edit, markers, highlights ...)
 //               - multi options polyline / leaflet motion
-//               - add a CRUD button to hide the visiblity of linked travel logs (highlights, markers etc.)
 
-// ---------- 3. Separate tab to calculate the "achievements": overall trips distance (divided on the trip type: bicycle, car, plane, boat, motorcycle, walk), countries visited
+// ---------- 3. Separate tab to calculate the travel stats: overall trips distance divided on the travel type, countries visited
 // ---------- 4. Add local storage to save the trip progress and settings
 // ---------- 5. new UI / Add loading animations before the page/content load
 // ---------- 6. Add different page styles (font, animations, images, backgrounds, theme) - modern / middleage / other
@@ -57,6 +55,8 @@ const travel_type_boat = document.getElementById("travel_type_boat");
 const travel_type_walk = document.getElementById("travel_type_walk");
 const travel_type_bicycle = document.getElementById("travel_type_bicycle");
 const travel_type_motorcycle = document.getElementById("travel_type_motorcycle");
+const travel_type_train = document.getElementById("travel_type_train");
+const travel_type_bus = document.getElementById("travel_type_bus");
 
 const check_icon_group = document.getElementById("check_icon_group");
 const close_icon_group = document.getElementById("close_icon_group");
@@ -84,6 +84,7 @@ let markers_visibility = true;
 let polyline_visibility = true;
 
 let is_travel_creator_active = false;
+let highlight_color_opacity_customization = true;
 let travel_log_individual_container_active = false;
 let layers_button_active = false;
 let home_button_active = false;
@@ -114,7 +115,7 @@ home_button_main.addEventListener("click", () => {
     return;
   }
   map.off("click");
-  travelTypeValueUpdate(false, false, false, false, false, false);
+  travelTypeValueUpdate(false, false, false, false, false, false, false, false);
 
   if (location_container.style.display === "none" || location_container.style.display === "") {
     toggleLocationContainerVisibility();
@@ -174,16 +175,18 @@ function toggleMainLogContainerVisibility(toggle) {
 // ↑ Home ↑
 // ↓ Leaflet Map ↓
 
-/* LS */ let highlights = [];
-/* LS */ let markers = [];
-/* LS */ let markersCoordinates = [];
-/* TP */ let polylines = [];
-/* LS */ let travelLogs = [];
-/* LS */ let storedIds = [];
-/* LS */ let timelineData = {
+// 1 = future local storage / 0 = temporary, local storage not needed
+
+/* 1 */ let highlights = [];
+/* 1 */ let markers = [];
+/* 1 */ let markersCoordinates = [];
+/* 1 */ let travelLogs = [];
+/* 0 */ let polylines = [];
+/* 0 */ let storedIds = [];
+/* 0 */ let timelineData = {
   events: [],
 };
-/* TP */ let rawCoordinatesDistances = [];
+/* 0 */ let rawCoordinatesDistances = [];
 
 let timelineOptions = {
   initial_zoom: 1,
@@ -222,9 +225,11 @@ let travel_type_boat_click = false;
 let travel_type_walk_click = false;
 let travel_type_bicycle_click = false;
 let travel_type_motorcycle_click = false;
+let travel_type_train_click = false;
+let travel_type_bus_click = false;
 
 const { mapTileLayer_A, mapTileLayer_B, mapTileLayer_C, mapTileLayer_D } = leafletConfig.tilemaps;
-const { home_icon, car_icon, plane_icon, boat_icon, walk_icon, bicycle_icon, motorcycle_icon } =
+const { home_icon, car_icon, plane_icon, boat_icon, walk_icon, bicycle_icon, motorcycle_icon, train_icon, bus_icon } =
   leafletConfig.marker_icons;
 const { trainsAddon, cyclingAddon, bordersAddon, labelsAddon } = leafletConfig.addons;
 
@@ -301,11 +306,15 @@ home_opacity_slider.addEventListener("input", function () {
 });
 
 marker_color_picker.addEventListener("input", function () {
-  marker_highlight_color = marker_color_picker.value;
+  if (highlight_color_opacity_customization) {
+    marker_highlight_color = marker_color_picker.value;
+  } else showInfoPopup("cannot customize highlight color while placing travel markers");
 });
 
 marker_opacity_slider.addEventListener("input", function () {
-  marker_highlight_opacity = parseFloat(marker_opacity_slider.value);
+  if (highlight_color_opacity_customization) {
+    marker_highlight_opacity = parseFloat(marker_opacity_slider.value);
+  } else showInfoPopup("cannot customize highlight opacity while placing travel markers");
 });
 
 // // ↑ Leaflet Map / Custom Home + marker Highlight Color + opacity ↑
@@ -359,6 +368,14 @@ function createHighlightLayer(data) {
           setLayerStyle(layer, marker_highlight_color, marker_highlight_opacity, "motorcycle", random_id);
           highlights.push({ type: "motorcycle", random_id, layer });
         }
+        if (travel_type_train_click) {
+          setLayerStyle(layer, marker_highlight_color, marker_highlight_opacity, "train", random_id);
+          highlights.push({ type: "train", random_id, layer });
+        }
+        if (travel_type_bus_click) {
+          setLayerStyle(layer, marker_highlight_color, marker_highlight_opacity, "bus", random_id);
+          highlights.push({ type: "bus", random_id, layer });
+        }
       });
     },
   }).addTo(map);
@@ -381,18 +398,13 @@ function setLayerStyle(layer, fillColor, fillOpacity, attribution, random_id) {
 // // ↓ GeoJSON / Geolocation on Button Click ↓
 
 home_button_geolocation.addEventListener("click", () => {
-  travelTypeValueUpdate(false, false, false, false, false, false);
+  travelTypeValueUpdate(true, false, false, false, false, false, false, false, false);
 
   homeMarkerClear();
 
   if ("geolocation" in navigator) {
     navigator.geolocation.getCurrentPosition((position) => {
       const { latitude, longitude } = position.coords;
-
-      const latlng = L.latLng(latitude, longitude);
-
-      // const containerPoint = map.latLngToContainerPoint(latlng);
-      // const layerAtLatLng = map.getLayerAt(containerPoint);
 
       home_marker = L.marker([latitude, longitude], {
         icon: home_icon,
@@ -415,7 +427,7 @@ home_button_geolocation.addEventListener("click", () => {
 // // ↓ GeoJSON / Manual Location ↓
 
 home_button_manual.addEventListener("click", () => {
-  travelTypeValueUpdate(true, false, false, false, false, false);
+  travelTypeValueUpdate(true, false, false, false, false, false, false, false, false);
 
   homeMarkerClear();
 
@@ -484,6 +496,8 @@ travelTypeButtonImages.set(travel_type_boat, "/content/icons/boat_icon_small.png
 travelTypeButtonImages.set(travel_type_walk, "/content/icons/walk_icon_small.png");
 travelTypeButtonImages.set(travel_type_bicycle, "/content/icons/bicycle_icon_small.png");
 travelTypeButtonImages.set(travel_type_motorcycle, "/content/icons/motorcycle_icon_small.png");
+travelTypeButtonImages.set(travel_type_train, "/content/icons/train_icon_small.png");
+travelTypeButtonImages.set(travel_type_bus, "/content/icons/bus_icon_small.png");
 
 const travelTypeButtons = [
   travel_type_car,
@@ -492,18 +506,21 @@ const travelTypeButtons = [
   travel_type_walk,
   travel_type_bicycle,
   travel_type_motorcycle,
+  travel_type_train,
+  travel_type_bus,
 ];
 
 let type = "";
 
 travel_type_car.addEventListener("click", () => {
-  if (is_travel_creator_active == true) {
+  if (is_travel_creator_active) {
+    highlight_color_opacity_customization = false;
     createHighlightLayer(cachedGeoJSON);
     updateCursorImage("/content/icons/car_icon_small.png");
     travelTypeButtonsGrayscale();
     travel_type_car.querySelector("img").src = travelTypeButtonImages.get(travel_type_car);
 
-    travelTypeValueUpdate(false, true, false, false, false, false, false);
+    travelTypeValueUpdate(false, true, false, false, false, false, false, false, false);
 
     if (travel_type_car_click == true) {
       map.off("click");
@@ -528,17 +545,19 @@ travel_type_car.addEventListener("click", () => {
 
       map.on("click", onMapClick);
     }
+    is_travel_creator_active = !is_travel_creator_active;
   }
 });
 
 travel_type_plane.addEventListener("click", () => {
-  if (is_travel_creator_active == true) {
+  if (is_travel_creator_active) {
+    highlight_color_opacity_customization = false;
     createHighlightLayer(cachedGeoJSON);
     updateCursorImage("/content/icons/plane_icon_small.png");
     travelTypeButtonsGrayscale();
     travel_type_plane.querySelector("img").src = travelTypeButtonImages.get(travel_type_plane);
 
-    travelTypeValueUpdate(false, false, true, false, false, false, false);
+    travelTypeValueUpdate(false, false, true, false, false, false, false, false, false);
 
     if (travel_type_plane_click == true) {
       map.off("click");
@@ -562,17 +581,19 @@ travel_type_plane.addEventListener("click", () => {
 
       map.on("click", onMapClick);
     }
+    is_travel_creator_active = !is_travel_creator_active;
   }
 });
 
 travel_type_boat.addEventListener("click", () => {
-  if (is_travel_creator_active == true) {
+  if (is_travel_creator_active) {
+    highlight_color_opacity_customization = false;
     createHighlightLayer(cachedGeoJSON);
     updateCursorImage("/content/icons/boat_icon_small.png");
     travelTypeButtonsGrayscale();
     travel_type_boat.querySelector("img").src = travelTypeButtonImages.get(travel_type_boat);
 
-    travelTypeValueUpdate(false, false, false, true, false, false, false);
+    travelTypeValueUpdate(false, false, false, true, false, false, false, false, false);
 
     if (travel_type_boat_click == true) {
       map.off("click");
@@ -596,17 +617,19 @@ travel_type_boat.addEventListener("click", () => {
 
       map.on("click", onMapClick);
     }
+    is_travel_creator_active = !is_travel_creator_active;
   }
 });
 
 travel_type_walk.addEventListener("click", () => {
-  if (is_travel_creator_active == true) {
+  if (is_travel_creator_active) {
+    highlight_color_opacity_customization = false;
     createHighlightLayer(cachedGeoJSON);
     updateCursorImage("/content/icons/walk_icon_small.png");
     travelTypeButtonsGrayscale();
     travel_type_walk.querySelector("img").src = travelTypeButtonImages.get(travel_type_walk);
 
-    travelTypeValueUpdate(false, false, false, false, true, false, false);
+    travelTypeValueUpdate(false, false, false, false, true, false, false, false, false);
 
     if (travel_type_walk_click == true) {
       map.off("click");
@@ -630,17 +653,19 @@ travel_type_walk.addEventListener("click", () => {
 
       map.on("click", onMapClick);
     }
+    is_travel_creator_active = !is_travel_creator_active;
   }
 });
 
 travel_type_bicycle.addEventListener("click", () => {
-  if (is_travel_creator_active == true) {
+  if (is_travel_creator_active) {
+    highlight_color_opacity_customization = false;
     createHighlightLayer(cachedGeoJSON);
     updateCursorImage("/content/icons/bicycle_icon_small.png");
     travelTypeButtonsGrayscale();
     travel_type_bicycle.querySelector("img").src = travelTypeButtonImages.get(travel_type_bicycle);
 
-    travelTypeValueUpdate(false, false, false, false, false, true, false);
+    travelTypeValueUpdate(false, false, false, false, false, true, false, false, false);
 
     if (travel_type_bicycle_click == true) {
       map.off("click");
@@ -664,17 +689,19 @@ travel_type_bicycle.addEventListener("click", () => {
 
       map.on("click", onMapClick);
     }
+    is_travel_creator_active = !is_travel_creator_active;
   }
 });
 
 travel_type_motorcycle.addEventListener("click", () => {
-  if (is_travel_creator_active == true) {
+  if (is_travel_creator_active) {
+    highlight_color_opacity_customization = false;
     createHighlightLayer(cachedGeoJSON);
     updateCursorImage("/content/icons/motorcycle_icon_small.png");
     travelTypeButtonsGrayscale();
     travel_type_motorcycle.querySelector("img").src = travelTypeButtonImages.get(travel_type_motorcycle);
 
-    travelTypeValueUpdate(false, false, false, false, false, false, true);
+    travelTypeValueUpdate(false, false, false, false, false, false, true, false, false);
 
     if (travel_type_motorcycle_click == true) {
       map.off("click");
@@ -698,10 +725,85 @@ travel_type_motorcycle.addEventListener("click", () => {
 
       map.on("click", onMapClick);
     }
+    is_travel_creator_active = !is_travel_creator_active;
   }
 });
 
-function travelTypeValueUpdate(manual, car, plane, boat, walk, bicycle, motorcycle) {
+travel_type_train.addEventListener("click", () => {
+  if (is_travel_creator_active) {
+    highlight_color_opacity_customization = false;
+    createHighlightLayer(cachedGeoJSON);
+    updateCursorImage("/content/icons/train_icon_small.png");
+    travelTypeButtonsGrayscale();
+    travel_type_train.querySelector("img").src = travelTypeButtonImages.get(travel_type_train);
+
+    travelTypeValueUpdate(false, false, false, false, false, false, false, true, false);
+
+    if (travel_type_train_click == true) {
+      map.off("click");
+      function onMapClick(e) {
+        let lat = e.latlng.lat;
+        let lng = e.latlng.lng;
+
+        marker = L.marker([lat, lng], {
+          icon: train_icon,
+          travelType: "train",
+          id: random_id,
+        });
+
+        marker.addTo(map).bounce(1);
+        markers.push(marker);
+
+        type = "train";
+
+        markersCoordinates[markersCoordinates.length - 1].push([lat, lng, [random_id, type]]);
+        drawPolyline();
+      }
+
+      map.on("click", onMapClick);
+    }
+    is_travel_creator_active = !is_travel_creator_active;
+  }
+});
+
+travel_type_bus.addEventListener("click", () => {
+  if (is_travel_creator_active) {
+    highlight_color_opacity_customization = false;
+    createHighlightLayer(cachedGeoJSON);
+    updateCursorImage("/content/icons/bus_icon_small.png");
+    travelTypeButtonsGrayscale();
+    travel_type_bus.querySelector("img").src = travelTypeButtonImages.get(travel_type_bus);
+
+    travelTypeValueUpdate(false, false, false, false, false, false, false, false, true);
+
+    if (travel_type_bus_click == true) {
+      map.off("click");
+      function onMapClick(e) {
+        let lat = e.latlng.lat;
+        let lng = e.latlng.lng;
+
+        marker = L.marker([lat, lng], {
+          icon: bus_icon,
+          travelType: "bus",
+          id: random_id,
+        });
+
+        marker.addTo(map).bounce(1);
+        markers.push(marker);
+
+        type = "bus";
+
+        markersCoordinates[markersCoordinates.length - 1].push([lat, lng, [random_id, type]]);
+        drawPolyline();
+      }
+
+      map.on("click", onMapClick);
+    }
+    is_travel_creator_active = !is_travel_creator_active;
+  }
+});
+
+function travelTypeValueUpdate(manual, car, plane, boat, walk, bicycle, motorcycle, train, bus) {
   home_button_manual_click = manual;
   travel_type_car_click = car;
   travel_type_plane_click = plane;
@@ -709,6 +811,8 @@ function travelTypeValueUpdate(manual, car, plane, boat, walk, bicycle, motorcyc
   travel_type_walk_click = walk;
   travel_type_bicycle_click = bicycle;
   travel_type_motorcycle_click = motorcycle;
+  travel_type_train_click = train;
+  travel_type_bus_click = bus;
 }
 
 function travelTypeButtonsGrayscale() {
@@ -814,7 +918,7 @@ check_icon_individual.addEventListener("click", (event) => {
 
   if (travel_logs_individual_name !== "") {
     travel_log_individual_container_active = false;
-    travelTypeValueUpdate(false, false, false, false, false, false);
+    travelTypeValueUpdate(false, false, false, false, false, false, false, false, false);
     travelLogIndividualSubmit(event);
     document.removeEventListener("mousemove", pngMouseTracking);
     toggleCustomCursorVisibility(false);
@@ -839,7 +943,7 @@ close_icon_individual.addEventListener("click", () => {
   document.removeEventListener("mousemove", pngMouseTracking);
   toggleCustomCursorVisibility(false);
   map.off("click");
-  travelTypeValueUpdate(false, false, false, false, false, false);
+  travelTypeValueUpdate(false, false, false, false, false, false, false, false, false);
 
   stored_individual_log_id = random_id;
   removeMarkers(stored_individual_log_id);
@@ -1058,11 +1162,12 @@ function travelLogGroupSubmit(event) {
   $travel_logs_group_div_settings.appendChild($travel_logs_delete);
 
   // delete log group button
-  // add group travel button
+  // add group (individual) travel button
 
   const $travel_logs_group_add_travel_button = document.createElement("button");
   $travel_logs_group_add_travel_button.textContent = "add individual travel";
   $travel_logs_group_add_travel_button.addEventListener("click", () => {
+    highlight_color_opacity_customization = true;
     layers_button_active = false;
     home_button_active = false;
     travel_log_individual_container_active = true;
@@ -1095,7 +1200,7 @@ function travelLogGroupSubmit(event) {
   });
   $travel_logs_group_div_settings.appendChild($travel_logs_group_add_travel_button);
 
-  // add group travel button
+  // add group (individual) travel button
   // display the log
 
   const $logs_list = document.getElementById("logs_list");
@@ -1285,6 +1390,10 @@ function drawPolyline() {
         color = "green";
       } else if (coordinates[0][2][1] === "motorcycle") {
         color = "yellow";
+      } else if (coordinates[0][2][1] === "train") {
+        color = "pink";
+      } else if (coordinates[0][2][1] === "bus") {
+        color = "orange";
       }
 
       const polyline = L.polyline(coordinates, {
@@ -1465,6 +1574,8 @@ test_button.addEventListener("click", () => {
   //console.log("Total Walk Distance:", total_walk_distance.toFixed(2), "km");
   //console.log("Total Bicycle Distance:", total_bicycle_distance.toFixed(2), "km");
   // console.log("Total Motorcycle Distance:", total_motorcycle_distance.toFixed(2), "km");
+  // console.log("Total Train Distance:", total_train_distance.toFixed(2), "km");
+  // console.log("Total Bus Distance:", total_bus_distance.toFixed(2), "km");
 });
 
 test_button_2.addEventListener("click", () => {
@@ -1484,6 +1595,8 @@ let total_boat_distance = 0;
 let total_walk_distance = 0;
 let total_bicycle_distance = 0;
 let total_motorcycle_distance = 0;
+let total_train_distance = 0;
+let total_bus_distance = 0;
 
 function calculateDistances() {
   rawCoordinatesDistances = [];
@@ -1546,12 +1659,14 @@ function updateTravelStats() {
   document.getElementById("total_walk_distance").textContent = total_walk_distance.toFixed(2) + " km";
   document.getElementById("total_bicycle_distance").textContent = total_bicycle_distance.toFixed(2) + " km";
   document.getElementById("total_motorcycle_distance").textContent = total_motorcycle_distance.toFixed(2) + " km";
+  document.getElementById("total_train_distance").textContent = total_train_distance.toFixed(2) + " km";
+  document.getElementById("total_bus_distance").textContent = total_bus_distance.toFixed(2) + " km";
 }
 
 function toggleStatisticsVisibility(toggle) {
   if (toggle) {
-    main_statistics_container.style.transform = "translate(-50%, -25%)";
-    main_statistics_container_arrow.style.transform = "translate(-50%, 27vh)";
+    main_statistics_container.style.transform = "translate(-50%, -24%)";
+    main_statistics_container_arrow.style.transform = "translate(-50%, 29vh)";
     main_statistics_container_arrow_clicked = true;
   } else {
     main_statistics_container.style.transform = "translate(-50%, -130%)";
@@ -1567,6 +1682,8 @@ function calculateTotalDistances(distances) {
   total_walk_distance = 0;
   total_bicycle_distance = 0;
   total_motorcycle_distance = 0;
+  total_train_distance = 0;
+  total_bus_distance = 0;
 
   for (let i = 0; i < distances.length; i++) {
     for (let j = 0; j < distances[i].length; j++) {
@@ -1590,6 +1707,12 @@ function calculateTotalDistances(distances) {
       if (distance_info.includes("motorcycle")) {
         total_motorcycle_distance += distance;
       }
+      if (distance_info.includes("train")) {
+        total_train_distance += distance;
+      }
+      if (distance_info.includes("bus")) {
+        total_bus_distance += distance;
+      }
     }
   }
 
@@ -1600,5 +1723,7 @@ function calculateTotalDistances(distances) {
     total_walk_distance,
     total_bicycle_distance,
     total_motorcycle_distance,
+    total_train_distance,
+    total_bus_distance,
   };
 }
