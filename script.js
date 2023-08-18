@@ -1,4 +1,4 @@
-// ver: 0.6.04
+// ver: 0.6.05
 
 // Bugs:
 
@@ -919,6 +919,10 @@ check_icon_individual.addEventListener("click", (event) => {
   if (travel_logs_individual_name !== "") {
     travel_log_individual_container_active = false;
     travelTypeValueUpdate(false, false, false, false, false, false, false, false, false);
+    calculateDistances();
+    distancesBreakdown(rawCoordinatesDistances);
+    calculateTotalDistances(rawCoordinatesDistances);
+    updateTravelStats();
     travelLogIndividualSubmit(event);
     document.removeEventListener("mousemove", pngMouseTracking);
     toggleCustomCursorVisibility(false);
@@ -993,6 +997,16 @@ function travelLogIndividualSubmit(event) {
   $travel_logs_individual_div_main.appendChild($travel_logs_individual_name);
 
   // individual travel name
+  // individual travel distance
+
+  // stored_individual_id = random_id;
+
+  calculateTotalIdDistance(rawCoordinatesDistances, stored_individual_id);
+  const $travel_logs_individual_distance = document.createElement("span");
+  $travel_logs_individual_distance.textContent = total_id_distance.toFixed(1) + "km";
+  $travel_logs_individual_div_main.appendChild($travel_logs_individual_distance);
+
+  // individual travel distance
   // individual travel name edit
 
   const $travel_logs_individual_name_edit = document.createElement("button");
@@ -1042,6 +1056,10 @@ function travelLogIndividualSubmit(event) {
     removeStoredId(stored_individual_log_id);
     removeTimelineData(timelineData, stored_individual_log_id);
     timelineInfoToggle();
+    calculateDistances();
+    distancesBreakdown(rawCoordinatesDistances);
+    calculateTotalDistances(rawCoordinatesDistances);
+    updateTravelStats();
     if (timeline_enabled === true) {
       window.timeline = new TL.Timeline("timeline", timelineData, timelineOptions);
     }
@@ -1343,7 +1361,6 @@ $(function () {
 });
 
 // // ↑ Travel Log / Date picker ↑
-
 // // ↓ Travel Log / Travel ID generator ↓
 
 function randomIdGenerator() {
@@ -1362,9 +1379,7 @@ function randomIdGenerator() {
 }
 
 // // ↑ Travel Log / Travel ID generator ↑
-
 // ↑ Travel Log ↑
-
 // ↓ Leaflet Polyline ↓
 
 function drawPolyline() {
@@ -1510,8 +1525,21 @@ function timelineInfoToggle() {
 }
 
 // ↑ TimelineJS ↑
-
 // ↓ Travel Statistics ↓
+
+let highest_distance = 0;
+let lowest_distance = 0;
+let total_distance = 0;
+let total_id_distance = 0;
+
+let total_car_distance = 0;
+let total_plane_distance = 0;
+let total_boat_distance = 0;
+let total_walk_distance = 0;
+let total_bicycle_distance = 0;
+let total_motorcycle_distance = 0;
+let total_train_distance = 0;
+let total_bus_distance = 0;
 
 main_statistics_container_arrow.addEventListener("click", () => {
   if (!is_travel_creator_active) {
@@ -1523,80 +1551,6 @@ main_statistics_container_arrow.addEventListener("click", () => {
     }
   }
 });
-
-// ↑ Travel Statistics ↑
-
-// ↓ Other ↓
-
-// ↓ Other / Info popup ↓
-
-function showInfoPopup(text) {
-  info_popup_text.textContent = text;
-  info_popup.style.display = "block";
-}
-
-function closeInfoPopup() {
-  info_popup.style.display = "none";
-}
-close_info_popup.addEventListener("click", closeInfoPopup);
-
-// ↑ Other / Info popup ↑
-
-// ↑ Other ↑
-
-// // ---------- TEST ---------- ↓
-
-// // ---------- Check if page is loaded  ---------- ↓
-
-//   window.addEventListener("load", function () {
-//       const cover = document.getElementById("cover");
-//       cover.style.display = "none";
-//   });
-
-test_button.addEventListener("click", () => {
-  console.log("highlight array", highlights);
-  console.log("markers array", markers);
-  console.log("marker coordinates", markersCoordinates);
-  console.log("polylines", polylines);
-  console.log("Logs Array:", travelLogs);
-  console.log("stored ids", storedIds);
-  console.log("timeline", timelineData);
-
-  // console.log("raw coordinates distances", rawCoordinatesDistances);
-
-  // console.log("Highest Distance:", highest_distance.toFixed(2), "km");
-  // console.log("Lowest Distance:", lowest_distance.toFixed(2), "km");
-  // console.log("Total Distance:", total_distance.toFixed(2), "km");
-
-  //console.log("Total Car Distance:", total_car_distance.toFixed(2), "km");
-  //console.log("Total Plane Distance:", total_plane_distance.toFixed(2), "km");
-  //console.log("Total Boat Distance:", total_boat_distance.toFixed(2), "km");
-  //console.log("Total Walk Distance:", total_walk_distance.toFixed(2), "km");
-  //console.log("Total Bicycle Distance:", total_bicycle_distance.toFixed(2), "km");
-  // console.log("Total Motorcycle Distance:", total_motorcycle_distance.toFixed(2), "km");
-  // console.log("Total Train Distance:", total_train_distance.toFixed(2), "km");
-  // console.log("Total Bus Distance:", total_bus_distance.toFixed(2), "km");
-});
-
-test_button_2.addEventListener("click", () => {
-  calculateDistances();
-  distancesBreakdown(rawCoordinatesDistances);
-  calculateTotalDistances(rawCoordinatesDistances);
-  updateTravelStats();
-});
-
-let highest_distance = 0;
-let lowest_distance = 0;
-let total_distance = 0;
-
-let total_car_distance = 0;
-let total_plane_distance = 0;
-let total_boat_distance = 0;
-let total_walk_distance = 0;
-let total_bicycle_distance = 0;
-let total_motorcycle_distance = 0;
-let total_train_distance = 0;
-let total_bus_distance = 0;
 
 function calculateDistances() {
   rawCoordinatesDistances = [];
@@ -1649,18 +1603,20 @@ function distancesBreakdown(distances) {
 }
 
 function updateTravelStats() {
-  document.getElementById("highest_distance").textContent = highest_distance.toFixed(2) + " km";
-  document.getElementById("lowest_distance").textContent = lowest_distance.toFixed(2) + " km";
-  document.getElementById("total_distance").textContent = total_distance.toFixed(2) + " km";
+  const display_highest_distance = highest_distance === Number.NEGATIVE_INFINITY ? 0 : highest_distance;
+  document.getElementById("highest_distance").textContent = display_highest_distance.toFixed(1) + " km";
+  const display_lowest_distance = lowest_distance === Number.POSITIVE_INFINITY ? 0 : lowest_distance;
+  document.getElementById("lowest_distance").textContent = display_lowest_distance.toFixed(1) + " km";
+  document.getElementById("total_distance").textContent = total_distance.toFixed(1) + " km";
 
-  document.getElementById("total_car_distance").textContent = total_car_distance.toFixed(2) + " km";
-  document.getElementById("total_plane_distance").textContent = total_plane_distance.toFixed(2) + " km";
-  document.getElementById("total_boat_distance").textContent = total_boat_distance.toFixed(2) + " km";
-  document.getElementById("total_walk_distance").textContent = total_walk_distance.toFixed(2) + " km";
-  document.getElementById("total_bicycle_distance").textContent = total_bicycle_distance.toFixed(2) + " km";
-  document.getElementById("total_motorcycle_distance").textContent = total_motorcycle_distance.toFixed(2) + " km";
-  document.getElementById("total_train_distance").textContent = total_train_distance.toFixed(2) + " km";
-  document.getElementById("total_bus_distance").textContent = total_bus_distance.toFixed(2) + " km";
+  document.getElementById("total_car_distance").textContent = total_car_distance.toFixed(1) + " km";
+  document.getElementById("total_plane_distance").textContent = total_plane_distance.toFixed(1) + " km";
+  document.getElementById("total_boat_distance").textContent = total_boat_distance.toFixed(1) + " km";
+  document.getElementById("total_walk_distance").textContent = total_walk_distance.toFixed(1) + " km";
+  document.getElementById("total_bicycle_distance").textContent = total_bicycle_distance.toFixed(1) + " km";
+  document.getElementById("total_motorcycle_distance").textContent = total_motorcycle_distance.toFixed(1) + " km";
+  document.getElementById("total_train_distance").textContent = total_train_distance.toFixed(1) + " km";
+  document.getElementById("total_bus_distance").textContent = total_bus_distance.toFixed(1) + " km";
 }
 
 function toggleStatisticsVisibility(toggle) {
@@ -1727,3 +1683,79 @@ function calculateTotalDistances(distances) {
     total_bus_distance,
   };
 }
+
+function calculateTotalIdDistance(distances, id) {
+  total_id_distance = 0;
+
+  for (let i = 0; i < distances.length; i++) {
+    for (let j = 0; j < distances[i].length; j++) {
+      const { distance, distance_info } = distances[i][j];
+
+      if (distance_info.includes(id)) {
+        total_id_distance += distance;
+      }
+    }
+  }
+
+  return {
+    total_car_distance,
+  };
+}
+
+// ↑ Travel Statistics ↑
+// ↓ Other ↓
+// ↓ Other / Info popup ↓
+
+function showInfoPopup(text) {
+  info_popup_text.textContent = text;
+  info_popup.style.display = "block";
+}
+
+function closeInfoPopup() {
+  info_popup.style.display = "none";
+}
+close_info_popup.addEventListener("click", closeInfoPopup);
+
+// ↑ Other / Info popup ↑
+// ↑ Other ↑
+
+// // ---------- TEST ---------- ↓
+
+// // ---------- Check if page is loaded  ---------- ↓
+
+//   window.addEventListener("load", function () {
+//       const cover = document.getElementById("cover");
+//       cover.style.display = "none";
+//   });
+
+test_button.addEventListener("click", () => {
+  console.log("highlight array", highlights);
+  console.log("markers array", markers);
+  console.log("marker coordinates", markersCoordinates);
+  console.log("polylines", polylines);
+  console.log("Logs Array:", travelLogs);
+  console.log("stored ids", storedIds);
+  console.log("timeline", timelineData);
+
+  console.log("raw coordinates distances", rawCoordinatesDistances);
+
+  console.log("Highest Distance:", highest_distance.toFixed(2), "km");
+  console.log("Lowest Distance:", lowest_distance.toFixed(2), "km");
+  console.log("Total Distance:", total_distance.toFixed(2), "km");
+
+  console.log("Total Car Distance:", total_car_distance.toFixed(2), "km");
+  console.log("Total Plane Distance:", total_plane_distance.toFixed(2), "km");
+  console.log("Total Boat Distance:", total_boat_distance.toFixed(2), "km");
+  console.log("Total Walk Distance:", total_walk_distance.toFixed(2), "km");
+  console.log("Total Bicycle Distance:", total_bicycle_distance.toFixed(2), "km");
+  console.log("Total Motorcycle Distance:", total_motorcycle_distance.toFixed(2), "km");
+  console.log("Total Train Distance:", total_train_distance.toFixed(2), "km");
+  console.log("Total Bus Distance:", total_bus_distance.toFixed(2), "km");
+});
+
+test_button_2.addEventListener("click", () => {
+  calculateDistances();
+  distancesBreakdown(rawCoordinatesDistances);
+  calculateTotalDistances(rawCoordinatesDistances);
+  updateTravelStats();
+});
