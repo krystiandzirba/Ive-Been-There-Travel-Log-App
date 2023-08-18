@@ -1,4 +1,4 @@
-// ver: 0.6.05
+// ver: 0.6.06
 
 // Bugs:
 
@@ -323,7 +323,6 @@ marker_opacity_slider.addEventListener("input", function () {
 // // ↓ GeoJSON Initialization + country highlight ↓
 
 let defaultCountryHighlight = 0;
-
 let cachedGeoJSON = null;
 
 if (!cachedGeoJSON) {
@@ -1003,7 +1002,7 @@ function travelLogIndividualSubmit(event) {
 
   calculateTotalIdDistance(rawCoordinatesDistances, stored_individual_id);
   const $travel_logs_individual_distance = document.createElement("span");
-  $travel_logs_individual_distance.textContent = total_id_distance.toFixed(1) + "km";
+  $travel_logs_individual_distance.textContent = formatDistance(total_id_distance) + " km";
   $travel_logs_individual_div_main.appendChild($travel_logs_individual_distance);
 
   // individual travel distance
@@ -1540,6 +1539,8 @@ let total_bicycle_distance = 0;
 let total_motorcycle_distance = 0;
 let total_train_distance = 0;
 let total_bus_distance = 0;
+let highest_distance_type = "";
+let lowest_distance_type = "";
 
 main_statistics_container_arrow.addEventListener("click", () => {
   if (!is_travel_creator_active) {
@@ -1585,10 +1586,12 @@ function distancesBreakdown(distances) {
 
       if (distance > highest_distance) {
         highest_distance = distance;
+        highest_distance_type = distance_info[1];
       }
 
       if (distance < lowest_distance) {
         lowest_distance = distance;
+        lowest_distance_type = distance_info[1];
       }
 
       total_distance += distance;
@@ -1598,25 +1601,43 @@ function distancesBreakdown(distances) {
   return {
     highest_distance,
     lowest_distance,
+    highest_distance_type,
+    lowest_distance_type,
     total_distance,
   };
 }
 
 function updateTravelStats() {
   const display_highest_distance = highest_distance === Number.NEGATIVE_INFINITY ? 0 : highest_distance;
-  document.getElementById("highest_distance").textContent = display_highest_distance.toFixed(1) + " km";
   const display_lowest_distance = lowest_distance === Number.POSITIVE_INFINITY ? 0 : lowest_distance;
-  document.getElementById("lowest_distance").textContent = display_lowest_distance.toFixed(1) + " km";
-  document.getElementById("total_distance").textContent = total_distance.toFixed(1) + " km";
 
-  document.getElementById("total_car_distance").textContent = total_car_distance.toFixed(1) + " km";
-  document.getElementById("total_plane_distance").textContent = total_plane_distance.toFixed(1) + " km";
-  document.getElementById("total_boat_distance").textContent = total_boat_distance.toFixed(1) + " km";
-  document.getElementById("total_walk_distance").textContent = total_walk_distance.toFixed(1) + " km";
-  document.getElementById("total_bicycle_distance").textContent = total_bicycle_distance.toFixed(1) + " km";
-  document.getElementById("total_motorcycle_distance").textContent = total_motorcycle_distance.toFixed(1) + " km";
-  document.getElementById("total_train_distance").textContent = total_train_distance.toFixed(1) + " km";
-  document.getElementById("total_bus_distance").textContent = total_bus_distance.toFixed(1) + " km";
+  const highest_distance_display =
+    highest_distance === Number.NEGATIVE_INFINITY ? "" : "[" + highest_distance_type + "]";
+  const lowest_distance_display = lowest_distance === Number.POSITIVE_INFINITY ? "" : "[" + lowest_distance_type + "]";
+
+  document.getElementById("highest_distance").textContent =
+    formatDistance(display_highest_distance) + " km " + highest_distance_display;
+
+  document.getElementById("lowest_distance").textContent =
+    formatDistance(display_lowest_distance) + " km " + lowest_distance_display;
+
+  document.getElementById("total_distance").textContent = formatDistance(total_distance) + " km";
+  document.getElementById("total_car_distance").textContent = formatDistance(total_car_distance) + " km";
+  document.getElementById("total_plane_distance").textContent = formatDistance(total_plane_distance) + " km";
+  document.getElementById("total_boat_distance").textContent = formatDistance(total_boat_distance) + " km";
+  document.getElementById("total_walk_distance").textContent = formatDistance(total_walk_distance) + " km";
+  document.getElementById("total_bicycle_distance").textContent = formatDistance(total_bicycle_distance) + " km";
+  document.getElementById("total_motorcycle_distance").textContent = formatDistance(total_motorcycle_distance) + " km";
+  document.getElementById("total_train_distance").textContent = formatDistance(total_train_distance) + " km";
+  document.getElementById("total_bus_distance").textContent = formatDistance(total_bus_distance) + " km";
+}
+
+function formatDistance(distance) {
+  if (distance > 1000) {
+    return distance.toFixed(0);
+  } else {
+    return distance.toFixed(1);
+  }
 }
 
 function toggleStatisticsVisibility(toggle) {
@@ -1698,7 +1719,7 @@ function calculateTotalIdDistance(distances, id) {
   }
 
   return {
-    total_car_distance,
+    total_id_distance,
   };
 }
 
@@ -1753,9 +1774,4 @@ test_button.addEventListener("click", () => {
   console.log("Total Bus Distance:", total_bus_distance.toFixed(2), "km");
 });
 
-test_button_2.addEventListener("click", () => {
-  calculateDistances();
-  distancesBreakdown(rawCoordinatesDistances);
-  calculateTotalDistances(rawCoordinatesDistances);
-  updateTravelStats();
-});
+test_button_2.addEventListener("click", () => {});
