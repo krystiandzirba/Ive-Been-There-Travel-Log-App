@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Travel App 0.6.06</title>
+    <title>Travel App 0.7.01</title>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -24,6 +24,16 @@
     <link rel="stylesheet" href="https://cdn.knightlab.com/libs/timeline3/latest/css/timeline.css" />
 
     <script type="module" src="script.js"></script>
+
+    <div class="loading_page_container" id="loading_page_container">
+      <div class="loading_animation_container">
+        <div class="plane_animation_container">
+          <img src="/content/icons/plane_icon_animation.png" class="plane_icon" alt="plane Icon" />
+        </div>
+
+        <img src="/content/icons/globe_icon_white.png" class="globe_icon" alt="globe Icon" />
+      </div>
+    </div>
 
     <div id="map"></div>
 
@@ -165,7 +175,7 @@
       <img id="custom_cursor_image" src="/content/icons/car_icon_small.png" />
     </div>
 
-    <div class="app_version">ver: 0.6.06</div>
+    <div class="app_version">ver: 0.7.01</div>
 
     <div id="info_popup" style="display: none">
       <span id="close_info_popup">&times;</span>

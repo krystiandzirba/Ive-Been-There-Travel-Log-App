@@ -1,4 +1,4 @@
-// ver: 0.6.06
+// ver: 0.7.01
 
 // Bugs:
 
@@ -8,12 +8,12 @@
 //               - travel logs, make it display only the travel name, name edit ( and maybe date ), on click make it extend to show all the log options (edit, markers, highlights ...)
 //               - multi options polyline / leaflet motion
 
-// ---------- 3. Separate tab to calculate the travel stats: overall trips distance divided on the travel type, countries visited
-// ---------- 4. Add local storage to save the trip progress and settings
-// ---------- 5. new UI / Add loading animations before the page/content load
-// ---------- 6. Add different page styles (font, animations, images, backgrounds, theme) - modern / middleage / other
+// ---------- 4. new UI / Add loading animations before the page/content load
+// ---------- 5. Add different page styles (font, animations, images, backgrounds, theme) - modern / middleage / other
+// ---------- 6. Add local storage to save the trip progress and settings
 // ---------- 7. Add different languages
-// ---------- 8. Rewrite to React
+// ---------- 8. Add info boxes to help navigate the app while using it for the first time
+// ---------- 9. Rewrite to React
 
 // download the polyline offset, polyline snake anim / polyline decorator
 
@@ -1724,6 +1724,24 @@ function calculateTotalIdDistance(distances, id) {
 }
 
 // ↑ Travel Statistics ↑
+// ↓ UI / Visuals ↓
+
+window.addEventListener("load", function () {
+  const loading_page_container = document.getElementById("loading_page_container");
+  loading_page_container.style.display = "none";
+
+  const plane_animation_container = document.querySelector(".plane_animation_container");
+  const globe_icon = document.querySelector(".globe_icon");
+
+  plane_animation_container.style.animationPlayState = "paused";
+  globe_icon.style.animationPlayState = "paused";
+
+  setTimeout(() => {
+    toggleMainLogContainerVisibility(true);
+  }, 400);
+});
+
+// ↑ UI / Visuals ↑
 // ↓ Other ↓
 // ↓ Other / Info popup ↓
 
@@ -1741,13 +1759,6 @@ close_info_popup.addEventListener("click", closeInfoPopup);
 // ↑ Other ↑
 
 // // ---------- TEST ---------- ↓
-
-// // ---------- Check if page is loaded  ---------- ↓
-
-//   window.addEventListener("load", function () {
-//       const cover = document.getElementById("cover");
-//       cover.style.display = "none";
-//   });
 
 test_button.addEventListener("click", () => {
   console.log("highlight array", highlights);
