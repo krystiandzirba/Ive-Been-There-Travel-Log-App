@@ -494,11 +494,17 @@ body {
 /* ↓ UI, Visuals ↓  */
 
 .loading_page_container {
+  pointer-events: none;
   min-height: 100vh;
   width: 100vw;
   background-color: #23232d;
   position: fixed;
   z-index: 990;
+}
+
+.loading_page_container_fade_out {
+  opacity: 0;
+  transition: opacity 1s ease;
 }
 
 .loading_animation_container {
@@ -534,6 +540,8 @@ body {
 
 .plane_icon {
   position: absolute;
+  height: 50px;
+  width: 50px;
   top: 40%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -542,6 +550,8 @@ body {
 
 .globe_icon {
   animation: rotate_globe 20s linear infinite;
+  height: 250px;
+  width: 250px;
 }
 
 @keyframes rotate_globe {
@@ -553,8 +563,34 @@ body {
   }
 }
 
-.cover_animation img {
+.loading_page_progress_container {
   position: absolute;
+  height: 2.8vh;
+  width: 30vw;
+  top: 90%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(17, 17, 19, 0.5);
+  border-radius: 10px;
+  box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.loading_page_progress_container p {
+  font-weight: bold;
+  font-family: "Dosis", sans-serif;
+  color: rgb(211, 211, 211);
+}
+
+.loading_page_fade_container {
+  position: absolute;
+  top: 10%;
+  width: 100vw;
+  height: 30vh;
+  background: linear-gradient(to bottom, transparent, rgb(0, 0, 0, 0.5));
 }
 
 /* ↑ UI, Visuals ↑ */
@@ -568,7 +604,7 @@ body {
   height: 2vh;
   width: 5vw;
   position: absolute;
-  z-index: 899;
+  z-index: 999;
   font-family: "Dosis", sans-serif;
   /*       font-family: 'Lilita One', cursive; */
   text-align: center;
