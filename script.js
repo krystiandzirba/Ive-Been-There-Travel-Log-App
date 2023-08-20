@@ -1,4 +1,4 @@
-// ver: 0.7.02
+// ver: 0.7.03
 
 // Bugs:
 
@@ -18,8 +18,6 @@
 // download the polyline offset, polyline snake anim / polyline decorator
 
 // ↓ Home ↓
-
-updateLoadingProgress("loading variables");
 
 const layers_button = document.getElementById("layers_button");
 const layers_container = document.getElementById("layers_container");
@@ -100,8 +98,6 @@ let travel_logs_group_input = document.getElementById("travel_logs_group_input")
 
 // // ↓ Home / Basic interactiveness ↓
 
-updateLoadingProgress("loading main buttons");
-
 layers_button.addEventListener("click", () => {
   if (travel_log_individual_container_active) {
     return;
@@ -181,8 +177,6 @@ function toggleMainLogContainerVisibility(toggle) {
 
 // 1 = future local storage / 0 = temporary, local storage not needed
 
-updateLoadingProgress("loading arrays");
-
 /* 1 */ let highlights = [];
 /* 1 */ let markers = [];
 /* 1 */ let markersCoordinates = [];
@@ -206,8 +200,6 @@ let random_id = "";
 import leafletConfig from "./LeafletConfig.js";
 
 const { L } = window;
-
-updateLoadingProgress("loading leaflet map");
 
 const maxBounds = L.latLngBounds(L.latLng(-90, -180), L.latLng(90, 180));
 const map = L.map("map", {
@@ -305,8 +297,6 @@ function togglePolylineVisibility() {
 // // ↑ Leaflet Map / Marker + Polyline visibility toggle ↑
 // // ↓ Leaflet Map / Custom Home + marker Highlight Color + opacity ↓
 
-updateLoadingProgress("loading color and opacity pickers");
-
 home_color_picker.addEventListener("input", function () {
   home_circle_color = home_color_picker.value;
 });
@@ -331,8 +321,6 @@ marker_opacity_slider.addEventListener("input", function () {
 // ↑ Leaflet Map  ↑
 // ↓ GeoJSON ↓
 // // ↓ GeoJSON Initialization + country highlight ↓
-
-updateLoadingProgress("caching geoJSON file");
 
 let defaultCountryHighlight = 0;
 let cachedGeoJSON = null;
@@ -499,8 +487,6 @@ function homeMarkerZoom() {
 // ↑ GeoJSON ↑
 // ↓ Travel Log ↓
 // // ↓ Travel Log / Log markers ↓
-
-updateLoadingProgress("loading travel type buttons");
 
 const travelTypeButtonImages = new Map();
 travelTypeButtonImages.set(travel_type_car, "/content/icons/car_icon_small.png");
@@ -862,8 +848,6 @@ function pngMouseTracking(e) {
 
 // // ↑ Travel Log / Log markers ↑
 // // ↓ Travel Log / CRUD setup ↓
-
-updateLoadingProgress("loading travel log CRUDs");
 
 let travel_date_start = "";
 let travel_date_end = "";
@@ -1351,8 +1335,6 @@ function toggleCustomCursorVisibility(toggle) {
 
 // // ↓ Travel Log / Date picker ↓
 
-updateLoadingProgress("loading data picker");
-
 $(function () {
   const startDate = moment().startOf("day").format("YYYY/MM/DD");
   const endDate = moment().startOf("day").add(1, "day").format("YYYY/MM/DD");
@@ -1442,8 +1424,6 @@ function drawPolyline() {
 
 // ↑ Leaflet Polyline ↑
 // ↓ TimelineJS ↓
-
-updateLoadingProgress("loading timeline");
 
 timeline_toggle.addEventListener("click", () => {
   toggleTimelineVisibility(false);
@@ -1545,8 +1525,6 @@ function timelineInfoToggle() {
 
 // ↑ TimelineJS ↑
 // ↓ Travel Statistics ↓
-
-updateLoadingProgress("loading travel statistics");
 
 let highest_distance = 0;
 let lowest_distance = 0;
@@ -1748,15 +1726,6 @@ function calculateTotalIdDistance(distances, id) {
 // ↑ Travel Statistics ↑
 // ↓ UI / Visuals ↓
 
-window.addEventListener("load", function () {
-  removeLoadingPageContent();
-  updateLoadingProgress("page loaded!");
-});
-
-function updateLoadingProgress(progress) {
-  document.getElementById("progress_info").textContent = progress;
-}
-
 function removeLoadingPageContent() {
   const loading_animation_container = document.querySelector(".loading_animation_container");
   loading_animation_container.style.transition = "transform 1s ease";
@@ -1790,6 +1759,82 @@ function closeInfoPopup() {
 close_info_popup.addEventListener("click", closeInfoPopup);
 
 // ↑ Other / Info popup ↑
+// ↓ Other / Loading progress info ↓
+
+const progress_info = document.getElementById("progress_info");
+
+function trackLoadingProgress(resources, progressInfoDisplay, onLoadingComplete) {
+  const totalResources = resources.length;
+  let loadedResources = 0;
+  let currentResourceIndex = 0;
+
+  function loadNextResource() {
+    if (currentResourceIndex < totalResources) {
+      const resource = resources[currentResourceIndex];
+      const resourceUrl = resource.url;
+      const label = resource.label;
+
+      fetch(resourceUrl)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`Failed to fetch ${resourceUrl}`);
+          }
+          return response;
+        })
+        .then(() => {
+          loadedResources++;
+          const progress = (loadedResources / totalResources) * 100;
+          progressInfoDisplay(label, progress);
+
+          currentResourceIndex++;
+          loadNextResource();
+        })
+        .catch((error) => {
+          console.error(error);
+          loadedResources++;
+          currentResourceIndex++;
+          loadNextResource();
+        });
+    } else {
+      onLoadingComplete();
+    }
+  }
+
+  loadNextResource();
+}
+
+const resourcesToLoad = [
+  { url: "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css", label: "Leaflet CSS" },
+  { url: "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js", label: "leaflet JS" },
+  { url: "styles.css", label: "Main CSS" },
+  { url: "https://cdn.jsdelivr.net/npm/leaflet-ajax/dist/leaflet.ajax.min.js", label: "Leaflet" },
+  { url: "https://cdn.jsdelivr.net/npm/leaflet.cheaplayerat@0.1.2/Leaflet.CheapLayerAt.min.js", label: "Leaflet" },
+  {
+    url: "https://cdn.jsdelivr.net/gh/hosuaby/Leaflet.SmoothMarkerBouncing@v3.0.2/dist/bundle.js",
+    label: "Smooth Marker Bouncing",
+  },
+  // "https://cdn.knightlab.com/libs/timeline3/latest/js/timeline.js",
+  { url: "https://cdn.jsdelivr.net/jquery/latest/jquery.min.js", label: "jQuery" },
+  { url: "https://cdn.jsdelivr.net/momentjs/latest/moment.min.js", label: "Moment.js" },
+  { url: "https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js", label: "Date range picker JS" },
+  { url: "https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css", label: "date range picker CSS" },
+  // "https://cdn.knightlab.com/libs/timeline3/latest/css/timeline.css",
+  { url: "script.js", label: "Main JS Script" },
+];
+
+function progressInfoDisplay(label, progress) {
+  progress_info.textContent = ` ${label} (Progress: ${progress.toFixed(2)}%)`;
+}
+
+function onLoadingComplete() {
+  progress_info.textContent = "All resources loaded!";
+  setTimeout(() => {
+    removeLoadingPageContent();
+  }, 500);
+}
+trackLoadingProgress(resourcesToLoad, progressInfoDisplay, onLoadingComplete);
+
+// ↑ Other / Loading progress info ↑
 // ↑ Other ↑
 
 // // ---------- TEST ---------- ↓

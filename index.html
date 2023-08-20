@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Travel App 0.7.02</title>
+    <title>Travel App 0.7.03</title>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <script type="module" src="script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/leaflet-ajax/dist/leaflet.ajax.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/leaflet.cheaplayerat@0.1.2/Leaflet.CheapLayerAt.min.js"></script>
@@ -22,8 +23,6 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <link rel="stylesheet" href="https://cdn.knightlab.com/libs/timeline3/latest/css/timeline.css" />
-
-    <script type="module" src="script.js"></script>
 
     <div class="loading_page_container" id="loading_page_container">
       <div class="loading_animation_container">
@@ -39,7 +38,7 @@
         <img src="/content/icons/globe_icon_white.png" class="globe_icon" id="globe_icon_animation" alt="globe Icon" />
       </div>
       <div class="loading_page_progress_container">
-        <p>Loading progress: <span id="progress_info"></span></p>
+        <p>Loading: <span id="progress_info">. . . </span></p>
         <div class="loading_page_fade_container"></div>
       </div>
     </div>
@@ -184,7 +183,7 @@
       <img id="custom_cursor_image" src="/content/icons/car_icon_small.png" />
     </div>
 
-    <div class="app_version">ver: 0.7.02</div>
+    <div class="app_version">ver: 0.7.03</div>
 
     <div id="info_popup" style="display: none">
       <span id="close_info_popup">&times;</span>
