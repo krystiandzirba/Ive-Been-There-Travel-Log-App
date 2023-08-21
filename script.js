@@ -1,4 +1,4 @@
-// ver: 0.7.03
+// ver: 0.7.04
 
 // Bugs:
 
@@ -1739,7 +1739,8 @@ function removeLoadingPageContent() {
     loading_animation_container.remove();
     loading_page_progress_container.remove();
     const loading_page_container = document.getElementById("loading_page_container");
-    loading_page_container.classList.add("loading_page_container_fade_out");
+    loading_page_container.classList.add("loading_page_fade_out");
+
     toggleMainLogContainerVisibility(true);
   }, 800);
 }
@@ -1762,6 +1763,28 @@ close_info_popup.addEventListener("click", closeInfoPopup);
 // ↓ Other / Loading progress info ↓
 
 const progress_info = document.getElementById("progress_info");
+
+showAppTitle();
+
+function showAppTitle() {
+  const title_screen_background = document.querySelector(".title_screen_background");
+  if (title_screen_background) {
+    title_screen_background.style.left = "20%";
+    title_screen_background.style.transform = "translateX(-20%)";
+    title_screen_background.style.top = "30%";
+    title_screen_background.style.transform = "translateY(-30%)";
+  }
+}
+
+function hideAppTitle() {
+  const title_screen_background = document.querySelector(".title_screen_background");
+  if (title_screen_background) {
+    title_screen_background.style.left = "90%";
+    title_screen_background.style.transform = "translateX(90%)";
+    title_screen_background.style.top = "30%";
+    title_screen_background.style.transform = "translateY(-30%)";
+  }
+}
 
 function trackLoadingProgress(resources, progressInfoDisplay, onLoadingComplete) {
   const totalResources = resources.length;
@@ -1827,8 +1850,12 @@ function progressInfoDisplay(label, progress) {
 }
 
 function onLoadingComplete() {
+  hideAppTitle();
   progress_info.textContent = "All resources loaded!";
+
   setTimeout(() => {
+    plane_icon_animation.classList.add("loading_page_fade_out_fast");
+    globe_icon_animation.classList.add("loading_page_fade_out_fast");
     removeLoadingPageContent();
   }, 500);
 }
