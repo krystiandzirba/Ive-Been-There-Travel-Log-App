@@ -104,6 +104,77 @@ body {
 
 /* ↑ Map addon layer ↑  */
 
+/* ↓ Sidebar left ↓  */
+.sidebar_settings_container {
+  position: absolute;
+  height: 100%;
+  width: 7vw;
+  background-color: #2f3c4c;
+  z-index: 800;
+  top: 0%;
+  left: 0%;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 0px;
+  margin: 0px;
+}
+
+.button_1,
+.button_2,
+.button_3,
+.button_4,
+.button_5,
+.button_6,
+.button_7,
+.button_8,
+.button_9,
+.button_10 {
+  padding: 10px 0;
+  background-color: #2f3c4c;
+  height: 8.5%;
+  width: 80%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  border: none;
+  color: #d7d7d7;
+  margin-bottom: 5%;
+  margin-top: 5%;
+}
+
+.button_1 i,
+.button_2 i,
+.button_3 i,
+.button_4 i,
+.button_5 i,
+.button_6 i,
+.button_7 i,
+.button_8 i,
+.button_9 i,
+.button_10 i {
+  margin-top: 20px;
+}
+
+.button_1 p,
+.button_2 p,
+.button_3 p,
+.button_4 p,
+.button_5 p,
+.button_6 p,
+.button_7 p,
+.button_8 p,
+.button_9 p,
+.button_10 p {
+  margin-top: 25px;
+}
+
+/* ↑ Sidebar left ↑  */
+
 /* ↓ Home ↓  */
 
 .home_button {
@@ -224,7 +295,7 @@ body {
   top: 10%;
   right: 5%;
   transform: translate(5%, 5%);
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .travel_logs_individual_div_main {
@@ -273,6 +344,13 @@ body {
   margin-bottom: 10px;
   background-color: rgb(243, 207, 255);
   overflow: auto;
+}
+
+.travel_logs_group_name {
+  font-size: 2vw;
+  padding: 0.5vw;
+  margin: 1vw;
+  background-color: rgb(167, 167, 255);
 }
 
 /* ↑ Logs container ↑  */
@@ -533,7 +611,7 @@ body {
 .title_screen_background {
   position: absolute;
   background-color: white;
-  top: 40%;
+  top: 30%;
   left: -20%;
   height: 30vh;
   width: 80vw;
@@ -627,7 +705,7 @@ body {
 .app_version {
   color: white;
   top: 95%;
-  left: 1%;
+  left: 7%;
   height: 2vh;
   width: 5vw;
   position: absolute;

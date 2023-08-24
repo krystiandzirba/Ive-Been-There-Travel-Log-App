@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>I've been there! - Travel log app 0.7.04</title>
+    <title>I've been there! - Travel log app 0.7.05</title>
     <link rel="icon" type="image/x-icon" href="/content/icons/globe_icon_black.png" />
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -24,6 +24,8 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <link rel="stylesheet" href="https://cdn.knightlab.com/libs/timeline3/latest/css/timeline.css" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
 
     <div class="loading_page_container" id="loading_page_container">
       <div class="title_screen_container">
@@ -49,6 +51,50 @@
     </div>
 
     <div id="map"></div>
+
+    <div class="sidebar_settings_container">
+      <button class="button_1">
+        <i class="fa-solid fa-home fa-2xl" style="color: #d7d7d7"></i>
+
+        <p>house location</p>
+      </button>
+      <button class="button_2">
+        <i class="fa-solid fa-layer-group fa-2xl" style="color: #d7d7d7"></i>
+        <p>map layers</p>
+      </button>
+      <button class="button_3">
+        <i class="fa-solid fa-fill-drip fa-2xl" style="color: #d7d7d7"></i>
+        <p>page styles</p>
+      </button>
+      <button class="button_4">
+        <i class="fa-solid fa-tag fa-2xl" style="color: #d7d7d7"></i>
+        <p>country labels</p>
+      </button>
+      <button class="button_5">
+        <i class="fa-solid fa-flag fa-2xl" style="color: #d7d7d7"></i>
+        <p>country borders</p>
+      </button>
+      <button class="button_6">
+        <i class="fa-solid fa-eye-slash fa-2xl" style="color: #d7d7d7"></i>
+        <p>visibility</p>
+      </button>
+      <button class="button_7">
+        <i class="fa-solid fa-map-location-dot fa-2xl" style="color: #d7d7d7"></i>
+        <p>trails</p>
+      </button>
+      <button class="button_8">
+        <i class="fa-solid fa-timeline fa-2xl" style="color: #d7d7d7"></i>
+        <p>timeline</p>
+      </button>
+      <button class="button_9">
+        <i class="fa-solid fa-language fa-2xl" style="color: #d7d7d7"></i>
+        <p>language</p>
+      </button>
+      <button class="button_10">
+        <i class="fa-solid fa-gear fa-2xl" style="color: #d7d7d7"></i>
+        <p>settings</p>
+      </button>
+    </div>
 
     <button id="layers_button" class="layer_button layer_0">layers</button>
     <div id="layers_container" class="layers_container">
@@ -81,7 +127,7 @@
     </div>
 
     <div class="main_logs_container">
-      <button id="add_travel" class="add_travel">add travel</button>
+      <button id="add_travel" class="add_travel">Begin new travel!</button>
       <div id="logs_list" class="travel_logs"></div>
     </div>
 
@@ -188,7 +234,7 @@
       <img id="custom_cursor_image" src="/content/icons/car_icon_small.png" />
     </div>
 
-    <div class="app_version">ver: 0.7.04</div>
+    <div class="app_version">ver: 0.7.05</div>
 
     <div id="info_popup" style="display: none">
       <span id="close_info_popup">&times;</span>

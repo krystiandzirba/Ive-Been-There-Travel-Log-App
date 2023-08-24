@@ -1,21 +1,21 @@
-// ver: 0.7.04
+// ver: 0.7.05
 
 // Bugs:
 
 // Features to add:
 
-//               - make the storedIds[] load the id data from the travelLogs[] on page load, instead of storing it in a local storage in the future
-//               - travel logs, make it display only the travel name, name edit ( and maybe date ), on click make it extend to show all the log options (edit, markers, highlights ...)
-//               - multi options polyline / leaflet motion
-
 // ---------- 4. new UI / Add loading animations before the page/content load
+//               - travel logs, make it display only the travel name, name edit ( and maybe date ), on click make it extend to show all the log options (edit, markers, highlights ...)
+//               - change the color and opacity slider to a color picker with opacity channel (jscolor)
 // ---------- 5. Add different page styles (font, animations, images, backgrounds, theme) - modern / middleage / other
 // ---------- 6. Add local storage to save the trip progress and settings
+//               - make the storedIds[] load the id data from the travelLogs[] on page load, instead of storing it in a local storage in the future
 // ---------- 7. Add different languages
 // ---------- 8. Add info boxes to help navigate the app while using it for the first time
 // ---------- 9. Rewrite to React
 
 // download the polyline offset, polyline snake anim / polyline decorator
+// multi options polyline / leaflet motion
 
 // ↓ Home ↓
 
@@ -985,7 +985,6 @@ function travelLogIndividualSubmit(event) {
 
   const $individual_log_id = document.createElement("span");
   $individual_log_id.textContent = random_id;
-  $travel_logs_individual_div_main.appendChild($individual_log_id);
 
   // individual travel id
   // individual travel name
@@ -1110,7 +1109,6 @@ function travelLogGroupSubmit(event) {
 
   const $group_log_id = document.createElement("span");
   $group_log_id.textContent = stored_group_log_id;
-  $travel_logs_group_div_settings.appendChild($group_log_id);
 
   // group travel id
   // travel name div
@@ -1182,7 +1180,7 @@ function travelLogGroupSubmit(event) {
   // add group (individual) travel button
 
   const $travel_logs_group_add_travel_button = document.createElement("button");
-  $travel_logs_group_add_travel_button.textContent = "add individual travel";
+  $travel_logs_group_add_travel_button.textContent = "add travel type";
   $travel_logs_group_add_travel_button.addEventListener("click", () => {
     highlight_color_opacity_customization = true;
     layers_button_active = false;
@@ -1768,22 +1766,20 @@ showAppTitle();
 
 function showAppTitle() {
   const title_screen_background = document.querySelector(".title_screen_background");
-  if (title_screen_background) {
-    title_screen_background.style.left = "20%";
-    title_screen_background.style.transform = "translateX(-20%)";
-    title_screen_background.style.top = "30%";
-    title_screen_background.style.transform = "translateY(-30%)";
-  }
+
+  title_screen_background.style.left = "20%";
+  title_screen_background.style.transform = "translateX(-50%)";
+  title_screen_background.style.top = "30%";
+  title_screen_background.style.transform = "translateY(-50%)";
 }
 
 function hideAppTitle() {
   const title_screen_background = document.querySelector(".title_screen_background");
-  if (title_screen_background) {
-    title_screen_background.style.left = "90%";
-    title_screen_background.style.transform = "translateX(90%)";
-    title_screen_background.style.top = "30%";
-    title_screen_background.style.transform = "translateY(-30%)";
-  }
+
+  title_screen_background.style.left = "90%";
+  title_screen_background.style.transform = "translateX(-50%)";
+  title_screen_background.style.top = "30%";
+  title_screen_background.style.transform = "translateY(-50%)";
 }
 
 function trackLoadingProgress(resources, progressInfoDisplay, onLoadingComplete) {
