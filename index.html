@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>I've been there! - Travel log app 0.7.05</title>
+    <title>I've been there! - Travel log app 0.7.06</title>
     <link rel="icon" type="image/x-icon" href="/content/icons/globe_icon_black.png" />
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -18,6 +18,7 @@
     <!-- prettier-ignore -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/hosuaby/Leaflet.SmoothMarkerBouncing@v3.0.2/dist/bundle.js" crossorigin="anonymous" ></script>
     <script src="https://cdn.knightlab.com/libs/timeline3/latest/js/timeline.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jscolor/2.5.1/jscolor.min.js"></script>
 
     <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
@@ -52,48 +53,82 @@
 
     <div id="map"></div>
 
-    <div class="sidebar_settings_container">
-      <button class="button_1">
+    <div class="sidebar_container">
+      <button id="sidebar_house_button" class="sidebar_main_button">
         <i class="fa-solid fa-home fa-2xl" style="color: #d7d7d7"></i>
-
-        <p>house location</p>
+        <p>house</p>
       </button>
-      <button class="button_2">
+      <button id="sidebar_map_layers_button" class="sidebar_main_button">
         <i class="fa-solid fa-layer-group fa-2xl" style="color: #d7d7d7"></i>
         <p>map layers</p>
       </button>
-      <button class="button_3">
-        <i class="fa-solid fa-fill-drip fa-2xl" style="color: #d7d7d7"></i>
-        <p>page styles</p>
-      </button>
-      <button class="button_4">
-        <i class="fa-solid fa-tag fa-2xl" style="color: #d7d7d7"></i>
-        <p>country labels</p>
-      </button>
-      <button class="button_5">
-        <i class="fa-solid fa-flag fa-2xl" style="color: #d7d7d7"></i>
-        <p>country borders</p>
-      </button>
-      <button class="button_6">
-        <i class="fa-solid fa-eye-slash fa-2xl" style="color: #d7d7d7"></i>
-        <p>visibility</p>
-      </button>
-      <button class="button_7">
-        <i class="fa-solid fa-map-location-dot fa-2xl" style="color: #d7d7d7"></i>
-        <p>trails</p>
-      </button>
-      <button class="button_8">
+      <button id="sidebar_timeline_button" class="sidebar_main_button">
         <i class="fa-solid fa-timeline fa-2xl" style="color: #d7d7d7"></i>
         <p>timeline</p>
       </button>
-      <button class="button_9">
+      <button id="sidebar_statistics_button" class="sidebar_main_button">
+        <i class="fa-solid fa-chart-simple fa-2xl" style="color: #d7d7d7"></i>
+        <p>statistics</p>
+      </button>
+      <button id="sidebar_labels_button" class="sidebar_main_button">
+        <i class="fa-solid fa-tag fa-2xl" style="color: #d7d7d7"></i>
+        <p>labels</p>
+      </button>
+      <button id="sidebar_borders_button" class="sidebar_main_button">
+        <i class="fa-solid fa-flag fa-2xl" style="color: #d7d7d7"></i>
+        <p>borders</p>
+      </button>
+      <button id="sidebar_trails_button" class="sidebar_main_button">
+        <i class="fa-solid fa-map-location-dot fa-2xl" style="color: #d7d7d7"></i>
+        <p>trails</p>
+      </button>
+      <button id="sidebar_visibility_button" class="sidebar_main_button">
+        <i class="fa-solid fa-eye-slash fa-2xl" style="color: #d7d7d7"></i>
+        <p>visibility</p>
+      </button>
+      <button id="sidebar_page_styles_button" class="sidebar_main_button">
+        <i class="fa-solid fa-fill-drip fa-2xl" style="color: #888888"></i>
+        <p>page styles</p>
+      </button>
+      <button id="sidebar_language_button" class="sidebar_main_button">
         <i class="fa-solid fa-language fa-2xl" style="color: #d7d7d7"></i>
         <p>language</p>
       </button>
-      <button class="button_10">
+      <button id="sidebar_settings_button" class="sidebar_main_button">
         <i class="fa-solid fa-gear fa-2xl" style="color: #d7d7d7"></i>
         <p>settings</p>
       </button>
+    </div>
+
+    <div id="sub_house_button_container" class="sub_house_button_container">
+      <button id="sidebar_sub_house_color_button" class="sidebar_sub_button">
+        <i class="fa-solid fa-palette fa-2xl" style="color: #d7d7d7"></i>
+        <p>color</p>
+      </button>
+      <button id="sub_house_manual_location" class="sidebar_sub_button">
+        <i class="fa-solid fa-hand-point-down fa-2xl" style="color: #d7d7d7"></i>
+        <p>manual</p>
+      </button>
+      <button id="sub_house_geolocation" class="sidebar_sub_button">
+        <i class="fa-solid fa-location-crosshairs fa-2xl" style="color: #d7d7d7"></i>
+        <p>geolocation</p>
+      </button>
+      <button id="sub_house_zoom" class="sidebar_sub_button">
+        <i class="fa-solid fa-magnifying-glass-location fa-2xl" style="color: #d7d7d7"></i>
+        <p>zoom</p>
+      </button>
+    </div>
+
+    <div class="jscolor_container">
+      <p>
+        <input
+          id="jscolor"
+          data-jscolor="{
+            format: 'rgb', alphaChannel: true, height: 200, width: 300,crossSize: 9, borderWidth: 0, pointerBorderWidth: 0, closeButton:true, closeText:'OK', backgroundColor:'#333', buttonColor:'#d7d7d7'
+          }"
+          value="rgba(138, 255, 20, 0.5)"
+        />
+      </p>
     </div>
 
     <button id="layers_button" class="layer_button layer_0">layers</button>
@@ -110,16 +145,6 @@
       <button id="markers_toggle" class="layer_button markers_toggle">toggle markers</button>
       <button id="polylines_toggle" class="layer_button polylines_toggle">toggle polylines</button>
       <button id="timeline_toggle" class="layer_button timeline_toggle">Timeline Enabled</button>
-    </div>
-
-    <button id="home_button_main" class="home_button home_main">main</button>
-    <div id="location_container" class="location_container">
-      <button id="home_button_geolocation" class="home_button home_geolocation">location</button>
-      <button id="home_button_manual" class="home_button home_manual">manual</button>
-      <button id="home_button_zoom" class="home_button home_zoom">zoom</button>
-
-      <input type="color" id="home_color_picker" value="#8AFF14" />
-      <input type="range" id="home_opacity_slider" min="0" max="1" step="0.05" value="0.5" />
     </div>
 
     <div class="main_logs_container_arrow">
@@ -234,7 +259,7 @@
       <img id="custom_cursor_image" src="/content/icons/car_icon_small.png" />
     </div>
 
-    <div class="app_version">ver: 0.7.05</div>
+    <div class="app_version">ver: 0.7.06</div>
 
     <div id="info_popup" style="display: none">
       <span id="close_info_popup">&times;</span>

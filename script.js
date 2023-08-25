@@ -1,4 +1,4 @@
-// ver: 0.7.05
+// ver: 0.7.06
 
 // Bugs:
 
@@ -6,7 +6,6 @@
 
 // ---------- 4. new UI / Add loading animations before the page/content load
 //               - travel logs, make it display only the travel name, name edit ( and maybe date ), on click make it extend to show all the log options (edit, markers, highlights ...)
-//               - change the color and opacity slider to a color picker with opacity channel (jscolor)
 // ---------- 5. Add different page styles (font, animations, images, backgrounds, theme) - modern / middleage / other
 // ---------- 6. Add local storage to save the trip progress and settings
 //               - make the storedIds[] load the id data from the travelLogs[] on page load, instead of storing it in a local storage in the future
@@ -17,7 +16,13 @@
 // download the polyline offset, polyline snake anim / polyline decorator
 // multi options polyline / leaflet motion
 
-// ↓ Home ↓
+const sidebar_house_button = document.getElementById("sidebar_house_button");
+const sub_house_button_container = document.getElementById("sub_house_button_container");
+const sub_house_manual_location = document.getElementById("sub_house_manual_location");
+const sub_house_geolocation = document.getElementById("sub_house_geolocation");
+const sub_house_zoom = document.getElementById("sub_house_zoom");
+const sidebar_sub_house_color_button = document.getElementById("sidebar_sub_house_color_button");
+const jscolor = document.getElementById("jscolor");
 
 const layers_button = document.getElementById("layers_button");
 const layers_container = document.getElementById("layers_container");
@@ -36,11 +41,6 @@ const timeline_toggle = document.querySelector("#timeline_toggle");
 
 const home_button_main = document.getElementById("home_button_main");
 const location_container = document.getElementById("location_container");
-const home_button_geolocation = document.getElementById("home_button_geolocation");
-const home_button_manual = document.getElementById("home_button_manual");
-const home_button_zoom = document.getElementById("home_button_zoom");
-const home_color_picker = document.getElementById("home_color_picker");
-const home_opacity_slider = document.getElementById("home_opacity_slider");
 
 const info_popup = document.getElementById("info_popup");
 const info_popup_text = document.getElementById("info_popup_text");
@@ -96,31 +96,129 @@ let travel_logs_group_name = "";
 let travel_logs_individual_input = document.getElementById("travel_logs_individual_input");
 let travel_logs_group_input = document.getElementById("travel_logs_group_input");
 
-// // ↓ Home / Basic interactiveness ↓
+let container_timeout;
+let jscolor_data = "";
+let jscolor_color = "#8AFF14";
+let jscolor_opacity = 0.5;
+
+let home_button_manual_click = false;
+let home_circle = null;
+
+let home_marker = "";
+let marker = "";
+
+// ↓ Page interaction ↓
+// // ↓ Sidebar ↓
+
+sidebar_house_button.addEventListener("mouseenter", () => {
+  clearTimeout(container_timeout);
+  sub_house_button_container.style.transition = "transform 0.3s ease";
+  sub_house_button_container.style.transform = "translate(0%, 0%)";
+});
+
+sidebar_house_button.addEventListener("mouseleave", () => {
+  container_timeout = setTimeout(() => {
+    sub_house_button_container.style.transition = "transform 0.3s ease";
+    sub_house_button_container.style.transform = "translate(-100%, 0%)";
+  }, 200);
+});
+
+sub_house_button_container.addEventListener("mouseenter", () => {
+  clearTimeout(container_timeout);
+  sub_house_button_container.style.transition = "none";
+  sub_house_button_container.style.transform = "translate(0%, 0%)";
+});
+
+sub_house_button_container.addEventListener("mouseleave", () => {
+  container_timeout = setTimeout(() => {
+    sub_house_button_container.style.transition = "transform 0.3s ease";
+    sub_house_button_container.style.transform = "translate(-100%, 0%)";
+  }, 200);
+});
+
+sidebar_sub_house_color_button.addEventListener("click", () => {
+  jscolor.jscolor.show();
+});
+
+jscolor.addEventListener("change", () => {
+  jscolor_data = jscolor.jscolor.toHEXAString();
+  jscolor_color = jscolor_data.slice(0, -2);
+  jscolor_opacity = parseInt(jscolor_data.slice(-2), 16) / 255;
+  console.log(jscolor_color, jscolor_opacity);
+});
+
+sub_house_manual_location.addEventListener("click", () => {
+  travelTypeValueUpdate(true, false, false, false, false, false, false, false, false);
+
+  homeMarkerClear();
+
+  const mapClickListener = (e) => {
+    const clickedLatLng = e.latlng;
+
+    if (home_button_manual_click === true) {
+      home_marker = L.marker(clickedLatLng, {
+        icon: home_icon,
+        id: "home_marker",
+      });
+      home_marker.addTo(map).bounce(1);
+      markers.push(home_marker);
+      home_circle = L.circle(home_marker.getLatLng(), {
+        radius: 50000,
+        color: jscolor_color,
+        fillOpacity: jscolor_opacity,
+        weight: 1,
+      }).addTo(map);
+    }
+
+    home_button_manual_click = false;
+
+    map.off("click", mapClickListener);
+  };
+  map.on("click", mapClickListener);
+});
+
+sub_house_geolocation.addEventListener("click", () => {
+  travelTypeValueUpdate(true, false, false, false, false, false, false, false, false);
+
+  homeMarkerClear();
+
+  if ("geolocation" in navigator) {
+    navigator.geolocation.getCurrentPosition((position) => {
+      const { latitude, longitude } = position.coords;
+
+      home_marker = L.marker([latitude, longitude], {
+        icon: home_icon,
+        id: "home_marker",
+      });
+      home_marker.addTo(map).bounce(1);
+      markers.push(home_marker);
+      home_circle = L.circle(home_marker.getLatLng(), {
+        radius: 50000,
+        color: jscolor_color,
+        fillOpacity: jscolor_opacity,
+        weight: 1,
+      }).addTo(map);
+    });
+  }
+  setTimeout(homeMarkerZoom, 100);
+});
+
+sub_house_zoom.addEventListener("click", () => {
+  homeMarkerZoom();
+});
+
+// // ↑ Sidebar ↑
+// ↑ Page interaction ↑
 
 layers_button.addEventListener("click", () => {
   if (travel_log_individual_container_active) {
     return;
   }
 
-  if (layers_container.style.display === "none" || location_container.style.display === "") {
+  if (layers_container.style.display === "none") {
     toggleLayersButtonVisibility();
   } else {
     toggleLayersButtonVisibility();
-  }
-});
-
-home_button_main.addEventListener("click", () => {
-  if (travel_log_individual_container_active) {
-    return;
-  }
-  map.off("click");
-  travelTypeValueUpdate(false, false, false, false, false, false, false, false);
-
-  if (location_container.style.display === "none" || location_container.style.display === "") {
-    toggleLocationContainerVisibility();
-  } else {
-    toggleLocationContainerVisibility();
   }
 });
 
@@ -128,8 +226,8 @@ add_travel.addEventListener("click", () => {
   toggleMainLogContainerVisibility(false);
   toggleTimelineVisibility(false);
   toggleStatisticsVisibility(false);
-  home_button_main.style.backgroundColor = "rgb(180, 180, 180, 0.5)";
-  layers_button.style.backgroundColor = "rgb(180, 180, 180, 0.5)";
+  // home_button_main.style.backgroundColor = "rgb(180, 180, 180, 0.5)";
+  //layers_button.style.backgroundColor = "rgb(180, 180, 180, 0.5)";
   add_travel.style.backgroundColor = "rgb(180, 180, 180, 0.5)";
   if (!is_travel_creator_active) {
     random_id = "";
@@ -159,8 +257,6 @@ main_logs_container_arrow.addEventListener("click", function () {
     }
   }
 });
-
-// // ↑ Home / Basic interactiveness ↑
 
 function toggleMainLogContainerVisibility(toggle) {
   if (toggle) {
@@ -208,16 +304,8 @@ const map = L.map("map", {
   maxBoundsViscosity: 0.8,
 }).setView([50, 10], 6);
 
-let home_circle_color = "#8AFF14";
-let home_circle_opacity = 0.5;
 let marker_highlight_color = "#1495ED";
 let marker_highlight_opacity = 0.5;
-
-let home_marker = "";
-let marker = "";
-
-let home_button_manual_click = false;
-let home_circle = null;
 
 let travel_type_car_click = false;
 let travel_type_plane_click = false;
@@ -296,14 +384,6 @@ function togglePolylineVisibility() {
 
 // // ↑ Leaflet Map / Marker + Polyline visibility toggle ↑
 // // ↓ Leaflet Map / Custom Home + marker Highlight Color + opacity ↓
-
-home_color_picker.addEventListener("input", function () {
-  home_circle_color = home_color_picker.value;
-});
-
-home_opacity_slider.addEventListener("input", function () {
-  home_circle_opacity = parseFloat(home_opacity_slider.value);
-});
 
 marker_color_picker.addEventListener("input", function () {
   if (highlight_color_opacity_customization) {
@@ -392,77 +472,7 @@ function setLayerStyle(layer, fillColor, fillOpacity, attribution, random_id) {
   layer.defaultOptions.id = random_id;
 }
 
-// // ↓ GeoJSON Initialization + country highlight ↓
-
-// // ↓ GeoJSON / Geolocation on Button Click ↓
-
-home_button_geolocation.addEventListener("click", () => {
-  travelTypeValueUpdate(true, false, false, false, false, false, false, false, false);
-
-  homeMarkerClear();
-
-  if ("geolocation" in navigator) {
-    navigator.geolocation.getCurrentPosition((position) => {
-      const { latitude, longitude } = position.coords;
-
-      home_marker = L.marker([latitude, longitude], {
-        icon: home_icon,
-        id: "home_marker",
-      });
-      home_marker.addTo(map).bounce(1);
-      markers.push(home_marker);
-      home_circle = L.circle(home_marker.getLatLng(), {
-        radius: 50000,
-        color: home_circle_color,
-        fillOpacity: home_circle_opacity,
-        weight: 1,
-      }).addTo(map);
-    });
-  }
-  setTimeout(homeMarkerZoom, 100);
-});
-
-// // ↑ GeoJSON / Geolocation on Button Click ↑
-// // ↓ GeoJSON / Manual Location ↓
-
-home_button_manual.addEventListener("click", () => {
-  travelTypeValueUpdate(true, false, false, false, false, false, false, false, false);
-
-  homeMarkerClear();
-
-  const mapClickListener = (e) => {
-    const clickedLatLng = e.latlng;
-
-    if (home_button_manual_click === true) {
-      home_marker = L.marker(clickedLatLng, {
-        icon: home_icon,
-        id: "home_marker",
-      });
-      home_marker.addTo(map).bounce(1);
-      markers.push(home_marker);
-      home_circle = L.circle(home_marker.getLatLng(), {
-        radius: 50000,
-        color: home_circle_color,
-        fillOpacity: home_circle_opacity,
-        weight: 1,
-      }).addTo(map);
-    }
-
-    home_button_manual_click = false;
-
-    map.off("click", mapClickListener);
-  };
-  map.on("click", mapClickListener);
-});
-
-// // ↑ GeoJSON / Manual Location ↑
-// // ↓ GeoJSON / Home Button Center Marker ↓
-
-home_button_zoom.addEventListener("click", () => {
-  homeMarkerZoom();
-});
-
-// // ↑ GeoJSON / Home Button Center Marker ↑
+// // ↑ GeoJSON Initialization + country highlight ↑
 
 function homeMarkerClear() {
   if (home_marker) {
@@ -870,8 +880,8 @@ check_icon_group.addEventListener("click", (event) => {
   }
 
   if (travel_logs_group_name !== "") {
-    home_button_main.style.backgroundColor = "rgb(255, 255, 190)";
-    layers_button.style.backgroundColor = "rgb(255, 255, 190)";
+    //home_button_main.style.backgroundColor = "rgb(255, 255, 190)";
+    //layers_button.style.backgroundColor = "rgb(255, 255, 190)";
     add_travel.style.backgroundColor = "rgb(255, 255, 190)";
     is_travel_creator_active = false;
     travelLogGroupSubmit(event);
@@ -884,8 +894,8 @@ check_icon_group.addEventListener("click", (event) => {
 });
 
 close_icon_group.addEventListener("click", () => {
-  home_button_main.style.backgroundColor = "rgb(255, 255, 190)";
-  layers_button.style.backgroundColor = "rgb(255, 255, 190)";
+  // home_button_main.style.backgroundColor = "rgb(255, 255, 190)";
+  //layers_button.style.backgroundColor = "rgb(255, 255, 190)";
   add_travel.style.backgroundColor = "rgb(255, 255, 190)";
   is_travel_creator_active = false;
   stored_group_log_id = random_id;
@@ -932,8 +942,8 @@ check_icon_individual.addEventListener("click", (event) => {
     toggleTravelLogsIndividualMainContainerVisibility(false);
     timelineInfoToggle();
     closeInfoPopup();
-    home_button_main.style.backgroundColor = "rgb(255, 255, 190)";
-    layers_button.style.backgroundColor = "rgb(255, 255, 190)";
+    //home_button_main.style.backgroundColor = "rgb(255, 255, 190)";
+    //layers_button.style.backgroundColor = "rgb(255, 255, 190)";
     is_travel_creator_active = false;
   }
 });
@@ -966,8 +976,8 @@ close_icon_individual.addEventListener("click", () => {
   } else {
     toggleTravelLogsIndividualMainContainerVisibility(false);
   }
-  home_button_main.style.backgroundColor = "rgb(255, 255, 190)";
-  layers_button.style.backgroundColor = "rgb(255, 255, 190)";
+  // home_button_main.style.backgroundColor = "rgb(255, 255, 190)";
+  // layers_button.style.backgroundColor = "rgb(255, 255, 190)";
   is_travel_creator_active = false;
 });
 
@@ -1320,8 +1330,8 @@ function toggleLayersButtonVisibility() {
 function toggleLocationContainerVisibility() {
   location_container.style.display = !home_button_active ? "block" : "none";
   if (is_travel_creator_active) {
-    home_button_main.style.backgroundColor = "rgb(180, 180, 180, 0.5)";
-    layers_button.style.backgroundColor = "rgb(180, 180, 180, 0.5)";
+    //home_button_main.style.backgroundColor = "rgb(180, 180, 180, 0.5)";
+    //layers_button.style.backgroundColor = "rgb(180, 180, 180, 0.5)";
   }
 
   home_button_active = !home_button_active;

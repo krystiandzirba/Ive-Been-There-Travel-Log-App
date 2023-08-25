@@ -16,7 +16,7 @@ body {
 .layer_button {
   height: 50px;
   width: 100px;
-  left: 10%;
+  left: 37%;
   background-color: rgb(255, 255, 255);
   position: absolute;
   z-index: 899;
@@ -105,10 +105,10 @@ body {
 /* ↑ Map addon layer ↑  */
 
 /* ↓ Sidebar left ↓  */
-.sidebar_settings_container {
+.sidebar_container {
   position: absolute;
   height: 100%;
-  width: 7vw;
+  width: 4.5vw;
   background-color: #2f3c4c;
   z-index: 800;
   top: 0%;
@@ -122,20 +122,11 @@ body {
   margin: 0px;
 }
 
-.button_1,
-.button_2,
-.button_3,
-.button_4,
-.button_5,
-.button_6,
-.button_7,
-.button_8,
-.button_9,
-.button_10 {
+.sidebar_main_button {
   padding: 10px 0;
   background-color: #2f3c4c;
-  height: 8.5%;
-  width: 80%;
+  height: 7.5%;
+  width: 75%;
 
   display: flex;
   flex-direction: column;
@@ -143,106 +134,92 @@ body {
 
   border: none;
   color: #d7d7d7;
-  margin-bottom: 5%;
-  margin-top: 5%;
+  margin-bottom: 7%;
+  margin-top: 7%;
+
+  border-radius: 10px 10px 10px 10px;
+
+  font-family: "Dosis", sans-serif;
+  font-weight: 500;
+  font-size: 0.7vw;
 }
 
-.button_1 i,
-.button_2 i,
-.button_3 i,
-.button_4 i,
-.button_5 i,
-.button_6 i,
-.button_7 i,
-.button_8 i,
-.button_9 i,
-.button_10 i {
+.jscolor_container {
+  top: 5.5%;
+  left: 4.5%;
+  z-index: 290;
+  position: absolute;
+}
+
+.sidebar_main_button:hover {
+  background-color: #374657;
+}
+
+.sidebar_main_button:hover i {
+  color: red;
+}
+
+.sidebar_main_button i {
   margin-top: 20px;
 }
 
-.button_1 p,
-.button_2 p,
-.button_3 p,
-.button_4 p,
-.button_5 p,
-.button_6 p,
-.button_7 p,
-.button_8 p,
-.button_9 p,
-.button_10 p {
-  margin-top: 25px;
+.sidebar_main_button p {
+  margin-top: 12px;
+}
+
+.sub_house_button_container {
+  position: absolute;
+  background-color: #2f3c4c;
+  height: 9%;
+  z-index: 790;
+  width: 20%;
+  left: 4.5%;
+  top: 0%;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  transform: translate(-100%, 0%);
+}
+
+.sidebar_sub_button {
+  color: #d7d7d7;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  border: none;
+
+  padding: 10px 0;
+  background-color: #2f3c4c;
+  height: 85%;
+  width: 20%;
+
+  border-radius: 10px 10px 10px 10px;
+
+  font-family: "Dosis", sans-serif;
+  font-weight: 500;
+  font-size: 0.7vw;
+  margin-right: 20px;
+}
+
+.sidebar_sub_button:hover {
+  background-color: #374657;
+}
+
+.sidebar_sub_button i {
+  margin-top: 20px;
+}
+
+.sidebar_sub_button p {
+  margin-top: 12px;
 }
 
 /* ↑ Sidebar left ↑  */
 
 /* ↓ Home ↓  */
 
-.home_button {
-  height: 50px;
-  width: 100px;
-  background-color: rgb(255, 255, 255);
-  position: absolute;
-  z-index: 899;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: "Dosis", sans-serif;
-  font-weight: 700;
-  font-size: 1vw;
-
-  text-align: center;
-  border: black, 2px, solid;
-}
-
-.home_button:hover {
-  transform: translate(-50%, -50%) scale(1.1);
-}
-
-.home_main {
-  top: 5%;
-  left: 20%;
-  transform: translate(-50%, -50%);
-  background-color: rgb(255, 255, 190);
-}
-
-.home_geolocation {
-  top: 12.5%;
-  left: 20%;
-  transform: translate(-50%, -50%);
-}
-
-.home_manual {
-  top: 20%;
-  left: 20%;
-  transform: translate(-50%, -50%);
-}
-
-.home_zoom {
-  top: 27.5%;
-  left: 20%;
-  transform: translate(-50%, -50%);
-}
-
-#home_color_picker {
-  top: 35%;
-  left: 20%;
-  position: absolute;
-  z-index: 899;
-}
-
-#home_opacity_slider {
-  top: 40%;
-  left: 16%;
-  position: absolute;
-  z-index: 899;
-}
-
 .layers_container {
-  display: none;
-}
-
-.location_container {
   display: none;
 }
 
@@ -642,6 +619,10 @@ body {
   }
 }
 
+.home_button {
+  display: none;
+}
+
 .plane_icon {
   position: absolute;
   height: 50px;
@@ -704,8 +685,8 @@ body {
 
 .app_version {
   color: white;
-  top: 95%;
-  left: 7%;
+  top: 97%;
+  left: 5%;
   height: 2vh;
   width: 5vw;
   position: absolute;
