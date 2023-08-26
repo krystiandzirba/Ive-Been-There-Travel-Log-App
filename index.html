@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>I've been there! - Travel log app 0.7.06</title>
+    <title>I've been there! - Travel log app 0.7.07</title>
     <link rel="icon" type="image/x-icon" href="/content/icons/globe_icon_black.png" />
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -63,7 +63,7 @@
         <p>map layers</p>
       </button>
       <button id="sidebar_timeline_button" class="sidebar_main_button">
-        <i class="fa-solid fa-timeline fa-2xl" style="color: #d7d7d7"></i>
+        <i class="fa-solid fa-timeline fa-2xl" style="color: #d7d7d7" id="timeline_icon"> </i>
         <p>timeline</p>
       </button>
       <button id="sidebar_statistics_button" class="sidebar_main_button">
@@ -100,7 +100,7 @@
       </button>
     </div>
 
-    <div id="sub_house_button_container" class="sub_house_button_container">
+    <div id="sub_house_button_container" class="sub_main_container sub_container_house">
       <button id="sidebar_sub_house_color_button" class="sidebar_sub_button">
         <i class="fa-solid fa-palette fa-2xl" style="color: #d7d7d7"></i>
         <p>color</p>
@@ -119,12 +119,31 @@
       </button>
     </div>
 
+    <div id="sub_map_layers_container" class="sub_main_container sub_container_map_layers">
+      <button id="map_tile_layer_A" class="sidebar_sub_button">
+        <i class="fa-solid fa-layer-group fa-2xl" style="color: #d7d7d7"></i>
+        <p>bright</p>
+      </button>
+      <button id="map_tile_layer_B" class="sidebar_sub_button">
+        <i class="fa-solid fa-layer-group fa-2xl" style="color: #d7d7d7"></i>
+        <p>earth</p>
+      </button>
+      <button id="map_tile_layer_C" class="sidebar_sub_button">
+        <i class="fa-solid fa-layer-group fa-2xl" style="color: #d7d7d7"></i>
+        <p>dark</p>
+      </button>
+      <button id="map_tile_layer_D" class="sidebar_sub_button">
+        <i class="fa-solid fa-layer-group fa-2xl" style="color: #d7d7d7"></i>
+        <p>middleage</p>
+      </button>
+    </div>
+
     <div class="jscolor_container">
       <p>
         <input
           id="jscolor"
           data-jscolor="{
-            format: 'rgb', alphaChannel: true, height: 200, width: 300,crossSize: 9, borderWidth: 0, pointerBorderWidth: 0, closeButton:true, closeText:'OK', backgroundColor:'#333', buttonColor:'#d7d7d7'
+            hideOnLeave: true, position:'right', format: 'rgb', alphaChannel: true, height: 200, width: 300,crossSize: 9, borderWidth: 0, pointerBorderWidth: 0, closeButton:false, closeText:'OK', backgroundColor:'#333', buttonColor:'#d7d7d7'
           }"
           value="rgba(138, 255, 20, 0.5)"
         />
@@ -133,18 +152,12 @@
 
     <button id="layers_button" class="layer_button layer_0">layers</button>
     <div id="layers_container" class="layers_container">
-      <button id="map_tile_layer_A" class="layer_button layer_1">layer 1</button>
-      <button id="map_tile_layer_B" class="layer_button layer_2">layer 2</button>
-      <button id="map_tile_layer_C" class="layer_button layer_3">layer 3</button>
-      <button id="map_tile_layer_D" class="layer_button layer_4">layer 4</button>
-
       <button id="map_tile_addon_labels" class="layer_button addon_labels">labels</button>
       <button id="map_tile_addon_borders" class="layer_button addon_borders">borders</button>
       <button id="map_tile_addon_train" class="layer_button addon_train">train</button>
       <button id="map_tile_addon_cycling" class="layer_button addon_cycling">cycling</button>
       <button id="markers_toggle" class="layer_button markers_toggle">toggle markers</button>
       <button id="polylines_toggle" class="layer_button polylines_toggle">toggle polylines</button>
-      <button id="timeline_toggle" class="layer_button timeline_toggle">Timeline Enabled</button>
     </div>
 
     <div class="main_logs_container_arrow">
@@ -259,7 +272,7 @@
       <img id="custom_cursor_image" src="/content/icons/car_icon_small.png" />
     </div>
 
-    <div class="app_version">ver: 0.7.06</div>
+    <div class="app_version">ver: 0.7.07</div>
 
     <div id="info_popup" style="display: none">
       <span id="close_info_popup">&times;</span>

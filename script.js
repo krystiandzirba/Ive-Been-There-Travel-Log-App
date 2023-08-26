@@ -1,4 +1,4 @@
-// ver: 0.7.06
+// ver: 0.7.07
 
 // Bugs:
 
@@ -15,21 +15,33 @@
 
 // download the polyline offset, polyline snake anim / polyline decorator
 // multi options polyline / leaflet motion
+// check leaflet plugins
 
+// ↓ Variables ↓
+// // ↓ Sidebar Variables ↓
 const sidebar_house_button = document.getElementById("sidebar_house_button");
 const sub_house_button_container = document.getElementById("sub_house_button_container");
+
+const jscolor = document.getElementById("jscolor");
 const sub_house_manual_location = document.getElementById("sub_house_manual_location");
 const sub_house_geolocation = document.getElementById("sub_house_geolocation");
 const sub_house_zoom = document.getElementById("sub_house_zoom");
 const sidebar_sub_house_color_button = document.getElementById("sidebar_sub_house_color_button");
-const jscolor = document.getElementById("jscolor");
 
-const layers_button = document.getElementById("layers_button");
-const layers_container = document.getElementById("layers_container");
+const sidebar_map_layers_button = document.getElementById("sidebar_map_layers_button");
+const sub_map_layers_container = document.getElementById("sub_map_layers_container");
 const map_tile_layer_A = document.querySelector("#map_tile_layer_A");
 const map_tile_layer_B = document.querySelector("#map_tile_layer_B");
 const map_tile_layer_C = document.querySelector("#map_tile_layer_C");
 const map_tile_layer_D = document.querySelector("#map_tile_layer_D");
+
+const sidebar_timeline_button = document.getElementById("sidebar_timeline_button");
+const timeline_icon = document.getElementById("timeline_icon");
+
+// // ↑ Sidebar Variables ↑
+
+const layers_button = document.getElementById("layers_button");
+const layers_container = document.getElementById("layers_container");
 
 const map_tile_addon_labels = document.querySelector("#map_tile_addon_labels");
 const map_tile_addon_borders = document.querySelector("#map_tile_addon_borders");
@@ -37,10 +49,6 @@ const map_tile_addon_train = document.querySelector("#map_tile_addon_train");
 const map_tile_addon_cycling = document.querySelector("#map_tile_addon_cycling");
 const markers_toggle = document.querySelector("#markers_toggle");
 const polylines_toggle = document.querySelector("#polylines_toggle");
-const timeline_toggle = document.querySelector("#timeline_toggle");
-
-const home_button_main = document.getElementById("home_button_main");
-const location_container = document.getElementById("location_container");
 
 const info_popup = document.getElementById("info_popup");
 const info_popup_text = document.getElementById("info_popup_text");
@@ -87,7 +95,6 @@ let is_travel_creator_active = false;
 let highlight_color_opacity_customization = true;
 let travel_log_individual_container_active = false;
 let layers_button_active = false;
-let home_button_active = false;
 let main_logs_container_arrow_clicked = false;
 let main_statistics_container_arrow_clicked = false;
 
@@ -96,7 +103,9 @@ let travel_logs_group_name = "";
 let travel_logs_individual_input = document.getElementById("travel_logs_individual_input");
 let travel_logs_group_input = document.getElementById("travel_logs_group_input");
 
-let container_timeout;
+let house_container_timeout;
+let map_layers_container_timeout;
+
 let jscolor_data = "";
 let jscolor_color = "#8AFF14";
 let jscolor_opacity = 0.5;
@@ -107,30 +116,90 @@ let home_circle = null;
 let home_marker = "";
 let marker = "";
 
+let timelineOptions = {
+  initial_zoom: 1,
+  timenav_position: "bottom",
+  optimal_tick_width: 100,
+  duration: 400,
+  font: "bitter-raleway",
+};
+let random_id = "";
+
+import leafletConfig from "./LeafletConfig.js";
+
+const { L } = window;
+
+const maxBounds = L.latLngBounds(L.latLng(-90, -180), L.latLng(90, 180));
+const map = L.map("map", {
+  zoomControl: false,
+  maxBounds: maxBounds,
+  maxBoundsViscosity: 0.8,
+}).setView([50, 10], 6);
+
+let marker_highlight_color = "#1495ED";
+let marker_highlight_opacity = 0.5;
+
+let travel_type_car_click = false;
+let travel_type_plane_click = false;
+let travel_type_boat_click = false;
+let travel_type_walk_click = false;
+let travel_type_bicycle_click = false;
+let travel_type_motorcycle_click = false;
+let travel_type_train_click = false;
+let travel_type_bus_click = false;
+
+const { mapTileLayer_A, mapTileLayer_B, mapTileLayer_C, mapTileLayer_D } = leafletConfig.tilemaps;
+const { home_icon, car_icon, plane_icon, boat_icon, walk_icon, bicycle_icon, motorcycle_icon, train_icon, bus_icon } =
+  leafletConfig.marker_icons;
+const { trainsAddon, cyclingAddon, bordersAddon, labelsAddon } = leafletConfig.addons;
+
+const mapTileLayers = L.layerGroup([mapTileLayer_B]).addTo(map);
+
+map_tile_addon_labels.addEventListener("click", () => switchTileAddon(labelsAddon));
+map_tile_addon_borders.addEventListener("click", () => switchTileAddon(bordersAddon));
+map_tile_addon_train.addEventListener("click", () => switchTileAddon(trainsAddon));
+map_tile_addon_cycling.addEventListener("click", () => switchTileAddon(cyclingAddon));
+
+// 1 = future local storage / 0 = temporary, local storage not needed
+
+/* 1 */ let highlights = [];
+/* 1 */ let markers = [];
+/* 1 */ let markersCoordinates = [];
+/* 1 */ let travelLogs = [];
+/* 0 */ let polylines = [];
+/* 0 */ let storedIds = [];
+/* 0 */ let timelineData = {
+  events: [],
+};
+/* 0 */ let rawCoordinatesDistances = [];
+
+// ↑ Variables ↑
+
 // ↓ Page interaction ↓
 // // ↓ Sidebar ↓
+// // // ↓ House ↓
 
 sidebar_house_button.addEventListener("mouseenter", () => {
-  clearTimeout(container_timeout);
+  clearTimeout(house_container_timeout);
   sub_house_button_container.style.transition = "transform 0.3s ease";
   sub_house_button_container.style.transform = "translate(0%, 0%)";
 });
 
 sidebar_house_button.addEventListener("mouseleave", () => {
-  container_timeout = setTimeout(() => {
+  house_container_timeout = setTimeout(() => {
     sub_house_button_container.style.transition = "transform 0.3s ease";
     sub_house_button_container.style.transform = "translate(-100%, 0%)";
   }, 200);
 });
 
 sub_house_button_container.addEventListener("mouseenter", () => {
-  clearTimeout(container_timeout);
+  clearTimeout(house_container_timeout);
   sub_house_button_container.style.transition = "none";
   sub_house_button_container.style.transform = "translate(0%, 0%)";
 });
 
 sub_house_button_container.addEventListener("mouseleave", () => {
-  container_timeout = setTimeout(() => {
+  house_container_timeout = setTimeout(() => {
     sub_house_button_container.style.transition = "transform 0.3s ease";
     sub_house_button_container.style.transform = "translate(-100%, 0%)";
   }, 200);
@@ -149,10 +218,12 @@ jscolor.addEventListener("change", () => {
 
 sub_house_manual_location.addEventListener("click", () => {
   travelTypeValueUpdate(true, false, false, false, false, false, false, false, false);
-
+  updateCursorImage("/content/icons/home_icon_small.png");
+  removeMarkers("home_marker");
   homeMarkerClear();
 
   const mapClickListener = (e) => {
+    toggleCustomCursorVisibility(false);
     const clickedLatLng = e.latlng;
 
     if (home_button_manual_click === true) {
@@ -179,7 +250,7 @@ sub_house_manual_location.addEventListener("click", () => {
 
 sub_house_geolocation.addEventListener("click", () => {
   travelTypeValueUpdate(true, false, false, false, false, false, false, false, false);
-
+  removeMarkers("home_marker");
   homeMarkerClear();
 
   if ("geolocation" in navigator) {
@@ -200,13 +271,92 @@ sub_house_geolocation.addEventListener("click", () => {
       }).addTo(map);
     });
   }
-  setTimeout(homeMarkerZoom, 100);
+  setTimeout(homeMarkerZoom, 200);
 });
 
 sub_house_zoom.addEventListener("click", () => {
   homeMarkerZoom();
 });
 
+// // // ↑ House ↑
+// // // ↓ Map Layers ↓
+
+sidebar_map_layers_button.addEventListener("mouseenter", () => {
+  clearTimeout(map_layers_container_timeout);
+  sub_map_layers_container.style.transition = "transform 0.3s ease";
+  sub_map_layers_container.style.transform = "translate(0%, 0%)";
+});
+
+sidebar_map_layers_button.addEventListener("mouseleave", () => {
+  map_layers_container_timeout = setTimeout(() => {
+    sub_map_layers_container.style.transition = "transform 0.3s ease";
+    sub_map_layers_container.style.transform = "translate(-100%, 0%)";
+  }, 200);
+});
+
+sub_map_layers_container.addEventListener("mouseenter", () => {
+  clearTimeout(map_layers_container_timeout);
+  sub_map_layers_container.style.transition = "none";
+  sub_map_layers_container.style.transform = "translate(0%, 0%)";
+});
+
+sub_map_layers_container.addEventListener("mouseleave", () => {
+  map_layers_container_timeout = setTimeout(() => {
+    sub_map_layers_container.style.transition = "transform 0.3s ease";
+    sub_map_layers_container.style.transform = "translate(-100%, 0%)";
+  }, 200);
+});
+
+map_tile_layer_A.addEventListener("click", () => switchTileMap(mapTileLayer_A));
+map_tile_layer_B.addEventListener("click", () => switchTileMap(mapTileLayer_B));
+map_tile_layer_C.addEventListener("click", () => switchTileMap(mapTileLayer_C));
+map_tile_layer_D.addEventListener("click", () => switchTileMap(mapTileLayer_D));
+
+function switchTileMap(layer) {
+  mapTileLayers.clearLayers();
+  mapTileLayers.addLayer(layer);
+}
+
+// // // ↑ Map Layers ↑
+// // // ↓ Timeline ↓
+
+sidebar_timeline_button.addEventListener("click", () => {
+  toggleTimelineVisibility(false);
+  changeTimelineIconColor(true);
+  toggleTimeline();
+});
+
+timeline_container_arrow.addEventListener("click", () => {
+  if (!is_travel_creator_active) {
+    if (timeline_visibility == true) {
+      toggleTimelineVisibility(false);
+    } else {
+      toggleTimelineVisibility(true);
+    }
+  }
+});
+
+function changeTimelineIconColor() {
+  if (timeline_enabled) {
+    timeline_icon.classList.add("timeline_icon_black");
+  } else {
+    timeline_icon.classList.remove("timeline_icon_black");
+  }
+}
+
+function toggleTimelineVisibility(toggle) {
+  if (toggle && timeline_enabled) {
+    timeline_container.style.transform = "translate(-50%, -67.5%)";
+    timeline_container_arrow.style.transform = "translate(-50%, -630%)";
+    timeline_visibility = true;
+  } else {
+    timeline_container.style.transform = "translate(-50%, 40%)";
+    timeline_container_arrow.style.transform = "translate(-50%, 0%)";
+    timeline_visibility = false;
+  }
+}
+
+// // // ↑ Timeline ↑
 // // ↑ Sidebar ↑
 // ↑ Page interaction ↑
 
@@ -226,8 +376,6 @@ add_travel.addEventListener("click", () => {
   toggleMainLogContainerVisibility(false);
   toggleTimelineVisibility(false);
   toggleStatisticsVisibility(false);
-  // home_button_main.style.backgroundColor = "rgb(180, 180, 180, 0.5)";
-  //layers_button.style.backgroundColor = "rgb(180, 180, 180, 0.5)";
   add_travel.style.backgroundColor = "rgb(180, 180, 180, 0.5)";
   if (!is_travel_creator_active) {
     random_id = "";
@@ -271,69 +419,7 @@ function toggleMainLogContainerVisibility(toggle) {
 // ↑ Home ↑
 // ↓ Leaflet Map ↓
 
-// 1 = future local storage / 0 = temporary, local storage not needed
-
-/* 1 */ let highlights = [];
-/* 1 */ let markers = [];
-/* 1 */ let markersCoordinates = [];
-/* 1 */ let travelLogs = [];
-/* 0 */ let polylines = [];
-/* 0 */ let storedIds = [];
-/* 0 */ let timelineData = {
-  events: [],
-};
-/* 0 */ let rawCoordinatesDistances = [];
-
-let timelineOptions = {
-  initial_zoom: 1,
-  timenav_position: "bottom",
-  optimal_tick_width: 100,
-  duration: 400,
-  font: "bitter-raleway",
-};
-let random_id = "";
-
-import leafletConfig from "./LeafletConfig.js";
-
-const { L } = window;
-
-const maxBounds = L.latLngBounds(L.latLng(-90, -180), L.latLng(90, 180));
-const map = L.map("map", {
-  zoomControl: false,
-  maxBounds: maxBounds,
-  maxBoundsViscosity: 0.8,
-}).setView([50, 10], 6);
-
-let marker_highlight_color = "#1495ED";
-let marker_highlight_opacity = 0.5;
-
-let travel_type_car_click = false;
-let travel_type_plane_click = false;
-let travel_type_boat_click = false;
-let travel_type_walk_click = false;
-let travel_type_bicycle_click = false;
-let travel_type_motorcycle_click = false;
-let travel_type_train_click = false;
-let travel_type_bus_click = false;
-
-const { mapTileLayer_A, mapTileLayer_B, mapTileLayer_C, mapTileLayer_D } = leafletConfig.tilemaps;
-const { home_icon, car_icon, plane_icon, boat_icon, walk_icon, bicycle_icon, motorcycle_icon, train_icon, bus_icon } =
-  leafletConfig.marker_icons;
-const { trainsAddon, cyclingAddon, bordersAddon, labelsAddon } = leafletConfig.addons;
-
-const mapTileLayers = L.layerGroup([mapTileLayer_B]).addTo(map);
-
 // // ↓ Leaflet Map / Tiles Change ↓
-
-map_tile_layer_A.addEventListener("click", () => switchTileMap(mapTileLayer_A));
-map_tile_layer_B.addEventListener("click", () => switchTileMap(mapTileLayer_B));
-map_tile_layer_C.addEventListener("click", () => switchTileMap(mapTileLayer_C));
-map_tile_layer_D.addEventListener("click", () => switchTileMap(mapTileLayer_D));
-
-map_tile_addon_labels.addEventListener("click", () => switchTileAddon(labelsAddon));
-map_tile_addon_borders.addEventListener("click", () => switchTileAddon(bordersAddon));
-map_tile_addon_train.addEventListener("click", () => switchTileAddon(trainsAddon));
-map_tile_addon_cycling.addEventListener("click", () => switchTileAddon(cyclingAddon));
 
 function switchTileAddon(tile_addon) {
   if (map.hasLayer(tile_addon)) {
@@ -341,11 +427,6 @@ function switchTileAddon(tile_addon) {
   } else {
     tile_addon.addTo(map);
   }
-}
-
-function switchTileMap(layer) {
-  mapTileLayers.clearLayers();
-  mapTileLayers.addLayer(layer);
 }
 
 // // ↑ Leaflet Map / Tiles Change ↑
@@ -1194,17 +1275,15 @@ function travelLogGroupSubmit(event) {
   $travel_logs_group_add_travel_button.addEventListener("click", () => {
     highlight_color_opacity_customization = true;
     layers_button_active = false;
-    home_button_active = false;
     travel_log_individual_container_active = true;
     is_travel_creator_active = true;
     markers_visibility = false;
     polyline_visibility = false;
     toggleMarkersVisibility();
     togglePolylineVisibility();
-    toggleLocationContainerVisibility();
+
     toggleLayersButtonVisibility();
-    toggleLocationContainerVisibility();
-    toggleLayersButtonVisibility();
+
     travelTypeButtonsColor();
     toggleMainLogContainerVisibility(false);
     toggleTimelineVisibility(false);
@@ -1327,16 +1406,6 @@ function toggleLayersButtonVisibility() {
   layers_button_active = !layers_button_active;
 }
 
-function toggleLocationContainerVisibility() {
-  location_container.style.display = !home_button_active ? "block" : "none";
-  if (is_travel_creator_active) {
-    //home_button_main.style.backgroundColor = "rgb(180, 180, 180, 0.5)";
-    //layers_button.style.backgroundColor = "rgb(180, 180, 180, 0.5)";
-  }
-
-  home_button_active = !home_button_active;
-}
-
 function toggleCustomCursorVisibility(toggle) {
   custom_cursor.style.display = toggle ? "flex" : "none";
 }
@@ -1433,21 +1502,6 @@ function drawPolyline() {
 // ↑ Leaflet Polyline ↑
 // ↓ TimelineJS ↓
 
-timeline_toggle.addEventListener("click", () => {
-  toggleTimelineVisibility(false);
-  toggleTimeline();
-});
-
-timeline_container_arrow.addEventListener("click", () => {
-  if (!is_travel_creator_active) {
-    if (timeline_visibility == true) {
-      toggleTimelineVisibility(false);
-    } else {
-      toggleTimelineVisibility(true);
-    }
-  }
-});
-
 function splitDates(timeline_start, timeline_end) {
   const [startYear, startMonth, startDay] = timeline_start.split("/").map(Number);
   const [endYear, endMonth, endDay] = timeline_end.split("/").map(Number);
@@ -1497,18 +1551,6 @@ function removeTimelineData(timelineData, id) {
   return timelineData;
 }
 
-function toggleTimelineVisibility(toggle) {
-  if (toggle && timeline_enabled) {
-    timeline_container.style.transform = "translate(-50%, -67.5%)";
-    timeline_container_arrow.style.transform = "translate(-50%, -630%)";
-    timeline_visibility = true;
-  } else {
-    timeline_container.style.transform = "translate(-50%, 40%)";
-    timeline_container_arrow.style.transform = "translate(-50%, 0%)";
-    timeline_visibility = false;
-  }
-}
-
 function toggleTimeline() {
   if (timeline_enabled) {
     while (timeline.firstChild) {
@@ -1518,8 +1560,6 @@ function toggleTimeline() {
     window.timeline = new TL.Timeline("timeline", timelineData, timelineOptions);
   }
 
-  timeline_toggle.textContent = timeline_enabled ? "Timeline Disabled" : "Timeline Enabled";
-  timeline_toggle.style.backgroundColor = timeline_enabled ? "rgb(255, 162, 162)" : "rgb(193, 255, 162)";
   timeline_enabled = !timeline_enabled;
 }
 

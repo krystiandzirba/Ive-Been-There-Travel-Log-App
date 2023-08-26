@@ -7,11 +7,144 @@ body {
   overflow: hidden;
 }
 
-/* ↓ Map layer ↓  */
-
 #map {
   height: 100vh;
 }
+
+/* ↓ Loading ↓  */
+
+.loading_page_container {
+  pointer-events: none;
+  min-height: 100vh;
+  width: 100vw;
+  background-color: #23232d;
+  position: fixed;
+  z-index: 990;
+}
+
+.loading_page_fade_out {
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+
+.loading_page_fade_out_fast {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.title_screen {
+  position: absolute;
+  width: 100%;
+  top: 10%;
+  z-index: 900;
+}
+
+.loading_animation_container {
+  height: 250px;
+  width: 250px;
+
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 970;
+}
+
+.title_screen_background {
+  position: absolute;
+  background-color: white;
+  top: 30%;
+  left: -20%;
+  height: 30vh;
+  width: 80vw;
+  transform: translate(-50%, -50%);
+  z-index: 850;
+  border-radius: 0 0 300px 0;
+  transition: left 1.3s ease-in-out, transform 1.3s ease-in-out;
+}
+
+.plane_animation_container {
+  position: absolute;
+  height: 200px;
+  width: 200px;
+
+  top: 50%;
+  left: 50%;
+  transform: translate(-100%, -100%);
+  transform-origin: 100% 100%;
+  animation: rotate_plane 10s linear infinite;
+}
+
+@keyframes rotate_plane {
+  0% {
+    transform: translate(-100%, -100%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-100%, -100%) rotate(360deg);
+  }
+}
+
+.home_button {
+  display: none;
+}
+
+.plane_icon {
+  position: absolute;
+  height: 50px;
+  width: 50px;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transform: rotate(5deg);
+}
+
+.globe_icon {
+  animation: rotate_globe 20s linear infinite;
+  height: 250px;
+  width: 250px;
+}
+
+@keyframes rotate_globe {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+.loading_page_progress_container {
+  position: absolute;
+  height: 3.5vh;
+  width: 30vw;
+  top: 90%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(17, 17, 19, 0.5);
+  border-radius: 10px;
+  box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.loading_page_progress_container p {
+  font-size: 20px;
+  font-weight: bold;
+  font-family: "Dosis", sans-serif;
+  color: rgb(211, 211, 211);
+}
+
+.loading_page_fade_container {
+  position: absolute;
+  top: 10%;
+  width: 100vw;
+  height: 30vh;
+  background: linear-gradient(to bottom, transparent, rgb(0, 0, 0, 0.5));
+}
+
+/* ↑ Loading ↑ */
 
 .layer_button {
   height: 50px;
@@ -96,12 +229,6 @@ body {
   transform: translate(-50%, -50%);
 }
 
-.timeline_toggle {
-  top: 71%;
-  transform: translate(-50%, -50%);
-  background-color: rgb(193, 255, 162);
-}
-
 /* ↑ Map addon layer ↑  */
 
 /* ↓ Sidebar left ↓  */
@@ -145,9 +272,9 @@ body {
 }
 
 .jscolor_container {
-  top: 5.5%;
-  left: 4.5%;
-  z-index: 290;
+  top: 9%;
+  left: -6%;
+  z-index: 200;
   position: absolute;
 }
 
@@ -159,6 +286,10 @@ body {
   color: red;
 }
 
+.sidebar_main_button:hover p {
+  transform: scale(1.1);
+}
+
 .sidebar_main_button i {
   margin-top: 20px;
 }
@@ -167,19 +298,33 @@ body {
   margin-top: 12px;
 }
 
-.sub_house_button_container {
+.sub_main_container {
   position: absolute;
-  background-color: #2f3c4c;
+  background-color: #2b3847;
+  backdrop-filter: blur(10px);
   height: 9%;
   z-index: 790;
   width: 20%;
-  left: 4.5%;
-  top: 0%;
 
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: space-around;
   transform: translate(-100%, 0%);
+}
+
+.sub_container_house {
+  left: 4.5%;
+  top: 0%;
+}
+
+.timeline_icon_black {
+  color: #d7d7d726 !important;
+}
+
+.sub_container_map_layers {
+  left: 4.5%;
+  top: 9%;
 }
 
 .sidebar_sub_button {
@@ -190,10 +335,12 @@ body {
 
   border: none;
 
-  padding: 10px 0;
-  background-color: #2f3c4c;
-  height: 85%;
-  width: 20%;
+  padding: 5px 0;
+  margin-left: 10px;
+  background-color: #2b3847;
+  backdrop-filter: blur(10px);
+  height: 80%;
+  width: 25%;
 
   border-radius: 10px 10px 10px 10px;
 
@@ -546,141 +693,6 @@ body {
 }
 
 /* ↑ Travel stats ↑ */
-/* ↓ UI, Visuals ↓  */
-
-.loading_page_container {
-  pointer-events: none;
-  min-height: 100vh;
-  width: 100vw;
-  background-color: #23232d;
-  position: fixed;
-  z-index: 990;
-}
-
-.loading_page_fade_out {
-  opacity: 0;
-  transition: opacity 1s ease;
-}
-
-.loading_page_fade_out_fast {
-  opacity: 0;
-  transition: opacity 0.2s ease;
-}
-
-.title_screen {
-  position: absolute;
-  width: 100%;
-  top: 10%;
-  z-index: 900;
-}
-
-.loading_animation_container {
-  height: 250px;
-  width: 250px;
-
-  position: absolute;
-  top: 60%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 970;
-}
-
-.title_screen_background {
-  position: absolute;
-  background-color: white;
-  top: 30%;
-  left: -20%;
-  height: 30vh;
-  width: 80vw;
-  transform: translate(-50%, -50%);
-  z-index: 850;
-  border-radius: 0 0 300px 0;
-  transition: left 1.3s ease-in-out, transform 1.3s ease-in-out;
-}
-
-.plane_animation_container {
-  position: absolute;
-  height: 200px;
-  width: 200px;
-
-  top: 50%;
-  left: 50%;
-  transform: translate(-100%, -100%);
-  transform-origin: 100% 100%;
-  animation: rotate_plane 10s linear infinite;
-}
-
-@keyframes rotate_plane {
-  0% {
-    transform: translate(-100%, -100%) rotate(0deg);
-  }
-  100% {
-    transform: translate(-100%, -100%) rotate(360deg);
-  }
-}
-
-.home_button {
-  display: none;
-}
-
-.plane_icon {
-  position: absolute;
-  height: 50px;
-  width: 50px;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  transform: rotate(5deg);
-}
-
-.globe_icon {
-  animation: rotate_globe 20s linear infinite;
-  height: 250px;
-  width: 250px;
-}
-
-@keyframes rotate_globe {
-  from {
-    transform: rotate(360deg);
-  }
-  to {
-    transform: rotate(0deg);
-  }
-}
-
-.loading_page_progress_container {
-  position: absolute;
-  height: 3.5vh;
-  width: 30vw;
-  top: 90%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: rgba(17, 17, 19, 0.5);
-  border-radius: 10px;
-  box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
-
-.loading_page_progress_container p {
-  font-size: 20px;
-  font-weight: bold;
-  font-family: "Dosis", sans-serif;
-  color: rgb(211, 211, 211);
-}
-
-.loading_page_fade_container {
-  position: absolute;
-  top: 10%;
-  width: 100vw;
-  height: 30vh;
-  background: linear-gradient(to bottom, transparent, rgb(0, 0, 0, 0.5));
-}
-
-/* ↑ UI, Visuals ↑ */
-
 /* ↓ Other ↓  */
 
 .app_version {
