@@ -145,92 +145,6 @@ body {
 }
 
 /* ↑ Loading ↑ */
-
-.layer_button {
-  height: 50px;
-  width: 100px;
-  left: 37%;
-  background-color: rgb(255, 255, 255);
-  position: absolute;
-  z-index: 899;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: "Dosis", sans-serif;
-  font-weight: 700;
-  font-size: 1vw;
-
-  text-align: center;
-  border: black, 2px, solid;
-}
-
-.layer_button:hover {
-  transform: translate(-50%, -50%) scale(1.1);
-}
-
-.layer_0 {
-  top: 5%;
-  transform: translate(-50%, -50%);
-  background-color: rgb(255, 255, 190);
-}
-
-.layer_1 {
-  top: 11%;
-  transform: translate(-50%, -50%);
-}
-
-.layer_2 {
-  top: 17%;
-  transform: translate(-50%, -50%);
-}
-
-.layer_3 {
-  top: 23%;
-  transform: translate(-50%, -50%);
-}
-
-.layer_4 {
-  top: 29%;
-  transform: translate(-50%, -50%);
-}
-
-/* ↑ Map layer ↑  */
-
-/* ↓ Map addon layer ↓  */
-
-.addon_labels {
-  top: 35%;
-  transform: translate(-50%, -50%);
-}
-
-.addon_borders {
-  top: 41%;
-  transform: translate(-50%, -50%);
-}
-
-.addon_train {
-  top: 47%;
-  transform: translate(-50%, -50%);
-}
-
-.addon_cycling {
-  top: 53%;
-  transform: translate(-50%, -50%);
-}
-
-.markers_toggle {
-  top: 59%;
-  transform: translate(-50%, -50%);
-}
-
-.polylines_toggle {
-  top: 65%;
-  transform: translate(-50%, -50%);
-}
-
-/* ↑ Map addon layer ↑  */
-
 /* ↓ Sidebar left ↓  */
 .sidebar_container {
   position: absolute;
@@ -250,7 +164,7 @@ body {
 }
 
 .sidebar_main_button {
-  padding: 10px 0;
+  padding: 10% 0;
   background-color: #2f3c4c;
   height: 7.5%;
   width: 75%;
@@ -304,7 +218,6 @@ body {
   backdrop-filter: blur(10px);
   height: 9%;
   z-index: 790;
-  width: 20%;
 
   display: flex;
   flex-direction: row;
@@ -316,15 +229,19 @@ body {
 .sub_container_house {
   left: 4.5%;
   top: 0%;
-}
-
-.timeline_icon_black {
-  color: #d7d7d726 !important;
+  width: 25%;
 }
 
 .sub_container_map_layers {
   left: 4.5%;
   top: 9%;
+  width: 20%;
+}
+
+.sub_container_overlay {
+  left: 4.5%;
+  top: 18%;
+  width: 30%;
 }
 
 .sidebar_sub_button {
@@ -340,6 +257,7 @@ body {
   background-color: #2b3847;
   backdrop-filter: blur(10px);
   height: 80%;
+  min-width: 70px;
   width: 25%;
 
   border-radius: 10px 10px 10px 10px;
@@ -347,7 +265,7 @@ body {
   font-family: "Dosis", sans-serif;
   font-weight: 500;
   font-size: 0.7vw;
-  margin-right: 20px;
+  margin-right: 3%;
 }
 
 .sidebar_sub_button:hover {
@@ -362,16 +280,11 @@ body {
   margin-top: 12px;
 }
 
-/* ↑ Sidebar left ↑  */
-
-/* ↓ Home ↓  */
-
-.layers_container {
-  display: none;
+.timeline_icon_black {
+  color: #d7d7d726 !important;
 }
 
-/* ↑ Home ↑  */
-
+/* ↑ Sidebar left ↑  */
 /* ↓ Logs container ↓  */
 
 .main_logs_container_arrow {
@@ -698,7 +611,7 @@ body {
 .app_version {
   color: white;
   top: 97%;
-  left: 5%;
+  left: -0.3%;
   height: 2vh;
   width: 5vw;
   position: absolute;
@@ -706,6 +619,7 @@ body {
   font-family: "Dosis", sans-serif;
   /*       font-family: 'Lilita One', cursive; */
   text-align: center;
+  font-size: 0.8vw;
 }
 
 #info_popup {

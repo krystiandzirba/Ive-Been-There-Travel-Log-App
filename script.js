@@ -1,4 +1,4 @@
-// ver: 0.7.07
+// ver: 0.7.08
 
 // Bugs:
 
@@ -21,34 +21,33 @@
 // // ↓ Sidebar Variables ↓
 const sidebar_house_button = document.getElementById("sidebar_house_button");
 const sub_house_button_container = document.getElementById("sub_house_button_container");
-
+const sidebar_sub_house_color_button = document.getElementById("sidebar_sub_house_color_button");
 const jscolor = document.getElementById("jscolor");
 const sub_house_manual_location = document.getElementById("sub_house_manual_location");
 const sub_house_geolocation = document.getElementById("sub_house_geolocation");
 const sub_house_zoom = document.getElementById("sub_house_zoom");
-const sidebar_sub_house_color_button = document.getElementById("sidebar_sub_house_color_button");
+const sub_house_delete = document.getElementById("sub_house_delete");
 
 const sidebar_map_layers_button = document.getElementById("sidebar_map_layers_button");
 const sub_map_layers_container = document.getElementById("sub_map_layers_container");
-const map_tile_layer_A = document.querySelector("#map_tile_layer_A");
-const map_tile_layer_B = document.querySelector("#map_tile_layer_B");
-const map_tile_layer_C = document.querySelector("#map_tile_layer_C");
-const map_tile_layer_D = document.querySelector("#map_tile_layer_D");
+const sub_map_tile_layer_A = document.querySelector("#sub_map_tile_layer_A");
+const sub_map_tile_layer_B = document.querySelector("#sub_map_tile_layer_B");
+const sub_map_tile_layer_C = document.querySelector("#sub_map_tile_layer_C");
+const sub_map_tile_layer_D = document.querySelector("#sub_map_tile_layer_D");
+
+const sidebar_overlay_button = document.getElementById("sidebar_overlay_button");
+const sub_overlay_container = document.getElementById("sub_overlay_container");
+const sub_overlay_train = document.getElementById("sub_overlay_train");
+const sub_overlay_bicycle = document.getElementById("sub_overlay_bicycle");
+const sub_overlay_labels = document.getElementById("sub_overlay_labels");
+const sub_overlay_borders = document.getElementById("sub_overlay_borders");
+const sub_overlay_markers = document.getElementById("sub_overlay_markers");
+const sub_overlay_polylines = document.getElementById("sub_overlay_polylines");
 
 const sidebar_timeline_button = document.getElementById("sidebar_timeline_button");
 const timeline_icon = document.getElementById("timeline_icon");
 
 // // ↑ Sidebar Variables ↑
-
-const layers_button = document.getElementById("layers_button");
-const layers_container = document.getElementById("layers_container");
-
-const map_tile_addon_labels = document.querySelector("#map_tile_addon_labels");
-const map_tile_addon_borders = document.querySelector("#map_tile_addon_borders");
-const map_tile_addon_train = document.querySelector("#map_tile_addon_train");
-const map_tile_addon_cycling = document.querySelector("#map_tile_addon_cycling");
-const markers_toggle = document.querySelector("#markers_toggle");
-const polylines_toggle = document.querySelector("#polylines_toggle");
 
 const info_popup = document.getElementById("info_popup");
 const info_popup_text = document.getElementById("info_popup_text");
@@ -93,8 +92,6 @@ let polyline_visibility = true;
 
 let is_travel_creator_active = false;
 let highlight_color_opacity_customization = true;
-let travel_log_individual_container_active = false;
-let layers_button_active = false;
 let main_logs_container_arrow_clicked = false;
 let main_statistics_container_arrow_clicked = false;
 
@@ -105,6 +102,7 @@ let travel_logs_group_input = document.getElementById("travel_logs_group_input")
 
 let house_container_timeout;
 let map_layers_container_timeout;
+let overlay_container_timeout;
 
 let jscolor_data = "";
 let jscolor_color = "#8AFF14";
@@ -154,11 +152,6 @@ const { home_icon, car_icon, plane_icon, boat_icon, walk_icon, bicycle_icon, mot
 const { trainsAddon, cyclingAddon, bordersAddon, labelsAddon } = leafletConfig.addons;
 
 const mapTileLayers = L.layerGroup([mapTileLayer_B]).addTo(map);
-
-map_tile_addon_labels.addEventListener("click", () => switchTileAddon(labelsAddon));
-map_tile_addon_borders.addEventListener("click", () => switchTileAddon(bordersAddon));
-map_tile_addon_train.addEventListener("click", () => switchTileAddon(trainsAddon));
-map_tile_addon_cycling.addEventListener("click", () => switchTileAddon(cyclingAddon));
 
 // 1 = future local storage / 0 = temporary, local storage not needed
 
@@ -213,7 +206,6 @@ jscolor.addEventListener("change", () => {
   jscolor_data = jscolor.jscolor.toHEXAString();
   jscolor_color = jscolor_data.slice(0, -2);
   jscolor_opacity = parseInt(jscolor_data.slice(-2), 16) / 255;
-  console.log(jscolor_color, jscolor_opacity);
 });
 
 sub_house_manual_location.addEventListener("click", () => {
@@ -278,18 +270,43 @@ sub_house_zoom.addEventListener("click", () => {
   homeMarkerZoom();
 });
 
+sub_house_delete.addEventListener("click", () => {
+  removeMarkers("home_marker");
+  homeMarkerClear();
+});
+
+function homeMarkerClear() {
+  if (home_marker) {
+    home_marker.remove();
+    home_marker = null;
+
+    if (home_circle) {
+      home_circle.remove();
+      home_circle = null;
+    }
+  }
+}
+
+function homeMarkerZoom() {
+  if (home_marker) {
+    map.setView(home_marker.getLatLng(), 7);
+  } else {
+    showInfoPopup("Home location not set!");
+  }
+}
+
 // // // ↑ House ↑
 // // // ↓ Map Layers ↓
 
 sidebar_map_layers_button.addEventListener("mouseenter", () => {
   clearTimeout(map_layers_container_timeout);
-  sub_map_layers_container.style.transition = "transform 0.3s ease";
+  sub_map_layers_container.style.transition = "transform 0.2s ease";
   sub_map_layers_container.style.transform = "translate(0%, 0%)";
 });
 
 sidebar_map_layers_button.addEventListener("mouseleave", () => {
   map_layers_container_timeout = setTimeout(() => {
-    sub_map_layers_container.style.transition = "transform 0.3s ease";
+    sub_map_layers_container.style.transition = "transform 0.2s ease";
     sub_map_layers_container.style.transform = "translate(-100%, 0%)";
   }, 200);
 });
@@ -302,15 +319,15 @@ sub_map_layers_container.addEventListener("mouseenter", () => {
 
 sub_map_layers_container.addEventListener("mouseleave", () => {
   map_layers_container_timeout = setTimeout(() => {
-    sub_map_layers_container.style.transition = "transform 0.3s ease";
+    sub_map_layers_container.style.transition = "transform 0.2s ease";
     sub_map_layers_container.style.transform = "translate(-100%, 0%)";
   }, 200);
 });
 
-map_tile_layer_A.addEventListener("click", () => switchTileMap(mapTileLayer_A));
-map_tile_layer_B.addEventListener("click", () => switchTileMap(mapTileLayer_B));
-map_tile_layer_C.addEventListener("click", () => switchTileMap(mapTileLayer_C));
-map_tile_layer_D.addEventListener("click", () => switchTileMap(mapTileLayer_D));
+sub_map_tile_layer_A.addEventListener("click", () => switchTileMap(mapTileLayer_A));
+sub_map_tile_layer_B.addEventListener("click", () => switchTileMap(mapTileLayer_B));
+sub_map_tile_layer_C.addEventListener("click", () => switchTileMap(mapTileLayer_C));
+sub_map_tile_layer_D.addEventListener("click", () => switchTileMap(mapTileLayer_D));
 
 function switchTileMap(layer) {
   mapTileLayers.clearLayers();
@@ -318,6 +335,73 @@ function switchTileMap(layer) {
 }
 
 // // // ↑ Map Layers ↑
+// // // ↓ Overlay ↓
+
+sidebar_overlay_button.addEventListener("mouseenter", () => {
+  clearTimeout(overlay_container_timeout);
+  sub_overlay_container.style.transition = "transform 0.2s ease";
+  sub_overlay_container.style.transform = "translate(0%, 0%)";
+});
+
+sidebar_overlay_button.addEventListener("mouseleave", () => {
+  overlay_container_timeout = setTimeout(() => {
+    sub_overlay_container.style.transition = "transform 0.2s ease";
+    sub_overlay_container.style.transform = "translate(-100%, 0%)";
+  }, 200);
+});
+
+sub_overlay_container.addEventListener("mouseenter", () => {
+  clearTimeout(overlay_container_timeout);
+  sub_overlay_container.style.transition = "none";
+  sub_overlay_container.style.transform = "translate(0%, 0%)";
+});
+
+sub_overlay_container.addEventListener("mouseleave", () => {
+  overlay_container_timeout = setTimeout(() => {
+    sub_overlay_container.style.transition = "transform 0.2s ease";
+    sub_overlay_container.style.transform = "translate(-100%, 0%)";
+  }, 200);
+});
+
+sub_overlay_train.addEventListener("click", () => switchTileAddon(trainsAddon));
+sub_overlay_bicycle.addEventListener("click", () => switchTileAddon(cyclingAddon));
+sub_overlay_labels.addEventListener("click", () => switchTileAddon(labelsAddon));
+sub_overlay_borders.addEventListener("click", () => switchTileAddon(bordersAddon));
+sub_overlay_markers.addEventListener("click", () => toggleMarkersVisibility());
+sub_overlay_polylines.addEventListener("click", () => togglePolylineVisibility());
+
+function switchTileAddon(tile_addon) {
+  if (map.hasLayer(tile_addon)) {
+    tile_addon.removeFrom(map);
+  } else {
+    tile_addon.addTo(map);
+  }
+}
+
+function toggleMarkersVisibility() {
+  markers.forEach((marker) => {
+    if (map.hasLayer(marker) && markers_visibility) {
+      marker.removeFrom(map);
+    } else {
+      marker.addTo(map);
+    }
+  });
+  markers_visibility = !markers_visibility;
+}
+
+function togglePolylineVisibility() {
+  for (let i = 0; i < polylines.length; i++) {
+    const polyline = polylines[i][0];
+    if (map.hasLayer(polyline) && polyline_visibility) {
+      map.removeLayer(polyline);
+    } else {
+      map.addLayer(polyline);
+    }
+  }
+  polyline_visibility = !polyline_visibility;
+}
+
+// // // ↑ Overlay ↑
 // // // ↓ Timeline ↓
 
 sidebar_timeline_button.addEventListener("click", () => {
@@ -359,18 +443,6 @@ function toggleTimelineVisibility(toggle) {
 // // // ↑ Timeline ↑
 // // ↑ Sidebar ↑
 // ↑ Page interaction ↑
-
-layers_button.addEventListener("click", () => {
-  if (travel_log_individual_container_active) {
-    return;
-  }
-
-  if (layers_container.style.display === "none") {
-    toggleLayersButtonVisibility();
-  } else {
-    toggleLayersButtonVisibility();
-  }
-});
 
 add_travel.addEventListener("click", () => {
   toggleMainLogContainerVisibility(false);
@@ -419,51 +491,6 @@ function toggleMainLogContainerVisibility(toggle) {
 // ↑ Home ↑
 // ↓ Leaflet Map ↓
 
-// // ↓ Leaflet Map / Tiles Change ↓
-
-function switchTileAddon(tile_addon) {
-  if (map.hasLayer(tile_addon)) {
-    tile_addon.removeFrom(map);
-  } else {
-    tile_addon.addTo(map);
-  }
-}
-
-// // ↑ Leaflet Map / Tiles Change ↑
-// // ↓ Leaflet Map / Marker + Polyline visibility toggle ↓
-
-markers_toggle.addEventListener("click", () => {
-  toggleMarkersVisibility();
-});
-
-polylines_toggle.addEventListener("click", () => {
-  togglePolylineVisibility();
-});
-
-function toggleMarkersVisibility() {
-  markers.forEach((marker) => {
-    if (map.hasLayer(marker) && markers_visibility) {
-      marker.removeFrom(map);
-    } else {
-      marker.addTo(map);
-    }
-  });
-  markers_visibility = !markers_visibility;
-}
-
-function togglePolylineVisibility() {
-  for (let i = 0; i < polylines.length; i++) {
-    const polyline = polylines[i][0];
-    if (map.hasLayer(polyline) && polyline_visibility) {
-      map.removeLayer(polyline);
-    } else {
-      map.addLayer(polyline);
-    }
-  }
-  polyline_visibility = !polyline_visibility;
-}
-
-// // ↑ Leaflet Map / Marker + Polyline visibility toggle ↑
 // // ↓ Leaflet Map / Custom Home + marker Highlight Color + opacity ↓
 
 marker_color_picker.addEventListener("input", function () {
@@ -555,29 +582,8 @@ function setLayerStyle(layer, fillColor, fillOpacity, attribution, random_id) {
 
 // // ↑ GeoJSON Initialization + country highlight ↑
 
-function homeMarkerClear() {
-  if (home_marker) {
-    home_marker.remove();
-    home_marker = null;
-
-    if (home_circle) {
-      home_circle.remove();
-      home_circle = null;
-    }
-  }
-}
-
-function homeMarkerZoom() {
-  if (home_marker) {
-    map.setView(home_marker.getLatLng(), 7);
-  } else {
-    showInfoPopup("Home location not set!");
-  }
-}
-
 // ↑ GeoJSON ↑
-// ↓ Travel Log ↓
-// // ↓ Travel Log / Log markers ↓
+// ↓ Travel Log markers ↓
 
 const travelTypeButtonImages = new Map();
 travelTypeButtonImages.set(travel_type_car, "/content/icons/car_icon_small.png");
@@ -937,8 +943,8 @@ function pngMouseTracking(e) {
   custom_cursor.style.top = `${topPos}px`;
 }
 
-// // ↑ Travel Log / Log markers ↑
-// // ↓ Travel Log / CRUD setup ↓
+// ↑ Travel Log markers ↑
+// ↓ Travel Log CRUD setup ↓
 
 let travel_date_start = "";
 let travel_date_end = "";
@@ -961,8 +967,6 @@ check_icon_group.addEventListener("click", (event) => {
   }
 
   if (travel_logs_group_name !== "") {
-    //home_button_main.style.backgroundColor = "rgb(255, 255, 190)";
-    //layers_button.style.backgroundColor = "rgb(255, 255, 190)";
     add_travel.style.backgroundColor = "rgb(255, 255, 190)";
     is_travel_creator_active = false;
     travelLogGroupSubmit(event);
@@ -975,8 +979,6 @@ check_icon_group.addEventListener("click", (event) => {
 });
 
 close_icon_group.addEventListener("click", () => {
-  // home_button_main.style.backgroundColor = "rgb(255, 255, 190)";
-  //layers_button.style.backgroundColor = "rgb(255, 255, 190)";
   add_travel.style.backgroundColor = "rgb(255, 255, 190)";
   is_travel_creator_active = false;
   stored_group_log_id = random_id;
@@ -1007,7 +1009,6 @@ check_icon_individual.addEventListener("click", (event) => {
   }
 
   if (travel_logs_individual_name !== "") {
-    travel_log_individual_container_active = false;
     travelTypeValueUpdate(false, false, false, false, false, false, false, false, false);
     calculateDistances();
     distancesBreakdown(rawCoordinatesDistances);
@@ -1023,14 +1024,11 @@ check_icon_individual.addEventListener("click", (event) => {
     toggleTravelLogsIndividualMainContainerVisibility(false);
     timelineInfoToggle();
     closeInfoPopup();
-    //home_button_main.style.backgroundColor = "rgb(255, 255, 190)";
-    //layers_button.style.backgroundColor = "rgb(255, 255, 190)";
     is_travel_creator_active = false;
   }
 });
 
 close_icon_individual.addEventListener("click", () => {
-  travel_log_individual_container_active = false;
   toggleMainLogContainerVisibility(true);
   toggleTimelineVisibility(true);
   closeInfoPopup();
@@ -1057,8 +1055,6 @@ close_icon_individual.addEventListener("click", () => {
   } else {
     toggleTravelLogsIndividualMainContainerVisibility(false);
   }
-  // home_button_main.style.backgroundColor = "rgb(255, 255, 190)";
-  // layers_button.style.backgroundColor = "rgb(255, 255, 190)";
   is_travel_creator_active = false;
 });
 
@@ -1274,16 +1270,11 @@ function travelLogGroupSubmit(event) {
   $travel_logs_group_add_travel_button.textContent = "add travel type";
   $travel_logs_group_add_travel_button.addEventListener("click", () => {
     highlight_color_opacity_customization = true;
-    layers_button_active = false;
-    travel_log_individual_container_active = true;
     is_travel_creator_active = true;
     markers_visibility = false;
     polyline_visibility = false;
     toggleMarkersVisibility();
     togglePolylineVisibility();
-
-    toggleLayersButtonVisibility();
-
     travelTypeButtonsColor();
     toggleMainLogContainerVisibility(false);
     toggleTimelineVisibility(false);
@@ -1325,7 +1316,7 @@ function travelLogGroupSubmit(event) {
   random_id = "";
 }
 
-// // ↑ Travel Log / CRUD setup ↑
+// ↑ Travel Log CRUD setup ↑
 
 function removeMarkers(id) {
   for (let i = markers.length - 1; i >= 0; i--) {
@@ -1401,16 +1392,12 @@ function toggleTravelLogsIndividualMainContainerVisibility(toggle) {
     close_icon_individual.style.display = "none";
   }
 }
-function toggleLayersButtonVisibility() {
-  layers_container.style.display = !layers_button_active ? "block" : "none";
-  layers_button_active = !layers_button_active;
-}
 
 function toggleCustomCursorVisibility(toggle) {
   custom_cursor.style.display = toggle ? "flex" : "none";
 }
 
-// // ↓ Travel Log / Date picker ↓
+// ↓ Travel Log date picker ↓
 
 $(function () {
   const startDate = moment().startOf("day").format("YYYY/MM/DD");
@@ -1436,8 +1423,8 @@ $(function () {
   );
 });
 
-// // ↑ Travel Log / Date picker ↑
-// // ↓ Travel Log / Travel ID generator ↓
+// ↑ Travel Log date picker ↑
+// ↓ Travel ID generator ↓
 
 function randomIdGenerator() {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -1454,9 +1441,8 @@ function randomIdGenerator() {
   return random_id;
 }
 
-// // ↑ Travel Log / Travel ID generator ↑
-// ↑ Travel Log ↑
-// ↓ Leaflet Polyline ↓
+// ↑ Travel ID generator ↑
+// ↓ Polyline ↓
 
 function drawPolyline() {
   for (let i = 0; i < polylines.length; i++) {
@@ -1499,7 +1485,7 @@ function drawPolyline() {
   }
 }
 
-// ↑ Leaflet Polyline ↑
+// ↑ Polyline ↑
 // ↓ TimelineJS ↓
 
 function splitDates(timeline_start, timeline_end) {
@@ -1572,7 +1558,7 @@ function timelineInfoToggle() {
 }
 
 // ↑ TimelineJS ↑
-// ↓ Travel Statistics ↓
+// ↓ Statistics ↓
 
 let highest_distance = 0;
 let lowest_distance = 0;
@@ -1771,7 +1757,7 @@ function calculateTotalIdDistance(distances, id) {
   };
 }
 
-// ↑ Travel Statistics ↑
+// ↑ Statistics ↑
 // ↓ UI / Visuals ↓
 
 function removeLoadingPageContent() {
@@ -1795,7 +1781,7 @@ function removeLoadingPageContent() {
 
 // ↑ UI / Visuals ↑
 // ↓ Other ↓
-// ↓ Other / Info popup ↓
+// // ↓ Other / Info popup ↓
 
 function showInfoPopup(text) {
   info_popup_text.textContent = text;
@@ -1807,8 +1793,8 @@ function closeInfoPopup() {
 }
 close_info_popup.addEventListener("click", closeInfoPopup);
 
-// ↑ Other / Info popup ↑
-// ↓ Other / Loading progress info ↓
+// // ↑ Other / Info popup ↑
+// // ↓ Other / Loading progress info ↓
 
 const progress_info = document.getElementById("progress_info");
 
@@ -1883,11 +1869,13 @@ const resourcesToLoad = [
     label: "Smooth Marker Bouncing",
   },
   // "https://cdn.knightlab.com/libs/timeline3/latest/js/timeline.js",
+  { url: "https://cdnjs.cloudflare.com/ajax/libs/jscolor/2.5.1/jscolor.min.js", label: "JScolor" },
   { url: "https://cdn.jsdelivr.net/jquery/latest/jquery.min.js", label: "jQuery" },
   { url: "https://cdn.jsdelivr.net/momentjs/latest/moment.min.js", label: "Moment.js" },
   { url: "https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js", label: "Date range picker JS" },
   { url: "https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css", label: "date range picker CSS" },
   // "https://cdn.knightlab.com/libs/timeline3/latest/css/timeline.css",
+  { url: "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css", label: "Font awesome" },
   { url: "script.js", label: "Main JS Script" },
 ];
 
