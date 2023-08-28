@@ -1,4 +1,4 @@
-// ver: 0.7.08
+// ver: 0.7.09
 
 // Bugs:
 
@@ -13,9 +13,7 @@
 // ---------- 8. Add info boxes to help navigate the app while using it for the first time
 // ---------- 9. Rewrite to React
 
-// download the polyline offset, polyline snake anim / polyline decorator
-// multi options polyline / leaflet motion
-// check leaflet plugins
+// multi options polyline / leaflet motion / polyline decorator / leaflet Storage / leaflet canvas markers /
 
 // ↓ Variables ↓
 // // ↓ Sidebar Variables ↓
@@ -134,6 +132,13 @@ const map = L.map("map", {
   maxBoundsViscosity: 0.8,
 }).setView([50, 10], 6);
 
+const { mapTileLayer_A, mapTileLayer_B, mapTileLayer_C, mapTileLayer_D } = leafletConfig.tilemaps;
+const { home_icon, car_icon, plane_icon, boat_icon, walk_icon, bicycle_icon, motorcycle_icon, train_icon, bus_icon } =
+  leafletConfig.marker_icons;
+const { trainsAddon, cyclingAddon, bordersAddon, labelsAddon } = leafletConfig.addons;
+
+const mapTileLayers = L.layerGroup([mapTileLayer_B]).addTo(map);
+
 let marker_highlight_color = "#1495ED";
 let marker_highlight_opacity = 0.5;
 
@@ -145,13 +150,6 @@ let travel_type_bicycle_click = false;
 let travel_type_motorcycle_click = false;
 let travel_type_train_click = false;
 let travel_type_bus_click = false;
-
-const { mapTileLayer_A, mapTileLayer_B, mapTileLayer_C, mapTileLayer_D } = leafletConfig.tilemaps;
-const { home_icon, car_icon, plane_icon, boat_icon, walk_icon, bicycle_icon, motorcycle_icon, train_icon, bus_icon } =
-  leafletConfig.marker_icons;
-const { trainsAddon, cyclingAddon, bordersAddon, labelsAddon } = leafletConfig.addons;
-
-const mapTileLayers = L.layerGroup([mapTileLayer_B]).addTo(map);
 
 // 1 = future local storage / 0 = temporary, local storage not needed
 
@@ -1859,24 +1857,22 @@ function trackLoadingProgress(resources, progressInfoDisplay, onLoadingComplete)
 }
 
 const resourcesToLoad = [
-  { url: "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css", label: "Leaflet CSS" },
-  { url: "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js", label: "leaflet JS" },
   { url: "styles.css", label: "Main CSS" },
-  { url: "https://cdn.jsdelivr.net/npm/leaflet-ajax/dist/leaflet.ajax.min.js", label: "Leaflet" },
-  { url: "https://cdn.jsdelivr.net/npm/leaflet.cheaplayerat@0.1.2/Leaflet.CheapLayerAt.min.js", label: "Leaflet" },
-  {
-    url: "https://cdn.jsdelivr.net/gh/hosuaby/Leaflet.SmoothMarkerBouncing@v3.0.2/dist/bundle.js",
-    label: "Smooth Marker Bouncing",
-  },
-  // "https://cdn.knightlab.com/libs/timeline3/latest/js/timeline.js",
-  { url: "https://cdnjs.cloudflare.com/ajax/libs/jscolor/2.5.1/jscolor.min.js", label: "JScolor" },
-  { url: "https://cdn.jsdelivr.net/jquery/latest/jquery.min.js", label: "jQuery" },
-  { url: "https://cdn.jsdelivr.net/momentjs/latest/moment.min.js", label: "Moment.js" },
-  { url: "https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js", label: "Date range picker JS" },
-  { url: "https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css", label: "date range picker CSS" },
-  // "https://cdn.knightlab.com/libs/timeline3/latest/css/timeline.css",
-  { url: "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css", label: "Font awesome" },
-  { url: "script.js", label: "Main JS Script" },
+  { url: "content/data/LeafletMap/leaflet.css", label: "Leaflet CSS" },
+  { url: "content/data/DateRangePicker/daterangepicker.css", label: "DateRangePicker CSS" },
+  { url: "content/data/FontAwesome/css/all.min.css", label: "FontAwesome CSS" },
+  { url: "script.js", label: "Main JS" },
+  { url: "content/data/LeafletMap/leaflet.js", label: "Leaflet JS" },
+  { url: "content/data/JScolor/jscolor.js", label: "JScolor JS" },
+  { url: "content/data/Jquery/jquery.js", label: "Jquery JS" },
+  { url: "content/data/Moment/moment.min.js", label: "Moment JS" },
+  { url: "content/data/DateRangePicker/daterangepicker.js", label: "DateRangePicker JS" },
+  { url: "content/data/LeafletEdgeBuffer/leaflet.edgebuffer.js", label: "Leaflet EdgeBuffer JS" },
+  { url: "content/data/LeafletGridLayerFadeOut/Leaflet.GridLayer.FadeOut.js", label: "Leaflet Grid Layer Fade-out JS" },
+  { url: "content/data/SmoothMarkerBouncing/bundle.js", label: "SmoothMarkerBouncing JS" },
+
+  // { url: "https://cdn.knightlab.com/libs/timeline3/latest/js/timeline.js", label: "TimelineJS JS" },
+  // { url: "https://cdn.knightlab.com/libs/timeline3/latest/css/timeline.css", label: "TimelineJS CSS" },
 ];
 
 function progressInfoDisplay(label, progress) {

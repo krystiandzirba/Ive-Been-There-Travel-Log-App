@@ -1,31 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>I've been there! - Travel log app 0.7.08</title>
+    <title>I've been there! - Travel log app 0.7.09</title>
     <link rel="icon" type="image/x-icon" href="/content/icons/globe_icon_black.png" />
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <script type="module" src="script.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/leaflet-ajax/dist/leaflet.ajax.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/leaflet.cheaplayerat@0.1.2/Leaflet.CheapLayerAt.min.js"></script>
-    <!-- prettier-ignore -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/hosuaby/Leaflet.SmoothMarkerBouncing@v3.0.2/dist/bundle.js" crossorigin="anonymous" ></script>
-    <script src="https://cdn.knightlab.com/libs/timeline3/latest/js/timeline.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jscolor/2.5.1/jscolor.min.js"></script>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="content/data/LeafletMap/leaflet.css" />
+    <link rel="stylesheet" href="content/data/DateRangePicker/daterangepicker.css" />
+    <link rel="stylesheet" href="content/data/FontAwesome/css/all.min.css" />
 
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <script type="module" src="script.js"></script>
+    <script type="text/javascript" src="content/data/LeafletMap/leaflet.js"></script>
+    <script type="text/javascript" src="content/data/JScolor/jscolor.js"></script>
+    <script type="text/javascript" src="content/data/Jquery/jquery.js"></script>
+    <script type="text/javascript" src="content/data/Moment/moment.min.js"></script>
+    <script type="text/javascript" src="content/data/DateRangePicker/daterangepicker.js"></script>
+    <script type="text/javascript" src="content/data/LeafletEdgeBuffer/leaflet.edgebuffer.js"></script>
+    <script type="text/javascript" src="content/data/LeafletGridLayerFadeOut/Leaflet.GridLayer.FadeOut.js"></script>
+    <script type="text/javascript" src="content/data/SmoothMarkerBouncing/bundle.js"></script>
+
+    <!-- prettier-ignore -->
+    <script src="https://cdn.knightlab.com/libs/timeline3/latest/js/timeline.js"></script>
     <link rel="stylesheet" href="https://cdn.knightlab.com/libs/timeline3/latest/css/timeline.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    <!---->
 
     <div class="loading_page_container" id="loading_page_container">
       <div class="title_screen_container">
@@ -280,7 +281,7 @@
       <img id="custom_cursor_image" src="/content/icons/car_icon_small.png" />
     </div>
 
-    <div class="app_version">ver: 0.7.08</div>
+    <div class="app_version">ver: 0.7.09</div>
 
     <div id="info_popup" style="display: none">
       <span id="close_info_popup">&times;</span>
