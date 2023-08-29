@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>I've been there! - Travel log app 0.7.09</title>
+    <title>I've been there! - Travel log app 0.7.10</title>
     <link rel="icon" type="image/x-icon" href="/content/icons/globe_icon_black.png" />
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -53,106 +53,106 @@
 
     <div id="map"></div>
 
-    <div class="sidebar_container">
+    <div class="sidebar_buttons_container">
       <button id="sidebar_house_button" class="sidebar_main_button">
-        <i class="fa-solid fa-home fa-2xl" style="color: #d7d7d7"></i>
+        <i class="fa-solid fa-home fa-2xl" style="color: #c9c9c9" id="house_icon"></i>
         <p>house</p>
       </button>
       <button id="sidebar_map_layers_button" class="sidebar_main_button">
-        <i class="fa-solid fa-layer-group fa-2xl" style="color: #d7d7d7"></i>
+        <i class="fa-solid fa-layer-group fa-2xl" style="color: #c9c9c9" id="map_layers_icon"></i>
         <p>map layers</p>
       </button>
       <button id="sidebar_overlay_button" class="sidebar_main_button">
-        <i class="fa-solid fa-circle-half-stroke fa-2xl" style="color: #d7d7d7"></i>
+        <i class="fa-solid fa-circle-half-stroke fa-2xl" style="color: #c9c9c9" id="overlay_icon"></i>
         <p>overlay</p>
       </button>
       <button id="sidebar_page_styles_button" class="sidebar_main_button">
-        <i class="fa-solid fa-fill-drip fa-2xl" style="color: #d7d7d726"></i>
+        <i class="fa-solid fa-fill-drip fa-2xl" style="color: #d7d7d726" id="page_styles_icon"></i>
         <p>page styles</p>
       </button>
       <button id="sidebar_timeline_button" class="sidebar_main_button">
-        <i class="fa-solid fa-timeline fa-2xl" style="color: #d7d7d7" id="timeline_icon"> </i>
+        <i class="fa-solid fa-timeline fa-2xl" style="color: #c9c9c9" id="timeline_icon"> </i>
         <p>timeline</p>
       </button>
       <button id="sidebar_statistics_button" class="sidebar_main_button">
-        <i class="fa-solid fa-chart-simple fa-2xl" style="color: #d7d7d7"></i>
+        <i class="fa-solid fa-chart-simple fa-2xl" style="color: #c9c9c9" id="statistics_icon"></i>
         <p>statistics</p>
       </button>
       <button id="sidebar_language_button" class="sidebar_main_button">
-        <i class="fa-solid fa-language fa-2xl" style="color: #d7d7d7"></i>
+        <i class="fa-solid fa-language fa-2xl" style="color: #c9c9c9" id="language_icon"></i>
         <p>language</p>
       </button>
       <button id="sidebar_settings_button" class="sidebar_main_button">
-        <i class="fa-solid fa-gear fa-2xl" style="color: #d7d7d7"></i>
+        <i class="fa-solid fa-gear fa-2xl" style="color: #c9c9c9" id="settings_icon"></i>
         <p>settings</p>
       </button>
     </div>
 
     <div id="sub_house_button_container" class="sub_main_container sub_container_house">
-      <button id="sidebar_sub_house_color_button" class="sidebar_sub_button">
-        <i class="fa-solid fa-palette fa-2xl" style="color: #d7d7d7"></i>
+      <button id="sub_house_color_button" class="sidebar_sub_button">
+        <i class="fa-solid fa-palette fa-2xl" style="color: #c9c9c9"></i>
         <p>color</p>
       </button>
       <button id="sub_house_manual_location" class="sidebar_sub_button">
-        <i class="fa-solid fa-location-dot fa-2xl" style="color: #d7d7d7"></i>
+        <i class="fa-solid fa-location-dot fa-2xl" style="color: #c9c9c9"></i>
         <p>manual</p>
       </button>
       <button id="sub_house_geolocation" class="sidebar_sub_button">
-        <i class="fa-solid fa-location-crosshairs fa-2xl" style="color: #d7d7d7"></i>
+        <i class="fa-solid fa-location-crosshairs fa-2xl" style="color: #c9c9c9"></i>
         <p>geolocation</p>
       </button>
       <button id="sub_house_zoom" class="sidebar_sub_button">
-        <i class="fa-solid fa-magnifying-glass-location fa-2xl" style="color: #d7d7d7"></i>
+        <i class="fa-solid fa-magnifying-glass-location fa-2xl" style="color: #c9c9c9"></i>
         <p>zoom</p>
       </button>
       <button id="sub_house_delete" class="sidebar_sub_button">
-        <i class="fa-regular fa-trash-can fa-2xl" style="color: #d7d7d7"></i>
+        <i class="fa-regular fa-trash-can fa-2xl" style="color: #c9c9c9"></i>
         <p>remove</p>
       </button>
     </div>
 
     <div id="sub_map_layers_container" class="sub_main_container sub_container_map_layers">
       <button id="sub_map_tile_layer_A" class="sidebar_sub_button">
-        <i class="fa-solid fa-layer-group fa-2xl" style="color: #d7d7d7"></i>
-        <p>bright</p>
-      </button>
-      <button id="sub_map_tile_layer_B" class="sidebar_sub_button">
-        <i class="fa-solid fa-layer-group fa-2xl" style="color: #d7d7d7"></i>
+        <i class="fa-solid fa-map fa-2xl" style="color: #c9c9c9" id="sub_map_layer_earth_icon"></i>
         <p>earth</p>
       </button>
+      <button id="sub_map_tile_layer_B" class="sidebar_sub_button">
+        <i class="fa-solid fa-map fa-2xl" style="color: #d7d7d726" id="sub_map_layer_bright_icon"></i>
+        <p>light</p>
+      </button>
       <button id="sub_map_tile_layer_C" class="sidebar_sub_button">
-        <i class="fa-solid fa-layer-group fa-2xl" style="color: #d7d7d7"></i>
+        <i class="fa-solid fa-map fa-2xl" style="color: #d7d7d726" id="sub_map_layer_dark_icon"></i>
         <p>dark</p>
       </button>
       <button id="sub_map_tile_layer_D" class="sidebar_sub_button">
-        <i class="fa-solid fa-layer-group fa-2xl" style="color: #d7d7d7"></i>
+        <i class="fa-solid fa-map fa-2xl" style="color: #d7d7d726" id="sub_map_layer_middleage_icon"></i>
         <p>middleage</p>
       </button>
     </div>
 
     <div id="sub_overlay_container" class="sub_main_container sub_container_overlay">
       <button id="sub_overlay_train" class="sidebar_sub_button">
-        <i class="fa-solid fa-map-location-dot fa-2xl" style="color: #d7d7d7"></i>
+        <i class="fa-solid fa-route fa-2xl" style="color: #d7d7d726" id="sub_train_icon"></i>
         <p>train</p>
       </button>
       <button id="sub_overlay_bicycle" class="sidebar_sub_button">
-        <i class="fa-solid fa-map-location-dot fa-2xl" style="color: #d7d7d7"></i>
+        <i class="fa-solid fa-route fa-2xl" style="color: #d7d7d726" id="sub_bicycle_icon"></i>
         <p>bicycle</p>
       </button>
       <button id="sub_overlay_labels" class="sidebar_sub_button">
-        <i class="fa-solid fa-tag fa-2xl" style="color: #d7d7d7"></i>
+        <i class="fa-solid fa-tag fa-2xl" style="color: #d7d7d726" id="sub_labels_icon"></i>
         <p>labels</p>
       </button>
       <button id="sub_overlay_borders" class="sidebar_sub_button">
-        <i class="fa-solid fa-flag fa-2xl" style="color: #d7d7d7"></i>
+        <i class="fa-solid fa-flag fa-2xl" style="color: #d7d7d726" id="sub_borders_icon"></i>
         <p>borders</p>
       </button>
       <button id="sub_overlay_markers" class="sidebar_sub_button">
-        <i class="fa-solid fa-location-dot fa-2xl" style="color: #d7d7d7"></i>
+        <i class="fa-solid fa-location-dot fa-2xl" style="color: #c9c9c9" id="sub_markers_icon"></i>
         <p>markers</p>
       </button>
       <button id="sub_overlay_polylines" class="sidebar_sub_button">
-        <i class="fa-solid fa-map-location-dot fa-2xl" style="color: #d7d7d7"></i>
+        <i class="fa-solid fa-map-location-dot fa-2xl" style="color: #c9c9c9" id="sub_polylines_icon"></i>
         <p>polylines</p>
       </button>
     </div>
@@ -229,7 +229,7 @@
     <button id="close_icon_individual" class="icon_settings_container close_icon_individual">&#10006;</button>
 
     <div class="timeline_container_arrow">
-      <img src="content/icons/main_logs_container_arrow.png" />
+      <i class="fa-solid fa-chevron-down fa-2xl" style="color: #171d25; font-size: 3.5em"></i>
     </div>
 
     <div class="timeline_container">
@@ -281,7 +281,7 @@
       <img id="custom_cursor_image" src="/content/icons/car_icon_small.png" />
     </div>
 
-    <div class="app_version">ver: 0.7.09</div>
+    <div class="app_version">ver: 0.7.10</div>
 
     <div id="info_popup" style="display: none">
       <span id="close_info_popup">&times;</span>

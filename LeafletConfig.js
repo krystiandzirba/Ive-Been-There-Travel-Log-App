@@ -2,30 +2,30 @@ const { L } = window;
 
 export default {
   tilemaps: {
-    mapTileLayer_A: L.tileLayer("https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png", {
-      edgeBufferTiles: 1,
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-      subdomains: "abcd",
-      minZoom: 3,
-      maxZoom: 12,
-    }),
-    mapTileLayer_B: L.tileLayer(
+    mapTileLayer_A: L.tileLayer(
       "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
       {
         edgeBufferTiles: 1,
-        minZoom: 3,
+        minZoom: 2,
         maxZoom: 12,
         attribution:
           "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community",
       }
     ),
+    mapTileLayer_B: L.tileLayer("https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png", {
+      edgeBufferTiles: 1,
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      subdomains: "abcd",
+      minZoom: 2,
+      maxZoom: 12,
+    }),
     mapTileLayer_C: L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png", {
       edgeBufferTiles: 1,
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
       subdomains: "abcd",
-      minZoom: 3,
+      minZoom: 2,
       maxZoom: 12,
     }),
     mapTileLayer_D: L.tileLayer(
@@ -34,7 +34,7 @@ export default {
         edgeBufferTiles: 1,
         attribution:
           "Tiles &copy; Esri &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC",
-        minZoom: 3,
+        minZoom: 2,
         maxZoom: 12,
       }
     ),

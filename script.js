@@ -1,4 +1,4 @@
-// ver: 0.7.09
+// ver: 0.7.10
 
 // Bugs:
 
@@ -18,8 +18,9 @@
 // ↓ Variables ↓
 // // ↓ Sidebar Variables ↓
 const sidebar_house_button = document.getElementById("sidebar_house_button");
+const house_icon = document.getElementById("house_icon");
 const sub_house_button_container = document.getElementById("sub_house_button_container");
-const sidebar_sub_house_color_button = document.getElementById("sidebar_sub_house_color_button");
+const sub_house_color_button = document.getElementById("sub_house_color_button");
 const jscolor = document.getElementById("jscolor");
 const sub_house_manual_location = document.getElementById("sub_house_manual_location");
 const sub_house_geolocation = document.getElementById("sub_house_geolocation");
@@ -27,6 +28,7 @@ const sub_house_zoom = document.getElementById("sub_house_zoom");
 const sub_house_delete = document.getElementById("sub_house_delete");
 
 const sidebar_map_layers_button = document.getElementById("sidebar_map_layers_button");
+const map_layers_icon = document.getElementById("map_layers_icon");
 const sub_map_layers_container = document.getElementById("sub_map_layers_container");
 const sub_map_tile_layer_A = document.querySelector("#sub_map_tile_layer_A");
 const sub_map_tile_layer_B = document.querySelector("#sub_map_tile_layer_B");
@@ -34,6 +36,7 @@ const sub_map_tile_layer_C = document.querySelector("#sub_map_tile_layer_C");
 const sub_map_tile_layer_D = document.querySelector("#sub_map_tile_layer_D");
 
 const sidebar_overlay_button = document.getElementById("sidebar_overlay_button");
+const overlay_icon = document.getElementById("overlay_icon");
 const sub_overlay_container = document.getElementById("sub_overlay_container");
 const sub_overlay_train = document.getElementById("sub_overlay_train");
 const sub_overlay_bicycle = document.getElementById("sub_overlay_bicycle");
@@ -42,8 +45,26 @@ const sub_overlay_borders = document.getElementById("sub_overlay_borders");
 const sub_overlay_markers = document.getElementById("sub_overlay_markers");
 const sub_overlay_polylines = document.getElementById("sub_overlay_polylines");
 
+const page_styles_icon = document.getElementById("page_styles_icon");
+
 const sidebar_timeline_button = document.getElementById("sidebar_timeline_button");
 const timeline_icon = document.getElementById("timeline_icon");
+
+const sidebar_statistics_button = document.getElementById("sidebar_statistics_button");
+const statistics_icon = document.getElementById("statistics_icon");
+
+const sidebar_language_button = document.getElementById("sidebar_language_button");
+const language_icon = document.getElementById("language_icon");
+
+const sidebar_settings_button = document.getElementById("sidebar_settings_button");
+const settings_icon = document.getElementById("settings_icon");
+
+let overlay_train_active = false;
+let overlay_bicycle_active = false;
+let overlay_labels_active = false;
+let overlay_borders_active = false;
+let overlay_markers_active = true;
+let overlay_polylines_active = true;
 
 // // ↑ Sidebar Variables ↑
 
@@ -137,7 +158,7 @@ const { home_icon, car_icon, plane_icon, boat_icon, walk_icon, bicycle_icon, mot
   leafletConfig.marker_icons;
 const { trainsAddon, cyclingAddon, bordersAddon, labelsAddon } = leafletConfig.addons;
 
-const mapTileLayers = L.layerGroup([mapTileLayer_B]).addTo(map);
+const mapTileLayers = L.layerGroup([mapTileLayer_A]).addTo(map);
 
 let marker_highlight_color = "#1495ED";
 let marker_highlight_opacity = 0.5;
@@ -171,32 +192,30 @@ let travel_type_bus_click = false;
 // // // ↓ House ↓
 
 sidebar_house_button.addEventListener("mouseenter", () => {
+  changeIconColorOnHover(true, house_icon, sidebar_house_button);
   clearTimeout(house_container_timeout);
-  sub_house_button_container.style.transition = "transform 0.3s ease";
-  sub_house_button_container.style.transform = "translate(0%, 0%)";
+  sidebarButtonsAnimation(sub_house_button_container, true);
 });
 
 sidebar_house_button.addEventListener("mouseleave", () => {
+  changeIconColorOnHover(false, house_icon, sidebar_house_button);
   house_container_timeout = setTimeout(() => {
-    sub_house_button_container.style.transition = "transform 0.3s ease";
-    sub_house_button_container.style.transform = "translate(-100%, 0%)";
+    sidebarButtonsAnimation(sub_house_button_container, false);
   }, 200);
 });
 
 sub_house_button_container.addEventListener("mouseenter", () => {
   clearTimeout(house_container_timeout);
-  sub_house_button_container.style.transition = "none";
-  sub_house_button_container.style.transform = "translate(0%, 0%)";
+  sidebarButtonsAnimation(sub_house_button_container, true);
 });
 
 sub_house_button_container.addEventListener("mouseleave", () => {
   house_container_timeout = setTimeout(() => {
-    sub_house_button_container.style.transition = "transform 0.3s ease";
-    sub_house_button_container.style.transform = "translate(-100%, 0%)";
+    sidebarButtonsAnimation(sub_house_button_container, false);
   }, 200);
 });
 
-sidebar_sub_house_color_button.addEventListener("click", () => {
+sub_house_color_button.addEventListener("click", () => {
   jscolor.jscolor.show();
 });
 
@@ -297,76 +316,120 @@ function homeMarkerZoom() {
 // // // ↓ Map Layers ↓
 
 sidebar_map_layers_button.addEventListener("mouseenter", () => {
+  changeIconColorOnHover(true, map_layers_icon, sidebar_map_layers_button);
   clearTimeout(map_layers_container_timeout);
-  sub_map_layers_container.style.transition = "transform 0.2s ease";
-  sub_map_layers_container.style.transform = "translate(0%, 0%)";
+  sidebarButtonsAnimation(sub_map_layers_container, true);
 });
 
 sidebar_map_layers_button.addEventListener("mouseleave", () => {
+  changeIconColorOnHover(false, map_layers_icon, sidebar_map_layers_button);
   map_layers_container_timeout = setTimeout(() => {
-    sub_map_layers_container.style.transition = "transform 0.2s ease";
-    sub_map_layers_container.style.transform = "translate(-100%, 0%)";
+    sidebarButtonsAnimation(sub_map_layers_container, false);
   }, 200);
 });
 
 sub_map_layers_container.addEventListener("mouseenter", () => {
   clearTimeout(map_layers_container_timeout);
-  sub_map_layers_container.style.transition = "none";
-  sub_map_layers_container.style.transform = "translate(0%, 0%)";
+  sidebarButtonsAnimation(sub_map_layers_container, true);
 });
 
 sub_map_layers_container.addEventListener("mouseleave", () => {
   map_layers_container_timeout = setTimeout(() => {
-    sub_map_layers_container.style.transition = "transform 0.2s ease";
-    sub_map_layers_container.style.transform = "translate(-100%, 0%)";
+    sidebarButtonsAnimation(sub_map_layers_container, false);
   }, 200);
 });
 
-sub_map_tile_layer_A.addEventListener("click", () => switchTileMap(mapTileLayer_A));
-sub_map_tile_layer_B.addEventListener("click", () => switchTileMap(mapTileLayer_B));
-sub_map_tile_layer_C.addEventListener("click", () => switchTileMap(mapTileLayer_C));
-sub_map_tile_layer_D.addEventListener("click", () => switchTileMap(mapTileLayer_D));
+sub_map_tile_layer_A.addEventListener("click", () => {
+  switchTileMap(mapTileLayer_A);
+  toggleActiveIconColor(sub_map_layer_earth_icon);
+  toggleInactiveIconColor(sub_map_layer_bright_icon, sub_map_layer_dark_icon, sub_map_layer_middleage_icon);
+});
+sub_map_tile_layer_B.addEventListener("click", () => {
+  switchTileMap(mapTileLayer_B);
+  toggleActiveIconColor(sub_map_layer_bright_icon);
+  toggleInactiveIconColor(sub_map_layer_earth_icon, sub_map_layer_dark_icon, sub_map_layer_middleage_icon);
+});
+sub_map_tile_layer_C.addEventListener("click", () => {
+  switchTileMap(mapTileLayer_C);
+  toggleActiveIconColor(sub_map_layer_dark_icon);
+  toggleInactiveIconColor(sub_map_layer_earth_icon, sub_map_layer_bright_icon, sub_map_layer_middleage_icon);
+});
+sub_map_tile_layer_D.addEventListener("click", () => {
+  switchTileMap(mapTileLayer_D);
+  toggleActiveIconColor(sub_map_layer_middleage_icon);
+  toggleInactiveIconColor(sub_map_layer_earth_icon, sub_map_layer_bright_icon, sub_map_layer_dark_icon);
+});
 
 function switchTileMap(layer) {
   mapTileLayers.clearLayers();
   mapTileLayers.addLayer(layer);
 }
 
+function toggleActiveIconColor(icon_0) {
+  icon_0.classList.remove("black_icon_toggle");
+  icon_0.classList.add("white_icon_toggle");
+}
+
+function toggleInactiveIconColor(icon_1, icon_2, icon_3) {
+  icon_1.classList.add("black_icon_toggle");
+  icon_2.classList.add("black_icon_toggle");
+  icon_3.classList.add("black_icon_toggle");
+  icon_1.classList.remove("white_icon_toggle");
+  icon_2.classList.remove("white_icon_toggle");
+  icon_3.classList.remove("white_icon_toggle");
+}
+
 // // // ↑ Map Layers ↑
 // // // ↓ Overlay ↓
 
 sidebar_overlay_button.addEventListener("mouseenter", () => {
+  changeIconColorOnHover(true, overlay_icon, sidebar_overlay_button);
   clearTimeout(overlay_container_timeout);
-  sub_overlay_container.style.transition = "transform 0.2s ease";
-  sub_overlay_container.style.transform = "translate(0%, 0%)";
+  sidebarButtonsAnimation(sub_overlay_container, true);
 });
 
 sidebar_overlay_button.addEventListener("mouseleave", () => {
+  changeIconColorOnHover(false, overlay_icon, sidebar_overlay_button);
   overlay_container_timeout = setTimeout(() => {
-    sub_overlay_container.style.transition = "transform 0.2s ease";
-    sub_overlay_container.style.transform = "translate(-100%, 0%)";
+    sidebarButtonsAnimation(sub_overlay_container, false);
   }, 200);
 });
 
 sub_overlay_container.addEventListener("mouseenter", () => {
   clearTimeout(overlay_container_timeout);
-  sub_overlay_container.style.transition = "none";
-  sub_overlay_container.style.transform = "translate(0%, 0%)";
+  sidebarButtonsAnimation(sub_overlay_container, true);
 });
 
 sub_overlay_container.addEventListener("mouseleave", () => {
   overlay_container_timeout = setTimeout(() => {
-    sub_overlay_container.style.transition = "transform 0.2s ease";
-    sub_overlay_container.style.transform = "translate(-100%, 0%)";
+    sidebarButtonsAnimation(sub_overlay_container, false);
   }, 200);
 });
 
-sub_overlay_train.addEventListener("click", () => switchTileAddon(trainsAddon));
-sub_overlay_bicycle.addEventListener("click", () => switchTileAddon(cyclingAddon));
-sub_overlay_labels.addEventListener("click", () => switchTileAddon(labelsAddon));
-sub_overlay_borders.addEventListener("click", () => switchTileAddon(bordersAddon));
-sub_overlay_markers.addEventListener("click", () => toggleMarkersVisibility());
-sub_overlay_polylines.addEventListener("click", () => togglePolylineVisibility());
+sub_overlay_train.addEventListener("click", () => {
+  switchTileAddon(trainsAddon);
+  overlay_train_active = toggleIconColor(overlay_train_active, sub_train_icon);
+});
+sub_overlay_bicycle.addEventListener("click", () => {
+  switchTileAddon(cyclingAddon);
+  overlay_bicycle_active = toggleIconColor(overlay_bicycle_active, sub_bicycle_icon);
+});
+sub_overlay_labels.addEventListener("click", () => {
+  switchTileAddon(labelsAddon);
+  overlay_labels_active = toggleIconColor(overlay_labels_active, sub_labels_icon);
+});
+sub_overlay_borders.addEventListener("click", () => {
+  switchTileAddon(bordersAddon);
+  overlay_borders_active = toggleIconColor(overlay_borders_active, sub_borders_icon);
+});
+sub_overlay_markers.addEventListener("click", () => {
+  toggleMarkersVisibility();
+  overlay_markers_active = toggleIconColor(overlay_markers_active, sub_markers_icon);
+});
+sub_overlay_polylines.addEventListener("click", () => {
+  togglePolylineVisibility();
+  overlay_polylines_active = toggleIconColor(overlay_polylines_active, sub_polylines_icon);
+});
 
 function switchTileAddon(tile_addon) {
   if (map.hasLayer(tile_addon)) {
@@ -399,14 +462,33 @@ function togglePolylineVisibility() {
   polyline_visibility = !polyline_visibility;
 }
 
+function toggleIconColor(toggle, icon) {
+  if (toggle) {
+    icon.classList.add("black_icon_toggle");
+    icon.classList.remove("white_icon_toggle");
+  } else {
+    icon.classList.add("white_icon_toggle");
+    icon.classList.remove("black_icon_toggle");
+  }
+  return !toggle;
+}
+
 // // // ↑ Overlay ↑
 // // // ↓ Timeline ↓
 
 sidebar_timeline_button.addEventListener("click", () => {
   toggleTimelineVisibility(false);
-  changeTimelineIconColor(true);
+  timeline_enabled = toggleIconColor(timeline_enabled, timeline_icon);
   toggleTimeline();
 });
+
+sidebar_timeline_button.addEventListener("mouseover", () =>
+  changeIconColorOnHover(true, timeline_icon, sidebar_timeline_button)
+);
+
+sidebar_timeline_button.addEventListener("mouseleave", () =>
+  changeIconColorOnHover(false, timeline_icon, sidebar_timeline_button)
+);
 
 timeline_container_arrow.addEventListener("click", () => {
   if (!is_travel_creator_active) {
@@ -417,14 +499,6 @@ timeline_container_arrow.addEventListener("click", () => {
     }
   }
 });
-
-function changeTimelineIconColor() {
-  if (timeline_enabled) {
-    timeline_icon.classList.add("timeline_icon_black");
-  } else {
-    timeline_icon.classList.remove("timeline_icon_black");
-  }
-}
 
 function toggleTimelineVisibility(toggle) {
   if (toggle && timeline_enabled) {
@@ -439,6 +513,60 @@ function toggleTimelineVisibility(toggle) {
 }
 
 // // // ↑ Timeline ↑
+// // // ↓ Statistics ↓
+
+sidebar_statistics_button.addEventListener("mouseenter", () =>
+  changeIconColorOnHover(true, statistics_icon, sidebar_statistics_button)
+);
+
+sidebar_statistics_button.addEventListener("mouseleave", () =>
+  changeIconColorOnHover(false, statistics_icon, sidebar_statistics_button)
+);
+
+// // // ↑ Statistics ↑
+// // // ↓ Language ↓
+
+sidebar_language_button.addEventListener("mouseenter", () =>
+  changeIconColorOnHover(true, language_icon, sidebar_language_button)
+);
+
+sidebar_language_button.addEventListener("mouseleave", () =>
+  changeIconColorOnHover(false, language_icon, sidebar_language_button)
+);
+
+// // // ↑ Language ↑
+// // // ↓ Settings ↓
+
+sidebar_settings_button.addEventListener("mouseenter", () =>
+  changeIconColorOnHover(true, settings_icon, sidebar_settings_button)
+);
+
+sidebar_settings_button.addEventListener("mouseleave", () =>
+  changeIconColorOnHover(false, settings_icon, sidebar_settings_button)
+);
+
+// // // ↑ Settings ↑
+
+function sidebarButtonsAnimation(element, toggle) {
+  if (toggle) {
+    element.style.transition = "transform 0.3s ease";
+    element.style.transform = "translate(4.4vw, 0%)";
+  } else {
+    element.style.transition = "transform 0.3s ease";
+    element.style.transform = "translate(-100%, 0%)";
+  }
+}
+
+function changeIconColorOnHover(toggle, element, button) {
+  if (toggle) {
+    element.classList.add("sidebar_icon_brighter");
+    button.style.transform = "scale(1.1)";
+  } else {
+    element.classList.remove("sidebar_icon_brighter");
+    button.style.transform = "scale(1)";
+  }
+}
+
 // // ↑ Sidebar ↑
 // ↑ Page interaction ↑
 
@@ -1543,8 +1671,6 @@ function toggleTimeline() {
   } else {
     window.timeline = new TL.Timeline("timeline", timelineData, timelineOptions);
   }
-
-  timeline_enabled = !timeline_enabled;
 }
 
 function timelineInfoToggle() {
