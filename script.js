@@ -1,11 +1,10 @@
-// ver: 0.7.10
+// ver: 0.7.11
 
 // Bugs:
 
 // Features to add:
 
 // ---------- 4. new UI / Add loading animations before the page/content load
-//               - travel logs, make it display only the travel name, name edit ( and maybe date ), on click make it extend to show all the log options (edit, markers, highlights ...)
 // ---------- 5. Add different page styles (font, animations, images, backgrounds, theme) - modern / middleage / other
 // ---------- 6. Add local storage to save the trip progress and settings
 //               - make the storedIds[] load the id data from the travelLogs[] on page load, instead of storing it in a local storage in the future
@@ -570,11 +569,11 @@ function changeIconColorOnHover(toggle, element, button) {
 // // ↑ Sidebar ↑
 // ↑ Page interaction ↑
 
+// ↓ Travel Log Creator ↓
 add_travel.addEventListener("click", () => {
   toggleMainLogContainerVisibility(false);
   toggleTimelineVisibility(false);
   toggleStatisticsVisibility(false);
-  add_travel.style.backgroundColor = "rgb(180, 180, 180, 0.5)";
   if (!is_travel_creator_active) {
     random_id = "";
     random_id = randomIdGenerator();
@@ -614,11 +613,6 @@ function toggleMainLogContainerVisibility(toggle) {
   }
 }
 
-// ↑ Home ↑
-// ↓ Leaflet Map ↓
-
-// // ↓ Leaflet Map / Custom Home + marker Highlight Color + opacity ↓
-
 marker_color_picker.addEventListener("input", function () {
   if (highlight_color_opacity_customization) {
     marker_highlight_color = marker_color_picker.value;
@@ -631,10 +625,8 @@ marker_opacity_slider.addEventListener("input", function () {
   } else showInfoPopup("cannot customize highlight opacity while placing travel markers");
 });
 
-// // ↑ Leaflet Map / Custom Home + marker Highlight Color + opacity ↑
-// ↑ Leaflet Map  ↑
-// ↓ GeoJSON ↓
-// // ↓ GeoJSON Initialization + country highlight ↓
+// ↑ Travel Log Creator ↑
+// ↓ GeoJSON + Country highlight ↓
 
 let defaultCountryHighlight = 0;
 let cachedGeoJSON = null;
@@ -706,9 +698,7 @@ function setLayerStyle(layer, fillColor, fillOpacity, attribution, random_id) {
   layer.defaultOptions.id = random_id;
 }
 
-// // ↑ GeoJSON Initialization + country highlight ↑
-
-// ↑ GeoJSON ↑
+// ↑ GeoJSON + Country highlight ↑
 // ↓ Travel Log markers ↓
 
 const travelTypeButtonImages = new Map();
@@ -1093,7 +1083,6 @@ check_icon_group.addEventListener("click", (event) => {
   }
 
   if (travel_logs_group_name !== "") {
-    add_travel.style.backgroundColor = "rgb(255, 255, 190)";
     is_travel_creator_active = false;
     travelLogGroupSubmit(event);
     toggleMainLogContainerVisibility(true);
@@ -1105,7 +1094,6 @@ check_icon_group.addEventListener("click", (event) => {
 });
 
 close_icon_group.addEventListener("click", () => {
-  add_travel.style.backgroundColor = "rgb(255, 255, 190)";
   is_travel_creator_active = false;
   stored_group_log_id = random_id;
   removeStoredId(stored_group_log_id);
@@ -1200,20 +1188,26 @@ function travelLogIndividualSubmit(event) {
   $individual_log_id.textContent = random_id;
 
   // individual travel id
+  // individual travel name container
+
+  const $travel_logs_individual_name_container = document.createElement("div");
+  $travel_logs_individual_name_container.classList.add("travel_logs_individual_name_container");
+  $travel_logs_individual_div_main.appendChild($travel_logs_individual_name_container);
+
+  // individual travel name container
   // individual travel name
 
   const $travel_logs_individual_name = document.createElement("span");
   $travel_logs_individual_name.textContent = travel_logs_individual_name;
   $travel_logs_individual_name.classList.add("travel_logs_individual_name");
-  $travel_logs_individual_div_main.appendChild($travel_logs_individual_name);
+  $travel_logs_individual_name_container.appendChild($travel_logs_individual_name);
 
   // individual travel name
   // individual travel distance
 
-  // stored_individual_id = random_id;
-
   calculateTotalIdDistance(rawCoordinatesDistances, stored_individual_id);
   const $travel_logs_individual_distance = document.createElement("span");
+  $travel_logs_individual_distance.classList.add("travel_logs_individual_distance");
   $travel_logs_individual_distance.textContent = formatDistance(total_id_distance) + " km";
   $travel_logs_individual_div_main.appendChild($travel_logs_individual_distance);
 
@@ -1221,8 +1215,8 @@ function travelLogIndividualSubmit(event) {
   // individual travel name edit
 
   const $travel_logs_individual_name_edit = document.createElement("button");
-  $travel_logs_individual_name_edit.textContent = "\u270E";
-  $travel_logs_individual_name_edit.classList.add("travel_logs_individual_name_edit");
+  $travel_logs_individual_name_edit.innerHTML = '<i class="fas fa-pen fa-lg" style="color: #c9c9c9;"></i>';
+  $travel_logs_individual_name_edit.classList.add("travel_logs_CRUD_buttons");
   $travel_logs_individual_name_edit.addEventListener("click", () => {
     const $travel_logs_individual_name_new = prompt("Enter new text:");
 
@@ -1249,10 +1243,11 @@ function travelLogIndividualSubmit(event) {
   $travel_logs_individual_div_main.appendChild($travel_logs_individual_name_edit);
 
   // individual travel name edit
-  // delete individual log
+  // delete log individual button
 
   const $travel_logs_delete = document.createElement("button");
-  $travel_logs_delete.textContent = "Delete";
+  $travel_logs_delete.innerHTML = '<i class="fa-regular fa-trash-can fa-xl" style="color: #c9c9c9;"></i>';
+  $travel_logs_delete.classList.add("travel_logs_CRUD_buttons");
   $travel_logs_delete.addEventListener("click", () => {
     stored_individual_log_id = $individual_log_id.textContent;
     markers_visibility = false;
@@ -1282,7 +1277,7 @@ function travelLogIndividualSubmit(event) {
   });
   $travel_logs_individual_div_main.appendChild($travel_logs_delete);
 
-  // delete individual log
+  // delete log individual button
   // display the individual log
 
   const $content_div = document.getElementById(stored_group_log_id);
@@ -1308,35 +1303,50 @@ function travelLogGroupSubmit(event) {
   // main group div
 
   const $travel_logs_group_div_main = document.createElement("div");
-  $travel_logs_group_div_main.className = "travel_logs_group_div_main";
+  $travel_logs_group_div_main.classList.add("travel_logs_group_div_main");
 
   const $travel_logs_group_div_settings = document.createElement("div");
-  $travel_logs_group_div_settings.className = "travel_logs_group_div_settings";
+  $travel_logs_group_div_settings.classList.add("travel_logs_group_div_settings");
 
   const $travel_logs_group_content = document.createElement("div");
-  $travel_logs_group_content.className = "travel_logs_group_div_content";
+  $travel_logs_group_content.classList.add("travel_logs_group_div_content");
   $travel_logs_group_content.id = stored_group_log_id;
 
   // main group div
-  // group travel id
+  // group group travel id
 
   const $group_log_id = document.createElement("span");
   $group_log_id.textContent = stored_group_log_id;
 
-  // group travel id
-  // travel name div
+  // group group travel id
+  // travel group name container
+
+  const $travel_logs_group_name_container = document.createElement("div");
+  $travel_logs_group_name_container.classList.add("travel_logs_group_name_container");
+  $travel_logs_group_div_settings.appendChild($travel_logs_group_name_container);
+
+  // travel group name container
+  // travel group name
 
   const $travel_logs_group_name = document.createElement("span");
   $travel_logs_group_name.textContent = travel_logs_group_name;
   $travel_logs_group_name.classList.add("travel_logs_group_name");
-  $travel_logs_group_div_settings.appendChild($travel_logs_group_name);
+  $travel_logs_group_name_container.appendChild($travel_logs_group_name);
 
-  // travel name div
-  // travel name edit button
+  // travel group name
+  // travel group date
+
+  const $travel_logs_group_date = document.createElement("span");
+  $travel_logs_group_date.classList.add("travel_logs_group_date");
+  $travel_logs_group_date.textContent = travel_date_start + " - " + travel_date_end;
+  $travel_logs_group_name_container.appendChild($travel_logs_group_date);
+
+  // travel group date
+  // travel group name edit button
 
   const $travel_logs_group_name_edit = document.createElement("button");
-  $travel_logs_group_name_edit.textContent = "\u270E";
-  $travel_logs_group_name_edit.classList.add("travel_logs_group_name_edit");
+  $travel_logs_group_name_edit.innerHTML = '<i class="fas fa-pen fa-xl" style="color: #c9c9c9;"></i>';
+  $travel_logs_group_name_edit.classList.add("travel_logs_CRUD_buttons");
   $travel_logs_group_name_edit.addEventListener("click", () => {
     const $travel_logs_group_name_new = prompt("Enter new text:");
 
@@ -1362,38 +1372,12 @@ function travelLogGroupSubmit(event) {
   });
   $travel_logs_group_div_settings.appendChild($travel_logs_group_name_edit);
 
-  // travel name edit button
-  // delete log group button
-
-  const $travel_logs_delete = document.createElement("button");
-  $travel_logs_delete.textContent = "Delete";
-  $travel_logs_delete.addEventListener("click", () => {
-    stored_group_log_id = $group_log_id.textContent;
-    isGroupContentDivEmpty();
-    if (isTravelGroupEmpty == true) {
-      removeTravelLogs(stored_group_log_id);
-      removeStoredId(stored_group_log_id);
-      removeTimelineData(timelineData, stored_group_log_id);
-      timelineInfoToggle();
-      if (timeline_enabled === true) {
-        window.timeline = new TL.Timeline("timeline", timelineData, timelineOptions);
-      }
-      const index = travelLogs.indexOf(travel_logs_group_name);
-      if (index !== -1) {
-        travelLogs.splice(index, 1);
-      }
-      $travel_logs_group_div_main.remove();
-    } else if (isTravelGroupEmpty == false) {
-      showInfoPopup("Travel group is not empty, please remove remaining travel logs");
-    }
-  });
-  $travel_logs_group_div_settings.appendChild($travel_logs_delete);
-
-  // delete log group button
+  // travel group name edit button
   // add group (individual) travel button
 
   const $travel_logs_group_add_travel_button = document.createElement("button");
-  $travel_logs_group_add_travel_button.textContent = "add travel type";
+  $travel_logs_group_add_travel_button.innerHTML = '<i class="fa-solid fa-plus fa-xl" style="color: #c9c9c9;"></i>';
+  $travel_logs_group_add_travel_button.classList.add("travel_logs_CRUD_buttons");
   $travel_logs_group_add_travel_button.addEventListener("click", () => {
     highlight_color_opacity_customization = true;
     is_travel_creator_active = true;
@@ -1422,14 +1406,62 @@ function travelLogGroupSubmit(event) {
   $travel_logs_group_div_settings.appendChild($travel_logs_group_add_travel_button);
 
   // add group (individual) travel button
-  // display the log
+  // delete log group button
+
+  const $travel_logs_delete = document.createElement("button");
+  $travel_logs_delete.innerHTML = '<i class="fa-regular fa-trash-can fa-xl" style="color: #c9c9c9;"></i>';
+  $travel_logs_delete.classList.add("travel_logs_CRUD_buttons");
+  $travel_logs_delete.addEventListener("click", () => {
+    stored_group_log_id = $group_log_id.textContent;
+    isGroupContentDivEmpty();
+    if (isTravelGroupEmpty == true) {
+      removeTravelLogs(stored_group_log_id);
+      removeStoredId(stored_group_log_id);
+      removeTimelineData(timelineData, stored_group_log_id);
+      timelineInfoToggle();
+      if (timeline_enabled === true) {
+        window.timeline = new TL.Timeline("timeline", timelineData, timelineOptions);
+      }
+      const index = travelLogs.indexOf(travel_logs_group_name);
+      if (index !== -1) {
+        travelLogs.splice(index, 1);
+      }
+      $travel_logs_group_div_main.remove();
+    } else if (isTravelGroupEmpty == false) {
+      showInfoPopup("Travel group is not empty, please remove remaining travel logs");
+    }
+  });
+  $travel_logs_group_div_settings.appendChild($travel_logs_delete);
+
+  // delete log group button
+  // group list collapse button
+
+  let list_collapsed = false;
+  const $list_collapse_button = document.createElement("button");
+  $list_collapse_button.innerHTML = '<i class="fa-solid fa-list fa-xl" style="color: #c9c9c9;"></i>';
+  $list_collapse_button.classList.add("travel_logs_CRUD_buttons");
+  $travel_logs_group_div_settings.appendChild($list_collapse_button);
+
+  $list_collapse_button.addEventListener("click", () => {
+    if (list_collapsed) {
+      $travel_logs_group_content.style.height = "auto";
+      $travel_logs_group_div_main.style.height = "auto";
+    } else {
+      $travel_logs_group_content.style.height = 0;
+      $travel_logs_group_div_main.style.height = "8.6vh";
+    }
+    list_collapsed = !list_collapsed;
+  });
+
+  // group list collapse button
+  // display the group log
 
   const $logs_list = document.getElementById("logs_list");
   $logs_list.appendChild($travel_logs_group_div_main);
   $travel_logs_group_div_main.appendChild($travel_logs_group_div_settings);
   $travel_logs_group_div_main.appendChild($travel_logs_group_content);
 
-  // display the log
+  // display the group log
 
   travelLogs.push([travel_logs_group_name, random_id, travel_date_start + " - " + travel_date_end]);
 
