@@ -382,21 +382,21 @@ body {
 
 .travel_logs_group_name {
   height: 4vh;
-  font-size: 3.5vh;
+  font-size: 3vh;
   font-family: "Dosis", sans-serif;
   display: flex;
   justify-content: center;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  color: #c9c9c9;
+  color: #dddddd;
 }
 
 .travel_logs_group_date {
   height: 1.8vh;
-  font-size: 1.3vh;
+  font-size: 1.5vh;
   width: 12vw;
-  color: #c9c9c9;
+  color: #dddddd;
   display: flex;
   justify-content: center;
   align-items: flex-end;
@@ -430,25 +430,37 @@ body {
 
 .travel_logs_individual_name_container {
   width: 12vw;
-  margin-right: 0.5vw;
-  margin-left: 0.1vw;
+  margin: 0 0.5vw 0 0.1vw;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  height: 3vh;
 }
 
 .travel_logs_individual_name {
-  font-size: 2vw;
-  margin: 1vw;
-  color: white;
+  font-size: 1vw;
+  color: #dddddd;
+  font-family: "Dosis", sans-serif;
+  padding: 2vw;
+}
+
+.travel_logs_individual_travel_type_and_distance_container {
+  width: 5vw;
+  height: 5vh;
+  text-align: center;
+}
+
+.travel_logs_individual_distance {
+  color: #dddddd;
   font-size: 2vh;
   font-family: "Dosis", sans-serif;
 }
 
-.travel_logs_individual_distance {
-  width: 4vw;
-  color: #c9c9c9;
+.travel_logs_distance_type {
+  display: block;
+  font-size: 1.8vh;
   font-family: "Dosis", sans-serif;
+  color: #dddddd;
 }
 
 .travel_logs_individual_name_edit {
@@ -667,22 +679,6 @@ body {
 .grid_item {
   border: 1px solid #ccc;
   padding: 0px;
-}
-
-.main_statistics_container_arrow {
-  position: absolute;
-  top: 30%;
-  left: 50%;
-  transform: translate(-50%, -800%);
-  z-index: 899;
-  height: 4vh;
-  transition: transform 0.5s ease;
-}
-
-.main_statistics_container_arrow img {
-  width: 10vh;
-  height: auto;
-  transform: rotate(270deg);
 }
 
 /* ↑ Travel stats ↑ */
