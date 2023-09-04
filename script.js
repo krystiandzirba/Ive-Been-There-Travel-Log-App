@@ -1,4 +1,4 @@
-// ver: 0.7.12
+// ver: 0.7.13
 
 // Bugs:
 
@@ -156,6 +156,8 @@ let total_train_distance = 0;
 let total_bus_distance = 0;
 let highest_distance_type = "";
 let lowest_distance_type = "";
+let average_distance = 0;
+let most_common_travel_type = "";
 
 import leafletConfig from "./LeafletConfig.js";
 
@@ -570,10 +572,12 @@ function calculateDistance(coord_1, coord_2) {
 }
 
 function distancesBreakdown(distances) {
-  total_distance = 0;
   let allDistances = [];
   highest_distance = Number.NEGATIVE_INFINITY;
   lowest_distance = Number.POSITIVE_INFINITY;
+  total_distance = 0;
+  average_distance = 0;
+  most_common_travel_type = "";
 
   for (let i = 0; i < distances.length; i++) {
     for (let j = 0; j < distances[i].length; j++) {
@@ -591,6 +595,7 @@ function distancesBreakdown(distances) {
       }
 
       total_distance += distance;
+      average_distance = total_distance / allDistances.length;
     }
   }
 
@@ -600,6 +605,8 @@ function distancesBreakdown(distances) {
     highest_distance_type,
     lowest_distance_type,
     total_distance,
+    average_distance,
+    most_common_travel_type,
   };
 }
 
@@ -626,6 +633,17 @@ function updateTravelStats() {
   document.getElementById("total_motorcycle_distance").textContent = formatDistance(total_motorcycle_distance) + " km";
   document.getElementById("total_train_distance").textContent = formatDistance(total_train_distance) + " km";
   document.getElementById("total_bus_distance").textContent = formatDistance(total_bus_distance) + " km";
+
+  document.getElementById("average_travel_distance").textContent = formatDistance(average_distance) + " km";
+
+  let most_common_travel_type = document.getElementById("most_common_travel_type");
+  const { travel_type_count, highest_count_travel_types } = countTravelType(markersCoordinates);
+  if (highest_count_travel_types.length > 0) {
+    const mostCommonTravelTypesText = highest_count_travel_types.join(", ");
+    most_common_travel_type.textContent = mostCommonTravelTypesText;
+  } else {
+    most_common_travel_type.textContent = "none";
+  }
 }
 
 function formatDistance(distance) {
@@ -713,6 +731,53 @@ function calculateTotalIdDistance(distances, id) {
   return {
     total_id_distance,
   };
+}
+
+let travel_type_count = {
+  car: 0,
+  plane: 0,
+  boat: 0,
+  motorcycle: 0,
+  bicycle: 0,
+  walk: 0,
+  train: 0,
+  bus: 0,
+};
+
+let highest_count_travel_types = [];
+let highest_count = Number.NEGATIVE_INFINITY;
+
+function countTravelType(markersCoordinates) {
+  travel_type_count = {
+    car: 0,
+    plane: 0,
+    boat: 0,
+    motorcycle: 0,
+    bicycle: 0,
+    walk: 0,
+    train: 0,
+    bus: 0,
+  };
+  highest_count_travel_types = [];
+  highest_count = Number.NEGATIVE_INFINITY;
+
+  for (const marker of markersCoordinates) {
+    const type = marker[0][2][1];
+    if (type in travel_type_count) {
+      travel_type_count[type]++;
+      if (travel_type_count[type] > highest_count) {
+        highest_count = travel_type_count[type];
+        highest_count_travel_types = [type];
+      } else if (travel_type_count[type] === highest_count) {
+        highest_count_travel_types.push(type);
+      }
+    }
+  }
+  return { travel_type_count, highest_count_travel_types };
+}
+
+function removeTravelCount(type) {
+  travel_type_count[type] -= 1;
 }
 
 // // // ↑ Statistics ↑
@@ -1333,6 +1398,7 @@ check_icon_individual.addEventListener("click", (event) => {
     toggleTravelLogsIndividualMainContainerVisibility(false);
     timelineInfoToggle();
     closeInfoPopup();
+    countTravelType(markersCoordinates);
     is_travel_creator_active = false;
   }
 });
@@ -1378,28 +1444,28 @@ function travelLogIndividualSubmit(event) {
   $travel_logs_individual_div_main.className = "travel_logs_individual_div_main";
 
   // main individual div
-  // individual travel id
+  // individual id
 
   const $individual_log_id = document.createElement("span");
   $individual_log_id.textContent = random_id;
 
-  // individual travel id
-  // individual travel name container
+  // individual id
+  // individual name container
 
   const $travel_logs_individual_name_container = document.createElement("div");
   $travel_logs_individual_name_container.classList.add("travel_logs_individual_name_container");
   $travel_logs_individual_div_main.appendChild($travel_logs_individual_name_container);
 
-  // individual travel name container
-  // individual travel name
+  // individual name container
+  // individual name
 
   const $travel_logs_individual_name = document.createElement("span");
   $travel_logs_individual_name.textContent = travel_logs_individual_name;
   $travel_logs_individual_name.classList.add("travel_logs_individual_name");
   $travel_logs_individual_name_container.appendChild($travel_logs_individual_name);
 
-  // individual travel name
-  // individual travel distance
+  // individual name
+  // individual distance
 
   let distance_type = type;
 
@@ -1421,8 +1487,8 @@ function travelLogIndividualSubmit(event) {
   $travel_logs_individual_travel_type_and_distance_container.appendChild($travel_logs_distance_type);
   $travel_logs_individual_travel_type_and_distance_container.appendChild($travel_logs_individual_distance);
 
-  // individual travel distance
-  // individual travel name edit
+  // individual distance
+  // individual name edit
 
   const $travel_logs_individual_name_edit = document.createElement("button");
   $travel_logs_individual_name_edit.innerHTML = '<i class="fas fa-pen fa-lg" style="color: #c9c9c9;"></i>';
@@ -1452,8 +1518,8 @@ function travelLogIndividualSubmit(event) {
   });
   $travel_logs_individual_div_main.appendChild($travel_logs_individual_name_edit);
 
-  // individual travel name edit
-  // delete log individual button
+  // individual name edit
+  // delete individual
 
   const $travel_logs_delete = document.createElement("button");
   $travel_logs_delete.innerHTML = '<i class="fa-regular fa-trash-can fa-xl" style="color: #c9c9c9;"></i>';
@@ -1475,6 +1541,8 @@ function travelLogIndividualSubmit(event) {
     calculateDistances();
     distancesBreakdown(rawCoordinatesDistances);
     calculateTotalDistances(rawCoordinatesDistances);
+    removeTravelCount(distance_type);
+    countTravelType(markersCoordinates);
     updateTravelStats();
     if (timeline_enabled === true) {
       window.timeline = new TL.Timeline("timeline", timelineData, timelineOptions);
@@ -1487,13 +1555,13 @@ function travelLogIndividualSubmit(event) {
   });
   $travel_logs_individual_div_main.appendChild($travel_logs_delete);
 
-  // delete log individual button
-  // display the individual log
+  // delete individual
+  // display individual
 
   const $content_div = document.getElementById(stored_group_log_id);
   $content_div.appendChild($travel_logs_individual_div_main);
 
-  // display the individual log
+  // display individual
 
   travelLogs.push([travel_logs_individual_name, stored_individual_id, travel_date_start + " - " + travel_date_end]);
 
@@ -1525,36 +1593,36 @@ function travelLogGroupSubmit(event) {
   $travel_logs_group_content.id = stored_group_log_id;
 
   // main group div
-  // group group travel id
+  // group id
 
   const $group_log_id = document.createElement("span");
   $group_log_id.textContent = stored_group_log_id;
 
-  // group group travel id
-  // travel group name container
+  // group id
+  // group name div
 
   const $travel_logs_group_name_container = document.createElement("div");
   $travel_logs_group_name_container.classList.add("travel_logs_group_name_container");
   $travel_logs_group_div_settings.appendChild($travel_logs_group_name_container);
 
-  // travel group name container
-  // travel group name
+  // group name div
+  // group name
 
   const $travel_logs_group_name = document.createElement("span");
   $travel_logs_group_name.textContent = travel_logs_group_name;
   $travel_logs_group_name.classList.add("travel_logs_group_name");
   $travel_logs_group_name_container.appendChild($travel_logs_group_name);
 
-  // travel group name
-  // travel group date
+  // group name
+  // group date
 
   const $travel_logs_group_date = document.createElement("span");
   $travel_logs_group_date.classList.add("travel_logs_group_date");
   $travel_logs_group_date.textContent = travel_date_start + " - " + travel_date_end;
   $travel_logs_group_name_container.appendChild($travel_logs_group_date);
 
-  // travel group date
-  // travel group name edit button
+  // group date
+  // group name edit
 
   const $travel_logs_group_name_edit = document.createElement("button");
   $travel_logs_group_name_edit.innerHTML = '<i class="fas fa-pen fa-xl" style="color: #c9c9c9;"></i>';
@@ -1584,7 +1652,7 @@ function travelLogGroupSubmit(event) {
   });
   $travel_logs_group_div_settings.appendChild($travel_logs_group_name_edit);
 
-  // travel group name edit button
+  // group name edit
   // add group (individual) travel button
 
   const $travel_logs_group_add_travel_button = document.createElement("button");
@@ -1618,7 +1686,7 @@ function travelLogGroupSubmit(event) {
   $travel_logs_group_div_settings.appendChild($travel_logs_group_add_travel_button);
 
   // add group (individual) travel button
-  // delete log group button
+  // delete group
 
   const $travel_logs_delete = document.createElement("button");
   $travel_logs_delete.innerHTML = '<i class="fa-regular fa-trash-can fa-xl" style="color: #c9c9c9;"></i>';
@@ -1645,8 +1713,8 @@ function travelLogGroupSubmit(event) {
   });
   $travel_logs_group_div_settings.appendChild($travel_logs_delete);
 
-  // delete log group button
-  // group list collapse button
+  // delete group
+  // group list collapse
 
   let list_collapsed = false;
   const $list_collapse_button = document.createElement("button");
@@ -1665,15 +1733,15 @@ function travelLogGroupSubmit(event) {
     list_collapsed = !list_collapsed;
   });
 
-  // group list collapse button
-  // display the group log
+  // group list collapse
+  // display group
 
   const $logs_list = document.getElementById("logs_list");
   $logs_list.appendChild($travel_logs_group_div_main);
   $travel_logs_group_div_main.appendChild($travel_logs_group_div_settings);
   $travel_logs_group_div_main.appendChild($travel_logs_group_content);
 
-  // display the group log
+  // display group
 
   travelLogs.push([travel_logs_group_name, random_id, travel_date_start + " - " + travel_date_end]);
 
@@ -2091,4 +2159,10 @@ test_button.addEventListener("click", () => {
   console.log("Total Bus Distance:", total_bus_distance.toFixed(2), "km");
 });
 
-test_button_2.addEventListener("click", () => {});
+test_button_2.addEventListener("click", () => {
+  countTravelType(markersCoordinates);
+  console.log("Travel Types Count:", travel_type_count);
+  console.log("Travel Type with the Highest Number:", highest_count_travel_types);
+});
+
+test_button_3.addEventListener("click", () => {});

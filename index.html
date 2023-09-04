@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>I've been there! - Travel log app 0.7.12</title>
+    <title>I've been there! - Travel log app 0.7.13</title>
     <link rel="icon" type="image/x-icon" href="/content/icons/globe_icon_black.png" />
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -271,13 +271,19 @@
       <div class="grid_item">
         <p>bus distance: <span id="total_bus_distance"></span></p>
       </div>
+      <div class="grid_item">
+        <p>average travel distance: <span id="average_travel_distance"></span></p>
+      </div>
+      <div class="grid_item">
+        <p>most common travel type: <span id="most_common_travel_type"></span></p>
+      </div>
     </div>
 
     <div id="custom_cursor" class="custom_cursor">
       <img id="custom_cursor_image" src="/content/icons/car_icon_small.png" />
     </div>
 
-    <div class="app_version">ver: 0.7.12</div>
+    <div class="app_version">ver: 0.7.13</div>
 
     <div id="info_popup" style="display: none">
       <span id="close_info_popup">&times;</span>
@@ -285,5 +291,6 @@
     </div>
     <button id="test_button" class="test_button t1">TEST console</button>
     <button id="test_button_2" class="test_button t2">TEST clear</button>
+    <button id="test_button_3" class="test_button t3">decremenyt</button>
   </body>
 </html>
