@@ -1,8 +1,6 @@
-// ver: 0.7.13
+// ver: 0.7.14
 
 // Bugs:
-
-// ---------- 1. statistics and timeline buttons true/false status flip
 
 // Features to add:
 
@@ -12,6 +10,7 @@
 //               - make the storedIds[] load the id data from the travelLogs[] on page load, instead of storing it in a local storage in the future
 // ---------- 7. Add different languages
 // ---------- 8. Add info boxes to help navigate the app while using it for the first time
+// ---------- 9. Add D3 to visualize the statistics data
 
 // multi options polyline / leaflet motion / polyline decorator / leaflet Storage / leaflet canvas markers /
 
@@ -572,7 +571,6 @@ function calculateDistance(coord_1, coord_2) {
 }
 
 function distancesBreakdown(distances) {
-  let allDistances = [];
   highest_distance = Number.NEGATIVE_INFINITY;
   lowest_distance = Number.POSITIVE_INFINITY;
   total_distance = 0;
@@ -582,7 +580,6 @@ function distancesBreakdown(distances) {
   for (let i = 0; i < distances.length; i++) {
     for (let j = 0; j < distances[i].length; j++) {
       const { distance, distance_info } = distances[i][j];
-      allDistances.push(distance);
 
       if (distance > highest_distance) {
         highest_distance = distance;
@@ -595,7 +592,7 @@ function distancesBreakdown(distances) {
       }
 
       total_distance += distance;
-      average_distance = total_distance / allDistances.length;
+      average_distance = total_distance / polylines.length;
     }
   }
 
@@ -615,8 +612,8 @@ function updateTravelStats() {
   const display_lowest_distance = lowest_distance === Number.POSITIVE_INFINITY ? 0 : lowest_distance;
 
   const highest_distance_display =
-    highest_distance === Number.NEGATIVE_INFINITY ? "" : "[" + highest_distance_type + "]";
-  const lowest_distance_display = lowest_distance === Number.POSITIVE_INFINITY ? "" : "[" + lowest_distance_type + "]";
+    highest_distance === Number.NEGATIVE_INFINITY ? "" : "(" + highest_distance_type + ")";
+  const lowest_distance_display = lowest_distance === Number.POSITIVE_INFINITY ? "" : "(" + lowest_distance_type + ")";
 
   document.getElementById("highest_distance").textContent =
     formatDistance(display_highest_distance) + " km " + highest_distance_display;
@@ -1669,6 +1666,9 @@ function travelLogGroupSubmit(event) {
     toggleMainLogContainerVisibility(false);
     toggleTimelineVisibility(false);
     toggleStatisticsVisibility(false);
+    if (!statistics_visibility) {
+      statistics_visibility = toggleIconColor(statistics_visibility, statistics_icon);
+    }
 
     stored_group_log_id = $group_log_id.textContent;
     markersCoordinates = markersCoordinates.filter((coordinatesArray) => coordinatesArray.length > 0);
@@ -1976,7 +1976,7 @@ function removeTimelineData(timelineData, id) {
 }
 
 function toggleTimeline() {
-  if (timeline_enabled) {
+  if (!timeline_enabled) {
     while (timeline.firstChild) {
       timeline.removeChild(timeline.firstChild);
     }
@@ -2016,21 +2016,7 @@ function removeLoadingPageContent() {
 }
 
 // ↑ UI / Visuals ↑
-// ↓ Other ↓
-// // ↓ Other / Info popup ↓
-
-function showInfoPopup(text) {
-  info_popup_text.textContent = text;
-  info_popup.style.display = "block";
-}
-
-function closeInfoPopup() {
-  info_popup.style.display = "none";
-}
-close_info_popup.addEventListener("click", closeInfoPopup);
-
-// // ↑ Other / Info popup ↑
-// // ↓ Other / Loading progress info ↓
+// ↓ Loading progress info ↓
 
 const progress_info = document.getElementById("progress_info");
 
@@ -2129,7 +2115,21 @@ function onLoadingComplete() {
 }
 trackLoadingProgress(resourcesToLoad, progressInfoDisplay, onLoadingComplete);
 
-// ↑ Other / Loading progress info ↑
+// ↑ Loading progress info ↑
+// ↓ Other ↓
+// // ↓ Other / Info popup ↓
+
+function showInfoPopup(text) {
+  info_popup_text.textContent = text;
+  info_popup.style.display = "block";
+}
+
+function closeInfoPopup() {
+  info_popup.style.display = "none";
+}
+close_info_popup.addEventListener("click", closeInfoPopup);
+
+// // ↑ Other / Info popup ↑
 // ↑ Other ↑
 
 // // ---------- TEST ---------- ↓
@@ -2159,10 +2159,6 @@ test_button.addEventListener("click", () => {
   console.log("Total Bus Distance:", total_bus_distance.toFixed(2), "km");
 });
 
-test_button_2.addEventListener("click", () => {
-  countTravelType(markersCoordinates);
-  console.log("Travel Types Count:", travel_type_count);
-  console.log("Travel Type with the Highest Number:", highest_count_travel_types);
-});
+test_button_2.addEventListener("click", () => {});
 
 test_button_3.addEventListener("click", () => {});
