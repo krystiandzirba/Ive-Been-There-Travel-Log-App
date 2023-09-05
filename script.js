@@ -1,4 +1,4 @@
-// ver: 0.7.14
+// ver: 0.7.15
 
 // Bugs:
 
@@ -83,8 +83,10 @@ const travel_type_motorcycle = document.getElementById("travel_type_motorcycle")
 const travel_type_train = document.getElementById("travel_type_train");
 const travel_type_bus = document.getElementById("travel_type_bus");
 
-const check_icon_group = document.getElementById("check_icon_group");
-const close_icon_group = document.getElementById("close_icon_group");
+const check_group_button = document.getElementById("check_group_button");
+const close_group_button = document.getElementById("close_group_button");
+const check_group_icon = document.getElementById("check_group_icon");
+const close_group_icon = document.getElementById("close_group_icon");
 
 const check_icon_individual = document.getElementById("check_icon_individual");
 const close_icon_individual = document.getElementById("close_icon_individual");
@@ -140,6 +142,8 @@ let timelineOptions = {
 };
 let random_id = "";
 
+// // ↓ Statistics ↓
+
 let highest_distance = 0;
 let lowest_distance = 0;
 let total_distance = 0;
@@ -158,6 +162,21 @@ let lowest_distance_type = "";
 let average_distance = 0;
 let most_common_travel_type = "";
 
+// // ↑ Statistics ↑
+// // ↓ Travel log creator ↓
+
+let travel_date_start = "";
+let travel_date_end = "";
+let timeline_start = "";
+let timeline_end = "";
+
+let stored_group_log_id = "";
+let stored_individual_log_id = "";
+let isTravelGroupEmpty = "";
+
+// // ↑ Travel log creator ↑
+// // ↓ Leaflet map ↓
+
 import leafletConfig from "./LeafletConfig.js";
 
 const { L } = window;
@@ -175,6 +194,8 @@ const { home_icon, car_icon, plane_icon, boat_icon, walk_icon, bicycle_icon, mot
 const { trainsAddon, cyclingAddon, bordersAddon, labelsAddon } = leafletConfig.addons;
 
 const mapTileLayers = L.layerGroup([mapTileLayer_A]).addTo(map);
+
+// // ↑ Leaflet map ↑
 
 let marker_highlight_color = "#1495ED";
 let marker_highlight_opacity = 0.5;
@@ -883,6 +904,65 @@ marker_opacity_slider.addEventListener("input", function () {
 });
 
 // ↑ Travel Log Creator ↑
+// ↓ Travel log group ↓
+
+check_group_button.addEventListener("click", (event) => {
+  travel_logs_group_name = travel_logs_group_input.value;
+  if (travel_logs_group_name === "") {
+    showInfoPopup("Please enter valid name");
+    return;
+  }
+  if (travel_date_start === "" || travel_date_end === "") {
+    showInfoPopup("Please select a valid date range");
+    return;
+  }
+
+  if (travel_logs_group_name !== "") {
+    is_travel_creator_active = false;
+    travelLogGroupSubmit(event);
+    toggleMainLogContainerVisibility(true);
+    toggleTimelineVisibility(true);
+    toggleTravelLogsGroupMainContainerVisibility(false);
+    timelineInfoToggle();
+    closeInfoPopup();
+  }
+});
+
+check_group_button.addEventListener("mouseenter", () =>
+  changeIconColorOnHover(true, check_group_icon, check_group_button)
+);
+
+check_group_button.addEventListener("mouseleave", () =>
+  changeIconColorOnHover(false, check_group_icon, check_group_button)
+);
+
+close_group_button.addEventListener("click", () => {
+  is_travel_creator_active = false;
+  stored_group_log_id = random_id;
+  removeStoredId(stored_group_log_id);
+  closeInfoPopup();
+  travel_logs_group_input.value = "";
+  if (
+    travel_logs_group_main_container.style.display === "none" ||
+    travel_logs_group_main_container.style.display === ""
+  ) {
+    toggleTravelLogsGroupMainContainerVisibility(true);
+  } else {
+    toggleMainLogContainerVisibility(true);
+    toggleTimelineVisibility(true);
+    toggleTravelLogsGroupMainContainerVisibility(false);
+  }
+});
+
+close_group_button.addEventListener("mouseenter", () =>
+  changeIconColorOnHover(true, close_group_icon, close_group_button)
+);
+
+close_group_button.addEventListener("mouseleave", () =>
+  changeIconColorOnHover(false, close_group_icon, close_group_button)
+);
+
+// ↑ Travel log group ↑
 // ↓ GeoJSON + Country highlight ↓
 
 let defaultCountryHighlight = 0;
@@ -1318,55 +1398,6 @@ function pngMouseTracking(e) {
 
 // ↑ Travel Log markers ↑
 // ↓ Travel Log CRUD setup ↓
-
-let travel_date_start = "";
-let travel_date_end = "";
-let timeline_start = "";
-let timeline_end = "";
-
-let stored_group_log_id = "";
-let stored_individual_log_id = "";
-let isTravelGroupEmpty = "";
-
-check_icon_group.addEventListener("click", (event) => {
-  travel_logs_group_name = travel_logs_group_input.value;
-  if (travel_logs_group_name === "") {
-    showInfoPopup("Please enter valid name");
-    return;
-  }
-  if (travel_date_start === "" || travel_date_end === "") {
-    showInfoPopup("Please select a valid date range");
-    return;
-  }
-
-  if (travel_logs_group_name !== "") {
-    is_travel_creator_active = false;
-    travelLogGroupSubmit(event);
-    toggleMainLogContainerVisibility(true);
-    toggleTimelineVisibility(true);
-    toggleTravelLogsGroupMainContainerVisibility(false);
-    timelineInfoToggle();
-    closeInfoPopup();
-  }
-});
-
-close_icon_group.addEventListener("click", () => {
-  is_travel_creator_active = false;
-  stored_group_log_id = random_id;
-  removeStoredId(stored_group_log_id);
-  closeInfoPopup();
-  travel_logs_group_input.value = "";
-  if (
-    travel_logs_group_main_container.style.display === "none" ||
-    travel_logs_group_main_container.style.display === ""
-  ) {
-    toggleTravelLogsGroupMainContainerVisibility(true);
-  } else {
-    toggleMainLogContainerVisibility(true);
-    toggleTimelineVisibility(true);
-    toggleTravelLogsGroupMainContainerVisibility(false);
-  }
-});
 
 check_icon_individual.addEventListener("click", (event) => {
   travel_logs_individual_name = travel_logs_individual_input.value;
@@ -1810,12 +1841,12 @@ function isGroupContentDivEmpty() {
 function toggleTravelLogsGroupMainContainerVisibility(toggle) {
   if (toggle) {
     travel_logs_group_main_container.style.display = "block";
-    check_icon_group.style.display = "block";
-    close_icon_group.style.display = "block";
+    check_group_button.style.display = "block";
+    close_group_button.style.display = "block";
   } else {
     travel_logs_group_main_container.style.display = "none";
-    check_icon_group.style.display = "none";
-    close_icon_group.style.display = "none";
+    check_group_button.style.display = "none";
+    close_group_button.style.display = "none";
   }
 }
 

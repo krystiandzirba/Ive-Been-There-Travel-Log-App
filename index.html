@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>I've been there! - Travel log app 0.7.14</title>
+    <title>I've been there! - Travel log app 0.7.15</title>
     <link rel="icon" type="image/x-icon" href="/content/icons/globe_icon_black.png" />
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -181,13 +181,17 @@
     <div class="travel_logs_group_main_container" id="travel_logs_group_main_container">
       <div class="travel_logs_group_data_input_container">
         <form id="travel_log_form">
-          <input type="text" id="travel_logs_group_input" placeholder="Enter the group name" />
-          <input type="text" name="daterange" id="daterange" value="" />
+          <input type="text" id="travel_logs_group_input" class="group_input" placeholder="Enter the group name" />
+          <input type="text" name="daterange" id="daterange" class="group_input" value="" />
         </form>
       </div>
     </div>
-    <button id="check_icon_group" class="icon_settings_container check_icon_group">&#10003;</button>
-    <button id="close_icon_group" class="icon_settings_container close_icon_group">&#10006;</button>
+    <button id="check_group_button" class="icon_settings_container check_icon_group">
+      <i class="fa-solid fa-check fa-2xl" style="color: #c9c9c9" id="check_group_icon"></i>
+    </button>
+    <button id="close_group_button" class="icon_settings_container close_icon_group">
+      <i class="fa-solid fa-xmark fa-2xl" style="color: #c9c9c9" id="close_group_icon"></i>
+    </button>
 
     <div class="travel_logs_individual_main_container" id="travel_logs_individual_main_container">
       <div class="travel_logs_individual_data_input_container">
@@ -283,7 +287,7 @@
       <img id="custom_cursor_image" src="/content/icons/car_icon_small.png" />
     </div>
 
-    <div class="app_version">ver: 0.7.14</div>
+    <div class="app_version">ver: 0.7.15</div>
 
     <div id="info_popup" style="display: none">
       <span id="close_info_popup">&times;</span>
