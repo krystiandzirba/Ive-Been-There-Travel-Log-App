@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>I've been there! - Travel log app 0.7.16</title>
+    <title>I've been there! - Travel log app 0.7.17</title>
     <link rel="icon" type="image/x-icon" href="/content/icons/globe_icon_black.png" />
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -157,10 +157,10 @@
       </button>
     </div>
 
-    <div class="jscolor_container">
+    <div class="jscolor_home_container">
       <p>
         <input
-          id="jscolor"
+          id="jscolor_home"
           data-jscolor="{
             hideOnLeave: true, position:'right', format: 'rgb', alphaChannel: true, height: 200, width: 300,crossSize: 9, borderWidth: 0, pointerBorderWidth: 0, closeButton:false, closeText:'OK', backgroundColor:'#333', buttonColor:'#d7d7d7'
           }"
@@ -186,22 +186,39 @@
         </form>
       </div>
     </div>
-    <button id="check_group_button" class="icon_settings_container check_icon_group">
-      <i class="fa-solid fa-check fa-2xl" style="color: #c9c9c9" id="check_group_icon"></i>
+    <button id="check_button_group" class="icon_settings_container check_icon_group">
+      <i class="fa-solid fa-check fa-2xl" style="color: #c9c9c9" id="check_icon_group"></i>
     </button>
-    <button id="close_group_button" class="icon_settings_container close_icon_group">
-      <i class="fa-solid fa-xmark fa-2xl" style="color: #c9c9c9" id="close_group_icon"></i>
+    <button id="close_button_group" class="icon_settings_container close_icon_group">
+      <i class="fa-solid fa-xmark fa-2xl" style="color: #c9c9c9" id="close_icon_group"></i>
     </button>
 
     <div class="travel_logs_individual_main_container" id="travel_logs_individual_main_container">
       <div class="travel_logs_individual_data_input_container">
         <form id="travel_log_form">
-          <input type="text" id="travel_logs_individual_input" placeholder="Enter the travel name" />
-          <input type="text" name="daterange" id="daterange" value="" />
+          <input
+            type="text"
+            id="travel_logs_individual_input"
+            class="individual_input"
+            placeholder="Enter travel name"
+          />
+          <input type="text" name="daterange" id="daterange" class="individual_input" value="" />
         </form>
+
+        <div class="jscolor_highlight_container">
+          <p>
+            <input
+              id="jscolor_highlight"
+              class="individual_input jscolor_highlight"
+              data-jscolor="{
+                hideOnLeave: true, position:'right', format: 'rgb', alphaChannel: true, height: 200, width: 300,crossSize: 9,
+                 borderWidth: 0, pointerBorderWidth: 0, closeButton:false, closeText:'OK', backgroundColor:'#333', buttonColor:'#d7d7d7'
+              }"
+              value="rgba(20, 149, 237, 0.5)"
+            />
+          </p>
+        </div>
       </div>
-      <input type="color" id="marker_color_picker" value="#1495ED" />
-      <input type="range" id="marker_opacity_slider" min="0" max="1" step="0.05" value="0.5" />
       <div class="travel_logs_individual_icon_container">
         <button id="travel_type_car" class="travel_type_button">
           <img src="/content/icons/car_icon_small.png" alt="Car Icon" />
@@ -229,8 +246,12 @@
         </button>
       </div>
     </div>
-    <button id="check_icon_individual" class="icon_settings_container check_icon_individual">&#10003;</button>
-    <button id="close_icon_individual" class="icon_settings_container close_icon_individual">&#10006;</button>
+    <button id="check_button_individual" class="icon_settings_container check_icon_individual">
+      <i class="fa-solid fa-check fa-2xl" style="color: #c9c9c9" id="check_icon_individual"></i>
+    </button>
+    <button id="close_button_individual" class="icon_settings_container close_icon_individual">
+      <i class="fa-solid fa-xmark fa-2xl" style="color: #c9c9c9" id="close_icon_individual"></i>
+    </button>
 
     <div class="timeline_container_arrow">
       <i class="fa-solid fa-chevron-down fa-2xl" style="color: #171d25; font-size: 3.5em"></i>
@@ -287,7 +308,7 @@
       <img id="custom_cursor_image" src="/content/icons/car_icon_small.png" />
     </div>
 
-    <div class="app_version">ver: 0.7.16</div>
+    <div class="app_version">ver: 0.7.17</div>
 
     <div id="info_popup" style="display: none">
       <span id="close_info_popup">&times;</span>

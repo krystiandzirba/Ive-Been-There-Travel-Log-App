@@ -198,7 +198,7 @@ body {
   font-size: 0.7vw;
 }
 
-.jscolor_container {
+.jscolor_home_container {
   top: 9%;
   left: -6%;
   z-index: 200;
@@ -317,8 +317,8 @@ body {
   height: 100vh;
   width: 25vw;
   z-index: 800;
-  background-color: rgb(35, 35, 35);
-  backdrop-filter: blur(10px);
+  background-color: rgba(63, 63, 63, 0.468);
+  backdrop-filter: blur(15px);
   top: 0;
   left: 100vw;
   padding: 0;
@@ -354,6 +354,161 @@ body {
 }
 
 /* ↑ Travel Log Creator ↑  */
+/* ↓ Travel Type Settings Individual ↓ */
+
+.travel_logs_individual_main_container {
+  box-shadow: 30px 30px 7px rgba(0, 0, 0, 0.4);
+  position: absolute;
+  width: 45vw;
+  min-height: 29vh;
+  background-color: #2f3c4c;
+  border-radius: 3vh;
+  top: 5%;
+  left: 50%;
+  transform: translate(-50%, 10%);
+  z-index: 890;
+  display: none;
+}
+
+.travel_logs_individual_data_input_container {
+  margin: 1vh;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 14vh;
+}
+
+.individual_input {
+  height: 7vh;
+  border-radius: 2vh;
+  width: 11vw;
+  border: none;
+  background-color: #26303d;
+  color: #d7d7d7;
+  font-size: 1vw;
+  font-family: "Dosis", sans-serif;
+  margin-left: 1vw;
+  margin-right: 1vw;
+  text-align: center;
+}
+
+.jscolor_highlight {
+  margin-top: -1vh;
+}
+
+#travel_logs_individual_input::placeholder {
+  color: #adadad;
+  font-size: 1.5vw;
+}
+
+.jscolor_highlight_container {
+  top: 5vh;
+  z-index: 200;
+  position: relative;
+  margin-bottom: 9vh;
+}
+
+.travel_logs_individual_icon_container {
+  position: absolute;
+  width: 40vw;
+  min-height: 7vh;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, 10%);
+  z-index: 895;
+
+  display: flex;
+  justify-content: space-around;
+}
+
+.travel_type_button {
+  padding-top: 1.5vh;
+  display: inline-block;
+  width: 15vw;
+  text-align: center;
+  line-height: 5vh;
+  background-color: #efefef;
+  border: none;
+  border-radius: 1.5vh;
+  margin: 0.2vw;
+  cursor: pointer;
+}
+
+.travel_type_button:hover {
+  transform: scale(1.1);
+}
+
+.icon_settings_container {
+  position: absolute;
+  z-index: 899;
+
+  border-radius: 1vh;
+  background-color: #2f3c4c;
+  box-shadow: 30px 30px 7px rgba(0, 0, 0, 0.4);
+  display: none;
+  height: 3.5vh;
+  width: 4vw;
+  border: none;
+}
+
+.check_icon_individual {
+  top: 39vh;
+  left: 30%;
+  display: none;
+}
+
+.close_icon_individual {
+  top: 39vh;
+  left: 65%;
+  display: none;
+}
+
+/* ↑ Travel Type Settings Individual ↑ */
+/* ↓ Travel Type Settings Group ↓ */
+
+.travel_logs_group_main_container {
+  border-radius: 2vh;
+  position: absolute;
+  width: 30vw;
+  min-height: 10vh;
+  background-color: #2f3c4c;
+  box-shadow: 30px 30px 9px rgba(0, 0, 0, 0.4);
+  top: 5vh;
+  left: 50vw;
+  transform: translate(-50%, 0%);
+  z-index: 890;
+  display: none;
+}
+
+.group_input {
+  border-radius: 2vh;
+  height: 7vh;
+  border: none;
+  background-color: #26303d;
+  color: #d7d7d7;
+  margin-top: 1.5vh;
+  margin-left: 3vw;
+  text-align: center;
+  width: 9vw;
+  font-size: 1vw;
+  font-family: "Dosis", sans-serif;
+}
+
+#travel_logs_group_input::placeholder {
+  color: #adadad;
+}
+
+.check_icon_group {
+  left: 36%;
+  top: 18vh;
+}
+
+.close_icon_group {
+  left: 60%;
+  top: 18vh;
+}
+
+/* ↑ Travel Type Settings Group ↑ */
 /* ↓ CRUD Group ↓  */
 
 .travel_logs_group_div_main {
@@ -480,144 +635,6 @@ body {
 }
 
 /* ↑ CRUD Individual ↑ */
-/* ↓ Travel Type Settings Individual ↓ */
-
-.travel_logs_individual_main_container {
-  position: absolute;
-  width: 45vw;
-  min-height: 22.5vh;
-  background-color: rgb(255, 255, 188);
-  top: 7.5%;
-  left: 50%;
-  transform: translate(-50%, 10%);
-  z-index: 890;
-  display: none;
-}
-
-.travel_logs_individual_data_input_container {
-  margin: 10px;
-  padding: 0px;
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-}
-
-#travel_logs_individual_input,
-#daterange {
-  width: 220px;
-  height: 40px;
-}
-
-#marker_color_picker {
-  top: 35%;
-  left: 28%;
-  position: absolute;
-  z-index: 899;
-}
-
-#marker_opacity_slider {
-  top: 35%;
-  left: 56%;
-  position: absolute;
-  z-index: 899;
-}
-
-.travel_logs_individual_icon_container {
-  position: absolute;
-  width: 35vw;
-  min-height: 7vh;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, 10%);
-  z-index: 895;
-
-  display: flex;
-  justify-content: space-around;
-}
-
-.travel_type_button {
-  display: inline-block;
-  width: 15%;
-  text-align: center;
-  line-height: 3vh;
-  background-color: #fff;
-  border: 2px solid black;
-  margin: 4px;
-  cursor: pointer;
-}
-
-.travel_type_button:hover {
-  transform: scale(1.1);
-}
-
-.icon_settings_container {
-  position: absolute;
-  top: 18vh;
-  z-index: 899;
-
-  border-radius: 1vh;
-  background-color: #2f3c4c;
-  box-shadow: 30px 30px 7px rgba(0, 0, 0, 0.4);
-  display: none;
-  height: 3.5vh;
-  width: 4vw;
-  border: none;
-}
-
-.check_icon_individual {
-  left: 35%;
-  display: none;
-}
-
-.close_icon_individual {
-  left: 65%;
-  display: none;
-}
-
-/* ↑ Travel Type Settings Individual ↑ */
-/* ↓ Travel Type Settings Group ↓ */
-
-.travel_logs_group_main_container {
-  border-radius: 2vh;
-  position: absolute;
-  width: 30vw;
-  min-height: 10vh;
-  background-color: #2f3c4c;
-  box-shadow: 30px 30px 9px rgba(0, 0, 0, 0.4);
-  top: 5vh;
-  left: 50vw;
-  transform: translate(-50%, 0%);
-  z-index: 890;
-  display: none;
-}
-
-.group_input {
-  border-radius: 2vh;
-  height: 7vh;
-  border: none;
-  background-color: #26303d;
-  color: #d7d7d7;
-  margin-top: 1.5vh;
-  margin-left: 3vw;
-  text-align: center;
-  width: 9vw;
-  font-size: 1vw;
-  font-family: "Dosis", sans-serif;
-}
-
-#travel_logs_group_input::placeholder {
-  color: #adadad;
-}
-
-.check_icon_group {
-  left: 36%;
-}
-
-.close_icon_group {
-  left: 60%;
-}
-
-/* ↑ Travel Type Settings Group ↑ */
 /* ↓ TimelineJS ↓ */
 
 .timeline_container {
