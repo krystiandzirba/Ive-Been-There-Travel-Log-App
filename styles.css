@@ -317,7 +317,7 @@ body {
   height: 100vh;
   width: 25vw;
   z-index: 800;
-  background-color: rgba(0, 0, 0, 0.512);
+  background-color: rgb(35, 35, 35);
   backdrop-filter: blur(10px);
   top: 0;
   left: 100vw;
@@ -552,7 +552,7 @@ body {
 
 .icon_settings_container {
   position: absolute;
-  top: 27%;
+  top: 18vh;
   z-index: 899;
 
   border-radius: 1vh;
@@ -584,7 +584,7 @@ body {
   min-height: 10vh;
   background-color: #2f3c4c;
   box-shadow: 30px 30px 9px rgba(0, 0, 0, 0.4);
-  top: 15vh;
+  top: 5vh;
   left: 50vw;
   transform: translate(-50%, 0%);
   z-index: 890;
