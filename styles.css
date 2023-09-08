@@ -737,7 +737,7 @@ body {
   z-index: 999;
   font-family: "Dosis", sans-serif;
   text-align: left;
-  font-size: 0.7vw;
+  font-size: 1.4vh;
   background-color: #232d38;
   padding-left: 0.5vw;
 }
@@ -788,20 +788,28 @@ body {
   text-align: center;
   border: black, 2px, solid;
   transform: translate(-50%, -50%);
-  background-color: rgb(255, 128, 126);
 }
 
 .t1 {
   top: 75%;
   left: 10%;
+  background-color: rgb(255, 128, 126);
 }
 
 .t2 {
-  top: 82.5%;
+  top: 80%;
   left: 10%;
+  background-color: rgb(160, 255, 126);
 }
 
 .t3 {
+  top: 85%;
+  left: 10%;
+  background-color: rgb(160, 255, 126);
+}
+
+.t4 {
   top: 90%;
   left: 10%;
+  background-color: rgb(160, 255, 126);
 }

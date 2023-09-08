@@ -1,21 +1,19 @@
-// ver: 0.7.17
+// ver: 0.8.01
 
 // Bugs:
 
 // Features to add:
 
-// ---------- 4. new UI / Add loading animations before the page/content load
 // ---------- 5. Add different page styles (font, animations, images, backgrounds, theme) - modern / middleage / other
 // ---------- 6. Add local storage to save the trip progress and settings
-//               - make the storedIds[] load the id data from the travelLogs[] on page load, instead of storing it in a local storage in the future
 // ---------- 7. Add different languages
 // ---------- 8. Add info boxes to help navigate the app while using it for the first time
 // ---------- 9. Add D3 to visualize the statistics data
 
 // multi options polyline / leaflet motion / polyline decorator / leaflet Storage / leaflet canvas markers /
 
-// ↓ Variables ↓
-// // ↓ Sidebar House ↓
+// Variables ↓
+// // Sidebar House ↓
 const sidebar_house_button = document.getElementById("sidebar_house_button");
 const house_icon = document.getElementById("house_icon");
 const sub_house_button_container = document.getElementById("sub_house_button_container");
@@ -38,8 +36,8 @@ let jscolor_home_opacity = 0.5;
 
 let house_container_timeout;
 
-// // ↑ Sidebar House ↑
-// // ↓ Sidebar Map Layers ↓
+// // Sidebar House ↑
+// // Sidebar Map Layers ↓
 
 const sidebar_map_layers_button = document.getElementById("sidebar_map_layers_button");
 const map_layers_icon = document.getElementById("map_layers_icon");
@@ -51,8 +49,8 @@ const sub_map_tile_layer_D = document.querySelector("#sub_map_tile_layer_D");
 
 let map_layers_container_timeout;
 
-// // ↑ Sidebar Map Layers ↑
-// // ↓ Sidebar Overlay ↓
+// // Sidebar Map Layers ↑
+// // Sidebar Overlay ↓
 
 const sidebar_overlay_button = document.getElementById("sidebar_overlay_button");
 const overlay_icon = document.getElementById("overlay_icon");
@@ -76,13 +74,13 @@ let polyline_visibility = true;
 
 let overlay_container_timeout;
 
-// // ↑ Sidebar Overlay ↑
-// // ↓ Sidebar Page Styles ↓
+// // Sidebar Overlay ↑
+// // Sidebar Page Styles ↓
 
 const page_styles_icon = document.getElementById("page_styles_icon");
 
-// // ↑ Sidebar Page Styles ↑
-// // ↓ Sidebar Timeline ↓
+// // Sidebar Page Styles ↑
+// // Sidebar Timeline ↓
 
 const timeline_container = document.querySelector(".timeline_container");
 const timeline_info = document.querySelector(".timeline_info");
@@ -105,8 +103,8 @@ let timeline_enabled = true;
 let timeline_start = "";
 let timeline_end = "";
 
-// // ↑ Sidebar Timeline ↑
-// // ↓ Sidebar Statistics ↓
+// // Sidebar Timeline ↑
+// // Sidebar Statistics ↓
 
 const main_statistics_container = document.querySelector(".main_statistics_container");
 const sidebar_statistics_button = document.getElementById("sidebar_statistics_button");
@@ -132,27 +130,27 @@ let most_common_travel_type = "";
 
 let statistics_visibility = true;
 
-// // ↑ Sidebar Statistics ↑
-// // ↓ Sidebar Language ↓
+// // Sidebar Statistics ↑
+// // Sidebar Language ↓
 
 const sidebar_language_button = document.getElementById("sidebar_language_button");
 const language_icon = document.getElementById("language_icon");
 
-// // ↑ Sidebar Language ↑
-// // ↓ Sidebar Settings ↓
+// // Sidebar Language ↑
+// // Sidebar Settings ↓
 
 const sidebar_settings_button = document.getElementById("sidebar_settings_button");
 const settings_icon = document.getElementById("settings_icon");
 
-// // ↑ Sidebar Settings ↑
-// // ↓ Info box ↓
+// // Sidebar Settings ↑
+// // Info box ↓
 
 const info_popup = document.getElementById("info_popup");
 const info_popup_text = document.getElementById("info_popup_text");
 const close_info_popup = document.getElementById("close_info_popup");
 
-// // ↑ Info box ↑
-// // ↓ Travel Log Creator ↓
+// // Info box ↑
+// // Travel Log Creator ↓
 
 const add_travel = document.getElementById("add_travel");
 const travel_logs_individual_main_container = document.getElementById("travel_logs_individual_main_container");
@@ -172,8 +170,8 @@ let isTravelGroupEmpty = "";
 let is_travel_creator_active = false;
 let main_logs_container_arrow_clicked = false;
 
-// // ↑ Travel Log Creator ↑
-// // ↓ Travel log group ↓
+// // Travel Log Creator ↑
+// // Travel log group ↓
 
 const check_button_group = document.getElementById("check_button_group");
 const close_button_group = document.getElementById("close_button_group");
@@ -183,8 +181,8 @@ const close_icon_group = document.getElementById("close_icon_group");
 let travel_logs_group_name = "";
 let travel_logs_group_input = document.getElementById("travel_logs_group_input");
 
-// // ↑ Travel log group ↑
-// // ↓ Travel log individual ↓
+// // Travel log group ↑
+// // Travel log individual ↓
 
 const travel_type_car = document.getElementById("travel_type_car");
 const travel_type_plane = document.getElementById("travel_type_plane");
@@ -242,13 +240,13 @@ let jscolor_highlight_data = "";
 let jscolor_highlight_color = "#1495ED";
 let jscolor_highlight_opacity = 0.5;
 
-// // ↑ Travel log individual ↑
-// // ↓ Custom cursor ↓
+// // Travel log individual ↑
+// // Custom cursor ↓
 
 const custom_cursor = document.getElementById("custom_cursor");
 
-// // ↑ Custom cursor ↑
-// // ↓ Leaflet map ↓
+// // Custom cursor ↑
+// // Leaflet map ↓
 
 import leafletConfig from "./LeafletConfig.js";
 
@@ -268,9 +266,9 @@ const { trainsAddon, cyclingAddon, bordersAddon, labelsAddon } = leafletConfig.a
 
 const mapTileLayers = L.layerGroup([mapTileLayer_A]).addTo(map);
 
-// // ↑ Leaflet map ↑
+// // Leaflet map ↑
 
-// 1 = local storage / 0 = temporary, ls not needed
+// 1 = local storage / 0 = temporary
 
 /* 1 */ let highlights = [];
 /* 1 */ let markers = [];
@@ -283,11 +281,11 @@ const mapTileLayers = L.layerGroup([mapTileLayer_A]).addTo(map);
 };
 /* 0 */ let rawCoordinatesDistances = [];
 
-// ↑ Variables ↑
+// Variables ↑
 
-// ↓ Page interaction ↓
-// // ↓ Sidebar ↓
-// // // ↓ House ↓
+// Page interaction ↓
+// // Sidebar ↓
+// // // House ↓
 
 sidebar_house_button.addEventListener("mouseenter", () => {
   changeIconColorOnHover(true, house_icon, sidebar_house_button);
@@ -410,8 +408,8 @@ function homeMarkerZoom() {
   }
 }
 
-// // // ↑ House ↑
-// // // ↓ Map Layers ↓
+// // // House ↑
+// // // Map Layers ↓
 
 sidebar_map_layers_button.addEventListener("mouseenter", () => {
   changeIconColorOnHover(true, map_layers_icon, sidebar_map_layers_button);
@@ -477,8 +475,8 @@ function toggleInactiveIconColor(icon_1, icon_2, icon_3) {
   icon_3.classList.remove("white_icon_toggle");
 }
 
-// // // ↑ Map Layers ↑
-// // // ↓ Overlay ↓
+// // // Map Layers ↑
+// // // Overlay ↓
 
 sidebar_overlay_button.addEventListener("mouseenter", () => {
   changeIconColorOnHover(true, overlay_icon, sidebar_overlay_button);
@@ -571,8 +569,8 @@ function toggleIconColor(toggle, icon) {
   return !toggle;
 }
 
-// // // ↑ Overlay ↑
-// // // ↓ Timeline ↓
+// // // Overlay ↑
+// // // Timeline ↓
 
 sidebar_timeline_button.addEventListener("click", () => {
   toggleTimelineVisibility(false);
@@ -610,8 +608,8 @@ function toggleTimelineVisibility(toggle) {
   }
 }
 
-// // // ↑ Timeline ↑
-// // // ↓ Statistics ↓
+// // // Timeline ↑
+// // // Statistics ↓
 
 sidebar_statistics_button.addEventListener("click", () => {
   statistics_visibility = toggleIconColor(statistics_visibility, statistics_icon);
@@ -859,8 +857,8 @@ function removeTravelCount(type) {
   travel_type_count[type] -= 1;
 }
 
-// // // ↑ Statistics ↑
-// // // ↓ Language ↓
+// // // Statistics ↑
+// // // Language ↓
 
 sidebar_language_button.addEventListener("mouseenter", () =>
   changeIconColorOnHover(true, language_icon, sidebar_language_button)
@@ -870,8 +868,8 @@ sidebar_language_button.addEventListener("mouseleave", () =>
   changeIconColorOnHover(false, language_icon, sidebar_language_button)
 );
 
-// // // ↑ Language ↑
-// // // ↓ Settings ↓
+// // // Language ↑
+// // // Settings ↓
 
 sidebar_settings_button.addEventListener("mouseenter", () =>
   changeIconColorOnHover(true, settings_icon, sidebar_settings_button)
@@ -881,7 +879,7 @@ sidebar_settings_button.addEventListener("mouseleave", () =>
   changeIconColorOnHover(false, settings_icon, sidebar_settings_button)
 );
 
-// // // ↑ Settings ↑
+// // // Settings ↑
 
 function sidebarButtonsAnimation(element, toggle) {
   if (toggle) {
@@ -903,9 +901,9 @@ function changeIconColorOnHover(toggle, element, button) {
   }
 }
 
-// // ↑ Sidebar ↑
-// ↑ Page interaction ↑
-// ↓ Travel Log Creator ↓
+// // Sidebar ↑
+// Page interaction ↑
+// Travel Log Creator ↓
 
 add_travel.addEventListener("click", () => {
   if (!statistics_visibility) {
@@ -953,8 +951,8 @@ function toggleMainLogContainerVisibility(toggle) {
   }
 }
 
-// ↑ Travel Log Creator ↑
-// ↓ Travel log group ↓
+// Travel Log Creator ↑
+// Travel log group ↓
 
 check_button_group.addEventListener("click", (event) => {
   travel_logs_group_name = travel_logs_group_input.value;
@@ -1011,8 +1009,8 @@ close_button_group.addEventListener("mouseleave", () =>
   changeIconColorOnHover(false, close_icon_group, close_button_group)
 );
 
-// ↑ Travel log group ↑
-// ↓ Travel Log Individual ↓
+// Travel log group ↑
+// Travel Log Individual ↓
 
 jscolor_highlight.addEventListener("change", () => {
   jscolor_highlight_data = jscolor_highlight.jscolor.toHEXAString();
@@ -1415,8 +1413,8 @@ function travelTypeButtonsColor() {
   }
 }
 
-// ↑ Travel Log Individual ↑
-// ↓ Polyline ↓
+// Travel Log Individual ↑
+// Polyline ↓
 
 function drawPolyline() {
   for (let i = 0; i < polylines.length; i++) {
@@ -1459,8 +1457,8 @@ function drawPolyline() {
   }
 }
 
-// ↑ Polyline ↑
-// ↓ ID generator ↓
+// Polyline ↑
+// ID generator ↓
 
 function randomIdGenerator() {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -1477,8 +1475,8 @@ function randomIdGenerator() {
   return random_id;
 }
 
-// ↑ ID generator ↑
-// ↓ Travel Log date picker ↓
+// ID generator ↑
+// Travel Log date picker ↓
 
 $(function () {
   const startDate = moment().startOf("day").format("YYYY/MM/DD");
@@ -1504,8 +1502,8 @@ $(function () {
   );
 });
 
-// ↑ Travel Log date picker ↑
-// ↓ Custom Cursor ↓
+// Travel Log date picker ↑
+// Custom Cursor ↓
 
 function updateCursorImage(icon) {
   const custom_cursor_image = document.getElementById("custom_cursor_image");
@@ -1525,8 +1523,8 @@ function pngMouseTracking(e) {
   custom_cursor.style.top = `${topPos}px`;
 }
 
-// ↑ Custom Cursor ↑
-// ↓ GeoJSON + Country highlight ↓
+// Custom Cursor ↑
+// GeoJSON + Country highlight ↓
 
 let defaultCountryHighlight = 0;
 let cachedGeoJSON = null;
@@ -1598,8 +1596,8 @@ function setLayerStyle(layer, fillColor, fillOpacity, attribution, random_id) {
   layer.defaultOptions.id = random_id;
 }
 
-// ↑ GeoJSON + Country highlight ↑
-// ↓ CRUD individual ↓
+// GeoJSON + Country highlight ↑
+// CRUD individual ↓
 
 function travelLogIndividualSubmit(event) {
   event.preventDefault();
@@ -1741,8 +1739,8 @@ function travelLogIndividualSubmit(event) {
   random_id = "";
 }
 
-// ↑ CRUD individual ↑
-// ↓ CRUD group ↓
+// CRUD individual ↑
+// CRUD group ↓
 
 function travelLogGroupSubmit(event) {
   event.preventDefault();
@@ -1924,7 +1922,7 @@ function travelLogGroupSubmit(event) {
   travel_logs_group_input.value = "";
   random_id = "";
 }
-// ↑ CRUD group ↑
+// CRUD group ↑
 
 function removeMarkers(id) {
   for (let i = markers.length - 1; i >= 0; i--) {
@@ -2005,7 +2003,7 @@ function toggleCustomCursorVisibility(toggle) {
   custom_cursor.style.display = toggle ? "flex" : "none";
 }
 
-// ↓ TimelineJS ↓
+// TimelineJS ↓
 
 function splitDates(timeline_start, timeline_end) {
   const [startYear, startMonth, startDay] = timeline_start.split("/").map(Number);
@@ -2074,8 +2072,8 @@ function timelineInfoToggle() {
   }
 }
 
-// ↑ TimelineJS ↑
-// ↓ UI / Visuals ↓
+// TimelineJS ↑
+// UI / Visuals ↓
 
 function removeLoadingPageContent() {
   const loading_animation_container = document.querySelector(".loading_animation_container");
@@ -2096,8 +2094,8 @@ function removeLoadingPageContent() {
   }, 800);
 }
 
-// ↑ UI / Visuals ↑
-// ↓ Loading progress info ↓
+// UI / Visuals ↑
+// Loading progress info ↓
 
 const progress_info = document.getElementById("progress_info");
 
@@ -2196,9 +2194,9 @@ function onLoadingComplete() {
 }
 trackLoadingProgress(resourcesToLoad, progressInfoDisplay, onLoadingComplete);
 
-// ↑ Loading progress info ↑
-// ↓ Other ↓
-// // ↓ Other / Info popup ↓
+// Loading progress info ↑
+// Other ↓
+// // Other / Info popup ↓
 
 function showInfoPopup(text) {
   info_popup_text.textContent = text;
@@ -2210,8 +2208,8 @@ function closeInfoPopup() {
 }
 close_info_popup.addEventListener("click", closeInfoPopup);
 
-// // ↑ Other / Info popup ↑
-// ↑ Other ↑
+// // Other / Info popup ↑
+// Other ↑
 
 // // ---------- TEST ---------- ↓
 
@@ -2220,7 +2218,7 @@ test_button.addEventListener("click", () => {
   console.log("markers array", markers);
   console.log("marker coordinates", markersCoordinates);
   console.log("polylines", polylines);
-  console.log("Logs Array:", travelLogs);
+  console.log("travel logs:", travelLogs);
   console.log("stored ids", storedIds);
   console.log("timeline", timelineData);
 
@@ -2240,6 +2238,71 @@ test_button.addEventListener("click", () => {
   console.log("Total Bus Distance:", total_bus_distance.toFixed(2), "km");
 });
 
-test_button_2.addEventListener("click", () => {});
+test_button_2.addEventListener("click", () => {
+  localStorageSaveTravelLogs();
+});
 
-test_button_3.addEventListener("click", () => {});
+test_button_3.addEventListener("click", () => {
+  localStorageLoadTravelLogs();
+  localStorageCreateStoredIds();
+  localStorageCreateTimelineData(travelLogs, timelineData);
+  toggleTimelineVisibility(true);
+  timelineInfoToggle();
+  window.timeline = new TL.Timeline("timeline", timelineData, timelineOptions);
+});
+
+test_button_4.addEventListener("click", () => {
+  localStorage.clear();
+});
+
+function localStorageSaveTravelLogs() {
+  localStorage.setItem("travel_logs_array", JSON.stringify(travelLogs));
+}
+
+function localStorageLoadTravelLogs() {
+  travelLogs = JSON.parse(localStorage.getItem("travel_logs_array"));
+  console.log(travelLogs);
+}
+
+function localStorageCreateStoredIds() {
+  for (let i = 0; i < travelLogs.length; i++) {
+    storedIds.push(travelLogs[i][1]);
+  }
+  console.log(storedIds);
+}
+
+function localStorageCreateTimelineData(travelLogs, timelineData) {
+  for (const log of travelLogs) {
+    const [headline, unique_id, date_range] = log;
+    const [start_date_str, end_date_str] = date_range.split(" - ");
+
+    const start_date = new Date(start_date_str);
+    const end_date = new Date(end_date_str);
+
+    const event = {
+      start_date: {
+        year: start_date.getFullYear(),
+        month: start_date.getMonth() + 1,
+        day: start_date.getDate(),
+        date_obj: start_date,
+        format: "full",
+        format_short: "full_short",
+      },
+      end_date: {
+        year: end_date.getFullYear(),
+        month: end_date.getMonth() + 1,
+        day: end_date.getDate(),
+        date_obj: end_date,
+        format: "full",
+        format_short: "full_short",
+      },
+      text: {
+        headline: headline,
+        text: "",
+      },
+      unique_id: unique_id,
+    };
+
+    timelineData.events.push(event);
+  }
+}
