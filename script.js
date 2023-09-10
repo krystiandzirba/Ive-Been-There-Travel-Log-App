@@ -1,4 +1,4 @@
-// ver: 0.8.01
+// ver: 0.8.02
 
 // Bugs:
 
@@ -608,6 +608,16 @@ function toggleTimelineVisibility(toggle) {
   }
 }
 
+function changeTimelineDimensions(toggle) {
+  if (toggle) {
+    timeline_container.style.width = "70.5vw";
+    timeline_container.style.marginLeft = "0vw";
+  } else {
+    timeline_container.style.width = "95.5vw";
+    timeline_container.style.marginLeft = "12.5vw";
+  }
+}
+
 // // // Timeline ↑
 // // // Statistics ↓
 
@@ -935,8 +945,10 @@ main_logs_container_arrow.addEventListener("click", function () {
     main_logs_container_arrow_clicked = !main_logs_container_arrow_clicked;
     if (main_logs_container_arrow_clicked) {
       toggleMainLogContainerVisibility(false);
+      changeTimelineDimensions(false);
     } else {
       toggleMainLogContainerVisibility(true);
+      changeTimelineDimensions(true);
     }
   }
 });
@@ -2240,11 +2252,14 @@ test_button.addEventListener("click", () => {
 
 test_button_2.addEventListener("click", () => {
   localStorageSaveTravelLogs();
+  localStorageSaveMarkerCoordinates();
 });
 
 test_button_3.addEventListener("click", () => {
   localStorageLoadTravelLogs();
   localStorageCreateStoredIds();
+  localStorageLoadMarkerCoordinates();
+  drawPolyline();
   localStorageCreateTimelineData(travelLogs, timelineData);
   toggleTimelineVisibility(true);
   timelineInfoToggle();
@@ -2262,6 +2277,15 @@ function localStorageSaveTravelLogs() {
 function localStorageLoadTravelLogs() {
   travelLogs = JSON.parse(localStorage.getItem("travel_logs_array"));
   console.log(travelLogs);
+}
+
+function localStorageSaveMarkerCoordinates() {
+  localStorage.setItem("marker_coordinates", JSON.stringify(markersCoordinates));
+}
+
+function localStorageLoadMarkerCoordinates() {
+  markersCoordinates = JSON.parse(localStorage.getItem("marker_coordinates"));
+  console.log(markersCoordinates);
 }
 
 function localStorageCreateStoredIds() {
