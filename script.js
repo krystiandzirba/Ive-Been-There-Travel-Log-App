@@ -1,6 +1,8 @@
-// ver: 0.8.02
+// ver: 0.8.03
 
 // Bugs:
+
+// check_button_individual on click, placing no marker causes error
 
 // Features to add:
 
@@ -274,6 +276,8 @@ const mapTileLayers = L.layerGroup([mapTileLayer_A]).addTo(map);
 /* 1 */ let markers = [];
 /* 1 */ let markersCoordinates = [];
 /* 1 */ let travelLogs = [];
+/* 1 */ let CRUD = [];
+
 /* 0 */ let polylines = [];
 /* 0 */ let storedIds = [];
 /* 0 */ let timelineData = {
@@ -1758,6 +1762,8 @@ function travelLogGroupSubmit(event) {
   event.preventDefault();
   stored_group_log_id = random_id;
 
+  let CRUDGroup = {};
+
   // main group div
 
   const $travel_logs_group_div_main = document.createElement("div");
@@ -1769,6 +1775,8 @@ function travelLogGroupSubmit(event) {
   const $travel_logs_group_content = document.createElement("div");
   $travel_logs_group_content.classList.add("travel_logs_group_div_content");
   $travel_logs_group_content.id = stored_group_log_id;
+
+  CRUDGroup.CRUD_group_id = stored_group_log_id;
 
   // main group div
   // group id
@@ -1791,6 +1799,8 @@ function travelLogGroupSubmit(event) {
   $travel_logs_group_name.classList.add("travel_logs_group_name");
   $travel_logs_group_name_container.appendChild($travel_logs_group_name);
 
+  CRUDGroup.CRUD_group_name = travel_logs_group_name;
+
   // group name
   // group date
 
@@ -1798,6 +1808,9 @@ function travelLogGroupSubmit(event) {
   $travel_logs_group_date.classList.add("travel_logs_group_date");
   $travel_logs_group_date.textContent = travel_date_start + " - " + travel_date_end;
   $travel_logs_group_name_container.appendChild($travel_logs_group_date);
+
+  CRUDGroup.CRUD_group_date_start = travel_date_start;
+  CRUDGroup.CRUD_group_date_end = travel_date_end;
 
   // group date
   // group name edit
@@ -1866,6 +1879,8 @@ function travelLogGroupSubmit(event) {
   });
   $travel_logs_group_div_settings.appendChild($travel_logs_group_add_travel_button);
 
+  // CRUDGroup.CRUD_individual = {};
+
   // group (individual) travel button
   // group delete
 
@@ -1874,7 +1889,7 @@ function travelLogGroupSubmit(event) {
   $travel_logs_delete.classList.add("travel_logs_CRUD_buttons");
   $travel_logs_delete.addEventListener("click", () => {
     stored_group_log_id = $group_log_id.textContent;
-    isGroupContentDivEmpty();
+    isGroupContentDivEmpty(stored_group_log_id);
     if (isTravelGroupEmpty == true) {
       removeTravelLogs(stored_group_log_id);
       removeStoredId(stored_group_log_id);
@@ -1926,6 +1941,8 @@ function travelLogGroupSubmit(event) {
 
   travelLogs.push([travel_logs_group_name, random_id, travel_date_start + " - " + travel_date_end]);
 
+  CRUD.push(CRUDGroup);
+
   splitDates(timeline_start, timeline_end);
   createTimelineData(travel_logs_group_name);
   if (timeline_enabled === true) {
@@ -1975,14 +1992,14 @@ function removeTravelLogs(id) {
 }
 
 function removeStoredId(id) {
-  const idToRemove = storedIds.indexOf(id);
-  if (idToRemove !== -1) {
-    storedIds.splice(idToRemove, 1);
+  const id_to_remove = storedIds.indexOf(id);
+  if (id_to_remove !== -1) {
+    storedIds.splice(id_to_remove, 1);
   }
 }
 
-function isGroupContentDivEmpty() {
-  let storedContentDiv = document.getElementById(stored_group_log_id);
+function isGroupContentDivEmpty(id) {
+  let storedContentDiv = document.getElementById(id);
   isTravelGroupEmpty = storedContentDiv.innerHTML.trim() === "";
   return isTravelGroupEmpty;
 }
@@ -2233,6 +2250,7 @@ test_button.addEventListener("click", () => {
   console.log("travel logs:", travelLogs);
   console.log("stored ids", storedIds);
   console.log("timeline", timelineData);
+  console.log("CRUD", CRUD);
 
   console.log("raw coordinates distances", rawCoordinatesDistances);
 
@@ -2253,17 +2271,20 @@ test_button.addEventListener("click", () => {
 test_button_2.addEventListener("click", () => {
   localStorageSaveTravelLogs();
   localStorageSaveMarkerCoordinates();
+  localStorageSaveCRUD();
 });
 
 test_button_3.addEventListener("click", () => {
   localStorageLoadTravelLogs();
   localStorageCreateStoredIds();
   localStorageLoadMarkerCoordinates();
+  localStorageLoadCRUD();
   drawPolyline();
   localStorageCreateTimelineData(travelLogs, timelineData);
   toggleTimelineVisibility(true);
   timelineInfoToggle();
   window.timeline = new TL.Timeline("timeline", timelineData, timelineOptions);
+  buildCRUD();
 });
 
 test_button_4.addEventListener("click", () => {
@@ -2276,7 +2297,6 @@ function localStorageSaveTravelLogs() {
 
 function localStorageLoadTravelLogs() {
   travelLogs = JSON.parse(localStorage.getItem("travel_logs_array"));
-  console.log(travelLogs);
 }
 
 function localStorageSaveMarkerCoordinates() {
@@ -2285,14 +2305,21 @@ function localStorageSaveMarkerCoordinates() {
 
 function localStorageLoadMarkerCoordinates() {
   markersCoordinates = JSON.parse(localStorage.getItem("marker_coordinates"));
-  console.log(markersCoordinates);
+}
+
+function localStorageSaveCRUD() {
+  localStorage.setItem("CRUD", JSON.stringify(CRUD));
+}
+
+function localStorageLoadCRUD() {
+  CRUD = JSON.parse(localStorage.getItem("CRUD"));
 }
 
 function localStorageCreateStoredIds() {
   for (let i = 0; i < travelLogs.length; i++) {
     storedIds.push(travelLogs[i][1]);
   }
-  console.log(storedIds);
+  // console.log(storedIds);
 }
 
 function localStorageCreateTimelineData(travelLogs, timelineData) {
@@ -2328,5 +2355,147 @@ function localStorageCreateTimelineData(travelLogs, timelineData) {
     };
 
     timelineData.events.push(event);
+  }
+}
+
+function buildCRUD() {
+  for (let i = 0; i < CRUD.length; i++) {
+    // main group div
+
+    const $travel_logs_group_div_main = document.createElement("div");
+    $travel_logs_group_div_main.classList.add("travel_logs_group_div_main");
+
+    const $travel_logs_group_div_settings = document.createElement("div");
+    $travel_logs_group_div_settings.classList.add("travel_logs_group_div_settings");
+
+    const $travel_logs_group_content = document.createElement("div");
+    $travel_logs_group_content.classList.add("travel_logs_group_div_content");
+    $travel_logs_group_content.id = CRUD[i].CRUD_group_id;
+
+    // main group div
+    // group id
+
+    const $group_log_id = document.createElement("span");
+    $group_log_id.textContent = CRUD[i].CRUD_group_id;
+
+    // group id
+    // group name div
+
+    const $travel_logs_group_name_container = document.createElement("div");
+    $travel_logs_group_name_container.classList.add("travel_logs_group_name_container");
+    $travel_logs_group_div_settings.appendChild($travel_logs_group_name_container);
+
+    // group name div
+    // group name
+
+    const $travel_logs_group_name = document.createElement("span");
+    $travel_logs_group_name.textContent = CRUD[i].CRUD_group_name;
+    $travel_logs_group_name.classList.add("travel_logs_group_name");
+    $travel_logs_group_name_container.appendChild($travel_logs_group_name);
+
+    // group name
+    // group date
+
+    const $travel_logs_group_date = document.createElement("span");
+    $travel_logs_group_date.classList.add("travel_logs_group_date");
+    $travel_logs_group_date.textContent = CRUD[i].CRUD_group_date_start + " - " + CRUD[i].CRUD_group_date_end;
+    $travel_logs_group_name_container.appendChild($travel_logs_group_date);
+
+    // group date
+    // group name edit
+
+    const $travel_logs_group_name_edit = document.createElement("button");
+    $travel_logs_group_name_edit.innerHTML = '<i class="fas fa-pen fa-xl" style="color: #c9c9c9;"></i>';
+    $travel_logs_group_name_edit.classList.add("travel_logs_CRUD_buttons");
+    $travel_logs_group_name_edit.addEventListener("click", () => {
+      const $travel_logs_group_name_new = prompt("Enter new text:");
+
+      if ($travel_logs_group_name_new == null || $travel_logs_group_name_new == "") {
+        showInfoPopup("Please enter a valid name");
+      } else {
+        $travel_logs_group_name.textContent = $travel_logs_group_name_new;
+        const logId = $group_log_id.textContent;
+        const logIndex = travelLogs.findIndex((log) => log[1] === logId);
+        if (logIndex !== -1) {
+          travelLogs[logIndex][0] = $travel_logs_group_name_new;
+          CRUD[i].CRUD_group_name = $travel_logs_group_name_new;
+        }
+      }
+      for (let i = 0; i < timelineData.events.length; i++) {
+        if (timelineData.events[i].unique_id === CRUD[i].CRUD_group_id) {
+          timelineData.events[i].text.headline = $travel_logs_group_name_new;
+          break;
+        }
+      }
+      if (timeline_enabled === true) {
+        window.timeline = new TL.Timeline("timeline", timelineData, timelineOptions);
+      }
+    });
+    $travel_logs_group_div_settings.appendChild($travel_logs_group_name_edit);
+
+    // group name edit
+    // group delete
+
+    const $travel_logs_delete = document.createElement("button");
+    $travel_logs_delete.innerHTML = '<i class="fa-regular fa-trash-can fa-xl" style="color: #c9c9c9;"></i>';
+    $travel_logs_delete.classList.add("travel_logs_CRUD_buttons");
+    $travel_logs_delete.addEventListener("click", () => {
+      CRUD[i].CRUD_group_id = $group_log_id.textContent;
+      isGroupContentDivEmpty(CRUD[i].CRUD_group_id);
+      if (isTravelGroupEmpty == true) {
+        removeTravelLogs(CRUD[i].CRUD_group_id);
+        removeStoredId(CRUD[i].CRUD_group_id);
+        removeTimelineData(timelineData, CRUD[i].CRUD_group_id);
+        //  removeCRUDLog(CRUD[i].CRUD_group_id);
+        timelineInfoToggle();
+        if (timeline_enabled === true) {
+          window.timeline = new TL.Timeline("timeline", timelineData, timelineOptions);
+        }
+        const index = travelLogs.indexOf(CRUD[i].CRUD_group_name);
+        if (index !== -1) {
+          travelLogs.splice(index, 1);
+        }
+        $travel_logs_group_div_main.remove();
+      } else if (isTravelGroupEmpty == false) {
+        showInfoPopup("Travel group is not empty, please remove remaining travel logs");
+      }
+
+      const id_to_remove = CRUD.findIndex((item) => item.CRUD_group_id === CRUD[i].CRUD_group_id);
+      if (id_to_remove !== -1) {
+        CRUD.splice(id_to_remove, 1);
+      }
+    });
+    $travel_logs_group_div_settings.appendChild($travel_logs_delete);
+
+    // group delete
+    // group display
+
+    const $logs_list = document.getElementById("logs_list");
+    $logs_list.appendChild($travel_logs_group_div_main);
+    $travel_logs_group_div_main.appendChild($travel_logs_group_div_settings);
+    $travel_logs_group_div_main.appendChild($travel_logs_group_content);
+
+    // group display
+
+    //  travelLogs.push([
+    //   CRUD[i].CRUD_group_name,
+    //    CRUD[i].CRUD_group_id,
+    //   CRUD[i].CRUD_group_date_start + " - " + CRUD[i].CRUD_group_date_end,
+    // ]);
+
+    // CRUD.push(CRUDGroup);
+
+    // splitDates(timeline_start, timeline_end);
+    // createTimelineData(CRUD[i].CRUD_group_name);
+    // if (timeline_enabled === true) {
+    //    window.timeline = new TL.Timeline("timeline", timelineData, timelineOptions);
+    //  }
+  }
+}
+
+function removeCRUDLog(id) {
+  const id_to_remove = CRUD.findIndex((item) => item.CRUD_group_id === id);
+  if (id_to_remove !== -1) {
+    CRUD.splice(id_to_remove, 1);
   }
 }
