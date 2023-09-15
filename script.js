@@ -1,9 +1,6 @@
-// ver: 0.8.04
+// ver: 0.8.05
 
 // Bugs:
-
-// timelineData multiplication when creating new travel logs, page reload fixes the issue
-// add statistics update on page refresh
 
 // Features to add:
 
@@ -12,6 +9,7 @@
 // ---------- 7. Add different languages
 // ---------- 8. Add info boxes to help navigate the app while using it for the first time
 // ---------- 9. Add D3 to visualize the statistics data
+// ---------- 10. populate the settings with options like: erase all data / report a bug / km-mil switch /
 
 // multi options polyline / leaflet motion / polyline decorator / leaflet Storage / leaflet canvas markers /
 
@@ -990,8 +988,10 @@ check_button_group.addEventListener("click", () => {
   if (travel_logs_group_name !== "") {
     is_travel_creator_active = false;
     groupDataSubmit();
+    timelineData = {
+      events: [],
+    };
 
-    //
     localStorageSaveTravelLogs();
     localStorageSaveMarkerCoordinates();
     localStorageSaveCRUD();
@@ -1005,7 +1005,6 @@ check_button_group.addEventListener("click", () => {
     timelineInfoToggle();
     window.timeline = new TL.Timeline("timeline", timelineData, timelineOptions);
     buildCRUD();
-    //
 
     toggleMainLogContainerVisibility(true);
     toggleTimelineVisibility(true);
@@ -1383,8 +1382,10 @@ check_button_individual.addEventListener("click", () => {
       calculateTotalDistances(rawCoordinatesDistances);
       updateTravelStats();
       individualDataSubmit();
+      timelineData = {
+        events: [],
+      };
 
-      //
       localStorageRemoveTravelLogs();
 
       localStorageSaveTravelLogs();
@@ -1392,8 +1393,6 @@ check_button_individual.addEventListener("click", () => {
       localStorageSaveCRUD();
 
       eraseLogsContainer();
-      // localStorageLoadTravelLogs();
-      // localStorageCreateStoredIds();
       localStorageLoadMarkerCoordinates();
       localStorageLoadCRUD();
       drawPolyline();
@@ -1402,7 +1401,6 @@ check_button_individual.addEventListener("click", () => {
       timelineInfoToggle();
       window.timeline = new TL.Timeline("timeline", timelineData, timelineOptions);
       buildCRUD();
-      //
 
       document.removeEventListener("mousemove", pngMouseTracking);
       toggleCustomCursorVisibility(false);
@@ -1551,7 +1549,6 @@ function randomIdGenerator() {
     }
   } while (storedIds.includes(random_id));
   storedIds.push(random_id);
-  // console.log("fresh id", random_id);
   return random_id;
 }
 
@@ -1700,7 +1697,6 @@ function groupDataSubmit() {
   CRUD.push(CRUDGroup);
 
   travel_logs_group_input.value = "";
-  //  random_id = "";
 }
 
 function individualDataSubmit() {
@@ -1728,7 +1724,6 @@ function individualDataSubmit() {
   }
 
   travel_logs_individual_input.value = "";
-  // random_id = "";
 }
 
 // CRUD data submit ↑
@@ -1920,7 +1915,6 @@ function localStorageCreateStoredIds() {
   for (let i = 0; i < travelLogs.length; i++) {
     storedIds.push(travelLogs[i][1]);
   }
-  // console.log(storedIds);
 }
 
 function localStorageCreateTimelineData(travelLogs, timelineData) {
@@ -2394,7 +2388,6 @@ function progressInfoDisplay(label, progress) {
 }
 
 function onLoadingComplete() {
-  //
   localStorageLoadTravelLogs();
   localStorageCreateStoredIds();
   localStorageCreateTimelineData(travelLogs, timelineData);
@@ -2405,7 +2398,11 @@ function onLoadingComplete() {
   timelineInfoToggle();
   window.timeline = new TL.Timeline("timeline", timelineData, timelineOptions);
   buildCRUD();
-  //
+
+  calculateDistances();
+  distancesBreakdown(rawCoordinatesDistances);
+  calculateTotalDistances(rawCoordinatesDistances);
+  updateTravelStats();
 
   hideAppTitle();
   progress_info.textContent = "All resources loaded!";
@@ -2457,14 +2454,14 @@ test_button.addEventListener("click", () => {
   console.log("Lowest Distance:", lowest_distance.toFixed(2), "km");
   console.log("Total Distance:", total_distance.toFixed(2), "km");
 
-  // console.log("Total Car Distance:", total_car_distance.toFixed(2), "km");
-  // console.log("Total Plane Distance:", total_plane_distance.toFixed(2), "km");
-  // console.log("Total Boat Distance:", total_boat_distance.toFixed(2), "km");
-  // console.log("Total Walk Distance:", total_walk_distance.toFixed(2), "km");
-  // console.log("Total Bicycle Distance:", total_bicycle_distance.toFixed(2), "km");
-  // console.log("Total Motorcycle Distance:", total_motorcycle_distance.toFixed(2), "km");
-  //console.log("Total Train Distance:", total_train_distance.toFixed(2), "km");
-  // console.log("Total Bus Distance:", total_bus_distance.toFixed(2), "km");
+  console.log("Total Car Distance:", total_car_distance.toFixed(2), "km");
+  console.log("Total Plane Distance:", total_plane_distance.toFixed(2), "km");
+  console.log("Total Boat Distance:", total_boat_distance.toFixed(2), "km");
+  console.log("Total Walk Distance:", total_walk_distance.toFixed(2), "km");
+  console.log("Total Bicycle Distance:", total_bicycle_distance.toFixed(2), "km");
+  console.log("Total Motorcycle Distance:", total_motorcycle_distance.toFixed(2), "km");
+  console.log("Total Train Distance:", total_train_distance.toFixed(2), "km");
+  console.log("Total Bus Distance:", total_bus_distance.toFixed(2), "km");
 });
 
 test_button_2.addEventListener("click", () => {
