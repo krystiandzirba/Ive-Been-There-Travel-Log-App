@@ -1,4 +1,4 @@
-// ver: 0.8.05
+// ver: 0.8.06
 
 // Bugs:
 
@@ -269,18 +269,20 @@ const { home_icon, car_icon, plane_icon, boat_icon, walk_icon, bicycle_icon, mot
 const { trainsAddon, cyclingAddon, bordersAddon, labelsAddon } = leafletConfig.addons;
 
 const mapTileLayers = L.layerGroup([mapTileLayer_A]).addTo(map);
+let temporaryMarkers = L.layerGroup();
+let trueMarkers = L.layerGroup();
 
 // // Leaflet map ↑
 
 // 1 = local storage / 0 = temporary
 
 /* 1 */ let highlights = [];
-/* 1 */ let markers = [];
-/* 1 */ let markersCoordinates = [];
+/* 1 */ let markersData = [];
 /* 1 */ let travelLogs = [];
 /* 1 */ let CRUD = [];
 /* 0 */ let CRUDGroup = {};
 /* 0 */ let CRUDIndividual = {};
+/* 0 */ let markers = [];
 /* 0 */ let polylines = [];
 /* 0 */ let storedIds = [];
 /* 0 */ let timelineData = {
@@ -543,13 +545,11 @@ function switchTileAddon(tile_addon) {
 }
 
 function toggleMarkersVisibility() {
-  markers.forEach((marker) => {
-    if (map.hasLayer(marker) && markers_visibility) {
-      marker.removeFrom(map);
-    } else {
-      marker.addTo(map);
-    }
-  });
+  if (markers_visibility) {
+    removeTrueMarkers();
+  } else {
+    localStorageCreateMarkers();
+  }
   markers_visibility = !markers_visibility;
 }
 
@@ -650,12 +650,12 @@ sidebar_statistics_button.addEventListener("mouseleave", () =>
 function calculateDistances() {
   rawCoordinatesDistances = [];
 
-  for (let i = 0; i < markersCoordinates.length; i++) {
+  for (let i = 0; i < markersData.length; i++) {
     let sub_distances = [];
 
-    for (let j = 0; j < markersCoordinates[i].length - 1; j++) {
-      let distance = calculateDistance(markersCoordinates[i][j], markersCoordinates[i][j + 1]);
-      let distance_info = markersCoordinates[i][j][2];
+    for (let j = 0; j < markersData[i].length - 1; j++) {
+      let distance = calculateDistance(markersData[i][j], markersData[i][j + 1]);
+      let distance_info = markersData[i][j][2];
       sub_distances.push({ distance, distance_info });
     }
 
@@ -731,7 +731,7 @@ function updateTravelStats() {
   document.getElementById("average_travel_distance").textContent = formatDistance(average_distance) + " km";
 
   let most_common_travel_type = document.getElementById("most_common_travel_type");
-  const { travel_type_count, highest_count_travel_types } = countTravelType(markersCoordinates);
+  const { travel_type_count, highest_count_travel_types } = countTravelType(markersData);
   if (highest_count_travel_types.length > 0) {
     const mostCommonTravelTypesText = highest_count_travel_types.join(", ");
     most_common_travel_type.textContent = mostCommonTravelTypesText;
@@ -841,7 +841,7 @@ let travel_type_count = {
 let highest_count_travel_types = [];
 let highest_count = Number.NEGATIVE_INFINITY;
 
-function countTravelType(markersCoordinates) {
+function countTravelType(markersData) {
   travel_type_count = {
     car: 0,
     plane: 0,
@@ -855,7 +855,7 @@ function countTravelType(markersCoordinates) {
   highest_count_travel_types = [];
   highest_count = Number.NEGATIVE_INFINITY;
 
-  for (const marker of markersCoordinates) {
+  for (const marker of markersData) {
     const type = marker[0][2][1];
     if (type in travel_type_count) {
       travel_type_count[type]++;
@@ -1073,6 +1073,7 @@ travel_type_car.addEventListener("click", () => {
         allow_individual_log_creation = true;
         let lat = e.latlng.lat;
         let lng = e.latlng.lng;
+        type = "car";
 
         marker = L.marker([lat, lng], {
           icon: car_icon,
@@ -1080,17 +1081,18 @@ travel_type_car.addEventListener("click", () => {
           id: random_id,
         });
 
+        temporaryMarkers.addLayer(marker);
         marker.addTo(map).bounce(1);
         markers.push(marker);
 
-        type = "car";
-
-        markersCoordinates[markersCoordinates.length - 1].push([lat, lng, [random_id, type]]);
+        markersData[markersData.length - 1].push([lat, lng, [random_id, type, "content/icons/car_icon.png"]]);
         drawPolyline();
       }
 
       map.on("click", onMapClick);
     }
+
+    temporaryMarkers.addTo(map);
     is_travel_creator_active = !is_travel_creator_active;
   }
 });
@@ -1112,6 +1114,7 @@ travel_type_plane.addEventListener("click", () => {
         allow_individual_log_creation = true;
         let lat = e.latlng.lat;
         let lng = e.latlng.lng;
+        type = "plane";
 
         marker = L.marker([lat, lng], {
           icon: plane_icon,
@@ -1119,16 +1122,17 @@ travel_type_plane.addEventListener("click", () => {
           id: random_id,
         });
 
+        temporaryMarkers.addLayer(marker);
         marker.addTo(map).bounce(1);
         markers.push(marker);
 
-        type = "plane";
-        markersCoordinates[markersCoordinates.length - 1].push([lat, lng, [random_id, type]]);
+        markersData[markersData.length - 1].push([lat, lng, [random_id, type, "content/icons/plane_icon.png"]]);
         drawPolyline();
       }
 
       map.on("click", onMapClick);
     }
+    temporaryMarkers.addTo(map);
     is_travel_creator_active = !is_travel_creator_active;
   }
 });
@@ -1150,6 +1154,7 @@ travel_type_boat.addEventListener("click", () => {
         allow_individual_log_creation = true;
         let lat = e.latlng.lat;
         let lng = e.latlng.lng;
+        type = "boat";
 
         marker = L.marker([lat, lng], {
           icon: boat_icon,
@@ -1157,16 +1162,17 @@ travel_type_boat.addEventListener("click", () => {
           id: random_id,
         });
 
+        temporaryMarkers.addLayer(marker);
         marker.addTo(map).bounce(1);
         markers.push(marker);
 
-        type = "boat";
-        markersCoordinates[markersCoordinates.length - 1].push([lat, lng, [random_id, type]]);
+        markersData[markersData.length - 1].push([lat, lng, [random_id, type, "content/icons/boat_icon.png"]]);
         drawPolyline();
       }
 
       map.on("click", onMapClick);
     }
+    temporaryMarkers.addTo(map);
     is_travel_creator_active = !is_travel_creator_active;
   }
 });
@@ -1188,6 +1194,7 @@ travel_type_walk.addEventListener("click", () => {
         allow_individual_log_creation = true;
         let lat = e.latlng.lat;
         let lng = e.latlng.lng;
+        type = "walk";
 
         marker = L.marker([lat, lng], {
           icon: walk_icon,
@@ -1195,16 +1202,17 @@ travel_type_walk.addEventListener("click", () => {
           id: random_id,
         });
 
+        temporaryMarkers.addLayer(marker);
         marker.addTo(map).bounce(1);
         markers.push(marker);
 
-        type = "walk";
-        markersCoordinates[markersCoordinates.length - 1].push([lat, lng, [random_id, type]]);
+        markersData[markersData.length - 1].push([lat, lng, [random_id, type, "content/icons/walk_icon.png"]]);
         drawPolyline();
       }
 
       map.on("click", onMapClick);
     }
+    temporaryMarkers.addTo(map);
     is_travel_creator_active = !is_travel_creator_active;
   }
 });
@@ -1226,6 +1234,7 @@ travel_type_bicycle.addEventListener("click", () => {
         allow_individual_log_creation = true;
         let lat = e.latlng.lat;
         let lng = e.latlng.lng;
+        type = "bicycle";
 
         marker = L.marker([lat, lng], {
           icon: bicycle_icon,
@@ -1233,16 +1242,17 @@ travel_type_bicycle.addEventListener("click", () => {
           id: random_id,
         });
 
+        temporaryMarkers.addLayer(marker);
         marker.addTo(map).bounce(1);
         markers.push(marker);
 
-        type = "bicycle";
-        markersCoordinates[markersCoordinates.length - 1].push([lat, lng, [random_id, type]]);
+        markersData[markersData.length - 1].push([lat, lng, [random_id, type, "content/icons/bicycle_icon.png"]]);
         drawPolyline();
       }
 
       map.on("click", onMapClick);
     }
+    temporaryMarkers.addTo(map);
     is_travel_creator_active = !is_travel_creator_active;
   }
 });
@@ -1264,6 +1274,7 @@ travel_type_motorcycle.addEventListener("click", () => {
         allow_individual_log_creation = true;
         let lat = e.latlng.lat;
         let lng = e.latlng.lng;
+        type = "motorcycle";
 
         marker = L.marker([lat, lng], {
           icon: motorcycle_icon,
@@ -1271,16 +1282,17 @@ travel_type_motorcycle.addEventListener("click", () => {
           id: random_id,
         });
 
+        temporaryMarkers.addLayer(marker);
         marker.addTo(map).bounce(1);
         markers.push(marker);
 
-        type = "motorcycle";
-        markersCoordinates[markersCoordinates.length - 1].push([lat, lng, [random_id, type]]);
+        markersData[markersData.length - 1].push([lat, lng, [random_id, type, "content/icons/motorcycle_icon.png"]]);
         drawPolyline();
       }
 
       map.on("click", onMapClick);
     }
+    temporaryMarkers.addTo(map);
     is_travel_creator_active = !is_travel_creator_active;
   }
 });
@@ -1302,6 +1314,7 @@ travel_type_train.addEventListener("click", () => {
         allow_individual_log_creation = true;
         let lat = e.latlng.lat;
         let lng = e.latlng.lng;
+        type = "train";
 
         marker = L.marker([lat, lng], {
           icon: train_icon,
@@ -1309,17 +1322,17 @@ travel_type_train.addEventListener("click", () => {
           id: random_id,
         });
 
+        temporaryMarkers.addLayer(marker);
         marker.addTo(map).bounce(1);
         markers.push(marker);
 
-        type = "train";
-
-        markersCoordinates[markersCoordinates.length - 1].push([lat, lng, [random_id, type]]);
+        markersData[markersData.length - 1].push([lat, lng, [random_id, type, "content/icons/train_icon.png"]]);
         drawPolyline();
       }
 
       map.on("click", onMapClick);
     }
+    temporaryMarkers.addTo(map);
     is_travel_creator_active = !is_travel_creator_active;
   }
 });
@@ -1341,6 +1354,7 @@ travel_type_bus.addEventListener("click", () => {
         allow_individual_log_creation = true;
         let lat = e.latlng.lat;
         let lng = e.latlng.lng;
+        type = "bus";
 
         marker = L.marker([lat, lng], {
           icon: bus_icon,
@@ -1348,17 +1362,17 @@ travel_type_bus.addEventListener("click", () => {
           id: random_id,
         });
 
+        temporaryMarkers.addLayer(marker);
         marker.addTo(map).bounce(1);
         markers.push(marker);
 
-        type = "bus";
-
-        markersCoordinates[markersCoordinates.length - 1].push([lat, lng, [random_id, type]]);
+        markersData[markersData.length - 1].push([lat, lng, [random_id, type, "content/icons/bus_icon.png"]]);
         drawPolyline();
       }
 
       map.on("click", onMapClick);
     }
+    temporaryMarkers.addTo(map);
     is_travel_creator_active = !is_travel_creator_active;
   }
 });
@@ -1386,6 +1400,7 @@ check_button_individual.addEventListener("click", () => {
         events: [],
       };
 
+      removeTemporaryMarkers();
       localStorageRemoveTravelLogs();
 
       localStorageSaveTravelLogs();
@@ -1401,6 +1416,7 @@ check_button_individual.addEventListener("click", () => {
       timelineInfoToggle();
       window.timeline = new TL.Timeline("timeline", timelineData, timelineOptions);
       buildCRUD();
+      localStorageCreateMarkers();
 
       document.removeEventListener("mousemove", pngMouseTracking);
       toggleCustomCursorVisibility(false);
@@ -1410,7 +1426,7 @@ check_button_individual.addEventListener("click", () => {
       toggleTravelLogsIndividualMainContainerVisibility(false);
       timelineInfoToggle();
       closeInfoPopup();
-      countTravelType(markersCoordinates);
+      countTravelType(markersData);
       is_travel_creator_active = false;
     }
   } else {
@@ -1499,8 +1515,8 @@ function drawPolyline() {
   }
   polylines = [];
 
-  for (let i = 0; i < markersCoordinates.length; i++) {
-    const coordinates = markersCoordinates[i];
+  for (let i = 0; i < markersData.length; i++) {
+    const coordinates = markersData[i];
     if (coordinates && coordinates.length > 1) {
       let color = "";
 
@@ -1739,7 +1755,7 @@ function removeMarkers(id) {
 }
 
 function removeMarkersCoordinates(id) {
-  markersCoordinates = markersCoordinates.filter((array) => {
+  markersData = markersData.filter((array) => {
     return !array.some((item) => item[2][0] === id);
   });
 }
@@ -1888,14 +1904,14 @@ function localStorageRemoveTravelLogs() {
 }
 
 function localStorageSaveMarkerCoordinates() {
-  localStorage.setItem("marker_coordinates", JSON.stringify(markersCoordinates));
+  localStorage.setItem("markersData", JSON.stringify(markersData));
 }
 
 function localStorageLoadMarkerCoordinates() {
-  if (localStorage.getItem("marker_coordinates")) {
-    markersCoordinates = JSON.parse(localStorage.getItem("marker_coordinates"));
+  if (localStorage.getItem("markersData")) {
+    markersData = JSON.parse(localStorage.getItem("markersData"));
   } else {
-    markersCoordinates = [];
+    markersData = [];
   }
 }
 
@@ -2060,8 +2076,8 @@ function buildCRUD() {
       }
 
       stored_group_log_id = $group_log_id.textContent;
-      markersCoordinates = markersCoordinates.filter((coordinatesArray) => coordinatesArray.length > 0);
-      markersCoordinates.push([]);
+      markersData = markersData.filter((coordinatesArray) => coordinatesArray.length > 0);
+      markersData.push([]);
       random_id = "";
       random_id = randomIdGenerator();
 
@@ -2255,7 +2271,7 @@ function buildCRUD() {
         distancesBreakdown(rawCoordinatesDistances);
         calculateTotalDistances(rawCoordinatesDistances);
         removeTravelCount(stored_individual_distance_type_reference);
-        countTravelType(markersCoordinates);
+        countTravelType(markersData);
         updateTravelStats();
         if (timeline_enabled === true) {
           window.timeline = new TL.Timeline("timeline", timelineData, timelineOptions);
@@ -2275,15 +2291,12 @@ function buildCRUD() {
         if (id_to_remove !== -1) {
           CRUD[id_to_remove].CRUD_individual.splice(j, 1);
         }
-
+        removeTrueMarkers();
         localStorageSaveTravelLogs();
         localStorageSaveCRUD();
         localStorageSaveMarkerCoordinates();
+        localStorageCreateMarkers();
       });
-
-      localStorageSaveTravelLogs();
-      localStorageSaveMarkerCoordinates();
-      localStorageSaveCRUD();
 
       $travel_logs_individual_div_main.appendChild($travel_logs_delete);
 
@@ -2297,6 +2310,41 @@ function buildCRUD() {
 
 function eraseLogsContainer() {
   document.getElementById("logs_list").innerHTML = "";
+}
+
+function localStorageCreateMarkers() {
+  for (const coordinatesArray of markersData) {
+    for (const coordinate of coordinatesArray) {
+      const [lat, lng, [id, travelType, iconUrl]] = coordinate;
+
+      const icon = L.icon({
+        iconUrl: iconUrl,
+        iconSize: [42, 42],
+      });
+
+      const marker = L.marker([lat, lng], {
+        icon: icon,
+        travelType: travelType,
+        id: id,
+      });
+
+      trueMarkers.addLayer(marker);
+    }
+  }
+
+  trueMarkers.addTo(map);
+}
+
+function removeTemporaryMarkers() {
+  temporaryMarkers.clearLayers();
+  map.removeLayer(temporaryMarkers);
+  temporaryMarkers = L.layerGroup();
+}
+
+function removeTrueMarkers() {
+  trueMarkers.clearLayers();
+  map.removeLayer(trueMarkers);
+  trueMarkers = L.layerGroup();
 }
 
 // Local Storage ↑
@@ -2398,6 +2446,7 @@ function onLoadingComplete() {
   timelineInfoToggle();
   window.timeline = new TL.Timeline("timeline", timelineData, timelineOptions);
   buildCRUD();
+  localStorageCreateMarkers();
 
   calculateDistances();
   distancesBreakdown(rawCoordinatesDistances);
@@ -2440,48 +2489,36 @@ close_info_popup.addEventListener("click", closeInfoPopup);
 
 test_button.addEventListener("click", () => {
   console.log("highlight array", highlights);
-  console.log("markers array", markers);
-  console.log("marker coordinates", markersCoordinates);
-  console.log("polylines", polylines);
-  console.log("travel logs:", travelLogs);
-  console.log("stored ids", storedIds);
-  console.log("timeline", timelineData);
-  console.log("CRUD", CRUD);
 
-  console.log("raw coordinates distances", rawCoordinatesDistances);
+  console.log("-1- " + "markersData", markersData);
+  console.log("-1- " + "travelLogs", travelLogs);
+  console.log("-1- " + "CRUD", CRUD);
+  console.log("-0- " + "markers", markers);
+  console.log("-0- " + "polylines", polylines);
+  console.log("-0- " + "storedIds", storedIds);
+  console.log("-0- " + "timelineData", timelineData);
+  console.log("-0- " + "rawCoordinatesDistances", rawCoordinatesDistances);
 
   console.log("Highest Distance:", highest_distance.toFixed(2), "km");
   console.log("Lowest Distance:", lowest_distance.toFixed(2), "km");
   console.log("Total Distance:", total_distance.toFixed(2), "km");
 
-  console.log("Total Car Distance:", total_car_distance.toFixed(2), "km");
-  console.log("Total Plane Distance:", total_plane_distance.toFixed(2), "km");
-  console.log("Total Boat Distance:", total_boat_distance.toFixed(2), "km");
-  console.log("Total Walk Distance:", total_walk_distance.toFixed(2), "km");
-  console.log("Total Bicycle Distance:", total_bicycle_distance.toFixed(2), "km");
-  console.log("Total Motorcycle Distance:", total_motorcycle_distance.toFixed(2), "km");
-  console.log("Total Train Distance:", total_train_distance.toFixed(2), "km");
-  console.log("Total Bus Distance:", total_bus_distance.toFixed(2), "km");
+  // console.log("Total Car Distance:", total_car_distance.toFixed(2), "km");
+  // console.log("Total Plane Distance:", total_plane_distance.toFixed(2), "km");
+  // console.log("Total Boat Distance:", total_boat_distance.toFixed(2), "km");
+  // console.log("Total Walk Distance:", total_walk_distance.toFixed(2), "km");
+  // console.log("Total Bicycle Distance:", total_bicycle_distance.toFixed(2), "km");
+  // console.log("Total Motorcycle Distance:", total_motorcycle_distance.toFixed(2), "km");
+  // console.log("Total Train Distance:", total_train_distance.toFixed(2), "km");
+  // console.log("Total Bus Distance:", total_bus_distance.toFixed(2), "km");
 });
 
 test_button_2.addEventListener("click", () => {
-  localStorageSaveTravelLogs();
-  localStorageSaveMarkerCoordinates();
-  localStorageSaveCRUD();
+  removeTemporaryMarkers();
 });
 
 test_button_3.addEventListener("click", () => {
-  eraseLogsContainer();
-  localStorageLoadTravelLogs();
-  localStorageCreateStoredIds();
-  localStorageLoadMarkerCoordinates();
-  localStorageLoadCRUD();
-  drawPolyline();
-  localStorageCreateTimelineData(travelLogs, timelineData);
-  toggleTimelineVisibility(true);
-  timelineInfoToggle();
-  window.timeline = new TL.Timeline("timeline", timelineData, timelineOptions);
-  buildCRUD();
+  removeTrueMarkers();
 });
 
 test_button_4.addEventListener("click", () => {

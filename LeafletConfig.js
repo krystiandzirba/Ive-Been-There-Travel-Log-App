@@ -43,47 +43,47 @@ export default {
   marker_icons: {
     home_icon: L.icon({
       iconUrl: "content/icons/home_icon.png",
-      iconSize: [48, 48],
+      iconSize: [42, 42],
       iconAnchor: [24, 24],
     }),
     car_icon: L.icon({
       iconUrl: "content/icons/car_icon.png",
-      iconSize: [48, 48],
+      iconSize: [42, 42],
       iconAnchor: [24, 24],
     }),
     plane_icon: L.icon({
       iconUrl: "content/icons/plane_icon.png",
-      iconSize: [48, 48],
+      iconSize: [42, 42],
       iconAnchor: [24, 24],
     }),
     boat_icon: L.icon({
       iconUrl: "content/icons/boat_icon.png",
-      iconSize: [48, 48],
+      iconSize: [42, 42],
       iconAnchor: [24, 24],
     }),
     walk_icon: L.icon({
       iconUrl: "content/icons/walk_icon.png",
-      iconSize: [48, 48],
+      iconSize: [42, 42],
       iconAnchor: [24, 24],
     }),
     bicycle_icon: L.icon({
       iconUrl: "content/icons/bicycle_icon.png",
-      iconSize: [48, 48],
+      iconSize: [42, 42],
       iconAnchor: [24, 24],
     }),
     motorcycle_icon: L.icon({
       iconUrl: "content/icons/motorcycle_icon.png",
-      iconSize: [48, 48],
+      iconSize: [42, 42],
       iconAnchor: [24, 24],
     }),
     train_icon: L.icon({
       iconUrl: "content/icons/train_icon.png",
-      iconSize: [48, 48],
+      iconSize: [42, 42],
       iconAnchor: [24, 24],
     }),
     bus_icon: L.icon({
       iconUrl: "content/icons/bus_icon.png",
-      iconSize: [48, 48],
+      iconSize: [42, 42],
       iconAnchor: [24, 24],
     }),
   },
