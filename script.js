@@ -1,17 +1,22 @@
-// ver: 0.8.06
+// ver: 1.0.00
 
 // Bugs:
 
 // Features to add:
 
+// - black theme for timeline
+// - portrait mode, no UI until mouse click
+// - marker size slider
+// - custom div for group/individual name changing
+
 // ---------- 5. Add different page styles (font, animations, images, backgrounds, theme) - modern / middleage / other
-// ---------- 6. Add local storage to save the trip progress and settings
 // ---------- 7. Add different languages
 // ---------- 8. Add info boxes to help navigate the app while using it for the first time
 // ---------- 9. Add D3 to visualize the statistics data
+//               - add continent statistics (how many countries were visited in different continents, how many countries were visited)
 // ---------- 10. populate the settings with options like: erase all data / report a bug / km-mil switch /
 
-// multi options polyline / leaflet motion / polyline decorator / leaflet Storage / leaflet canvas markers /
+// multi options polyline / leaflet motion / polyline decorator / leaflet canvas markers /
 
 // Variables ↓
 // // Sidebar House ↓
@@ -276,10 +281,11 @@ let trueMarkers = L.layerGroup();
 
 // 1 = local storage / 0 = temporary
 
-/* 1 */ let highlights = [];
 /* 1 */ let markersData = [];
 /* 1 */ let travelLogs = [];
 /* 1 */ let CRUD = [];
+/* 1 */ let trueHighlights = [];
+/* 0 */ let highlights = [];
 /* 0 */ let CRUDGroup = {};
 /* 0 */ let CRUDIndividual = {};
 /* 0 */ let markers = [];
@@ -548,7 +554,7 @@ function toggleMarkersVisibility() {
   if (markers_visibility) {
     removeTrueMarkers();
   } else {
-    localStorageCreateMarkers();
+    localStorageCreateTrueMarkers();
   }
   markers_visibility = !markers_visibility;
 }
@@ -987,25 +993,27 @@ check_button_group.addEventListener("click", () => {
 
   if (travel_logs_group_name !== "") {
     is_travel_creator_active = false;
-    groupDataSubmit();
+
     timelineData = {
       events: [],
     };
+
+    groupDataSubmit();
+    removeContainerTravelLogs();
 
     localStorageSaveTravelLogs();
     localStorageSaveMarkerCoordinates();
     localStorageSaveCRUD();
 
-    eraseLogsContainer();
     localStorageLoadMarkerCoordinates();
     localStorageLoadCRUD();
     drawPolyline();
+    populateTimeline();
+    buildCRUD();
+
     localStorageCreateTimelineData(travelLogs, timelineData);
     toggleTimelineVisibility(true);
     timelineInfoToggle();
-    window.timeline = new TL.Timeline("timeline", timelineData, timelineOptions);
-    buildCRUD();
-
     toggleMainLogContainerVisibility(true);
     toggleTimelineVisibility(true);
     toggleTravelLogsGroupMainContainerVisibility(false);
@@ -1391,32 +1399,38 @@ check_button_individual.addEventListener("click", () => {
 
     if (travel_logs_individual_name !== "") {
       travelTypeValueUpdate(false, false, false, false, false, false, false, false, false);
-      calculateDistances();
-      distancesBreakdown(rawCoordinatesDistances);
-      calculateTotalDistances(rawCoordinatesDistances);
-      updateTravelStats();
-      individualDataSubmit();
       timelineData = {
         events: [],
       };
-
+      removeTrueHighlights();
+      removeTemporaryHighlights(random_id);
       removeTemporaryMarkers();
+      removeContainerTravelLogs();
+
+      calculateDistances();
+      distancesBreakdown(rawCoordinatesDistances);
+      calculateTotalDistances(rawCoordinatesDistances);
+      countTravelType(markersData);
+      updateTravelStats();
+
+      individualDataSubmit();
+
       localStorageRemoveTravelLogs();
 
+      localStorageSaveTrueHighlights();
       localStorageSaveTravelLogs();
       localStorageSaveMarkerCoordinates();
       localStorageSaveCRUD();
 
-      eraseLogsContainer();
       localStorageLoadMarkerCoordinates();
       localStorageLoadCRUD();
-      drawPolyline();
+
       localStorageCreateTimelineData(travelLogs, timelineData);
-      toggleTimelineVisibility(true);
-      timelineInfoToggle();
-      window.timeline = new TL.Timeline("timeline", timelineData, timelineOptions);
+      populateTimeline();
       buildCRUD();
-      localStorageCreateMarkers();
+      localStorageCreateTrueMarkers();
+      localStorageCreateTrueHighlights();
+      drawPolyline();
 
       document.removeEventListener("mousemove", pngMouseTracking);
       toggleCustomCursorVisibility(false);
@@ -1426,7 +1440,6 @@ check_button_individual.addEventListener("click", () => {
       toggleTravelLogsIndividualMainContainerVisibility(false);
       timelineInfoToggle();
       closeInfoPopup();
-      countTravelType(markersData);
       is_travel_creator_active = false;
     }
   } else {
@@ -1453,7 +1466,7 @@ close_button_individual.addEventListener("click", () => {
 
   stored_individual_log_id = random_id;
   removeMarkers(stored_individual_log_id);
-  removeHighlights(stored_individual_log_id);
+  removeTemporaryHighlights(stored_individual_log_id);
   removeMarkersCoordinates(stored_individual_log_id);
   drawPolyline();
   removeTravelLogs(stored_individual_log_id);
@@ -1643,34 +1656,90 @@ function createHighlightLayer(data) {
         if (travel_type_car_click) {
           setLayerStyle(layer, jscolor_highlight_color, jscolor_highlight_opacity, "car", random_id);
           highlights.push({ type: "car", random_id, layer });
+          let country_name = feature.properties.ADMIN;
+          trueHighlights.push({
+            random_id,
+            country_name,
+            jscolor_highlight_color,
+            jscolor_highlight_opacity,
+          });
         }
         if (travel_type_plane_click) {
           setLayerStyle(layer, jscolor_highlight_color, jscolor_highlight_opacity, "plane", random_id);
           highlights.push({ type: "plane", random_id, layer });
+          let country_name = feature.properties.ADMIN;
+          trueHighlights.push({
+            random_id,
+            country_name,
+            jscolor_highlight_color,
+            jscolor_highlight_opacity,
+          });
         }
         if (travel_type_boat_click) {
           setLayerStyle(layer, jscolor_highlight_color, jscolor_highlight_opacity, "boat", random_id);
           highlights.push({ type: "boat", random_id, layer });
+          let country_name = feature.properties.ADMIN;
+          trueHighlights.push({
+            random_id,
+            country_name,
+            jscolor_highlight_color,
+            jscolor_highlight_opacity,
+          });
         }
         if (travel_type_walk_click) {
           setLayerStyle(layer, jscolor_highlight_color, jscolor_highlight_opacity, "walk", random_id);
           highlights.push({ type: "walk", random_id, layer });
+          let country_name = feature.properties.ADMIN;
+          trueHighlights.push({
+            random_id,
+            country_name,
+            jscolor_highlight_color,
+            jscolor_highlight_opacity,
+          });
         }
         if (travel_type_bicycle_click) {
           setLayerStyle(layer, jscolor_highlight_color, jscolor_highlight_opacity, "bicycle", random_id);
           highlights.push({ type: "bicycle", random_id, layer });
+          let country_name = feature.properties.ADMIN;
+          trueHighlights.push({
+            random_id,
+            country_name,
+            jscolor_highlight_color,
+            jscolor_highlight_opacity,
+          });
         }
         if (travel_type_motorcycle_click) {
           setLayerStyle(layer, jscolor_highlight_color, jscolor_highlight_opacity, "motorcycle", random_id);
           highlights.push({ type: "motorcycle", random_id, layer });
+          let country_name = feature.properties.ADMIN;
+          trueHighlights.push({
+            random_id,
+            country_name,
+            jscolor_highlight_color,
+            jscolor_highlight_opacity,
+          });
         }
         if (travel_type_train_click) {
           setLayerStyle(layer, jscolor_highlight_color, jscolor_highlight_opacity, "train", random_id);
           highlights.push({ type: "train", random_id, layer });
+          let country_name = feature.properties.ADMIN;
+          trueHighlights.push({
+            random_id,
+            country_name,
+            jscolor_highlight_color,
+            jscolor_highlight_opacity,
+          });
         }
         if (travel_type_bus_click) {
           setLayerStyle(layer, jscolor_highlight_color, jscolor_highlight_opacity, "bus", random_id);
           highlights.push({ type: "bus", random_id, layer });
+          let country_name = feature.properties.ADMIN;
+          trueHighlights.push({
+            random_id,
+            country_name,
+            jscolor_highlight_color,
+            jscolor_highlight_opacity,
+          });
         }
       });
     },
@@ -1760,14 +1829,14 @@ function removeMarkersCoordinates(id) {
   });
 }
 
-function removeHighlights(id) {
-  const highlightsToRemove = highlights.filter((highlight) => highlight.random_id === id);
+function removeTemporaryHighlights(id) {
+  const highlights_to_remove = highlights.filter((highlight) => highlight.random_id === id);
 
-  highlightsToRemove.forEach((highlight) => {
+  highlights_to_remove.forEach((highlight) => {
     map.removeLayer(highlight.layer);
-    const highlightIndex = highlights.findIndex((h) => h.random_id === highlight.random_id);
-    if (highlightIndex !== -1) {
-      highlights.splice(highlightIndex, 1);
+    const highlight_index = highlights.findIndex((h) => h.random_id === highlight.random_id);
+    if (highlight_index !== -1) {
+      highlights.splice(highlight_index, 1);
     }
   });
 }
@@ -1850,7 +1919,7 @@ function toggleTimeline() {
       timeline.removeChild(timeline.firstChild);
     }
   } else {
-    window.timeline = new TL.Timeline("timeline", timelineData, timelineOptions);
+    populateTimeline();
   }
 }
 
@@ -1860,6 +1929,10 @@ function timelineInfoToggle() {
   } else {
     timeline_info.style.opacity = "0";
   }
+}
+
+function populateTimeline() {
+  window.timeline = new TL.Timeline("timeline", timelineData, timelineOptions);
 }
 
 // TimelineJS ↑
@@ -1886,88 +1959,6 @@ function removeLoadingPageContent() {
 
 // UI / Visuals ↑
 // Local Storage ↓
-
-function localStorageSaveTravelLogs() {
-  localStorage.setItem("travel_logs_array", JSON.stringify(travelLogs));
-}
-
-function localStorageLoadTravelLogs() {
-  if (localStorage.getItem("travel_logs_array")) {
-    travelLogs = JSON.parse(localStorage.getItem("travel_logs_array"));
-  } else {
-    travelLogs = [];
-  }
-}
-
-function localStorageRemoveTravelLogs() {
-  localStorage.removeItem("travel_logs_array");
-}
-
-function localStorageSaveMarkerCoordinates() {
-  localStorage.setItem("markersData", JSON.stringify(markersData));
-}
-
-function localStorageLoadMarkerCoordinates() {
-  if (localStorage.getItem("markersData")) {
-    markersData = JSON.parse(localStorage.getItem("markersData"));
-  } else {
-    markersData = [];
-  }
-}
-
-function localStorageSaveCRUD() {
-  localStorage.setItem("CRUD", JSON.stringify(CRUD));
-}
-
-function localStorageLoadCRUD() {
-  if (localStorage.getItem("CRUD")) {
-    CRUD = JSON.parse(localStorage.getItem("CRUD"));
-  } else {
-    CRUD = [];
-  }
-}
-
-function localStorageCreateStoredIds() {
-  for (let i = 0; i < travelLogs.length; i++) {
-    storedIds.push(travelLogs[i][1]);
-  }
-}
-
-function localStorageCreateTimelineData(travelLogs, timelineData) {
-  for (const log of travelLogs) {
-    const [headline, unique_id, date_range] = log;
-    const [start_date_str, end_date_str] = date_range.split(" - ");
-
-    const start_date = new Date(start_date_str);
-    const end_date = new Date(end_date_str);
-
-    const event = {
-      start_date: {
-        year: start_date.getFullYear(),
-        month: start_date.getMonth() + 1,
-        day: start_date.getDate(),
-        date_obj: start_date,
-        format: "full",
-        format_short: "full_short",
-      },
-      end_date: {
-        year: end_date.getFullYear(),
-        month: end_date.getMonth() + 1,
-        day: end_date.getDate(),
-        date_obj: end_date,
-        format: "full",
-        format_short: "full_short",
-      },
-      text: {
-        headline: headline,
-        text: "",
-      },
-      unique_id: unique_id,
-    };
-
-    timelineData.events.push(event);
-  }
-}
 
 function buildCRUD() {
   for (let i = 0; i < CRUD.length; i++) {
@@ -2044,7 +2035,7 @@ function buildCRUD() {
         }
       }
       if (timeline_enabled === true) {
-        window.timeline = new TL.Timeline("timeline", timelineData, timelineOptions);
+        populateTimeline();
       }
 
       localStorageSaveTravelLogs();
@@ -2104,7 +2095,7 @@ function buildCRUD() {
         removeTimelineData(timelineData, stored_group_id_reference);
         timelineInfoToggle();
         if (timeline_enabled === true) {
-          window.timeline = new TL.Timeline("timeline", timelineData, timelineOptions);
+          populateTimeline();
         }
         const index = travelLogs.indexOf(stored_group_name_reference);
         if (index !== -1) {
@@ -2118,6 +2109,10 @@ function buildCRUD() {
       const id_to_remove = CRUD.findIndex((item) => item.CRUD_group_id === stored_group_id_reference);
       if (id_to_remove !== -1) {
         CRUD.splice(id_to_remove, 1);
+      }
+
+      if (timelineData.events.length === 0) {
+        toggleTimelineVisibility(false);
       }
 
       localStorageSaveTravelLogs();
@@ -2240,7 +2235,7 @@ function buildCRUD() {
         }
         // individual name edit -> timeline name edit
         if (timeline_enabled === true) {
-          window.timeline = new TL.Timeline("timeline", timelineData, timelineOptions);
+          populateTimeline();
         }
 
         localStorageSaveTravelLogs();
@@ -2257,12 +2252,13 @@ function buildCRUD() {
       $travel_logs_delete.addEventListener("click", () => {
         markers_visibility = false;
         polyline_visibility = false;
+        removeTrueHighlights();
         toggleMarkersVisibility();
         togglePolylineVisibility();
+        trueHighlightsArrayRemoveHighlight(stored_individual_id_reference);
         removeMarkers(stored_individual_id_reference);
-        removeHighlights(stored_individual_id_reference);
+        removeTemporaryHighlights(stored_individual_id_reference);
         removeMarkersCoordinates(stored_individual_id_reference);
-        drawPolyline();
         removeTravelLogs(stored_individual_id_reference);
         removeStoredId(stored_individual_id_reference);
         removeTimelineData(timelineData, stored_individual_id_reference);
@@ -2273,8 +2269,11 @@ function buildCRUD() {
         removeTravelCount(stored_individual_distance_type_reference);
         countTravelType(markersData);
         updateTravelStats();
+        localStorageCreateTrueHighlights();
+        drawPolyline();
+        localStorageSaveTrueHighlights();
         if (timeline_enabled === true) {
-          window.timeline = new TL.Timeline("timeline", timelineData, timelineOptions);
+          populateTimeline();
         }
         const index = travelLogs.indexOf(stored_individual_name_reference);
         if (index !== -1) {
@@ -2291,11 +2290,16 @@ function buildCRUD() {
         if (id_to_remove !== -1) {
           CRUD[id_to_remove].CRUD_individual.splice(j, 1);
         }
+
         removeTrueMarkers();
         localStorageSaveTravelLogs();
         localStorageSaveCRUD();
         localStorageSaveMarkerCoordinates();
-        localStorageCreateMarkers();
+        localStorageCreateTrueMarkers();
+
+        if (timelineData.events.length === 0) {
+          toggleTimelineVisibility(false);
+        }
       });
 
       $travel_logs_individual_div_main.appendChild($travel_logs_delete);
@@ -2308,11 +2312,89 @@ function buildCRUD() {
   }
 }
 
-function eraseLogsContainer() {
-  document.getElementById("logs_list").innerHTML = "";
+function localStorageSaveTravelLogs() {
+  localStorage.setItem("travel_logs_array", JSON.stringify(travelLogs));
 }
 
-function localStorageCreateMarkers() {
+function localStorageLoadTravelLogs() {
+  if (localStorage.getItem("travel_logs_array")) {
+    travelLogs = JSON.parse(localStorage.getItem("travel_logs_array"));
+  } else {
+    travelLogs = [];
+  }
+}
+
+function localStorageRemoveTravelLogs() {
+  localStorage.removeItem("travel_logs_array");
+}
+
+function localStorageSaveMarkerCoordinates() {
+  localStorage.setItem("markersData", JSON.stringify(markersData));
+}
+
+function localStorageLoadMarkerCoordinates() {
+  if (localStorage.getItem("markersData")) {
+    markersData = JSON.parse(localStorage.getItem("markersData"));
+  } else {
+    markersData = [];
+  }
+}
+
+function localStorageSaveCRUD() {
+  localStorage.setItem("CRUD", JSON.stringify(CRUD));
+}
+
+function localStorageLoadCRUD() {
+  if (localStorage.getItem("CRUD")) {
+    CRUD = JSON.parse(localStorage.getItem("CRUD"));
+  } else {
+    CRUD = [];
+  }
+}
+
+function localStorageCreateStoredIds() {
+  for (let i = 0; i < travelLogs.length; i++) {
+    storedIds.push(travelLogs[i][1]);
+  }
+}
+
+function localStorageCreateTimelineData(travelLogs, timelineData) {
+  for (const log of travelLogs) {
+    const [headline, unique_id, date_range] = log;
+    const [start_date_str, end_date_str] = date_range.split(" - ");
+
+    const start_date = new Date(start_date_str);
+    const end_date = new Date(end_date_str);
+
+    const event = {
+      start_date: {
+        year: start_date.getFullYear(),
+        month: start_date.getMonth() + 1,
+        day: start_date.getDate(),
+        date_obj: start_date,
+        format: "full",
+        format_short: "full_short",
+      },
+      end_date: {
+        year: end_date.getFullYear(),
+        month: end_date.getMonth() + 1,
+        day: end_date.getDate(),
+        date_obj: end_date,
+        format: "full",
+        format_short: "full_short",
+      },
+      text: {
+        headline: headline,
+        text: "",
+      },
+      unique_id: unique_id,
+    };
+
+    timelineData.events.push(event);
+  }
+}
+
+function localStorageCreateTrueMarkers() {
   for (const coordinatesArray of markersData) {
     for (const coordinate of coordinatesArray) {
       const [lat, lng, [id, travelType, iconUrl]] = coordinate;
@@ -2320,6 +2402,7 @@ function localStorageCreateMarkers() {
       const icon = L.icon({
         iconUrl: iconUrl,
         iconSize: [42, 42],
+        iconAnchor: [24, 24],
       });
 
       const marker = L.marker([lat, lng], {
@@ -2345,6 +2428,57 @@ function removeTrueMarkers() {
   trueMarkers.clearLayers();
   map.removeLayer(trueMarkers);
   trueMarkers = L.layerGroup();
+}
+
+function localStorageSaveTrueHighlights() {
+  localStorage.setItem("trueHighlights", JSON.stringify(trueHighlights));
+}
+
+function localStorageLoadTrueHighlights() {
+  if (localStorage.getItem("trueHighlights")) {
+    trueHighlights = JSON.parse(localStorage.getItem("trueHighlights"));
+  } else {
+    trueHighlights = [];
+  }
+}
+
+function localStorageCreateTrueHighlights() {
+  trueHighlights.forEach((highlight) => {
+    const { country_name, jscolor_highlight_color, jscolor_highlight_opacity } = highlight;
+
+    const feature = cachedGeoJSON.features.find((f) => f.properties.ADMIN === country_name);
+
+    if (feature) {
+      const layer = L.geoJSON(feature, {
+        style: {
+          fillColor: jscolor_highlight_color,
+          fillOpacity: jscolor_highlight_opacity,
+          color: "black",
+          weight: 1,
+          opacity: 1,
+        },
+        onEachFeature: function (feature, layer) {},
+      }).addTo(map);
+    }
+  });
+}
+
+function removeTrueHighlights() {
+  map.eachLayer((layer) => {
+    if (layer instanceof L.GeoJSON) {
+      map.removeLayer(layer);
+    }
+  });
+}
+
+function trueHighlightsArrayRemoveHighlight(stored_individual_id_reference) {
+  trueHighlights = trueHighlights.filter((highlight) => {
+    return highlight.random_id !== stored_individual_id_reference;
+  });
+}
+
+function removeContainerTravelLogs() {
+  document.getElementById("logs_list").innerHTML = "";
 }
 
 // Local Storage ↑
@@ -2436,17 +2570,19 @@ function progressInfoDisplay(label, progress) {
 }
 
 function onLoadingComplete() {
+  localStorageLoadTrueHighlights();
   localStorageLoadTravelLogs();
-  localStorageCreateStoredIds();
-  localStorageCreateTimelineData(travelLogs, timelineData);
   localStorageLoadMarkerCoordinates();
   localStorageLoadCRUD();
 
+  localStorageCreateStoredIds();
+  localStorageCreateTimelineData(travelLogs, timelineData);
+  localStorageCreateTrueHighlights();
   drawPolyline();
   timelineInfoToggle();
-  window.timeline = new TL.Timeline("timeline", timelineData, timelineOptions);
+  populateTimeline();
   buildCRUD();
-  localStorageCreateMarkers();
+  localStorageCreateTrueMarkers();
 
   calculateDistances();
   distancesBreakdown(rawCoordinatesDistances);
@@ -2457,7 +2593,9 @@ function onLoadingComplete() {
   progress_info.textContent = "All resources loaded!";
 
   setTimeout(() => {
-    toggleTimelineVisibility(true);
+    if (timelineData.events.length > 0) {
+      toggleTimelineVisibility(true);
+    }
   }, 1500);
 
   setTimeout(() => {
@@ -2488,11 +2626,11 @@ close_info_popup.addEventListener("click", closeInfoPopup);
 // // ---------- TEST ---------- ↓
 
 test_button.addEventListener("click", () => {
-  console.log("highlight array", highlights);
-
   console.log("-1- " + "markersData", markersData);
   console.log("-1- " + "travelLogs", travelLogs);
   console.log("-1- " + "CRUD", CRUD);
+  console.log("-1- " + "trueHighlights", trueHighlights);
+  console.log("-0- " + "highlights", highlights);
   console.log("-0- " + "markers", markers);
   console.log("-0- " + "polylines", polylines);
   console.log("-0- " + "storedIds", storedIds);
@@ -2513,14 +2651,11 @@ test_button.addEventListener("click", () => {
   // console.log("Total Bus Distance:", total_bus_distance.toFixed(2), "km");
 });
 
-test_button_2.addEventListener("click", () => {
-  removeTemporaryMarkers();
-});
+test_button_2.addEventListener("click", () => {});
 
-test_button_3.addEventListener("click", () => {
-  removeTrueMarkers();
-});
+test_button_3.addEventListener("click", () => {});
 
 test_button_4.addEventListener("click", () => {
   localStorage.clear();
+  location.reload();
 });
