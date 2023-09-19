@@ -1,4 +1,4 @@
-// ver: 1.0.00
+// ver: 1.0.01
 
 // Bugs:
 
@@ -8,6 +8,7 @@
 // - portrait mode, no UI until mouse click
 // - marker size slider
 // - custom div for group/individual name changing
+// - separate buttons to clear travel log / markers / highlights / timeline ...
 
 // ---------- 5. Add different page styles (font, animations, images, backgrounds, theme) - modern / middleage / other
 // ---------- 7. Add different languages
@@ -281,6 +282,8 @@ let trueMarkers = L.layerGroup();
 
 // 1 = local storage / 0 = temporary
 
+/* 1 */ let home_lat = "";
+/* 1 */ let home_lng = "";
 /* 1 */ let markersData = [];
 /* 1 */ let travelLogs = [];
 /* 1 */ let CRUD = [];
@@ -291,10 +294,10 @@ let trueMarkers = L.layerGroup();
 /* 0 */ let markers = [];
 /* 0 */ let polylines = [];
 /* 0 */ let storedIds = [];
+/* 0 */ let rawCoordinatesDistances = [];
 /* 0 */ let timelineData = {
   events: [],
 };
-/* 0 */ let rawCoordinatesDistances = [];
 
 // Variables ↑
 
@@ -344,7 +347,10 @@ sub_house_manual_location.addEventListener("click", () => {
 
   const mapClickListener = (e) => {
     toggleCustomCursorVisibility(false);
+
     const clickedLatLng = e.latlng;
+    home_lat = clickedLatLng.lat;
+    home_lng = clickedLatLng.lng;
 
     if (home_button_manual_click === true) {
       home_marker = L.marker(clickedLatLng, {
@@ -363,6 +369,7 @@ sub_house_manual_location.addEventListener("click", () => {
 
     home_button_manual_click = false;
 
+    localStorageSaveHomeLocation();
     map.off("click", mapClickListener);
   };
   map.on("click", mapClickListener);
@@ -381,6 +388,10 @@ sub_house_geolocation.addEventListener("click", () => {
         icon: home_icon,
         id: "home_marker",
       });
+
+      home_lat = latitude;
+      home_lng = longitude;
+
       home_marker.addTo(map).bounce(1);
       markers.push(home_marker);
       home_circle = L.circle(home_marker.getLatLng(), {
@@ -389,8 +400,10 @@ sub_house_geolocation.addEventListener("click", () => {
         fillOpacity: jscolor_home_opacity,
         weight: 1,
       }).addTo(map);
+      localStorageSaveHomeLocation();
     });
   }
+
   setTimeout(homeMarkerZoom, 200);
 });
 
@@ -401,6 +414,7 @@ sub_house_zoom.addEventListener("click", () => {
 sub_house_delete.addEventListener("click", () => {
   removeMarkers("home_marker");
   homeMarkerClear();
+  localStorageRemoveHomeLocation();
 });
 
 function homeMarkerClear() {
@@ -416,7 +430,7 @@ function homeMarkerClear() {
 }
 
 function homeMarkerZoom() {
-  if (home_marker) {
+  if (home_marker && home_lat && home_lng) {
     map.setView(home_marker.getLatLng(), 7);
   } else {
     showInfoPopup("Home location not set!");
@@ -2481,6 +2495,47 @@ function removeContainerTravelLogs() {
   document.getElementById("logs_list").innerHTML = "";
 }
 
+function localStorageSaveHomeLocation() {
+  localStorage.setItem("homelat", JSON.stringify(home_lat));
+  localStorage.setItem("homelng", JSON.stringify(home_lng));
+}
+
+function localStorageLoadHomeLocation() {
+  if (localStorage.getItem("homelat")) {
+    home_lat = JSON.parse(localStorage.getItem("homelat"));
+  }
+  if (localStorage.getItem("homelng")) {
+    home_lng = JSON.parse(localStorage.getItem("homelng"));
+  }
+}
+
+function localStorageRemoveHomeLocation() {
+  localStorage.removeItem("homelat");
+  localStorage.removeItem("homelng");
+}
+
+function localStorageCreateHomeMarkerAndCircle(latitude, longitude) {
+  removeMarkers("home_marker");
+  homeMarkerClear();
+
+  home_marker = L.marker([latitude, longitude], {
+    icon: home_icon,
+    id: "home_marker",
+  });
+
+  home_lat = latitude;
+  home_lng = longitude;
+
+  home_marker.addTo(map).bounce(1);
+
+  home_circle = L.circle(home_marker.getLatLng(), {
+    radius: 50000,
+    color: jscolor_home_color,
+    fillOpacity: jscolor_home_opacity,
+    weight: 1,
+  }).addTo(map);
+}
+
 // Local Storage ↑
 // Loading progress info ↓
 
@@ -2574,6 +2629,7 @@ function onLoadingComplete() {
   localStorageLoadTravelLogs();
   localStorageLoadMarkerCoordinates();
   localStorageLoadCRUD();
+  localStorageLoadHomeLocation();
 
   localStorageCreateStoredIds();
   localStorageCreateTimelineData(travelLogs, timelineData);
@@ -2583,6 +2639,7 @@ function onLoadingComplete() {
   populateTimeline();
   buildCRUD();
   localStorageCreateTrueMarkers();
+  localStorageCreateHomeMarkerAndCircle(home_lat, home_lng);
 
   calculateDistances();
   distancesBreakdown(rawCoordinatesDistances);
@@ -2634,8 +2691,8 @@ test_button.addEventListener("click", () => {
   console.log("-0- " + "markers", markers);
   console.log("-0- " + "polylines", polylines);
   console.log("-0- " + "storedIds", storedIds);
-  console.log("-0- " + "timelineData", timelineData);
   console.log("-0- " + "rawCoordinatesDistances", rawCoordinatesDistances);
+  console.log("-0- " + "timelineData", timelineData);
 
   console.log("Highest Distance:", highest_distance.toFixed(2), "km");
   console.log("Lowest Distance:", lowest_distance.toFixed(2), "km");
