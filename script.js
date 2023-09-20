@@ -1,4 +1,4 @@
-// ver: 1.0.02
+// ver: 1.0.03
 
 // Bugs:
 
@@ -7,10 +7,10 @@
 // - black theme for timeline
 // - portrait mode, no UI until mouse click
 // - marker size slider
-// - custom div for group/individual name changing
 // - separate buttons to clear travel log / markers / highlights / timeline ...
 // - true highlights drawn from every element in array, make it group in layers by its id, and add layers separately
 //   (if multiple markers from the same individual log are placed in the same country, the true highlight is multiplied)
+// - add a 0.5s timeout between deleting individual and group logs
 
 // ---------- 5. Add different page styles (font, animations, images, backgrounds, theme) - modern / middleage / other
 // ---------- 7. Add different languages
@@ -1081,324 +1081,51 @@ jscolor_highlight.addEventListener("change", () => {
 });
 
 travel_type_car.addEventListener("click", () => {
-  if (is_travel_creator_active) {
-    allow_individual_log_creation = false;
-    marker_highlight_color_opacity_customization = false;
-    createHighlightLayer(cachedGeoJSON);
-    updateCursorImage("/content/icons/car_icon_small.png");
-    travelTypeButtonsGrayscale();
-    travel_type_car.querySelector("img").src = travelTypeButtonImages.get(travel_type_car);
-
-    travelTypeValueUpdate(false, true, false, false, false, false, false, false, false);
-
-    if (travel_type_car_click == true) {
-      map.off("click");
-      function onMapClick(e) {
-        allow_individual_log_creation = true;
-        let lat = e.latlng.lat;
-        let lng = e.latlng.lng;
-        type = "car";
-
-        marker = L.marker([lat, lng], {
-          icon: car_icon,
-          travelType: "car",
-          id: random_id,
-        });
-
-        temporaryMarkers.addLayer(marker);
-        marker.addTo(map).bounce(1);
-        markers.push(marker);
-
-        markersData[markersData.length - 1].push([lat, lng, [random_id, type, "content/icons/car_icon.png"]]);
-        drawPolyline();
-      }
-
-      map.on("click", onMapClick);
-    }
-
-    temporaryMarkers.addTo(map);
-    is_travel_creator_active = !is_travel_creator_active;
-  }
+  travelTypeValueUpdate(false, true, false, false, false, false, false, false, false);
+  // prettier-ignore
+  travelTypeCreator(travel_type_car_click, "car", car_icon, "/content/icons/car_icon_small.png", "content/icons/car_icon.png");
 });
 
 travel_type_plane.addEventListener("click", () => {
-  if (is_travel_creator_active) {
-    allow_individual_log_creation = false;
-    marker_highlight_color_opacity_customization = false;
-    createHighlightLayer(cachedGeoJSON);
-    updateCursorImage("/content/icons/plane_icon_small.png");
-    travelTypeButtonsGrayscale();
-    travel_type_plane.querySelector("img").src = travelTypeButtonImages.get(travel_type_plane);
-
-    travelTypeValueUpdate(false, false, true, false, false, false, false, false, false);
-
-    if (travel_type_plane_click == true) {
-      map.off("click");
-      function onMapClick(e) {
-        allow_individual_log_creation = true;
-        let lat = e.latlng.lat;
-        let lng = e.latlng.lng;
-        type = "plane";
-
-        marker = L.marker([lat, lng], {
-          icon: plane_icon,
-          travelType: "plane",
-          id: random_id,
-        });
-
-        temporaryMarkers.addLayer(marker);
-        marker.addTo(map).bounce(1);
-        markers.push(marker);
-
-        markersData[markersData.length - 1].push([lat, lng, [random_id, type, "content/icons/plane_icon.png"]]);
-        drawPolyline();
-      }
-
-      map.on("click", onMapClick);
-    }
-    temporaryMarkers.addTo(map);
-    is_travel_creator_active = !is_travel_creator_active;
-  }
+  travelTypeValueUpdate(false, false, true, false, false, false, false, false, false);
+  // prettier-ignore
+  travelTypeCreator(travel_type_plane_click, "plane", plane_icon, "/content/icons/plane_icon_small.png", "content/icons/plane_icon.png");
 });
 
 travel_type_boat.addEventListener("click", () => {
-  if (is_travel_creator_active) {
-    allow_individual_log_creation = false;
-    marker_highlight_color_opacity_customization = false;
-    createHighlightLayer(cachedGeoJSON);
-    updateCursorImage("/content/icons/boat_icon_small.png");
-    travelTypeButtonsGrayscale();
-    travel_type_boat.querySelector("img").src = travelTypeButtonImages.get(travel_type_boat);
-
-    travelTypeValueUpdate(false, false, false, true, false, false, false, false, false);
-
-    if (travel_type_boat_click == true) {
-      map.off("click");
-      function onMapClick(e) {
-        allow_individual_log_creation = true;
-        let lat = e.latlng.lat;
-        let lng = e.latlng.lng;
-        type = "boat";
-
-        marker = L.marker([lat, lng], {
-          icon: boat_icon,
-          travelType: "boat",
-          id: random_id,
-        });
-
-        temporaryMarkers.addLayer(marker);
-        marker.addTo(map).bounce(1);
-        markers.push(marker);
-
-        markersData[markersData.length - 1].push([lat, lng, [random_id, type, "content/icons/boat_icon.png"]]);
-        drawPolyline();
-      }
-
-      map.on("click", onMapClick);
-    }
-    temporaryMarkers.addTo(map);
-    is_travel_creator_active = !is_travel_creator_active;
-  }
+  travelTypeValueUpdate(false, false, false, true, false, false, false, false, false);
+  // prettier-ignore
+  travelTypeCreator(travel_type_boat_click, "boat", boat_icon, "/content/icons/boat_icon_small.png", "content/icons/boat_icon.png");
 });
 
 travel_type_walk.addEventListener("click", () => {
-  if (is_travel_creator_active) {
-    allow_individual_log_creation = false;
-    marker_highlight_color_opacity_customization = false;
-    createHighlightLayer(cachedGeoJSON);
-    updateCursorImage("/content/icons/walk_icon_small.png");
-    travelTypeButtonsGrayscale();
-    travel_type_walk.querySelector("img").src = travelTypeButtonImages.get(travel_type_walk);
-
-    travelTypeValueUpdate(false, false, false, false, true, false, false, false, false);
-
-    if (travel_type_walk_click == true) {
-      map.off("click");
-      function onMapClick(e) {
-        allow_individual_log_creation = true;
-        let lat = e.latlng.lat;
-        let lng = e.latlng.lng;
-        type = "walk";
-
-        marker = L.marker([lat, lng], {
-          icon: walk_icon,
-          travelType: "walk",
-          id: random_id,
-        });
-
-        temporaryMarkers.addLayer(marker);
-        marker.addTo(map).bounce(1);
-        markers.push(marker);
-
-        markersData[markersData.length - 1].push([lat, lng, [random_id, type, "content/icons/walk_icon.png"]]);
-        drawPolyline();
-      }
-
-      map.on("click", onMapClick);
-    }
-    temporaryMarkers.addTo(map);
-    is_travel_creator_active = !is_travel_creator_active;
-  }
+  travelTypeValueUpdate(false, false, false, false, true, false, false, false, false);
+  // prettier-ignore
+  travelTypeCreator(travel_type_walk_click, "walk", walk_icon, "/content/icons/walk_icon_small.png", "content/icons/walk_icon.png");
 });
 
 travel_type_bicycle.addEventListener("click", () => {
-  if (is_travel_creator_active) {
-    allow_individual_log_creation = false;
-    marker_highlight_color_opacity_customization = false;
-    createHighlightLayer(cachedGeoJSON);
-    updateCursorImage("/content/icons/bicycle_icon_small.png");
-    travelTypeButtonsGrayscale();
-    travel_type_bicycle.querySelector("img").src = travelTypeButtonImages.get(travel_type_bicycle);
-
-    travelTypeValueUpdate(false, false, false, false, false, true, false, false, false);
-
-    if (travel_type_bicycle_click == true) {
-      map.off("click");
-      function onMapClick(e) {
-        allow_individual_log_creation = true;
-        let lat = e.latlng.lat;
-        let lng = e.latlng.lng;
-        type = "bicycle";
-
-        marker = L.marker([lat, lng], {
-          icon: bicycle_icon,
-          travelType: "bicycle",
-          id: random_id,
-        });
-
-        temporaryMarkers.addLayer(marker);
-        marker.addTo(map).bounce(1);
-        markers.push(marker);
-
-        markersData[markersData.length - 1].push([lat, lng, [random_id, type, "content/icons/bicycle_icon.png"]]);
-        drawPolyline();
-      }
-
-      map.on("click", onMapClick);
-    }
-    temporaryMarkers.addTo(map);
-    is_travel_creator_active = !is_travel_creator_active;
-  }
+  travelTypeValueUpdate(false, false, false, false, false, true, false, false, false);
+  // prettier-ignore
+  travelTypeCreator(travel_type_bicycle_click, "bicycle", bicycle_icon, "/content/icons/bicycle_icon_small.png", "content/icons/bicycle_icon.png");
 });
 
 travel_type_motorcycle.addEventListener("click", () => {
-  if (is_travel_creator_active) {
-    allow_individual_log_creation = false;
-    marker_highlight_color_opacity_customization = false;
-    createHighlightLayer(cachedGeoJSON);
-    updateCursorImage("/content/icons/motorcycle_icon_small.png");
-    travelTypeButtonsGrayscale();
-    travel_type_motorcycle.querySelector("img").src = travelTypeButtonImages.get(travel_type_motorcycle);
-
-    travelTypeValueUpdate(false, false, false, false, false, false, true, false, false);
-
-    if (travel_type_motorcycle_click == true) {
-      map.off("click");
-      function onMapClick(e) {
-        allow_individual_log_creation = true;
-        let lat = e.latlng.lat;
-        let lng = e.latlng.lng;
-        type = "motorcycle";
-
-        marker = L.marker([lat, lng], {
-          icon: motorcycle_icon,
-          travelType: "motorcycle",
-          id: random_id,
-        });
-
-        temporaryMarkers.addLayer(marker);
-        marker.addTo(map).bounce(1);
-        markers.push(marker);
-
-        markersData[markersData.length - 1].push([lat, lng, [random_id, type, "content/icons/motorcycle_icon.png"]]);
-        drawPolyline();
-      }
-
-      map.on("click", onMapClick);
-    }
-    temporaryMarkers.addTo(map);
-    is_travel_creator_active = !is_travel_creator_active;
-  }
+  travelTypeValueUpdate(false, false, false, false, false, false, true, false, false);
+  // prettier-ignore
+  travelTypeCreator(travel_type_motorcycle_click, "motorcycle", motorcycle_icon, "/content/icons/motorcycle_icon_small.png", "content/icons/motorcycle_icon.png");
 });
 
 travel_type_train.addEventListener("click", () => {
-  if (is_travel_creator_active) {
-    allow_individual_log_creation = false;
-    marker_highlight_color_opacity_customization = false;
-    createHighlightLayer(cachedGeoJSON);
-    updateCursorImage("/content/icons/train_icon_small.png");
-    travelTypeButtonsGrayscale();
-    travel_type_train.querySelector("img").src = travelTypeButtonImages.get(travel_type_train);
-
-    travelTypeValueUpdate(false, false, false, false, false, false, false, true, false);
-
-    if (travel_type_train_click == true) {
-      map.off("click");
-      function onMapClick(e) {
-        allow_individual_log_creation = true;
-        let lat = e.latlng.lat;
-        let lng = e.latlng.lng;
-        type = "train";
-
-        marker = L.marker([lat, lng], {
-          icon: train_icon,
-          travelType: "train",
-          id: random_id,
-        });
-
-        temporaryMarkers.addLayer(marker);
-        marker.addTo(map).bounce(1);
-        markers.push(marker);
-
-        markersData[markersData.length - 1].push([lat, lng, [random_id, type, "content/icons/train_icon.png"]]);
-        drawPolyline();
-      }
-
-      map.on("click", onMapClick);
-    }
-    temporaryMarkers.addTo(map);
-    is_travel_creator_active = !is_travel_creator_active;
-  }
+  travelTypeValueUpdate(false, false, false, false, false, false, false, true, false);
+  // prettier-ignore
+  travelTypeCreator(travel_type_train_click, "train", train_icon, "/content/icons/train_icon_small.png", "content/icons/train_icon.png");
 });
 
 travel_type_bus.addEventListener("click", () => {
-  if (is_travel_creator_active) {
-    allow_individual_log_creation = false;
-    marker_highlight_color_opacity_customization = false;
-    createHighlightLayer(cachedGeoJSON);
-    updateCursorImage("/content/icons/bus_icon_small.png");
-    travelTypeButtonsGrayscale();
-    travel_type_bus.querySelector("img").src = travelTypeButtonImages.get(travel_type_bus);
-
-    travelTypeValueUpdate(false, false, false, false, false, false, false, false, true);
-
-    if (travel_type_bus_click == true) {
-      map.off("click");
-      function onMapClick(e) {
-        allow_individual_log_creation = true;
-        let lat = e.latlng.lat;
-        let lng = e.latlng.lng;
-        type = "bus";
-
-        marker = L.marker([lat, lng], {
-          icon: bus_icon,
-          travelType: "bus",
-          id: random_id,
-        });
-
-        temporaryMarkers.addLayer(marker);
-        marker.addTo(map).bounce(1);
-        markers.push(marker);
-
-        markersData[markersData.length - 1].push([lat, lng, [random_id, type, "content/icons/bus_icon.png"]]);
-        drawPolyline();
-      }
-
-      map.on("click", onMapClick);
-    }
-    temporaryMarkers.addTo(map);
-    is_travel_creator_active = !is_travel_creator_active;
-  }
+  travelTypeValueUpdate(false, false, false, false, false, false, false, false, true);
+  // prettier-ignore
+  travelTypeCreator(travel_type_bus_click, "bus", bus_icon, "/content/icons/bus_icon_small.png", "content/icons/bus_icon.png");
 });
 
 check_button_individual.addEventListener("click", () => {
@@ -1519,6 +1246,45 @@ function travelTypeValueUpdate(manual, car, plane, boat, walk, bicycle, motorcyc
   travel_type_motorcycle_click = motorcycle;
   travel_type_train_click = train;
   travel_type_bus_click = bus;
+}
+
+function travelTypeCreator(travel_type_click, travel_type, icon_type, icon_small_path, icon_path) {
+  if (is_travel_creator_active) {
+    allow_individual_log_creation = false;
+    marker_highlight_color_opacity_customization = false;
+    createHighlightLayer(cachedGeoJSON);
+    updateCursorImage(icon_small_path);
+    travelTypeButtonsGrayscale();
+    `this.querySelector("img").src = travelTypeButtonImages.get(this);`;
+
+    if (travel_type_click == true) {
+      map.off("click");
+      function onMapClick(e) {
+        allow_individual_log_creation = true;
+        let lat = e.latlng.lat;
+        let lng = e.latlng.lng;
+        type = travel_type;
+
+        marker = L.marker([lat, lng], {
+          icon: icon_type,
+          travelType: travel_type,
+          id: random_id,
+        });
+
+        temporaryMarkers.addLayer(marker);
+        marker.addTo(map).bounce(1);
+        markers.push(marker);
+
+        markersData[markersData.length - 1].push([lat, lng, [random_id, type, icon_path]]);
+        drawPolyline();
+      }
+
+      map.on("click", onMapClick);
+    }
+
+    temporaryMarkers.addTo(map);
+    is_travel_creator_active = !is_travel_creator_active;
+  }
 }
 
 function travelTypeButtonsGrayscale() {
@@ -2254,7 +2020,7 @@ function buildCRUD() {
         $travel_logs_individual_name.contentEditable = true;
         $travel_logs_individual_name.focus();
         $travel_logs_individual_name.addEventListener("keydown", (event) => {
-          if (event.key === "Enter" || event.key === "Return") {
+          if (event.key === "Enter") {
             event.preventDefault();
             saveIndividualName();
           }
@@ -2265,7 +2031,7 @@ function buildCRUD() {
         function saveIndividualName() {
           const $travel_logs_individual_name_new = $travel_logs_individual_name.textContent;
 
-          if ($travel_logs_individual_name_new == null || $travel_logs_individual_name_new == "") {
+          if ($travel_logs_individual_name_new === "") {
             showInfoPopup("Please enter a valid name");
           } else {
             $travel_logs_individual_name.textContent = $travel_logs_individual_name_new;
@@ -2294,7 +2060,7 @@ function buildCRUD() {
         }
 
         function handleOutsideClick(event) {
-          if ($travel_logs_individual_div_main.contains(event.target)) {
+          if (!$travel_logs_individual_div_main.contains(event.target)) {
             saveIndividualName();
           }
         }
