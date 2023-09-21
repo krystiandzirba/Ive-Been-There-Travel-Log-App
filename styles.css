@@ -300,9 +300,10 @@ body {
 
 .main_logs_container_arrow {
   position: absolute;
-  top: 50vh;
+  top: 6.5vh;
   left: 95vw;
-  z-index: 899;
+  margin-left: 3vw;
+  z-index: 699;
   height: 4vh;
   transition: left 0.5s ease-in-out;
 }
@@ -646,7 +647,7 @@ body {
   top: 90.1vh;
   left: 39.7vw;
   transform: translate(-50%, 40%);
-  transition: transform 0.5s ease, width 0.5s ease-in-out, margin-left 0.5s ease-in-out;
+  transition: top 0.5s ease, width 0.5s ease-in-out, margin-left 0.5s ease-in-out;
 
   display: flex;
   align-items: center;
@@ -683,12 +684,12 @@ body {
 
 .timeline_container_arrow {
   position: absolute;
-  z-index: 899;
+  z-index: 699;
   height: 4vh;
-  top: 94vh;
+  top: 96vh;
   left: 50vw;
   transform: translate(-50%, 0%);
-  transition: transform 0.5s ease;
+  transition: top 0.5s ease;
 }
 
 .timeline_container_arrow img {
@@ -784,7 +785,8 @@ body {
   position: absolute;
   z-index: 899;
   cursor: pointer;
-  display: flex;
+  /* display: flex; */
+  display: none;
   text-align: center;
   border: black, 2px, solid;
   transform: translate(-50%, -50%);

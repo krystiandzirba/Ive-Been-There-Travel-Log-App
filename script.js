@@ -1,6 +1,8 @@
-// ver: 1.0.03
+// ver: 1.0.04
 
 // Bugs:
+
+// - if home marker is not created, loading the page will place it in the middle of the ocean
 
 // Features to add:
 
@@ -627,12 +629,12 @@ timeline_container_arrow.addEventListener("click", () => {
 
 function toggleTimelineVisibility(toggle) {
   if (toggle && timeline_enabled) {
-    timeline_container.style.transform = "translate(-50%, -67.5%)";
-    timeline_container_arrow.style.transform = "translate(-50%, -630%)";
+    timeline_container.style.top = "64%";
+    timeline_container_arrow.style.top = "72%";
     timeline_visibility = true;
   } else {
-    timeline_container.style.transform = "translate(-50%, 40%)";
-    timeline_container_arrow.style.transform = "translate(-50%, 0%)";
+    timeline_container.style.top = "88%";
+    timeline_container_arrow.style.top = "96%";
     timeline_visibility = false;
   }
 }
