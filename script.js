@@ -1,8 +1,6 @@
-// ver: 1.0.04
+// ver: 1.0.05
 
 // Bugs:
-
-// - if home marker is not created, loading the page will place it in the middle of the ocean
 
 // Features to add:
 
@@ -356,14 +354,16 @@ sub_house_manual_location.addEventListener("click", () => {
     home_lat = clickedLatLng.lat;
     home_lng = clickedLatLng.lng;
 
+    const offset_longitude = clickedLatLng.lng * 1.002;
+
     if (home_button_manual_click === true) {
-      home_marker = L.marker(clickedLatLng, {
+      home_marker = L.marker([clickedLatLng.lat, offset_longitude], {
         icon: home_icon,
         id: "home_marker",
       });
       home_marker.addTo(map).bounce(1);
       markers.push(home_marker);
-      home_circle = L.circle(home_marker.getLatLng(), {
+      home_circle = L.circle([clickedLatLng.lat, clickedLatLng.lng], {
         radius: 50000,
         color: jscolor_home_color,
         fillOpacity: jscolor_home_opacity,
@@ -388,7 +388,9 @@ sub_house_geolocation.addEventListener("click", () => {
     navigator.geolocation.getCurrentPosition((position) => {
       const { latitude, longitude } = position.coords;
 
-      home_marker = L.marker([latitude, longitude], {
+      const offset_longitude = longitude * 1.002;
+
+      home_marker = L.marker([latitude, offset_longitude], {
         icon: home_icon,
         id: "home_marker",
       });
@@ -398,7 +400,7 @@ sub_house_geolocation.addEventListener("click", () => {
 
       home_marker.addTo(map).bounce(1);
       markers.push(home_marker);
-      home_circle = L.circle(home_marker.getLatLng(), {
+      home_circle = L.circle([latitude, longitude], {
         radius: 50000,
         color: jscolor_home_color,
         fillOpacity: jscolor_home_opacity,
@@ -408,7 +410,7 @@ sub_house_geolocation.addEventListener("click", () => {
     });
   }
 
-  setTimeout(homeMarkerZoom, 200);
+  setTimeout(homeMarkerZoom, 350);
 });
 
 sub_house_zoom.addEventListener("click", () => {
@@ -2330,22 +2332,26 @@ function localStorageCreateHomeMarkerAndCircle(latitude, longitude) {
   removeMarkers("home_marker");
   homeMarkerClear();
 
-  home_marker = L.marker([latitude, longitude], {
-    icon: home_icon,
-    id: "home_marker",
-  });
+  const offset_longitude = longitude * 1.002;
 
-  home_lat = latitude;
-  home_lng = longitude;
+  if (!home_lat == 0) {
+    home_marker = L.marker([latitude, offset_longitude], {
+      icon: home_icon,
+      id: "home_marker",
+    });
 
-  home_marker.addTo(map).bounce(1);
+    home_lat = latitude;
+    home_lng = longitude;
 
-  home_circle = L.circle(home_marker.getLatLng(), {
-    radius: 50000,
-    color: jscolor_home_color,
-    fillOpacity: jscolor_home_opacity,
-    weight: 1,
-  }).addTo(map);
+    home_marker.addTo(map).bounce(1);
+
+    home_circle = L.circle([latitude, longitude], {
+      radius: 50000,
+      color: jscolor_home_color,
+      fillOpacity: jscolor_home_opacity,
+      weight: 1,
+    }).addTo(map);
+  }
 }
 
 // Local Storage ↑
