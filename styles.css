@@ -785,8 +785,8 @@ body {
   position: absolute;
   z-index: 899;
   cursor: pointer;
-  /* display: flex; */
-  display: none;
+  display: flex;
+  /* display: none; */
   text-align: center;
   border: black, 2px, solid;
   transform: translate(-50%, -50%);
