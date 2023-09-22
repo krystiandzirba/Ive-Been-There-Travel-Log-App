@@ -1,4 +1,4 @@
-// ver: 1.0.05
+// ver: 1.0.6
 
 // Bugs:
 
@@ -338,7 +338,7 @@ sub_house_color_button.addEventListener("click", () => {
 jscolor_home.addEventListener("change", () => {
   jscolor_home_data = jscolor_home.jscolor.toHEXAString();
   jscolor_home_color = jscolor_home_data.slice(0, -2);
-  jscolor_home_opacity = parseInt(jscolor_home_data.slice(-2), 16) / 255;
+  jscolor_home_opacity = (parseInt(jscolor_home_data.slice(-2), 16) / 255).toFixed(2);
 });
 
 sub_house_manual_location.addEventListener("click", () => {
@@ -1081,7 +1081,7 @@ close_button_group.addEventListener("mouseleave", () =>
 jscolor_highlight.addEventListener("change", () => {
   jscolor_highlight_data = jscolor_highlight.jscolor.toHEXAString();
   jscolor_highlight_color = jscolor_highlight_data.slice(0, -2);
-  jscolor_highlight_opacity = parseInt(jscolor_highlight_data.slice(-2), 16) / 255;
+  jscolor_highlight_opacity = (parseInt(jscolor_highlight_data.slice(-2), 16) / 255).toFixed(2);
 });
 
 travel_type_car.addEventListener("click", () => {
