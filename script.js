@@ -1,4 +1,4 @@
-// ver: 1.0.6
+// ver: 1.0.7
 
 // Bugs:
 
@@ -284,8 +284,7 @@ let trueMarkers = L.layerGroup();
 
 // 1 = local storage / 0 = temporary
 
-/* 1 */ let home_lat = "";
-/* 1 */ let home_lng = "";
+/* 1 */ let homeData = {};
 /* 1 */ let markersData = [];
 /* 1 */ let travelLogs = [];
 /* 1 */ let CRUD = [];
@@ -351,9 +350,6 @@ sub_house_manual_location.addEventListener("click", () => {
     toggleCustomCursorVisibility(false);
 
     const clickedLatLng = e.latlng;
-    home_lat = clickedLatLng.lat;
-    home_lng = clickedLatLng.lng;
-
     const offset_longitude = clickedLatLng.lng * 1.002;
 
     if (home_button_manual_click === true) {
@@ -373,7 +369,12 @@ sub_house_manual_location.addEventListener("click", () => {
 
     home_button_manual_click = false;
 
-    localStorageSaveHomeLocation();
+    homeData.lat = clickedLatLng.lat;
+    homeData.lng = clickedLatLng.lng;
+    homeData.color = jscolor_home_color;
+    homeData.opacity = jscolor_home_opacity;
+    localStorageSaveHomeData();
+
     map.off("click", mapClickListener);
   };
   map.on("click", mapClickListener);
@@ -395,9 +396,6 @@ sub_house_geolocation.addEventListener("click", () => {
         id: "home_marker",
       });
 
-      home_lat = latitude;
-      home_lng = longitude;
-
       home_marker.addTo(map).bounce(1);
       markers.push(home_marker);
       home_circle = L.circle([latitude, longitude], {
@@ -406,7 +404,12 @@ sub_house_geolocation.addEventListener("click", () => {
         fillOpacity: jscolor_home_opacity,
         weight: 1,
       }).addTo(map);
-      localStorageSaveHomeLocation();
+
+      homeData.lat = latitude;
+      homeData.lng = longitude;
+      homeData.color = jscolor_home_color;
+      homeData.opacity = jscolor_home_opacity;
+      localStorageSaveHomeData();
     });
   }
 
@@ -420,7 +423,8 @@ sub_house_zoom.addEventListener("click", () => {
 sub_house_delete.addEventListener("click", () => {
   removeMarkers("home_marker");
   homeMarkerClear();
-  localStorageRemoveHomeLocation();
+
+  localStorageRemoveHomeData();
 });
 
 function homeMarkerClear() {
@@ -436,7 +440,7 @@ function homeMarkerClear() {
 }
 
 function homeMarkerZoom() {
-  if (home_marker && home_lat && home_lng) {
+  if (home_marker && homeData.lat && homeData.lng) {
     map.setView(home_marker.getLatLng(), 7);
   } else {
     showInfoPopup("Home location not set!");
@@ -2309,39 +2313,35 @@ function removeContainerTravelLogs() {
   document.getElementById("logs_list").innerHTML = "";
 }
 
-function localStorageSaveHomeLocation() {
-  localStorage.setItem("homelat", JSON.stringify(home_lat));
-  localStorage.setItem("homelng", JSON.stringify(home_lng));
+function localStorageSaveHomeData() {
+  localStorage.setItem("homeData", JSON.stringify(homeData));
 }
 
-function localStorageLoadHomeLocation() {
-  if (localStorage.getItem("homelat")) {
-    home_lat = JSON.parse(localStorage.getItem("homelat"));
-  }
-  if (localStorage.getItem("homelng")) {
-    home_lng = JSON.parse(localStorage.getItem("homelng"));
+function localStorageLoadHomeData() {
+  if (localStorage.getItem("homeData")) {
+    homeData = JSON.parse(localStorage.getItem("homeData"));
+  } else {
+    homeData = {};
   }
 }
 
-function localStorageRemoveHomeLocation() {
-  localStorage.removeItem("homelat");
-  localStorage.removeItem("homelng");
+function localStorageRemoveHomeData() {
+  localStorage.removeItem("homeData");
 }
 
-function localStorageCreateHomeMarkerAndCircle(latitude, longitude) {
-  removeMarkers("home_marker");
-  homeMarkerClear();
+function localStorageCreateHomeMarkerAndCircle() {
+  let latitude = homeData.lat;
+  let longitude = homeData.lng;
+  let jscolor_home_opacity = homeData.opacity;
+  let jscolor_home_color = homeData.color;
 
   const offset_longitude = longitude * 1.002;
 
-  if (!home_lat == 0) {
+  if (!latitude == 0) {
     home_marker = L.marker([latitude, offset_longitude], {
       icon: home_icon,
       id: "home_marker",
     });
-
-    home_lat = latitude;
-    home_lng = longitude;
 
     home_marker.addTo(map).bounce(1);
 
@@ -2447,7 +2447,8 @@ function onLoadingComplete() {
   localStorageLoadTravelLogs();
   localStorageLoadMarkerCoordinates();
   localStorageLoadCRUD();
-  localStorageLoadHomeLocation();
+
+  localStorageLoadHomeData();
 
   localStorageCreateStoredIds();
   localStorageCreateTimelineData(travelLogs, timelineData);
@@ -2457,7 +2458,7 @@ function onLoadingComplete() {
   populateTimeline();
   buildCRUD();
   localStorageCreateTrueMarkers();
-  localStorageCreateHomeMarkerAndCircle(home_lat, home_lng);
+  localStorageCreateHomeMarkerAndCircle();
 
   calculateDistances();
   distancesBreakdown(rawCoordinatesDistances);
@@ -2501,6 +2502,7 @@ close_info_popup.addEventListener("click", closeInfoPopup);
 // // ---------- TEST ---------- ↓
 
 test_button.addEventListener("click", () => {
+  console.log("-1- " + "homeData", homeData);
   console.log("-1- " + "markersData", markersData);
   console.log("-1- " + "travelLogs", travelLogs);
   console.log("-1- " + "CRUD", CRUD);
