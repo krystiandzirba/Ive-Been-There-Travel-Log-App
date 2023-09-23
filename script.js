@@ -1,4 +1,4 @@
-// ver: 1.0.7
+// ver: 1.0.8
 
 // Bugs:
 
@@ -205,6 +205,7 @@ const travel_type_motorcycle = document.getElementById("travel_type_motorcycle")
 const travel_type_train = document.getElementById("travel_type_train");
 const travel_type_bus = document.getElementById("travel_type_bus");
 
+const jscolor_highlight_container = document.querySelector(".jscolor_highlight_container");
 const jscolor_highlight = document.getElementById("jscolor_highlight");
 
 const check_button_individual = document.getElementById("check_button_individual");
@@ -247,7 +248,7 @@ let travel_type_bus_click = false;
 let travel_logs_individual_name = "";
 let travel_logs_individual_input = document.getElementById("travel_logs_individual_input");
 
-let marker_highlight_color_opacity_customization = true;
+let highlight_color_opacity_customization = true;
 let jscolor_highlight_data = "";
 let jscolor_highlight_color = "#1495ED";
 let jscolor_highlight_opacity = 0.5;
@@ -1082,10 +1083,18 @@ close_button_group.addEventListener("mouseleave", () =>
 // Travel log group ↑
 // Travel Log Individual ↓
 
+jscolor_highlight_container.addEventListener("click", () => {
+  if (highlight_color_opacity_customization == false) {
+    showInfoPopup("Cannot change highlight settings after marker was placed");
+  }
+});
+
 jscolor_highlight.addEventListener("change", () => {
-  jscolor_highlight_data = jscolor_highlight.jscolor.toHEXAString();
-  jscolor_highlight_color = jscolor_highlight_data.slice(0, -2);
-  jscolor_highlight_opacity = (parseInt(jscolor_highlight_data.slice(-2), 16) / 255).toFixed(2);
+  if (highlight_color_opacity_customization == true) {
+    jscolor_highlight_data = jscolor_highlight.jscolor.toHEXAString();
+    jscolor_highlight_color = jscolor_highlight_data.slice(0, -2);
+    jscolor_highlight_opacity = (parseInt(jscolor_highlight_data.slice(-2), 16) / 255).toFixed(2);
+  }
 });
 
 travel_type_car.addEventListener("click", () => {
@@ -1259,16 +1268,16 @@ function travelTypeValueUpdate(manual, car, plane, boat, walk, bicycle, motorcyc
 function travelTypeCreator(travel_type_click, travel_type, icon_type, icon_small_path, icon_path) {
   if (is_travel_creator_active) {
     allow_individual_log_creation = false;
-    marker_highlight_color_opacity_customization = false;
     createHighlightLayer(cachedGeoJSON);
     updateCursorImage(icon_small_path);
-    travelTypeButtonsGrayscale();
+    travelTypeButtonsGrayscale(icon_small_path);
     `this.querySelector("img").src = travelTypeButtonImages.get(this);`;
 
     if (travel_type_click == true) {
       map.off("click");
       function onMapClick(e) {
         allow_individual_log_creation = true;
+        highlight_color_opacity_customization = false;
         let lat = e.latlng.lat;
         let lng = e.latlng.lng;
         type = travel_type;
@@ -1295,10 +1304,13 @@ function travelTypeCreator(travel_type_click, travel_type, icon_type, icon_small
   }
 }
 
-function travelTypeButtonsGrayscale() {
+function travelTypeButtonsGrayscale(name) {
   for (const button of travelTypeButtons) {
     const img = button.querySelector("img");
-    img.src = travelTypeButtonImages.get(button).replace(".png", "_grayscale.png");
+    const imageName = travelTypeButtonImages.get(button);
+    if (imageName !== name) {
+      img.src = imageName.replace(".png", "_grayscale.png");
+    }
   }
 }
 
@@ -1865,7 +1877,7 @@ function buildCRUD() {
     $travel_logs_group_add_travel_button.classList.add("travel_logs_CRUD_buttons");
     $travel_logs_group_add_travel_button.addEventListener("click", () => {
       reference = stored_group_id_reference;
-      marker_highlight_color_opacity_customization = true;
+      highlight_color_opacity_customization = true;
       is_travel_creator_active = true;
       markers_visibility = false;
       polyline_visibility = false;
