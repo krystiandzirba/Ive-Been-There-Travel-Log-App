@@ -1,4 +1,4 @@
-// ver: 1.0.8
+// ver: 1.1.0
 
 // Bugs:
 
@@ -8,8 +8,6 @@
 // - portrait mode, no UI until mouse click
 // - marker size slider
 // - separate buttons to clear travel log / markers / highlights / timeline ...
-// - true highlights drawn from every element in array, make it group in layers by its id, and add layers separately
-//   (if multiple markers from the same individual log are placed in the same country, the true highlight is multiplied)
 // - add a 0.5s timeout between deleting individual and group logs
 
 // ---------- 5. Add different page styles (font, animations, images, backgrounds, theme) - modern / middleage / other
@@ -290,6 +288,7 @@ let trueMarkers = L.layerGroup();
 /* 1 */ let travelLogs = [];
 /* 1 */ let CRUD = [];
 /* 1 */ let trueHighlights = [];
+/* 0 */ let createdHighlightLayers = [];
 /* 0 */ let highlights = [];
 /* 0 */ let CRUDGroup = {};
 /* 0 */ let CRUDIndividual = {};
@@ -2287,22 +2286,31 @@ function localStorageLoadTrueHighlights() {
 }
 
 function localStorageCreateTrueHighlights() {
+  createdHighlightLayers = [];
   trueHighlights.forEach((highlight) => {
-    const { country_name, jscolor_highlight_color, jscolor_highlight_opacity } = highlight;
+    const { country_name, jscolor_highlight_color, jscolor_highlight_opacity, random_id } = highlight;
 
-    const feature = cachedGeoJSON.features.find((f) => f.properties.ADMIN === country_name);
+    const layer_exist = createdHighlightLayers.some(
+      (layer) => layer.country_name === country_name && layer.random_id === random_id
+    );
 
-    if (feature) {
-      const layer = L.geoJSON(feature, {
-        style: {
-          fillColor: jscolor_highlight_color,
-          fillOpacity: jscolor_highlight_opacity,
-          color: "black",
-          weight: 1,
-          opacity: 1,
-        },
-        onEachFeature: function (feature, layer) {},
-      }).addTo(map);
+    if (!layer_exist) {
+      const feature = cachedGeoJSON.features.find((f) => f.properties.ADMIN === country_name);
+
+      if (feature) {
+        const layer = L.geoJSON(feature, {
+          style: {
+            fillColor: jscolor_highlight_color,
+            fillOpacity: jscolor_highlight_opacity,
+            color: "black",
+            weight: 1,
+            opacity: 1,
+          },
+          onEachFeature: function (feature, layer) {},
+        }).addTo(map);
+
+        createdHighlightLayers.push({ country_name, random_id });
+      }
     }
   });
 }
