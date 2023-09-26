@@ -1,4 +1,4 @@
-// ver: 1.1.0
+// ver: 1.1.1
 
 // Bugs:
 
@@ -9,6 +9,8 @@
 // - marker size slider
 // - separate buttons to clear travel log / markers / highlights / timeline ...
 // - add a 0.5s timeout between deleting individual and group logs
+// - add statistic: furthest distance from the home location
+// - draggable travel logs
 
 // ---------- 5. Add different page styles (font, animations, images, backgrounds, theme) - modern / middleage / other
 // ---------- 7. Add different languages
@@ -68,6 +70,7 @@ const sub_overlay_labels = document.getElementById("sub_overlay_labels");
 const sub_overlay_borders = document.getElementById("sub_overlay_borders");
 const sub_overlay_markers = document.getElementById("sub_overlay_markers");
 const sub_overlay_polylines = document.getElementById("sub_overlay_polylines");
+const sub_overlay_highlights = document.getElementById("sub_overlay_highlights");
 
 let overlay_train_active = false;
 let overlay_bicycle_active = false;
@@ -75,6 +78,7 @@ let overlay_labels_active = false;
 let overlay_borders_active = false;
 let overlay_markers_active = true;
 let overlay_polylines_active = true;
+let overlay_highlights_active = true;
 
 let markers_visibility = true;
 let polyline_visibility = true;
@@ -566,6 +570,13 @@ sub_overlay_polylines.addEventListener("click", () => {
   overlay_polylines_active = toggleIconColor(overlay_polylines_active, sub_polylines_icon);
 });
 
+sub_overlay_highlights.addEventListener("click", () => {
+  overlay_highlights_active = toggleIconColor(overlay_highlights_active, sub_highlights_icon);
+
+  if (overlay_highlights_active) localStorageCreateTrueHighlights();
+  else removeTrueHighlights();
+});
+
 function switchTileAddon(tile_addon) {
   if (map.hasLayer(tile_addon)) {
     tile_addon.removeFrom(map);
@@ -635,11 +646,11 @@ timeline_container_arrow.addEventListener("click", () => {
 
 function toggleTimelineVisibility(toggle) {
   if (toggle && timeline_enabled) {
-    timeline_container.style.top = "64%";
+    timeline_container.style.top = "63.2%";
     timeline_container_arrow.style.top = "72%";
     timeline_visibility = true;
   } else {
-    timeline_container.style.top = "88%";
+    timeline_container.style.top = "89%";
     timeline_container_arrow.style.top = "96%";
     timeline_visibility = false;
   }
