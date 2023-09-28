@@ -3,28 +3,48 @@
 Welcome to "I've Been There," the app that lets you add, view and modify your travel logs from every corner of the globe.
 Whether you're a seasoned explorer or just starting your adventure journey, this app is your ultimate companion. Explore, remember, and relive your travel tales with ease.
 
+![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/183f2d3e-b349-4bb1-890d-4e1f4fa5a976)
 ## how it works? 
 
 ### **Step 1: Create Your Main Travel Log**
 
+
+<br>
 Start by navigating to the right-side panel and click the "Begin New Travel!" button:
 - Give your adventure a unique name and select the date when your journey took place. For instance, "Europe Tour 2023 | 10.09.2023 - 20.09.2023". <br />
-**_This component will serve as the foundation for the sub-travels you'll be adding in the next step._**
+Once you've finished, just hit the "✔️" button to confirm your choice.
+**_This component will serve as the foundation for the sub-travels you'll be adding in the next step._** <br>
+<br>
+
+![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/6af7c1ee-7c49-488b-9001-6ca835402862)
+![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/ee1514db-f88a-444b-8392-ffbf3956a085)
+![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/42656eaa-a6a4-47e4-b14f-9355eefe7e37)
+
+
 
 ### **Step 2: Add Sub Travels to Your Main Log**
 
-- For each Main log of the "Europe Tour 2023" adventure, create individual sub-travels. Similar to the main log, provide a name and date for each sub-travel.
+- For each Main log of the "Europe Tour 2023" adventure, create individual sub-travels using the ➕ button in the main log. Similar to the main log, provide a name and date for each sub-travel.
 But this time you can choose the type of transportation you used for each sub-travel. Plus, you can customize the way countries are highlighted on the map by picking colors and adjusting opacity.
 - Once you've set everything up, start placing markers on the map by simply clicking with the Left Mouse Button (LMB) and then confirming your selection with the ✓ button.
 
-And don't worry, if you happen to make a mistake while creating either a main or sub-travel log, there's no need to panic. Simply click the "X" button to clear your current input and start fresh.
+And don't worry, if you happen to make a mistake while creating either a main or sub-travel log, simply click the "❌" button to clear your current input and start fresh.
+
+![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/4aa82b2e-7643-4b86-963b-774140cf5746)
+
+
 
 ### **Step 3: Manage travel logs**
 
 In the right-side panel, you have all the tools you need to effortlessly manage your travel logs:
 
-- Rename Your Logs: Keep your logs organized by giving them meaningful names. Simply click on a pen icon to edit it.
-- Delete Logs: If you no longer need a travel log, you can easily remove it with the click of a button.
+![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/aca5c161-45fe-4fef-9a71-36aa3f1d7e1a)
+
+
+1) Rename Your Logs: Keep your logs organized by giving them meaningful names. Simply click on a pen icon to edit it.
+2) Add sub-travels (we have that covered)
+3) Delete Logs: If you no longer need a travel log, you can easily remove it with the click of a button.
+4) Collapse button: if your travel log is getting out of hands you can simply hide the display of this particular log.
 - Detailed Information: Sub-travel logs provide you with specific details about your journeys. You can see the travel type used and the distance covered during each trip, helping you reminisce about your adventures.
 
 ### **Left panel settings** 
@@ -55,3 +75,6 @@ Dive into the details of your travel adventures with the "Statistics" button:
 Discover your Longest, Shortest, and Average travel distances, allowing you to reminisce about your epic journeys.
 Find out your Most Common Travel Type, revealing your preferred mode of exploration.
 Explore the Distance Divided by Travel Type, giving you a breakdown of distances covered for each travel type used.
+
+
+...
