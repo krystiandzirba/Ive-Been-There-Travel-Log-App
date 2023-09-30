@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>I've been there! - Travel log app v1.1.1</title>
+    <title>I've been there! - Travel log app v1.1.2</title>
     <link rel="icon" type="image/x-icon" href="/content/icons/globe_icon_black.png" />
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -178,7 +178,12 @@
     </div>
 
     <div class="main_logs_container">
-      <button id="add_travel" class="add_travel">Begin new travel!</button>
+      <button id="add_travel_superset" class="add_travel">
+        <i class="fa-solid fa-plus fa-1xl" style="color: #c9c9c9"></i>
+      </button>
+      <button id="add_travel_group" class="add_travel">
+        <i class="fa-solid fa-folder-plus fa-xl" style="color: #c9c9c9"></i>
+      </button>
       <div id="logs_list" class="travel_logs"></div>
     </div>
 
@@ -312,7 +317,7 @@
       <img id="custom_cursor_image" src="/content/icons/car_icon_small.png" />
     </div>
 
-    <div class="app_version">ver: 1.1.1</div>
+    <div class="app_version">ver: 1.1.2</div>
 
     <div id="info_popup" style="display: none">
       <span id="close_info_popup">&times;</span>

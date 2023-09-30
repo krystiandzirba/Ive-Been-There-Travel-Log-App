@@ -1,4 +1,4 @@
-// ver: 1.1.1
+// ver: 1.1.2
 
 // Bugs:
 
@@ -11,6 +11,7 @@
 // - add a 0.5s timeout between deleting individual and group logs
 // - add statistic: furthest distance from the home location
 // - draggable travel logs
+// - city search bar
 
 // ---------- 5. Add different page styles (font, animations, images, backgrounds, theme) - modern / middleage / other
 // ---------- 7. Add different languages
@@ -163,7 +164,8 @@ const close_info_popup = document.getElementById("close_info_popup");
 // // Info box ↑
 // // Travel Log Creator ↓
 
-const add_travel = document.getElementById("add_travel");
+const add_travel_group = document.getElementById("add_travel_group");
+const add_travel_superset = document.getElementById("add_travel_superset");
 const travel_logs_individual_main_container = document.getElementById("travel_logs_individual_main_container");
 
 const main_logs_container = document.querySelector(".main_logs_container");
@@ -183,6 +185,8 @@ let main_logs_container_arrow_clicked = false;
 
 let allow_individual_log_creation = false;
 let reference = "";
+
+let current_crud_category = "none";
 
 // // Travel Log Creator ↑
 // // Travel log group ↓
@@ -295,7 +299,8 @@ let trueMarkers = L.layerGroup();
 /* 0 */ let createdHighlightLayers = [];
 /* 0 */ let highlights = [];
 /* 0 */ let CRUDGroup = {};
-/* 0 */ let CRUDIndividual = {};
+/* 0 */ let CRUDSubset = {};
+/* 0 */ let CRUDSuperset = {};
 /* 0 */ let markers = [];
 /* 0 */ let polylines = [];
 /* 0 */ let storedIds = [];
@@ -963,7 +968,35 @@ function changeIconColorOnHover(toggle, element, button) {
 // Page interaction ↑
 // Travel Log Creator ↓
 
-add_travel.addEventListener("click", () => {
+add_travel_superset.addEventListener("click", () => {
+  current_crud_category = "superset";
+  highlight_color_opacity_customization = true;
+  is_travel_creator_active = true;
+  markers_visibility = false;
+  polyline_visibility = false;
+  toggleMarkersVisibility();
+  togglePolylineVisibility();
+  travelTypeButtonsColor();
+  toggleMainLogContainerVisibility(false);
+  toggleTimelineVisibility(false);
+  toggleStatisticsVisibility(false);
+  if (!statistics_visibility) {
+    statistics_visibility = toggleIconColor(statistics_visibility, statistics_icon);
+  }
+
+  markersData = markersData.filter((coordinatesArray) => coordinatesArray.length > 0);
+  markersData.push([]);
+  random_id = "";
+  random_id = randomIdGenerator();
+  if (
+    travel_logs_individual_main_container.style.display === "none" ||
+    travel_logs_individual_main_container.style.display === ""
+  ) {
+    toggleTravelLogsIndividualMainContainerVisibility(true);
+  }
+});
+
+add_travel_group.addEventListener("click", () => {
   if (!statistics_visibility) {
     statistics_visibility = toggleIconColor(statistics_visibility, statistics_icon);
   }
@@ -971,6 +1004,7 @@ add_travel.addEventListener("click", () => {
   toggleTimelineVisibility(false);
   toggleStatisticsVisibility(false);
   if (!is_travel_creator_active) {
+    current_crud_category = "group";
     allow_individual_log_creation = false;
     random_id = "";
     random_id = randomIdGenerator();
@@ -1054,6 +1088,7 @@ check_button_group.addEventListener("click", () => {
     toggleTravelLogsGroupMainContainerVisibility(false);
     timelineInfoToggle();
     closeInfoPopup();
+    current_crud_category = "none";
   }
 });
 
@@ -1066,6 +1101,7 @@ check_button_group.addEventListener("mouseleave", () =>
 );
 
 close_button_group.addEventListener("click", () => {
+  current_crud_category = "none";
   is_travel_creator_active = false;
   stored_group_log_id = random_id;
   removeStoredId(stored_group_log_id);
@@ -1211,6 +1247,7 @@ check_button_individual.addEventListener("click", () => {
       timelineInfoToggle();
       closeInfoPopup();
       is_travel_creator_active = false;
+      current_crud_category = "none";
     }
   } else {
     showInfoPopup("please, draw a path on the map first");
@@ -1226,6 +1263,7 @@ check_button_individual.addEventListener("mouseleave", () =>
 );
 
 close_button_individual.addEventListener("click", () => {
+  current_crud_category = "none";
   toggleMainLogContainerVisibility(true);
   toggleTimelineVisibility(true);
   closeInfoPopup();
@@ -1576,6 +1614,8 @@ function setLayerStyle(layer, fillColor, fillOpacity, attribution, random_id) {
 function groupDataSubmit() {
   CRUDGroup = {};
 
+  CRUDGroup.CRUD_category = "group";
+
   CRUDGroup.CRUD_group_id = random_id;
 
   CRUDGroup.CRUD_group_name = travel_logs_group_name;
@@ -1583,12 +1623,13 @@ function groupDataSubmit() {
   CRUDGroup.CRUD_group_date_start = travel_date_start;
   CRUDGroup.CRUD_group_date_end = travel_date_end;
 
-  CRUDGroup.CRUD_individual = [];
+  CRUDGroup.CRUD_subset = [];
 
   travelLogs.push([
     CRUDGroup.CRUD_group_name,
     CRUDGroup.CRUD_group_id,
     CRUDGroup.CRUD_group_date_start + " - " + CRUDGroup.CRUD_group_date_end,
+    CRUDGroup.CRUD_category,
   ]);
 
   CRUD.push(CRUDGroup);
@@ -1597,27 +1638,53 @@ function groupDataSubmit() {
 }
 
 function individualDataSubmit() {
-  CRUDIndividual = {};
+  if (current_crud_category == "subset") {
+    CRUDSubset = {};
 
-  CRUDIndividual.CRUD_individual_id = random_id;
+    CRUDSubset.CRUD_category = "subset";
 
-  CRUDIndividual.CRUD_individual_name = travel_logs_individual_name;
+    CRUDSubset.CRUD_subset_id = random_id;
 
-  calculateTotalIdDistance(rawCoordinatesDistances, CRUDIndividual.CRUD_individual_id);
+    CRUDSubset.CRUD_subset_name = travel_logs_individual_name;
 
-  CRUDIndividual.CRUD_individual_distance = total_id_distance;
-  CRUDIndividual.CRUD_individual_distance_type = type;
+    calculateTotalIdDistance(rawCoordinatesDistances, CRUDSubset.CRUD_subset_id);
 
-  travelLogs.push([
-    CRUDIndividual.CRUD_individual_name,
-    CRUDIndividual.CRUD_individual_id,
-    travel_date_start + " - " + travel_date_end,
-  ]);
+    CRUDSubset.CRUD_subset_distance = total_id_distance;
+    CRUDSubset.CRUD_subset_distance_type = type;
 
-  const matching_group = CRUD.find((group) => group.CRUD_group_id === reference);
+    travelLogs.push([
+      CRUDSubset.CRUD_subset_name,
+      CRUDSubset.CRUD_subset_id,
+      travel_date_start + " - " + travel_date_end,
+    ]);
 
-  if (matching_group) {
-    matching_group.CRUD_individual.push(CRUDIndividual);
+    const matching_group = CRUD.find((group) => group.CRUD_group_id === reference);
+
+    if (matching_group) {
+      matching_group.CRUD_subset.push(CRUDSubset);
+    }
+  }
+
+  if (current_crud_category == "superset") {
+    CRUDSuperset = {};
+
+    CRUDSuperset.CRUD_category = "superset";
+
+    CRUDSuperset.CRUD_superset_id = random_id;
+    CRUDSuperset.CRUD_superset_name = travel_logs_individual_name;
+
+    calculateTotalIdDistance(rawCoordinatesDistances, CRUDSuperset.CRUD_superset_id);
+
+    CRUDSuperset.CRUD_superset_distance = total_id_distance;
+    CRUDSuperset.CRUD_superset_distance_type = type;
+
+    travelLogs.push([
+      CRUDSuperset.CRUD_superset_name,
+      CRUDSuperset.CRUD_superset_id,
+      travel_date_start + " - " + travel_date_end,
+    ]);
+
+    CRUD.push(CRUDSuperset);
   }
 
   travel_logs_individual_input.value = "";
@@ -1774,253 +1841,434 @@ function removeLoadingPageContent() {
 
 function buildCRUD() {
   for (let i = 0; i < CRUD.length; i++) {
+    let stored_group_category = CRUD[i].CRUD_category;
     let stored_group_id_reference = CRUD[i].CRUD_group_id;
     let stored_group_name_reference = CRUD[i].CRUD_group_name;
     let stored_group_date_start_reference = CRUD[i].CRUD_group_date_start;
     let stored_group_date_end_reference = CRUD[i].CRUD_group_date_end;
 
-    // main group div
+    if (stored_group_category === "group") {
+      // main group div
 
-    const $travel_logs_group_div_main = document.createElement("div");
-    $travel_logs_group_div_main.classList.add("travel_logs_group_div_main");
+      const $travel_logs_group_div_main = document.createElement("div");
+      $travel_logs_group_div_main.classList.add("travel_logs_group_div_main");
 
-    const $travel_logs_group_div_settings = document.createElement("div");
-    $travel_logs_group_div_settings.classList.add("travel_logs_group_div_settings");
+      const $travel_logs_group_div_settings = document.createElement("div");
+      $travel_logs_group_div_settings.classList.add("travel_logs_group_div_settings");
 
-    const $travel_logs_group_content = document.createElement("div");
-    $travel_logs_group_content.classList.add("travel_logs_group_div_content");
-    $travel_logs_group_content.id = stored_group_id_reference;
+      const $travel_logs_group_content = document.createElement("div");
+      $travel_logs_group_content.classList.add("travel_logs_group_div_content");
+      $travel_logs_group_content.id = stored_group_id_reference;
 
-    // main group div
-    // group id
+      // main group div
+      // group id
 
-    const $group_log_id = document.createElement("span");
-    $group_log_id.textContent = stored_group_id_reference;
+      const $group_log_id = document.createElement("span");
+      $group_log_id.textContent = stored_group_id_reference;
 
-    // group id
-    // group name div
+      // group id
+      // group name div
 
-    const $travel_logs_group_name_container = document.createElement("div");
-    $travel_logs_group_name_container.classList.add("travel_logs_group_name_container");
-    $travel_logs_group_div_settings.appendChild($travel_logs_group_name_container);
+      const $travel_logs_group_name_container = document.createElement("div");
+      $travel_logs_group_name_container.classList.add("travel_logs_group_name_container");
+      $travel_logs_group_div_settings.appendChild($travel_logs_group_name_container);
 
-    // group name div
-    // group name
+      // group name div
+      // group name
 
-    const $travel_logs_group_name = document.createElement("span");
-    $travel_logs_group_name.textContent = stored_group_name_reference;
-    $travel_logs_group_name.classList.add("travel_logs_group_name");
-    $travel_logs_group_name_container.appendChild($travel_logs_group_name);
+      const $travel_logs_group_name = document.createElement("span");
+      $travel_logs_group_name.textContent = stored_group_name_reference;
+      $travel_logs_group_name.classList.add("travel_logs_group_name");
+      $travel_logs_group_name_container.appendChild($travel_logs_group_name);
 
-    // group name
-    // group date
+      // group name
+      // group date
 
-    const $travel_logs_group_date = document.createElement("span");
-    $travel_logs_group_date.classList.add("travel_logs_group_date");
-    $travel_logs_group_date.textContent = stored_group_date_start_reference + " - " + stored_group_date_end_reference;
-    $travel_logs_group_name_container.appendChild($travel_logs_group_date);
+      const $travel_logs_group_date = document.createElement("span");
+      $travel_logs_group_date.classList.add("travel_logs_group_date");
+      $travel_logs_group_date.textContent = stored_group_date_start_reference + " - " + stored_group_date_end_reference;
+      $travel_logs_group_name_container.appendChild($travel_logs_group_date);
 
-    // group date
-    // group name edit
+      // group date
+      // group name edit
 
-    const $travel_logs_group_name_edit = document.createElement("button");
-    $travel_logs_group_name_edit.innerHTML = '<i class="fas fa-pen fa-xl" style="color: #c9c9c9;"></i>';
-    $travel_logs_group_name_edit.classList.add("travel_logs_CRUD_buttons");
-    $travel_logs_group_name_edit.addEventListener("click", () => {
-      $travel_logs_group_name.contentEditable = true;
-      $travel_logs_group_name.focus();
-      $travel_logs_group_name.addEventListener("keydown", (event) => {
-        if (event.key === "Enter") {
-          event.preventDefault();
-          saveGroupName();
-        }
-      });
-
-      document.addEventListener("click", handleOutsideClick);
-
-      function saveGroupName() {
-        const $travel_logs_group_name_new = $travel_logs_group_name.textContent;
-
-        if ($travel_logs_group_name_new === "") {
-          showInfoPopup("Please enter a valid name");
-        } else {
-          $travel_logs_group_name.textContent = $travel_logs_group_name_new;
-          const logId = $group_log_id.textContent;
-          const logIndex = travelLogs.findIndex((log) => log[1] === logId);
-          if (logIndex !== -1) {
-            travelLogs[logIndex][0] = $travel_logs_group_name_new;
-            CRUD[i].CRUD_group_name = $travel_logs_group_name_new;
+      const $travel_logs_group_name_edit = document.createElement("button");
+      $travel_logs_group_name_edit.innerHTML = '<i class="fas fa-pen fa-xl" style="color: #c9c9c9;"></i>';
+      $travel_logs_group_name_edit.classList.add("travel_logs_CRUD_buttons");
+      $travel_logs_group_name_edit.addEventListener("click", () => {
+        $travel_logs_group_name.contentEditable = true;
+        $travel_logs_group_name.focus();
+        $travel_logs_group_name.addEventListener("keydown", (event) => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            saveGroupName();
           }
-          for (let i = 0; i < timelineData.events.length; i++) {
-            if (timelineData.events[i].unique_id === stored_group_id_reference) {
-              timelineData.events[i].text.headline = $travel_logs_group_name_new;
-              break;
+        });
+
+        document.addEventListener("click", handleOutsideClick);
+
+        function saveGroupName() {
+          const $travel_logs_group_name_new = $travel_logs_group_name.textContent;
+
+          if ($travel_logs_group_name_new === "") {
+            showInfoPopup("Please enter a valid name");
+          } else {
+            $travel_logs_group_name.textContent = $travel_logs_group_name_new;
+            const logId = $group_log_id.textContent;
+            const logIndex = travelLogs.findIndex((log) => log[1] === logId);
+            if (logIndex !== -1) {
+              travelLogs[logIndex][0] = $travel_logs_group_name_new;
+              CRUD[i].CRUD_group_name = $travel_logs_group_name_new;
+            }
+            for (let i = 0; i < timelineData.events.length; i++) {
+              if (timelineData.events[i].unique_id === stored_group_id_reference) {
+                timelineData.events[i].text.headline = $travel_logs_group_name_new;
+                break;
+              }
             }
           }
+
+          if (timeline_enabled === true) {
+            populateTimeline();
+          }
+
+          localStorageSaveTravelLogs();
+          localStorageSaveCRUD();
+
+          $travel_logs_group_name.contentEditable = false;
+          document.removeEventListener("click", handleOutsideClick);
         }
 
-        if (timeline_enabled === true) {
-          populateTimeline();
+        function handleOutsideClick(event) {
+          if (!$travel_logs_group_div_main.contains(event.target)) {
+            saveGroupName();
+          }
+        }
+      });
+      $travel_logs_group_div_settings.appendChild($travel_logs_group_name_edit);
+
+      // group name edit
+      // group (individual) travel button
+      CRUDGroup.CRUD_subset = [];
+
+      const $travel_logs_group_add_travel_button = document.createElement("button");
+      $travel_logs_group_add_travel_button.innerHTML = '<i class="fa-solid fa-plus fa-xl" style="color: #c9c9c9;"></i>';
+      $travel_logs_group_add_travel_button.classList.add("travel_logs_CRUD_buttons");
+      $travel_logs_group_add_travel_button.addEventListener("click", () => {
+        current_crud_category = "subset";
+        reference = stored_group_id_reference;
+        highlight_color_opacity_customization = true;
+        is_travel_creator_active = true;
+        markers_visibility = false;
+        polyline_visibility = false;
+        toggleMarkersVisibility();
+        togglePolylineVisibility();
+        travelTypeButtonsColor();
+        toggleMainLogContainerVisibility(false);
+        toggleTimelineVisibility(false);
+        toggleStatisticsVisibility(false);
+        if (!statistics_visibility) {
+          statistics_visibility = toggleIconColor(statistics_visibility, statistics_icon);
+        }
+
+        stored_group_log_id = $group_log_id.textContent;
+        markersData = markersData.filter((coordinatesArray) => coordinatesArray.length > 0);
+        markersData.push([]);
+        random_id = "";
+        random_id = randomIdGenerator();
+
+        if (
+          travel_logs_individual_main_container.style.display === "none" ||
+          travel_logs_individual_main_container.style.display === ""
+        ) {
+          toggleTravelLogsIndividualMainContainerVisibility(true);
+        }
+      });
+      $travel_logs_group_div_settings.appendChild($travel_logs_group_add_travel_button);
+
+      // group (individual) travel button
+      // group delete
+
+      const $travel_logs_delete = document.createElement("button");
+      $travel_logs_delete.innerHTML = '<i class="fa-regular fa-trash-can fa-xl" style="color: #c9c9c9;"></i>';
+      $travel_logs_delete.classList.add("travel_logs_CRUD_buttons");
+      $travel_logs_delete.addEventListener("click", () => {
+        isGroupContentDivEmpty(stored_group_id_reference);
+        if (isTravelGroupEmpty == true) {
+          removeTravelLogs(stored_group_id_reference);
+          removeStoredId(stored_group_id_reference);
+          removeTimelineData(timelineData, stored_group_id_reference);
+          timelineInfoToggle();
+          if (timeline_enabled === true) {
+            populateTimeline();
+          }
+          const index = travelLogs.indexOf(stored_group_name_reference);
+          if (index !== -1) {
+            travelLogs.splice(index, 1);
+          }
+          $travel_logs_group_div_main.remove();
+        } else if (isTravelGroupEmpty == false) {
+          showInfoPopup("Travel group is not empty, please remove remaining travel logs");
+        }
+
+        const id_to_remove = CRUD.findIndex((item) => item.CRUD_group_id === stored_group_id_reference);
+        if (id_to_remove !== -1) {
+          CRUD.splice(id_to_remove, 1);
+        }
+
+        if (timelineData.events.length === 0) {
+          toggleTimelineVisibility(false);
         }
 
         localStorageSaveTravelLogs();
+        localStorageSaveMarkerCoordinates();
         localStorageSaveCRUD();
+      });
+      $travel_logs_group_div_settings.appendChild($travel_logs_delete);
 
-        $travel_logs_group_name.contentEditable = false;
-        document.removeEventListener("click", handleOutsideClick);
-      }
+      // group delete
+      // group list collapse
 
-      function handleOutsideClick(event) {
-        if (!$travel_logs_group_div_main.contains(event.target)) {
-          saveGroupName();
+      let list_collapsed = false;
+      const $list_collapse_button = document.createElement("button");
+      $list_collapse_button.innerHTML = '<i class="fa-solid fa-list fa-xl" style="color: #c9c9c9;"></i>';
+      $list_collapse_button.classList.add("travel_logs_CRUD_buttons");
+      $travel_logs_group_div_settings.appendChild($list_collapse_button);
+
+      $list_collapse_button.addEventListener("click", () => {
+        if (list_collapsed) {
+          $travel_logs_group_content.style.height = "auto";
+          $travel_logs_group_div_main.style.height = "auto";
+        } else {
+          $travel_logs_group_content.style.height = 0;
+          $travel_logs_group_div_main.style.height = "8.6vh";
         }
+        list_collapsed = !list_collapsed;
+      });
+
+      // group list collapse
+      // group display
+
+      const $logs_list = document.getElementById("logs_list");
+      $logs_list.appendChild($travel_logs_group_div_main);
+      $travel_logs_group_div_main.appendChild($travel_logs_group_div_settings);
+      $travel_logs_group_div_main.appendChild($travel_logs_group_content);
+
+      // group display
+
+      // subset loop
+      for (let j = 0; j < CRUD[i].CRUD_subset.length; j++) {
+        let stored_subset_id_reference = CRUD[i].CRUD_subset[j].CRUD_subset_id;
+        let stored_subset_name_reference = CRUD[i].CRUD_subset[j].CRUD_subset_name;
+        let stored_subset_distance_reference = CRUD[i].CRUD_subset[j].CRUD_subset_distance;
+        let stored_subset_distance_type_reference = CRUD[i].CRUD_subset[j].CRUD_subset_distance_type;
+
+        // main subset div
+
+        const $travel_logs_individual_div_main = document.createElement("div");
+        $travel_logs_individual_div_main.className = "travel_logs_individual_div_main";
+
+        // main subset div
+        // individual id
+
+        const $individual_log_id = document.createElement("span");
+        $individual_log_id.textContent = stored_subset_id_reference;
+
+        // subset id
+        // subset name container
+
+        const $travel_logs_individual_name_container = document.createElement("div");
+        $travel_logs_individual_name_container.classList.add("travel_logs_individual_name_container");
+        $travel_logs_individual_div_main.appendChild($travel_logs_individual_name_container);
+
+        // subset name container
+        // subset name
+
+        const $travel_logs_individual_name = document.createElement("span");
+        $travel_logs_individual_name.textContent = stored_subset_name_reference;
+        $travel_logs_individual_name.classList.add("travel_logs_individual_name");
+        $travel_logs_individual_name_container.appendChild($travel_logs_individual_name);
+
+        // subset name
+        // subset distance
+
+        const $travel_logs_individual_travel_type_and_distance_container = document.createElement("div");
+        $travel_logs_individual_travel_type_and_distance_container.classList.add(
+          "travel_logs_individual_travel_type_and_distance_container"
+        );
+        $travel_logs_individual_div_main.appendChild($travel_logs_individual_travel_type_and_distance_container);
+
+        const $travel_logs_individual_distance = document.createElement("span");
+        $travel_logs_individual_distance.classList.add("travel_logs_individual_distance");
+        $travel_logs_individual_distance.textContent = formatDistance(stored_subset_distance_reference) + " km";
+
+        const $travel_logs_distance_type = document.createElement("span");
+        $travel_logs_distance_type.classList.add("travel_logs_distance_type");
+        $travel_logs_distance_type.textContent = stored_subset_distance_type_reference;
+
+        $travel_logs_individual_travel_type_and_distance_container.appendChild($travel_logs_distance_type);
+        $travel_logs_individual_travel_type_and_distance_container.appendChild($travel_logs_individual_distance);
+
+        // subset distance
+        // subset name edit
+
+        const $travel_logs_individual_name_edit = document.createElement("button");
+        $travel_logs_individual_name_edit.innerHTML = '<i class="fas fa-pen fa-lg" style="color: #c9c9c9;"></i>';
+        $travel_logs_individual_name_edit.classList.add("travel_logs_CRUD_buttons");
+
+        $travel_logs_individual_name_edit.addEventListener("click", () => {
+          $travel_logs_individual_name.contentEditable = true;
+          $travel_logs_individual_name.focus();
+          $travel_logs_individual_name.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+              event.preventDefault();
+              saveIndividualName();
+            }
+          });
+
+          document.addEventListener("click", handleOutsideClick);
+
+          function saveIndividualName() {
+            const $travel_logs_individual_name_new = $travel_logs_individual_name.textContent;
+
+            if ($travel_logs_individual_name_new === "") {
+              showInfoPopup("Please enter a valid name");
+            } else {
+              $travel_logs_individual_name.textContent = $travel_logs_individual_name_new;
+              const logId = $individual_log_id.textContent;
+              const logIndex = travelLogs.findIndex((log) => log[1] === logId);
+              if (logIndex !== -1) {
+                travelLogs[logIndex][0] = $travel_logs_individual_name_new;
+                CRUD[i].CRUD_subset[j].CRUD_subset_name = $travel_logs_individual_name_new;
+              }
+              for (let i = 0; i < timelineData.events.length; i++) {
+                if (timelineData.events[i].unique_id === stored_subset_id_reference) {
+                  timelineData.events[i].text.headline = $travel_logs_individual_name_new;
+                  break;
+                }
+              }
+            }
+            if (timeline_enabled === true) {
+              populateTimeline();
+            }
+
+            localStorageSaveTravelLogs();
+            localStorageSaveCRUD();
+
+            $travel_logs_individual_name.contentEditable = false;
+            document.removeEventListener("click", handleOutsideClick);
+          }
+
+          function handleOutsideClick(event) {
+            if (!$travel_logs_individual_div_main.contains(event.target)) {
+              saveIndividualName();
+            }
+          }
+        });
+        $travel_logs_individual_div_main.appendChild($travel_logs_individual_name_edit);
+
+        // subset name edit
+        // subset delete
+
+        const $travel_logs_delete = document.createElement("button");
+        $travel_logs_delete.innerHTML = '<i class="fa-regular fa-trash-can fa-xl" style="color: #c9c9c9;"></i>';
+        $travel_logs_delete.classList.add("travel_logs_CRUD_buttons");
+        $travel_logs_delete.addEventListener("click", () => {
+          markers_visibility = false;
+          polyline_visibility = false;
+          removeTrueHighlights();
+          toggleMarkersVisibility();
+          togglePolylineVisibility();
+          trueHighlightsArrayRemoveHighlight(stored_subset_id_reference);
+          removeMarkers(stored_subset_id_reference);
+          removeTemporaryHighlights(stored_subset_id_reference);
+          removeMarkersCoordinates(stored_subset_id_reference);
+          removeTravelLogs(stored_subset_id_reference);
+          removeStoredId(stored_subset_id_reference);
+          removeTimelineData(timelineData, stored_subset_id_reference);
+          timelineInfoToggle();
+          calculateDistances();
+          distancesBreakdown(rawCoordinatesDistances);
+          calculateTotalDistances(rawCoordinatesDistances);
+          removeTravelCount(stored_subset_distance_type_reference);
+          countTravelType(markersData);
+          updateTravelStats();
+          localStorageCreateTrueHighlights();
+          drawPolyline();
+          localStorageSaveTrueHighlights();
+          if (timeline_enabled === true) {
+            populateTimeline();
+          }
+          const index = travelLogs.indexOf(stored_subset_name_reference);
+          if (index !== -1) {
+            travelLogs.splice(index, 1);
+          }
+          $travel_logs_individual_div_main.remove();
+
+          const id_to_remove = CRUD.findIndex(
+            (item) =>
+              item.CRUD_subset &&
+              item.CRUD_subset.some((individual) => individual.CRUD_subset_id === stored_subset_id_reference)
+          );
+
+          if (id_to_remove !== -1) {
+            CRUD[id_to_remove].CRUD_subset.splice(j, 1);
+          }
+
+          removeTrueMarkers();
+          localStorageSaveTravelLogs();
+          localStorageSaveCRUD();
+          localStorageSaveMarkerCoordinates();
+          localStorageCreateTrueMarkers();
+
+          if (timelineData.events.length === 0) {
+            toggleTimelineVisibility(false);
+          }
+        });
+
+        $travel_logs_individual_div_main.appendChild($travel_logs_delete);
+
+        // subset delete
+        // display
+
+        $travel_logs_group_content.appendChild($travel_logs_individual_div_main);
       }
-    });
-    $travel_logs_group_div_settings.appendChild($travel_logs_group_name_edit);
+    }
 
-    // group name edit
-    // group (individual) travel button
-    CRUDGroup.CRUD_individual = [];
+    if (stored_group_category === "superset") {
+      let stored_superset_direct_id_reference = CRUD[i].CRUD_superset_id;
+      let stored_superset_direct_name_reference = CRUD[i].CRUD_superset_name;
+      let stored_superset_direct_distance_reference = CRUD[i].CRUD_superset_distance;
+      let stored_superset_direct_distance_type_reference = CRUD[i].CRUD_superset_distance_type;
 
-    const $travel_logs_group_add_travel_button = document.createElement("button");
-    $travel_logs_group_add_travel_button.innerHTML = '<i class="fa-solid fa-plus fa-xl" style="color: #c9c9c9;"></i>';
-    $travel_logs_group_add_travel_button.classList.add("travel_logs_CRUD_buttons");
-    $travel_logs_group_add_travel_button.addEventListener("click", () => {
-      reference = stored_group_id_reference;
-      highlight_color_opacity_customization = true;
-      is_travel_creator_active = true;
-      markers_visibility = false;
-      polyline_visibility = false;
-      toggleMarkersVisibility();
-      togglePolylineVisibility();
-      travelTypeButtonsColor();
-      toggleMainLogContainerVisibility(false);
-      toggleTimelineVisibility(false);
-      toggleStatisticsVisibility(false);
-      if (!statistics_visibility) {
-        statistics_visibility = toggleIconColor(statistics_visibility, statistics_icon);
-      }
-
-      stored_group_log_id = $group_log_id.textContent;
-      markersData = markersData.filter((coordinatesArray) => coordinatesArray.length > 0);
-      markersData.push([]);
-      random_id = "";
-      random_id = randomIdGenerator();
-
-      if (
-        travel_logs_individual_main_container.style.display === "none" ||
-        travel_logs_individual_main_container.style.display === ""
-      ) {
-        toggleTravelLogsIndividualMainContainerVisibility(true);
-      }
-    });
-    $travel_logs_group_div_settings.appendChild($travel_logs_group_add_travel_button);
-
-    // group (individual) travel button
-    // group delete
-
-    const $travel_logs_delete = document.createElement("button");
-    $travel_logs_delete.innerHTML = '<i class="fa-regular fa-trash-can fa-xl" style="color: #c9c9c9;"></i>';
-    $travel_logs_delete.classList.add("travel_logs_CRUD_buttons");
-    $travel_logs_delete.addEventListener("click", () => {
-      isGroupContentDivEmpty(stored_group_id_reference);
-      if (isTravelGroupEmpty == true) {
-        removeTravelLogs(stored_group_id_reference);
-        removeStoredId(stored_group_id_reference);
-        removeTimelineData(timelineData, stored_group_id_reference);
-        timelineInfoToggle();
-        if (timeline_enabled === true) {
-          populateTimeline();
-        }
-        const index = travelLogs.indexOf(stored_group_name_reference);
-        if (index !== -1) {
-          travelLogs.splice(index, 1);
-        }
-        $travel_logs_group_div_main.remove();
-      } else if (isTravelGroupEmpty == false) {
-        showInfoPopup("Travel group is not empty, please remove remaining travel logs");
-      }
-
-      const id_to_remove = CRUD.findIndex((item) => item.CRUD_group_id === stored_group_id_reference);
-      if (id_to_remove !== -1) {
-        CRUD.splice(id_to_remove, 1);
-      }
-
-      if (timelineData.events.length === 0) {
-        toggleTimelineVisibility(false);
-      }
-
-      localStorageSaveTravelLogs();
-      localStorageSaveMarkerCoordinates();
-      localStorageSaveCRUD();
-    });
-    $travel_logs_group_div_settings.appendChild($travel_logs_delete);
-
-    // group delete
-    // group list collapse
-
-    let list_collapsed = false;
-    const $list_collapse_button = document.createElement("button");
-    $list_collapse_button.innerHTML = '<i class="fa-solid fa-list fa-xl" style="color: #c9c9c9;"></i>';
-    $list_collapse_button.classList.add("travel_logs_CRUD_buttons");
-    $travel_logs_group_div_settings.appendChild($list_collapse_button);
-
-    $list_collapse_button.addEventListener("click", () => {
-      if (list_collapsed) {
-        $travel_logs_group_content.style.height = "auto";
-        $travel_logs_group_div_main.style.height = "auto";
-      } else {
-        $travel_logs_group_content.style.height = 0;
-        $travel_logs_group_div_main.style.height = "8.6vh";
-      }
-      list_collapsed = !list_collapsed;
-    });
-
-    // group list collapse
-    // group display
-
-    const $logs_list = document.getElementById("logs_list");
-    $logs_list.appendChild($travel_logs_group_div_main);
-    $travel_logs_group_div_main.appendChild($travel_logs_group_div_settings);
-    $travel_logs_group_div_main.appendChild($travel_logs_group_content);
-
-    // group display
-
-    // individual loop
-    for (let j = 0; j < CRUD[i].CRUD_individual.length; j++) {
-      let stored_individual_id_reference = CRUD[i].CRUD_individual[j].CRUD_individual_id;
-      let stored_individual_name_reference = CRUD[i].CRUD_individual[j].CRUD_individual_name;
-      let stored_individual_distance_reference = CRUD[i].CRUD_individual[j].CRUD_individual_distance;
-      let stored_individual_distance_type_reference = CRUD[i].CRUD_individual[j].CRUD_individual_distance_type;
-
-      // main individual div
+      // main superset div
 
       const $travel_logs_individual_div_main = document.createElement("div");
       $travel_logs_individual_div_main.className = "travel_logs_individual_div_main";
 
-      // main individual div
-      // individual id
+      // main superset div
+      // superset id
 
       const $individual_log_id = document.createElement("span");
-      $individual_log_id.textContent = stored_individual_id_reference;
+      $individual_log_id.textContent = stored_superset_direct_id_reference;
 
-      // individual id
-      // individual name container
+      // superset id
+      // superset name container
 
       const $travel_logs_individual_name_container = document.createElement("div");
       $travel_logs_individual_name_container.classList.add("travel_logs_individual_name_container");
       $travel_logs_individual_div_main.appendChild($travel_logs_individual_name_container);
 
-      // individual name container
-      // individual name
+      // superset name container
+      // superset name
 
       const $travel_logs_individual_name = document.createElement("span");
-      $travel_logs_individual_name.textContent = stored_individual_name_reference;
+      $travel_logs_individual_name.textContent = stored_superset_direct_name_reference;
       $travel_logs_individual_name.classList.add("travel_logs_individual_name");
       $travel_logs_individual_name_container.appendChild($travel_logs_individual_name);
 
-      // individual name
-      // individual distance
+      // superset name
+      // superset distance
 
       const $travel_logs_individual_travel_type_and_distance_container = document.createElement("div");
       $travel_logs_individual_travel_type_and_distance_container.classList.add(
@@ -2030,17 +2278,17 @@ function buildCRUD() {
 
       const $travel_logs_individual_distance = document.createElement("span");
       $travel_logs_individual_distance.classList.add("travel_logs_individual_distance");
-      $travel_logs_individual_distance.textContent = formatDistance(stored_individual_distance_reference) + " km";
+      $travel_logs_individual_distance.textContent = formatDistance(stored_superset_direct_distance_reference) + " km";
 
       const $travel_logs_distance_type = document.createElement("span");
       $travel_logs_distance_type.classList.add("travel_logs_distance_type");
-      $travel_logs_distance_type.textContent = stored_individual_distance_type_reference;
+      $travel_logs_distance_type.textContent = stored_superset_direct_distance_type_reference;
 
       $travel_logs_individual_travel_type_and_distance_container.appendChild($travel_logs_distance_type);
       $travel_logs_individual_travel_type_and_distance_container.appendChild($travel_logs_individual_distance);
 
-      // individual distance
-      // individual name edit
+      // superset distance
+      // superset name edit
 
       const $travel_logs_individual_name_edit = document.createElement("button");
       $travel_logs_individual_name_edit.innerHTML = '<i class="fas fa-pen fa-lg" style="color: #c9c9c9;"></i>';
@@ -2069,10 +2317,10 @@ function buildCRUD() {
             const logIndex = travelLogs.findIndex((log) => log[1] === logId);
             if (logIndex !== -1) {
               travelLogs[logIndex][0] = $travel_logs_individual_name_new;
-              CRUD[i].CRUD_individual[j].CRUD_individual_name = $travel_logs_individual_name_new;
+              CRUD[i].CRUD_superset_name = $travel_logs_individual_name_new;
             }
             for (let i = 0; i < timelineData.events.length; i++) {
-              if (timelineData.events[i].unique_id === stored_individual_id_reference) {
+              if (timelineData.events[i].unique_id === stored_superset_direct_id_reference) {
                 timelineData.events[i].text.headline = $travel_logs_individual_name_new;
                 break;
               }
@@ -2097,8 +2345,8 @@ function buildCRUD() {
       });
       $travel_logs_individual_div_main.appendChild($travel_logs_individual_name_edit);
 
-      // individual name edit
-      // individual delete
+      // superset name edit
+      // superset delete
 
       const $travel_logs_delete = document.createElement("button");
       $travel_logs_delete.innerHTML = '<i class="fa-regular fa-trash-can fa-xl" style="color: #c9c9c9;"></i>';
@@ -2109,18 +2357,18 @@ function buildCRUD() {
         removeTrueHighlights();
         toggleMarkersVisibility();
         togglePolylineVisibility();
-        trueHighlightsArrayRemoveHighlight(stored_individual_id_reference);
-        removeMarkers(stored_individual_id_reference);
-        removeTemporaryHighlights(stored_individual_id_reference);
-        removeMarkersCoordinates(stored_individual_id_reference);
-        removeTravelLogs(stored_individual_id_reference);
-        removeStoredId(stored_individual_id_reference);
-        removeTimelineData(timelineData, stored_individual_id_reference);
+        trueHighlightsArrayRemoveHighlight(stored_superset_direct_id_reference);
+        removeMarkers(stored_superset_direct_id_reference);
+        removeTemporaryHighlights(stored_superset_direct_id_reference);
+        removeMarkersCoordinates(stored_superset_direct_id_reference);
+        removeTravelLogs(stored_superset_direct_id_reference);
+        removeStoredId(stored_superset_direct_id_reference);
+        removeTimelineData(timelineData, stored_superset_direct_id_reference);
         timelineInfoToggle();
         calculateDistances();
         distancesBreakdown(rawCoordinatesDistances);
         calculateTotalDistances(rawCoordinatesDistances);
-        removeTravelCount(stored_individual_distance_type_reference);
+        removeTravelCount(stored_superset_direct_distance_type_reference);
         countTravelType(markersData);
         updateTravelStats();
         localStorageCreateTrueHighlights();
@@ -2129,20 +2377,18 @@ function buildCRUD() {
         if (timeline_enabled === true) {
           populateTimeline();
         }
-        const index = travelLogs.indexOf(stored_individual_name_reference);
+        const index = travelLogs.indexOf(stored_superset_direct_name_reference);
         if (index !== -1) {
           travelLogs.splice(index, 1);
         }
         $travel_logs_individual_div_main.remove();
 
         const id_to_remove = CRUD.findIndex(
-          (item) =>
-            item.CRUD_individual &&
-            item.CRUD_individual.some((individual) => individual.CRUD_individual_id === stored_individual_id_reference)
+          (element) => element.CRUD_superset_id === stored_superset_direct_id_reference
         );
 
         if (id_to_remove !== -1) {
-          CRUD[id_to_remove].CRUD_individual.splice(j, 1);
+          CRUD.splice(id_to_remove, 1);
         }
 
         removeTrueMarkers();
@@ -2158,10 +2404,11 @@ function buildCRUD() {
 
       $travel_logs_individual_div_main.appendChild($travel_logs_delete);
 
-      // individual delete
+      // superset delete
       // display
 
-      $travel_logs_group_content.appendChild($travel_logs_individual_div_main);
+      const $logs_list = document.getElementById("logs_list");
+      $logs_list.appendChild($travel_logs_individual_div_main);
     }
   }
 }
@@ -2334,9 +2581,9 @@ function removeTrueHighlights() {
   });
 }
 
-function trueHighlightsArrayRemoveHighlight(stored_individual_id_reference) {
+function trueHighlightsArrayRemoveHighlight(stored_subset_id_reference) {
   trueHighlights = trueHighlights.filter((highlight) => {
-    return highlight.random_id !== stored_individual_id_reference;
+    return highlight.random_id !== stored_subset_id_reference;
   });
 }
 

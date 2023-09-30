@@ -328,8 +328,8 @@ body {
 }
 
 .add_travel {
-  width: 90%;
-  height: 10%;
+  width: 30%;
+  height: 8%;
   z-index: 850;
   background-color: #2f3c4c;
   color: white;
@@ -337,7 +337,7 @@ body {
   top: 20vh;
   right: 5vw;
   border-radius: 1vw;
-  margin: 2vh 0vh 0vh 2.5vh;
+  margin: 2vh 0vh 0vh 6.5vh;
   font-size: 2vw;
   font-family: "Dosis", sans-serif;
 }
@@ -578,7 +578,7 @@ body {
   align-items: center;
   width: 19.5vw;
   height: 4vh;
-  background-color: rgba(37, 37, 37, 0.396);
+  background-color: #2b333d;
   padding: 1vh;
   margin: 1vh 0 1vh 2vw;
   border-radius: 2vh;
