@@ -1,4 +1,4 @@
-// ver: 1.1.2
+// ver: 1.1.3
 
 // Bugs:
 
@@ -10,7 +10,6 @@
 // - separate buttons to clear travel log / markers / highlights / timeline ...
 // - add a 0.5s timeout between deleting individual and group logs
 // - add statistic: furthest distance from the home location
-// - draggable travel logs
 // - city search bar
 
 // ---------- 5. Add different page styles (font, animations, images, backgrounds, theme) - modern / middleage / other
@@ -164,9 +163,12 @@ const close_info_popup = document.getElementById("close_info_popup");
 // // Info box ↑
 // // Travel Log Creator ↓
 
-const add_travel_group = document.getElementById("add_travel_group");
-const add_travel_superset = document.getElementById("add_travel_superset");
+const add_travel_group_button = document.getElementById("add_travel_group_button");
+const add_travel_superset_button = document.getElementById("add_travel_superset_button");
 const travel_logs_individual_main_container = document.getElementById("travel_logs_individual_main_container");
+
+const travel_superset_icon = document.getElementById("travel_superset_icon");
+const travel_group_icon = document.getElementById("travel_group_icon");
 
 const main_logs_container = document.querySelector(".main_logs_container");
 const main_logs_container_arrow = document.querySelector(".main_logs_container_arrow");
@@ -220,14 +222,14 @@ const check_icon_individual = document.getElementById("check_icon_individual");
 const close_icon_individual = document.getElementById("close_icon_individual");
 
 const travelTypeButtonImages = new Map();
-travelTypeButtonImages.set(travel_type_car, "/content/icons/car_icon_small.png");
-travelTypeButtonImages.set(travel_type_plane, "/content/icons/plane_icon_small.png");
-travelTypeButtonImages.set(travel_type_boat, "/content/icons/boat_icon_small.png");
-travelTypeButtonImages.set(travel_type_walk, "/content/icons/walk_icon_small.png");
-travelTypeButtonImages.set(travel_type_bicycle, "/content/icons/bicycle_icon_small.png");
-travelTypeButtonImages.set(travel_type_motorcycle, "/content/icons/motorcycle_icon_small.png");
-travelTypeButtonImages.set(travel_type_train, "/content/icons/train_icon_small.png");
-travelTypeButtonImages.set(travel_type_bus, "/content/icons/bus_icon_small.png");
+travelTypeButtonImages.set(travel_type_car, "/assets/images/car_icon_small.png");
+travelTypeButtonImages.set(travel_type_plane, "/assets/images/plane_icon_small.png");
+travelTypeButtonImages.set(travel_type_boat, "/assets/images/boat_icon_small.png");
+travelTypeButtonImages.set(travel_type_walk, "/assets/images/walk_icon_small.png");
+travelTypeButtonImages.set(travel_type_bicycle, "/assets/images/bicycle_icon_small.png");
+travelTypeButtonImages.set(travel_type_motorcycle, "/assets/images/motorcycle_icon_small.png");
+travelTypeButtonImages.set(travel_type_train, "/assets/images/train_icon_small.png");
+travelTypeButtonImages.set(travel_type_bus, "/assets/images/bus_icon_small.png");
 
 const travelTypeButtons = [
   travel_type_car,
@@ -351,7 +353,7 @@ jscolor_home.addEventListener("change", () => {
 
 sub_house_manual_location.addEventListener("click", () => {
   travelTypeValueUpdate(true, false, false, false, false, false, false, false, false);
-  updateCursorImage("/content/icons/home_icon_small.png");
+  updateCursorImage("/assets/images/home_icon_small.png");
   removeMarkers("home_marker");
   homeMarkerClear();
 
@@ -968,7 +970,7 @@ function changeIconColorOnHover(toggle, element, button) {
 // Page interaction ↑
 // Travel Log Creator ↓
 
-add_travel_superset.addEventListener("click", () => {
+add_travel_superset_button.addEventListener("click", () => {
   current_crud_category = "superset";
   highlight_color_opacity_customization = true;
   is_travel_creator_active = true;
@@ -996,7 +998,15 @@ add_travel_superset.addEventListener("click", () => {
   }
 });
 
-add_travel_group.addEventListener("click", () => {
+add_travel_superset_button.addEventListener("mouseenter", () => {
+  changeIconColorOnHover(true, travel_superset_icon, add_travel_superset_button);
+});
+
+add_travel_superset_button.addEventListener("mouseleave", () => {
+  changeIconColorOnHover(false, travel_superset_icon, add_travel_superset_button);
+});
+
+add_travel_group_button.addEventListener("click", () => {
   if (!statistics_visibility) {
     statistics_visibility = toggleIconColor(statistics_visibility, statistics_icon);
   }
@@ -1021,6 +1031,14 @@ add_travel_group.addEventListener("click", () => {
     }
     is_travel_creator_active = !is_travel_creator_active;
   }
+});
+
+add_travel_group_button.addEventListener("mouseenter", () => {
+  changeIconColorOnHover(true, travel_group_icon, add_travel_group_button);
+});
+
+add_travel_group_button.addEventListener("mouseleave", () => {
+  changeIconColorOnHover(false, travel_group_icon, add_travel_group_button);
 });
 
 main_logs_container_arrow.addEventListener("click", function () {
@@ -1146,49 +1164,49 @@ jscolor_highlight.addEventListener("change", () => {
 travel_type_car.addEventListener("click", () => {
   travelTypeValueUpdate(false, true, false, false, false, false, false, false, false);
   // prettier-ignore
-  travelTypeCreator(travel_type_car_click, "car", car_icon, "/content/icons/car_icon_small.png", "content/icons/car_icon.png");
+  travelTypeCreator(travel_type_car_click, "car", car_icon, "/assets/images/car_icon_small.png", "/assets/images/car_icon.png");
 });
 
 travel_type_plane.addEventListener("click", () => {
   travelTypeValueUpdate(false, false, true, false, false, false, false, false, false);
   // prettier-ignore
-  travelTypeCreator(travel_type_plane_click, "plane", plane_icon, "/content/icons/plane_icon_small.png", "content/icons/plane_icon.png");
+  travelTypeCreator(travel_type_plane_click, "plane", plane_icon, "/assets/images/plane_icon_small.png", "/assets/images/plane_icon.png");
 });
 
 travel_type_boat.addEventListener("click", () => {
   travelTypeValueUpdate(false, false, false, true, false, false, false, false, false);
   // prettier-ignore
-  travelTypeCreator(travel_type_boat_click, "boat", boat_icon, "/content/icons/boat_icon_small.png", "content/icons/boat_icon.png");
+  travelTypeCreator(travel_type_boat_click, "boat", boat_icon, "/assets/images/boat_icon_small.png", "/assets/images/boat_icon.png");
 });
 
 travel_type_walk.addEventListener("click", () => {
   travelTypeValueUpdate(false, false, false, false, true, false, false, false, false);
   // prettier-ignore
-  travelTypeCreator(travel_type_walk_click, "walk", walk_icon, "/content/icons/walk_icon_small.png", "content/icons/walk_icon.png");
+  travelTypeCreator(travel_type_walk_click, "walk", walk_icon, "/assets/images/walk_icon_small.png", "/assets/images/walk_icon.png");
 });
 
 travel_type_bicycle.addEventListener("click", () => {
   travelTypeValueUpdate(false, false, false, false, false, true, false, false, false);
   // prettier-ignore
-  travelTypeCreator(travel_type_bicycle_click, "bicycle", bicycle_icon, "/content/icons/bicycle_icon_small.png", "content/icons/bicycle_icon.png");
+  travelTypeCreator(travel_type_bicycle_click, "bicycle", bicycle_icon, "/assets/images/bicycle_icon_small.png", "/assets/images/bicycle_icon.png");
 });
 
 travel_type_motorcycle.addEventListener("click", () => {
   travelTypeValueUpdate(false, false, false, false, false, false, true, false, false);
   // prettier-ignore
-  travelTypeCreator(travel_type_motorcycle_click, "motorcycle", motorcycle_icon, "/content/icons/motorcycle_icon_small.png", "content/icons/motorcycle_icon.png");
+  travelTypeCreator(travel_type_motorcycle_click, "motorcycle", motorcycle_icon, "/assets/images/motorcycle_icon_small.png", "/assets/images/motorcycle_icon.png");
 });
 
 travel_type_train.addEventListener("click", () => {
   travelTypeValueUpdate(false, false, false, false, false, false, false, true, false);
   // prettier-ignore
-  travelTypeCreator(travel_type_train_click, "train", train_icon, "/content/icons/train_icon_small.png", "content/icons/train_icon.png");
+  travelTypeCreator(travel_type_train_click, "train", train_icon, "/assets/images/train_icon_small.png", "/assets/images/train_icon.png");
 });
 
 travel_type_bus.addEventListener("click", () => {
   travelTypeValueUpdate(false, false, false, false, false, false, false, false, true);
   // prettier-ignore
-  travelTypeCreator(travel_type_bus_click, "bus", bus_icon, "/content/icons/bus_icon_small.png", "content/icons/bus_icon.png");
+  travelTypeCreator(travel_type_bus_click, "bus", bus_icon, "/assets/images/bus_icon_small.png", "/assets/images/bus_icon.png");
 });
 
 check_button_individual.addEventListener("click", () => {
@@ -1486,7 +1504,7 @@ let defaultCountryHighlight = 0;
 let cachedGeoJSON = null;
 
 if (!cachedGeoJSON) {
-  fetch("content/data/countries.geojson")
+  fetch("assets/data/countries.geojson")
     .then((response) => response.json())
     .then((data) => {
       cachedGeoJSON = data;
@@ -2699,18 +2717,18 @@ function trackLoadingProgress(resources, progressInfoDisplay, onLoadingComplete)
 
 const resourcesToLoad = [
   { url: "styles.css", label: "Main CSS" },
-  { url: "content/data/LeafletMap/leaflet.css", label: "Leaflet CSS" },
-  { url: "content/data/DateRangePicker/daterangepicker.css", label: "DateRangePicker CSS" },
-  { url: "content/data/FontAwesome/css/all.min.css", label: "FontAwesome CSS" },
+  { url: "assets/data/LeafletMap/leaflet.css", label: "Leaflet CSS" },
+  { url: "assets/data/DateRangePicker/daterangepicker.css", label: "DateRangePicker CSS" },
+  { url: "assets/data/FontAwesome/css/all.min.css", label: "FontAwesome CSS" },
   { url: "script.js", label: "Main JS" },
-  { url: "content/data/LeafletMap/leaflet.js", label: "Leaflet JS" },
-  { url: "content/data/JScolor/jscolor.js", label: "JScolor JS" },
-  { url: "content/data/Jquery/jquery.js", label: "Jquery JS" },
-  { url: "content/data/Moment/moment.min.js", label: "Moment JS" },
-  { url: "content/data/DateRangePicker/daterangepicker.js", label: "DateRangePicker JS" },
-  { url: "content/data/LeafletEdgeBuffer/leaflet.edgebuffer.js", label: "Leaflet EdgeBuffer JS" },
-  { url: "content/data/LeafletGridLayerFadeOut/Leaflet.GridLayer.FadeOut.js", label: "Leaflet Grid Layer Fade-out JS" },
-  { url: "content/data/SmoothMarkerBouncing/bundle.js", label: "SmoothMarkerBouncing JS" },
+  { url: "assets/data/LeafletMap/leaflet.js", label: "Leaflet JS" },
+  { url: "assets/data/JScolor/jscolor.js", label: "JScolor JS" },
+  { url: "assets/data/Jquery/jquery.js", label: "Jquery JS" },
+  { url: "assets/data/Moment/moment.min.js", label: "Moment JS" },
+  { url: "assets/data/DateRangePicker/daterangepicker.js", label: "DateRangePicker JS" },
+  { url: "assets/data/LeafletEdgeBuffer/leaflet.edgebuffer.js", label: "Leaflet EdgeBuffer JS" },
+  { url: "assets/data/LeafletGridLayerFadeOut/Leaflet.GridLayer.FadeOut.js", label: "Leaflet Grid Layer Fade-out JS" },
+  { url: "assets/data/SmoothMarkerBouncing/bundle.js", label: "SmoothMarkerBouncing JS" },
 
   // { url: "https://cdn.knightlab.com/libs/timeline3/latest/js/timeline.js", label: "TimelineJS JS" },
   // { url: "https://cdn.knightlab.com/libs/timeline3/latest/css/timeline.css", label: "TimelineJS CSS" },

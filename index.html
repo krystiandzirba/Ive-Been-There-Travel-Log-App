@@ -1,27 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>I've been there! - Travel log app v1.1.2</title>
-    <link rel="icon" type="image/x-icon" href="/content/icons/globe_icon_black.png" />
+    <title>I've been there! - Travel log app v1.1.3</title>
+    <link rel="icon" type="image/x-icon" href="/assets/images/globe_icon_black.png" />
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </head>
   <body>
     <link rel="stylesheet" href="styles.css" />
-    <link rel="stylesheet" href="content/data/LeafletMap/leaflet.css" />
-    <link rel="stylesheet" href="content/data/DateRangePicker/daterangepicker.css" />
-    <link rel="stylesheet" href="content/data/FontAwesome/css/all.min.css" />
+    <link rel="stylesheet" href="assets/data/LeafletMap/leaflet.css" />
+    <link rel="stylesheet" href="assets/data/DateRangePicker/daterangepicker.css" />
+    <link rel="stylesheet" href="assets/data/FontAwesome/css/all.min.css" />
 
     <script type="module" src="script.js"></script>
-    <script type="text/javascript" src="content/data/LeafletMap/leaflet.js"></script>
-    <script type="text/javascript" src="content/data/JScolor/jscolor.js"></script>
-    <script type="text/javascript" src="content/data/Jquery/jquery.js"></script>
-    <script type="text/javascript" src="content/data/Moment/moment.min.js"></script>
-    <script type="text/javascript" src="content/data/DateRangePicker/daterangepicker.js"></script>
-    <script type="text/javascript" src="content/data/LeafletEdgeBuffer/leaflet.edgebuffer.js"></script>
-    <script type="text/javascript" src="content/data/LeafletGridLayerFadeOut/Leaflet.GridLayer.FadeOut.js"></script>
-    <script type="text/javascript" src="content/data/SmoothMarkerBouncing/bundle.js"></script>
+    <script type="text/javascript" src="assets/data/LeafletMap/leaflet.js"></script>
+    <script type="text/javascript" src="assets/data/JScolor/jscolor.js"></script>
+    <script type="text/javascript" src="assets/data/Jquery/jquery.js"></script>
+    <script type="text/javascript" src="assets/data/Moment/moment.min.js"></script>
+    <script type="text/javascript" src="assets/data/DateRangePicker/daterangepicker.js"></script>
+    <script type="text/javascript" src="assets/data/LeafletEdgeBuffer/leaflet.edgebuffer.js"></script>
+    <script type="text/javascript" src="assets/data/LeafletGridLayerFadeOut/Leaflet.GridLayer.FadeOut.js"></script>
+    <script type="text/javascript" src="assets/data/SmoothMarkerBouncing/bundle.js"></script>
 
     <!-- prettier-ignore -->
     <script src="https://cdn.knightlab.com/libs/timeline3/latest/js/timeline.js"></script>
@@ -30,20 +30,20 @@
 
     <div class="loading_page_container" id="loading_page_container">
       <div class="title_screen_container">
-        <img src="/content/icons/title_screen.png" class="title_screen" id="title_screen" alt="title screen" />
+        <img src="/assets/images/title_screen.png" class="title_screen" id="title_screen" alt="title screen" />
         <div class="title_screen_background"></div>
       </div>
       <div class="loading_animation_container">
         <div class="plane_animation_container">
           <img
-            src="/content/icons/plane_icon_animation.png"
+            src="/assets/images/plane_icon_animation.png"
             class="plane_icon"
             id="plane_icon_animation"
             alt="plane Icon"
           />
         </div>
 
-        <img src="/content/icons/globe_icon_white.png" class="globe_icon" id="globe_icon_animation" alt="globe Icon" />
+        <img src="/assets/images/globe_icon_white.png" class="globe_icon" id="globe_icon_animation" alt="globe Icon" />
       </div>
       <div class="loading_page_progress_container">
         <p>Loading: <span id="progress_info">. . . </span></p>
@@ -178,12 +178,16 @@
     </div>
 
     <div class="main_logs_container">
-      <button id="add_travel_superset" class="add_travel">
-        <i class="fa-solid fa-plus fa-1xl" style="color: #c9c9c9"></i>
-      </button>
-      <button id="add_travel_group" class="add_travel">
-        <i class="fa-solid fa-folder-plus fa-xl" style="color: #c9c9c9"></i>
-      </button>
+      <div class="travel_creator_butttons">
+        <button id="add_travel_superset_button" class="add_travel">
+          <i class="fa-solid fa-plus fa-1xl" style="color: #c9c9c9" id="travel_superset_icon"></i>
+          <p>individual</p>
+        </button>
+        <button id="add_travel_group_button" class="add_travel">
+          <i class="fa-solid fa-folder-plus fa-1xl" style="color: #c9c9c9" id="travel_group_icon"></i>
+          <p>group</p>
+        </button>
+      </div>
       <div id="logs_list" class="travel_logs"></div>
     </div>
 
@@ -230,28 +234,28 @@
       </div>
       <div class="travel_logs_individual_icon_container">
         <button id="travel_type_car" class="travel_type_button">
-          <img src="/content/icons/car_icon_small.png" alt="Car Icon" />
+          <img src="/assets/images/car_icon_small.png" alt="Car Icon" />
         </button>
         <button id="travel_type_plane" class="travel_type_button">
-          <img src="/content/icons/plane_icon_small.png" alt="plane Icon" />
+          <img src="/assets/images/plane_icon_small.png" alt="plane Icon" />
         </button>
         <button id="travel_type_boat" class="travel_type_button">
-          <img src="/content/icons/boat_icon_small.png" alt="boat Icon" />
+          <img src="/assets/images/boat_icon_small.png" alt="boat Icon" />
         </button>
         <button id="travel_type_walk" class="travel_type_button">
-          <img src="/content/icons/walk_icon_small.png" alt="walk Icon" />
+          <img src="/assets/images/walk_icon_small.png" alt="walk Icon" />
         </button>
         <button id="travel_type_bicycle" class="travel_type_button">
-          <img src="/content/icons/bicycle_icon_small.png" alt="bicycle Icon" />
+          <img src="/assets/images/bicycle_icon_small.png" alt="bicycle Icon" />
         </button>
         <button id="travel_type_motorcycle" class="travel_type_button">
-          <img src="/content/icons/motorcycle_icon_small.png" alt="motorcycle Icon" />
+          <img src="/assets/images/motorcycle_icon_small.png" alt="motorcycle Icon" />
         </button>
         <button id="travel_type_train" class="travel_type_button">
-          <img src="/content/icons/train_icon_small.png" alt="train Icon" />
+          <img src="/assets/images/train_icon_small.png" alt="train Icon" />
         </button>
         <button id="travel_type_bus" class="travel_type_button">
-          <img src="/content/icons/bus_icon_small.png" alt="bus Icon" />
+          <img src="/assets/images/bus_icon_small.png" alt="bus Icon" />
         </button>
       </div>
     </div>
@@ -314,10 +318,10 @@
     </div>
 
     <div id="custom_cursor" class="custom_cursor">
-      <img id="custom_cursor_image" src="/content/icons/car_icon_small.png" />
+      <img id="custom_cursor_image" src="/assets/images/car_icon_small.png" />
     </div>
 
-    <div class="app_version">ver: 1.1.2</div>
+    <div class="app_version">ver: 1.1.3</div>
 
     <div id="info_popup" style="display: none">
       <span id="close_info_popup">&times;</span>

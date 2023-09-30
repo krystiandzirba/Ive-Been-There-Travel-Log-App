@@ -327,30 +327,51 @@ body {
   transition: left 0.5s ease-in-out;
 }
 
+.travel_creator_butttons {
+  display: flex;
+  height: 12vh;
+  width: 100%;
+  background-color: #2f3c4c;
+  top: 0vh;
+}
+
 .add_travel {
-  width: 30%;
-  height: 8%;
+  width: 35%;
+  height: 10vh;
   z-index: 850;
   background-color: #2f3c4c;
   color: white;
   border: none;
-  top: 20vh;
-  right: 5vw;
-  border-radius: 1vw;
-  margin: 2vh 0vh 0vh 6.5vh;
-  font-size: 2vw;
-  font-family: "Dosis", sans-serif;
+  border-radius: 1.5vw;
+  margin: 1vh 0.5vw 0vw 2.5vw;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
 .add_travel:hover {
-  transform: scale(1.05);
+  background-color: #374657;
+}
+
+.add_travel i {
+  margin-top: 1.5vh;
+  font-size: 2vw;
+}
+
+.add_travel p {
+  font-family: "Dosis", sans-serif;
+  font-size: 1vw;
+  margin-top: 1vh;
 }
 
 .travel_logs {
   width: 100%;
   height: 85vh;
   z-index: 850;
-  margin-top: 2vh;
+  margin-top: 0.5vh;
   overflow-y: auto;
 }
 
@@ -514,7 +535,7 @@ body {
 
 .travel_logs_group_div_main {
   padding: 1vh;
-  margin: 0vh 0.5vh 0.5vh 0.5vh;
+  margin: 0vh 0.5vh 0vh 0.5vh;
   border-radius: 2vh;
 }
 
@@ -608,7 +629,7 @@ body {
 
 .travel_logs_individual_distance {
   color: #dddddd;
-  font-size: 2vh;
+  font-size: 1vw;
   font-family: "Dosis", sans-serif;
 }
 
