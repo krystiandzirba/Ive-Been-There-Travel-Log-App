@@ -42,47 +42,47 @@ export default {
 
   marker_icons: {
     home_icon: L.icon({
-      iconUrl: "/assets/images/home_icon.png",
+      iconUrl: "assets/images/home_icon.png",
       iconSize: [42, 42],
       iconAnchor: [24, 24],
     }),
     car_icon: L.icon({
-      iconUrl: "/assets/images/car_icon.png",
+      iconUrl: "assets/images/car_icon.png",
       iconSize: [42, 42],
       iconAnchor: [24, 24],
     }),
     plane_icon: L.icon({
-      iconUrl: "/assets/images/plane_icon.png",
+      iconUrl: "assets/images/plane_icon.png",
       iconSize: [42, 42],
       iconAnchor: [24, 24],
     }),
     boat_icon: L.icon({
-      iconUrl: "/assets/images/boat_icon.png",
+      iconUrl: "assets/images/boat_icon.png",
       iconSize: [42, 42],
       iconAnchor: [24, 24],
     }),
     walk_icon: L.icon({
-      iconUrl: "/assets/images/walk_icon.png",
+      iconUrl: "assets/images/walk_icon.png",
       iconSize: [42, 42],
       iconAnchor: [24, 24],
     }),
     bicycle_icon: L.icon({
-      iconUrl: "/assets/images/bicycle_icon.png",
+      iconUrl: "assets/images/bicycle_icon.png",
       iconSize: [42, 42],
       iconAnchor: [24, 24],
     }),
     motorcycle_icon: L.icon({
-      iconUrl: "/assets/images/motorcycle_icon.png",
+      iconUrl: "assets/images/motorcycle_icon.png",
       iconSize: [42, 42],
       iconAnchor: [24, 24],
     }),
     train_icon: L.icon({
-      iconUrl: "/assets/images/train_icon.png",
+      iconUrl: "assets/images/train_icon.png",
       iconSize: [42, 42],
       iconAnchor: [24, 24],
     }),
     bus_icon: L.icon({
-      iconUrl: "/assets/images/bus_icon.png",
+      iconUrl: "assets/images/bus_icon.png",
       iconSize: [42, 42],
       iconAnchor: [24, 24],
     }),

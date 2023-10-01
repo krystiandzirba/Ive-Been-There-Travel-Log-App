@@ -1,4 +1,4 @@
-// ver: 1.1.3
+// ver: 1.1.4
 
 // Bugs:
 
@@ -12,12 +12,12 @@
 // - add statistic: furthest distance from the home location
 // - city search bar
 
-// ---------- 5. Add different page styles (font, animations, images, backgrounds, theme) - modern / middleage / other
-// ---------- 7. Add different languages
-// ---------- 8. Add info boxes to help navigate the app while using it for the first time
-// ---------- 9. Add D3 to visualize the statistics data
-//               - add continent statistics (how many countries were visited in different continents, how many countries were visited)
-// ---------- 10. populate the settings with options like: erase all data / report a bug / km-mil switch /
+// - Add different page styles (font, animations, images, backgrounds, theme) - modern / middleage / other
+// - Add different languages
+// - Add info boxes to help navigate the app while using it for the first time
+// - Add D3 to visualize the statistics data
+//       - add continent statistics (how many countries were visited in different continents, how many countries were visited)
+// - populate the settings with options like: erase all data / report a bug / km-mil switch /
 
 // multi options polyline / leaflet motion / polyline decorator / leaflet canvas markers /
 
@@ -156,9 +156,11 @@ const settings_icon = document.getElementById("settings_icon");
 // // Sidebar Settings ↑
 // // Info box ↓
 
-const info_popup = document.getElementById("info_popup");
-const info_popup_text = document.getElementById("info_popup_text");
-const close_info_popup = document.getElementById("close_info_popup");
+const info_box = document.getElementById("info_box");
+const info_box_text = document.getElementById("info_box_text");
+
+let info_box_timeout_show;
+let info_box_timeout_hide;
 
 // // Info box ↑
 // // Travel Log Creator ↓
@@ -222,14 +224,14 @@ const check_icon_individual = document.getElementById("check_icon_individual");
 const close_icon_individual = document.getElementById("close_icon_individual");
 
 const travelTypeButtonImages = new Map();
-travelTypeButtonImages.set(travel_type_car, "/assets/images/car_icon_small.png");
-travelTypeButtonImages.set(travel_type_plane, "/assets/images/plane_icon_small.png");
-travelTypeButtonImages.set(travel_type_boat, "/assets/images/boat_icon_small.png");
-travelTypeButtonImages.set(travel_type_walk, "/assets/images/walk_icon_small.png");
-travelTypeButtonImages.set(travel_type_bicycle, "/assets/images/bicycle_icon_small.png");
-travelTypeButtonImages.set(travel_type_motorcycle, "/assets/images/motorcycle_icon_small.png");
-travelTypeButtonImages.set(travel_type_train, "/assets/images/train_icon_small.png");
-travelTypeButtonImages.set(travel_type_bus, "/assets/images/bus_icon_small.png");
+travelTypeButtonImages.set(travel_type_car, "assets/images/car_icon_small.png");
+travelTypeButtonImages.set(travel_type_plane, "assets/images/plane_icon_small.png");
+travelTypeButtonImages.set(travel_type_boat, "assets/images/boat_icon_small.png");
+travelTypeButtonImages.set(travel_type_walk, "assets/images/walk_icon_small.png");
+travelTypeButtonImages.set(travel_type_bicycle, "assets/images/bicycle_icon_small.png");
+travelTypeButtonImages.set(travel_type_motorcycle, "assets/images/motorcycle_icon_small.png");
+travelTypeButtonImages.set(travel_type_train, "assets/images/train_icon_small.png");
+travelTypeButtonImages.set(travel_type_bus, "assets/images/bus_icon_small.png");
 
 const travelTypeButtons = [
   travel_type_car,
@@ -353,7 +355,7 @@ jscolor_home.addEventListener("change", () => {
 
 sub_house_manual_location.addEventListener("click", () => {
   travelTypeValueUpdate(true, false, false, false, false, false, false, false, false);
-  updateCursorImage("/assets/images/home_icon_small.png");
+  updateCursorImage("assets/images/home_icon_small.png");
   removeMarkers("home_marker");
   homeMarkerClear();
 
@@ -454,7 +456,7 @@ function homeMarkerZoom() {
   if (home_marker && homeData.lat && homeData.lng) {
     map.setView(home_marker.getLatLng(), 7);
   } else {
-    showInfoPopup("Home location not set!");
+    displayInfoBox("Home location is not set!");
   }
 }
 
@@ -1070,11 +1072,11 @@ function toggleMainLogContainerVisibility(toggle) {
 check_button_group.addEventListener("click", () => {
   travel_logs_group_name = travel_logs_group_input.value;
   if (travel_logs_group_name === "") {
-    showInfoPopup("Please enter valid name");
+    displayInfoBox("Please enter a valid group name.");
     return;
   }
   if (travel_date_start === "" || travel_date_end === "") {
-    showInfoPopup("Please select a valid date range");
+    displayInfoBox("Please select a valid date range.");
     return;
   }
 
@@ -1105,7 +1107,6 @@ check_button_group.addEventListener("click", () => {
     toggleTimelineVisibility(true);
     toggleTravelLogsGroupMainContainerVisibility(false);
     timelineInfoToggle();
-    closeInfoPopup();
     current_crud_category = "none";
   }
 });
@@ -1123,7 +1124,6 @@ close_button_group.addEventListener("click", () => {
   is_travel_creator_active = false;
   stored_group_log_id = random_id;
   removeStoredId(stored_group_log_id);
-  closeInfoPopup();
   travel_logs_group_input.value = "";
   if (
     travel_logs_group_main_container.style.display === "none" ||
@@ -1149,7 +1149,7 @@ close_button_group.addEventListener("mouseleave", () =>
 
 jscolor_highlight_container.addEventListener("click", () => {
   if (highlight_color_opacity_customization == false) {
-    showInfoPopup("Cannot change highlight settings after marker was placed");
+    displayInfoBox("Cannot change highlight settings after the marker was placed on the map.");
   }
 });
 
@@ -1164,60 +1164,60 @@ jscolor_highlight.addEventListener("change", () => {
 travel_type_car.addEventListener("click", () => {
   travelTypeValueUpdate(false, true, false, false, false, false, false, false, false);
   // prettier-ignore
-  travelTypeCreator(travel_type_car_click, "car", car_icon, "/assets/images/car_icon_small.png", "/assets/images/car_icon.png");
+  travelTypeCreator(travel_type_car_click, "car", car_icon, "assets/images/car_icon_small.png", "assets/images/car_icon.png");
 });
 
 travel_type_plane.addEventListener("click", () => {
   travelTypeValueUpdate(false, false, true, false, false, false, false, false, false);
   // prettier-ignore
-  travelTypeCreator(travel_type_plane_click, "plane", plane_icon, "/assets/images/plane_icon_small.png", "/assets/images/plane_icon.png");
+  travelTypeCreator(travel_type_plane_click, "plane", plane_icon, "assets/images/plane_icon_small.png", "assets/images/plane_icon.png");
 });
 
 travel_type_boat.addEventListener("click", () => {
   travelTypeValueUpdate(false, false, false, true, false, false, false, false, false);
   // prettier-ignore
-  travelTypeCreator(travel_type_boat_click, "boat", boat_icon, "/assets/images/boat_icon_small.png", "/assets/images/boat_icon.png");
+  travelTypeCreator(travel_type_boat_click, "boat", boat_icon, "assets/images/boat_icon_small.png", "assets/images/boat_icon.png");
 });
 
 travel_type_walk.addEventListener("click", () => {
   travelTypeValueUpdate(false, false, false, false, true, false, false, false, false);
   // prettier-ignore
-  travelTypeCreator(travel_type_walk_click, "walk", walk_icon, "/assets/images/walk_icon_small.png", "/assets/images/walk_icon.png");
+  travelTypeCreator(travel_type_walk_click, "walk", walk_icon, "assets/images/walk_icon_small.png", "assets/images/walk_icon.png");
 });
 
 travel_type_bicycle.addEventListener("click", () => {
   travelTypeValueUpdate(false, false, false, false, false, true, false, false, false);
   // prettier-ignore
-  travelTypeCreator(travel_type_bicycle_click, "bicycle", bicycle_icon, "/assets/images/bicycle_icon_small.png", "/assets/images/bicycle_icon.png");
+  travelTypeCreator(travel_type_bicycle_click, "bicycle", bicycle_icon, "assets/images/bicycle_icon_small.png", "assets/images/bicycle_icon.png");
 });
 
 travel_type_motorcycle.addEventListener("click", () => {
   travelTypeValueUpdate(false, false, false, false, false, false, true, false, false);
   // prettier-ignore
-  travelTypeCreator(travel_type_motorcycle_click, "motorcycle", motorcycle_icon, "/assets/images/motorcycle_icon_small.png", "/assets/images/motorcycle_icon.png");
+  travelTypeCreator(travel_type_motorcycle_click, "motorcycle", motorcycle_icon, "assets/images/motorcycle_icon_small.png", "assets/images/motorcycle_icon.png");
 });
 
 travel_type_train.addEventListener("click", () => {
   travelTypeValueUpdate(false, false, false, false, false, false, false, true, false);
   // prettier-ignore
-  travelTypeCreator(travel_type_train_click, "train", train_icon, "/assets/images/train_icon_small.png", "/assets/images/train_icon.png");
+  travelTypeCreator(travel_type_train_click, "train", train_icon, "assets/images/train_icon_small.png", "assets/images/train_icon.png");
 });
 
 travel_type_bus.addEventListener("click", () => {
   travelTypeValueUpdate(false, false, false, false, false, false, false, false, true);
   // prettier-ignore
-  travelTypeCreator(travel_type_bus_click, "bus", bus_icon, "/assets/images/bus_icon_small.png", "/assets/images/bus_icon.png");
+  travelTypeCreator(travel_type_bus_click, "bus", bus_icon, "assets/images/bus_icon_small.png", "assets/images/bus_icon.png");
 });
 
 check_button_individual.addEventListener("click", () => {
   if (allow_individual_log_creation) {
     travel_logs_individual_name = travel_logs_individual_input.value;
     if (travel_logs_individual_name === "") {
-      showInfoPopup("Please enter travel name");
+      displayInfoBox("Please enter a travel name.");
       return;
     }
     if (travel_date_start === "" || travel_date_end === "") {
-      showInfoPopup("Please select a valid date range");
+      displayInfoBox("Please select a valid date range.");
       return;
     }
 
@@ -1263,12 +1263,11 @@ check_button_individual.addEventListener("click", () => {
       toggleTimelineVisibility(true);
       toggleTravelLogsIndividualMainContainerVisibility(false);
       timelineInfoToggle();
-      closeInfoPopup();
       is_travel_creator_active = false;
       current_crud_category = "none";
     }
   } else {
-    showInfoPopup("please, draw a path on the map first");
+    displayInfoBox("Please draw a path on the map first.");
   }
 });
 
@@ -1284,7 +1283,6 @@ close_button_individual.addEventListener("click", () => {
   current_crud_category = "none";
   toggleMainLogContainerVisibility(true);
   toggleTimelineVisibility(true);
-  closeInfoPopup();
   document.removeEventListener("mousemove", pngMouseTracking);
   toggleCustomCursorVisibility(false);
   map.off("click");
@@ -1929,7 +1927,7 @@ function buildCRUD() {
           const $travel_logs_group_name_new = $travel_logs_group_name.textContent;
 
           if ($travel_logs_group_name_new === "") {
-            showInfoPopup("Please enter a valid name");
+            displayInfoBox("Please enter a valid group name.");
           } else {
             $travel_logs_group_name.textContent = $travel_logs_group_name_new;
             const logId = $group_log_id.textContent;
@@ -2025,13 +2023,13 @@ function buildCRUD() {
             travelLogs.splice(index, 1);
           }
           $travel_logs_group_div_main.remove();
-        } else if (isTravelGroupEmpty == false) {
-          showInfoPopup("Travel group is not empty, please remove remaining travel logs");
-        }
 
-        const id_to_remove = CRUD.findIndex((item) => item.CRUD_group_id === stored_group_id_reference);
-        if (id_to_remove !== -1) {
-          CRUD.splice(id_to_remove, 1);
+          const id_to_remove = CRUD.findIndex((item) => item.CRUD_group_id === stored_group_id_reference);
+          if (id_to_remove !== -1) {
+            CRUD.splice(id_to_remove, 1);
+          }
+        } else if (isTravelGroupEmpty == false) {
+          displayInfoBox("Travel group is not empty. Please remove remaining travel logs first.");
         }
 
         if (timelineData.events.length === 0) {
@@ -2150,7 +2148,7 @@ function buildCRUD() {
             const $travel_logs_individual_name_new = $travel_logs_individual_name.textContent;
 
             if ($travel_logs_individual_name_new === "") {
-              showInfoPopup("Please enter a valid name");
+              displayInfoBox("Please enter a valid name.");
             } else {
               $travel_logs_individual_name.textContent = $travel_logs_individual_name_new;
               const logId = $individual_log_id.textContent;
@@ -2328,7 +2326,7 @@ function buildCRUD() {
           const $travel_logs_individual_name_new = $travel_logs_individual_name.textContent;
 
           if ($travel_logs_individual_name_new === "") {
-            showInfoPopup("Please enter a valid name");
+            displayInfoBox("Please enter a valid name.");
           } else {
             $travel_logs_individual_name.textContent = $travel_logs_individual_name_new;
             const logId = $individual_log_id.textContent;
@@ -2779,21 +2777,27 @@ function onLoadingComplete() {
 trackLoadingProgress(resourcesToLoad, progressInfoDisplay, onLoadingComplete);
 
 // Loading progress info ↑
-// Other ↓
-// // Other / Info popup ↓
 
-function showInfoPopup(text) {
-  info_popup_text.textContent = text;
-  info_popup.style.display = "block";
+// Info popup ↓
+
+function displayInfoBox(text) {
+  clearTimeout(info_box_timeout_show);
+  clearTimeout(info_box_timeout_hide);
+
+  info_box_text.textContent = text;
+  info_box.style.display = "flex";
+  info_box.style.opacity = 1;
+
+  info_box_timeout_show = setTimeout(function () {
+    info_box.style.opacity = 0;
+
+    info_box_timeout_hide = setTimeout(function () {
+      info_box.style.display = "none";
+    }, 300);
+  }, 2500);
 }
 
-function closeInfoPopup() {
-  info_popup.style.display = "none";
-}
-close_info_popup.addEventListener("click", closeInfoPopup);
-
-// // Other / Info popup ↑
-// Other ↑
+// Info popup ↑
 
 // // ---------- TEST ---------- ↓
 
