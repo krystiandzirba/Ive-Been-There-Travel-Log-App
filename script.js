@@ -1,4 +1,4 @@
-// ver: 1.1.4
+// ver: 1.1.5
 
 // Bugs:
 
@@ -14,7 +14,7 @@
 
 // - Add different page styles (font, animations, images, backgrounds, theme) - modern / middleage / other
 // - Add different languages
-// - Add info boxes to help navigate the app while using it for the first time
+// - Add driver.js
 // - Add D3 to visualize the statistics data
 //       - add continent statistics (how many countries were visited in different continents, how many countries were visited)
 // - populate the settings with options like: erase all data / report a bug / km-mil switch /
@@ -288,6 +288,7 @@ const { home_icon, car_icon, plane_icon, boat_icon, walk_icon, bicycle_icon, mot
 const { trainsAddon, cyclingAddon, bordersAddon, labelsAddon } = leafletConfig.addons;
 
 const mapTileLayers = L.layerGroup([mapTileLayer_A]).addTo(map);
+
 let temporaryMarkers = L.layerGroup();
 let trueMarkers = L.layerGroup();
 
@@ -295,6 +296,7 @@ let trueMarkers = L.layerGroup();
 
 // 1 = local storage / 0 = temporary
 
+/* 1 */ let pageSettings = {};
 /* 1 */ let homeData = {};
 /* 1 */ let markersData = [];
 /* 1 */ let travelLogs = [];
@@ -488,29 +490,43 @@ sub_map_layers_container.addEventListener("mouseleave", () => {
 });
 
 sub_map_tile_layer_A.addEventListener("click", () => {
+  pageSettings.current_map_layer = "earth";
+  localStorageSavePageSettings();
+
   switchTileMap(mapTileLayer_A);
   toggleActiveIconColor(sub_map_layer_earth_icon);
   toggleInactiveIconColor(sub_map_layer_bright_icon, sub_map_layer_dark_icon, sub_map_layer_middleage_icon);
 });
 sub_map_tile_layer_B.addEventListener("click", () => {
+  pageSettings.current_map_layer = "light";
+  localStorageSavePageSettings();
+
   switchTileMap(mapTileLayer_B);
   toggleActiveIconColor(sub_map_layer_bright_icon);
   toggleInactiveIconColor(sub_map_layer_earth_icon, sub_map_layer_dark_icon, sub_map_layer_middleage_icon);
 });
 sub_map_tile_layer_C.addEventListener("click", () => {
+  pageSettings.current_map_layer = "dark";
+  localStorageSavePageSettings();
+
   switchTileMap(mapTileLayer_C);
   toggleActiveIconColor(sub_map_layer_dark_icon);
   toggleInactiveIconColor(sub_map_layer_earth_icon, sub_map_layer_bright_icon, sub_map_layer_middleage_icon);
 });
 sub_map_tile_layer_D.addEventListener("click", () => {
+  pageSettings.current_map_layer = "middleage";
+  localStorageSavePageSettings();
+
   switchTileMap(mapTileLayer_D);
   toggleActiveIconColor(sub_map_layer_middleage_icon);
   toggleInactiveIconColor(sub_map_layer_earth_icon, sub_map_layer_bright_icon, sub_map_layer_dark_icon);
 });
 
 function switchTileMap(layer) {
-  mapTileLayers.clearLayers();
-  mapTileLayers.addLayer(layer);
+  if (!mapTileLayers.hasLayer(layer)) {
+    mapTileLayers.clearLayers();
+    mapTileLayers.addLayer(layer);
+  }
 }
 
 function toggleActiveIconColor(icon_0) {
@@ -656,7 +672,7 @@ timeline_container_arrow.addEventListener("click", () => {
 function toggleTimelineVisibility(toggle) {
   if (toggle && timeline_enabled) {
     timeline_container.style.top = "63.2%";
-    timeline_container_arrow.style.top = "72%";
+    timeline_container_arrow.style.top = "71%";
     timeline_visibility = true;
   } else {
     timeline_container.style.top = "89%";
@@ -2648,7 +2664,44 @@ function localStorageCreateHomeMarkerAndCircle() {
   }
 }
 
+function localStorageSavePageSettings() {
+  localStorage.setItem("pageSettings", JSON.stringify(pageSettings));
+}
+
+function localStorageLoadPageSettings() {
+  if (localStorage.getItem("pageSettings")) {
+    pageSettings = JSON.parse(localStorage.getItem("pageSettings"));
+  } else {
+    pageSettings = {};
+  }
+}
+
+function localStorageRemovePageSettings() {
+  localStorage.removeItem("pageSettings");
+}
+
+function localStorageSetMapLayer() {
+  if (pageSettings.current_map_layer === "earth" || pageSettings.current_map_layer === "") {
+    switchTileMap(mapTileLayer_A);
+    toggleActiveIconColor(sub_map_layer_earth_icon);
+    toggleInactiveIconColor(sub_map_layer_bright_icon, sub_map_layer_dark_icon, sub_map_layer_middleage_icon);
+  } else if (pageSettings.current_map_layer === "light") {
+    switchTileMap(mapTileLayer_B);
+    toggleActiveIconColor(sub_map_layer_bright_icon);
+    toggleInactiveIconColor(sub_map_layer_earth_icon, sub_map_layer_dark_icon, sub_map_layer_middleage_icon);
+  } else if (pageSettings.current_map_layer === "dark") {
+    switchTileMap(mapTileLayer_C);
+    toggleActiveIconColor(sub_map_layer_dark_icon);
+    toggleInactiveIconColor(sub_map_layer_earth_icon, sub_map_layer_bright_icon, sub_map_layer_middleage_icon);
+  } else if (pageSettings.current_map_layer === "middleage") {
+    switchTileMap(mapTileLayer_D);
+    toggleActiveIconColor(sub_map_layer_middleage_icon);
+    toggleInactiveIconColor(sub_map_layer_earth_icon, sub_map_layer_bright_icon, sub_map_layer_dark_icon);
+  }
+}
+
 // Local Storage ↑
+
 // Loading progress info ↓
 
 const progress_info = document.getElementById("progress_info");
@@ -2737,6 +2790,7 @@ function progressInfoDisplay(label, progress) {
 }
 
 function onLoadingComplete() {
+  localStorageLoadPageSettings();
   localStorageLoadTrueHighlights();
   localStorageLoadTravelLogs();
   localStorageLoadMarkerCoordinates();
@@ -2754,6 +2808,7 @@ function onLoadingComplete() {
   localStorageCreateTrueMarkers();
   localStorageCreateHomeMarkerAndCircle();
 
+  localStorageSetMapLayer();
   calculateDistances();
   distancesBreakdown(rawCoordinatesDistances);
   calculateTotalDistances(rawCoordinatesDistances);
@@ -2802,6 +2857,7 @@ function displayInfoBox(text) {
 // // ---------- TEST ---------- ↓
 
 test_button.addEventListener("click", () => {
+  console.log("-1- " + "pageSettings", pageSettings);
   console.log("-1- " + "homeData", homeData);
   console.log("-1- " + "markersData", markersData);
   console.log("-1- " + "travelLogs", travelLogs);

@@ -300,7 +300,7 @@ body {
 
 .main_logs_container_arrow {
   position: absolute;
-  top: 6.5vh;
+  top: 5vh;
   left: 95vw;
   margin-left: 3vw;
   z-index: 699;
