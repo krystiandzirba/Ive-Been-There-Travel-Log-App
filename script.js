@@ -1,4 +1,4 @@
-// ver: 1.1.5
+// ver: 1.1.6
 
 // Bugs:
 
@@ -6,7 +6,6 @@
 
 // - black theme for timeline
 // - portrait mode, no UI until mouse click
-// - marker size slider
 // - separate buttons to clear travel log / markers / highlights / timeline ...
 // - add a 0.5s timeout between deleting individual and group logs
 // - add statistic: furthest distance from the home location
@@ -72,6 +71,8 @@ const sub_overlay_markers = document.getElementById("sub_overlay_markers");
 const sub_overlay_polylines = document.getElementById("sub_overlay_polylines");
 const sub_overlay_highlights = document.getElementById("sub_overlay_highlights");
 
+const markers_settings_display = document.querySelector("#sub_overlay_markers p");
+
 let overlay_train_active = false;
 let overlay_bicycle_active = false;
 let overlay_labels_active = false;
@@ -84,6 +85,12 @@ let markers_visibility = true;
 let polyline_visibility = true;
 
 let overlay_container_timeout;
+
+let marker_settings_index;
+
+const marker_sizes = [0, 20, 35, 50, 75];
+const anchor_values = [0, 12, 20, 30, 40];
+const labels = ["none", "small", "mid", "big", "large"];
 
 // // Sidebar Overlay ↑
 // // Sidebar Page Styles ↓
@@ -586,10 +593,28 @@ sub_overlay_borders.addEventListener("click", () => {
   switchTileAddon(bordersAddon);
   overlay_borders_active = toggleIconColor(overlay_borders_active, sub_borders_icon);
 });
+
 sub_overlay_markers.addEventListener("click", () => {
-  toggleMarkersVisibility();
-  overlay_markers_active = toggleIconColor(overlay_markers_active, sub_markers_icon);
+  const current_size = marker_sizes[marker_settings_index];
+  const current_anchor = anchor_values[marker_settings_index];
+
+  const label = labels[marker_settings_index];
+  markers_settings_display.innerHTML = `markers<br>-${label}-`;
+
+  if (marker_settings_index === 0 || marker_settings_index === 1) {
+    overlay_markers_active = toggleIconColor(overlay_markers_active, sub_markers_icon);
+  }
+
+  pageSettings.markers_size = current_size;
+  pageSettings.markers_anchor = current_anchor;
+  marker_settings_index = (marker_settings_index + 1) % marker_sizes.length;
+  pageSettings.markers_index = marker_settings_index;
+
+  removeTrueMarkers();
+  localStorageCreateTrueMarkers(current_size, current_anchor);
+  localStorageSavePageSettings();
 });
+
 sub_overlay_polylines.addEventListener("click", () => {
   togglePolylineVisibility();
   overlay_polylines_active = toggleIconColor(overlay_polylines_active, sub_polylines_icon);
@@ -608,15 +633,6 @@ function switchTileAddon(tile_addon) {
   } else {
     tile_addon.addTo(map);
   }
-}
-
-function toggleMarkersVisibility() {
-  if (markers_visibility) {
-    removeTrueMarkers();
-  } else {
-    localStorageCreateTrueMarkers();
-  }
-  markers_visibility = !markers_visibility;
 }
 
 function togglePolylineVisibility() {
@@ -994,7 +1010,6 @@ add_travel_superset_button.addEventListener("click", () => {
   is_travel_creator_active = true;
   markers_visibility = false;
   polyline_visibility = false;
-  toggleMarkersVisibility();
   togglePolylineVisibility();
   travelTypeButtonsColor();
   toggleMainLogContainerVisibility(false);
@@ -1268,7 +1283,7 @@ check_button_individual.addEventListener("click", () => {
       localStorageCreateTimelineData(travelLogs, timelineData);
       populateTimeline();
       buildCRUD();
-      localStorageCreateTrueMarkers();
+      localStorageCreateTrueMarkers(pageSettings.markers_size, pageSettings.markers_anchor);
       localStorageCreateTrueHighlights();
       drawPolyline();
 
@@ -1993,7 +2008,6 @@ function buildCRUD() {
         is_travel_creator_active = true;
         markers_visibility = false;
         polyline_visibility = false;
-        toggleMarkersVisibility();
         togglePolylineVisibility();
         travelTypeButtonsColor();
         toggleMainLogContainerVisibility(false);
@@ -2209,7 +2223,6 @@ function buildCRUD() {
           markers_visibility = false;
           polyline_visibility = false;
           removeTrueHighlights();
-          toggleMarkersVisibility();
           togglePolylineVisibility();
           trueHighlightsArrayRemoveHighlight(stored_subset_id_reference);
           removeMarkers(stored_subset_id_reference);
@@ -2251,7 +2264,7 @@ function buildCRUD() {
           localStorageSaveTravelLogs();
           localStorageSaveCRUD();
           localStorageSaveMarkerCoordinates();
-          localStorageCreateTrueMarkers();
+          localStorageCreateTrueMarkers(pageSettings.markers_size, pageSettings.markers_anchor);
 
           if (timelineData.events.length === 0) {
             toggleTimelineVisibility(false);
@@ -2387,7 +2400,6 @@ function buildCRUD() {
         markers_visibility = false;
         polyline_visibility = false;
         removeTrueHighlights();
-        toggleMarkersVisibility();
         togglePolylineVisibility();
         trueHighlightsArrayRemoveHighlight(stored_superset_direct_id_reference);
         removeMarkers(stored_superset_direct_id_reference);
@@ -2427,7 +2439,7 @@ function buildCRUD() {
         localStorageSaveTravelLogs();
         localStorageSaveCRUD();
         localStorageSaveMarkerCoordinates();
-        localStorageCreateTrueMarkers();
+        localStorageCreateTrueMarkers(pageSettings.markers_size, pageSettings.markers_anchor);
 
         if (timelineData.events.length === 0) {
           toggleTimelineVisibility(false);
@@ -2527,15 +2539,15 @@ function localStorageCreateTimelineData(travelLogs, timelineData) {
   }
 }
 
-function localStorageCreateTrueMarkers() {
+function localStorageCreateTrueMarkers(size, anchor) {
   for (const coordinatesArray of markersData) {
     for (const coordinate of coordinatesArray) {
       const [lat, lng, [id, travelType, iconUrl]] = coordinate;
 
       const icon = L.icon({
         iconUrl: iconUrl,
-        iconSize: [42, 42],
-        iconAnchor: [24, 24],
+        iconSize: [size, size],
+        iconAnchor: [anchor, anchor],
       });
 
       const marker = L.marker([lat, lng], {
@@ -2671,8 +2683,29 @@ function localStorageSavePageSettings() {
 function localStorageLoadPageSettings() {
   if (localStorage.getItem("pageSettings")) {
     pageSettings = JSON.parse(localStorage.getItem("pageSettings"));
+
+    marker_settings_index = pageSettings.markers_index;
   } else {
-    pageSettings = {};
+    pageSettings.markers_size = 35;
+    pageSettings.markers_anchor = 20;
+    pageSettings.markers_index = 3;
+    marker_settings_index = pageSettings.markers_index;
+  }
+
+  if (marker_settings_index === 1) {
+    overlay_markers_active = toggleIconColor(overlay_markers_active, sub_markers_icon);
+  }
+
+  if (pageSettings.markers_size === 0) {
+    markers_settings_display.innerHTML = `markers<br>-none-`;
+  } else if (pageSettings.markers_size === 20) {
+    markers_settings_display.innerHTML = `markers<br>-small-`;
+  } else if (pageSettings.markers_size === 30) {
+    markers_settings_display.innerHTML = `markers<br>-mid-`;
+  } else if (pageSettings.markers_size === 50) {
+    markers_settings_display.innerHTML = `markers<br>-big-`;
+  } else if (pageSettings.markers_size === 75) {
+    markers_settings_display.innerHTML = `markers<br>-large-`;
   }
 }
 
@@ -2805,7 +2838,9 @@ function onLoadingComplete() {
   timelineInfoToggle();
   populateTimeline();
   buildCRUD();
-  localStorageCreateTrueMarkers();
+
+  localStorageCreateTrueMarkers(pageSettings.markers_size, pageSettings.markers_anchor);
+
   localStorageCreateHomeMarkerAndCircle();
 
   localStorageSetMapLayer();
