@@ -195,7 +195,7 @@ body {
 
   font-family: "Dosis", sans-serif;
   font-weight: 500;
-  font-size: 0.7vw;
+  font-size: 0.8vw;
 }
 
 .jscolor_home_container {
@@ -210,18 +210,18 @@ body {
 }
 
 .sidebar_main_button i {
-  margin-top: 20px;
+  margin-top: 2vh;
 }
 
 .sidebar_main_button p {
-  margin-top: 12px;
+  margin-top: 1.3vh;
 }
 
 .sub_main_container {
   position: absolute;
   background-color: #2b3847;
   backdrop-filter: blur(10px);
-  height: 9%;
+  height: 9.5%;
   z-index: 790;
 
   display: flex;
@@ -233,20 +233,71 @@ body {
 
 .sub_container_house {
   left: 0%;
-  top: 1%;
-  width: 25%;
+  top: 0.75vh;
+  width: 25vw;
 }
 
 .sub_container_map_layers {
   left: 0%;
-  top: 10%;
-  width: 20%;
+  top: 9.5vh;
+  width: 20vw;
 }
 
 .sub_container_overlay {
   left: 0%;
-  top: 18.5%;
+  top: 18.5vh;
   width: 35vw;
+}
+
+.sub_container_settings {
+  left: 0%;
+  top: 62.25vh;
+  width: 10vw;
+}
+
+.remove_data_confirmation_container {
+  height: 9vh;
+  width: 30vw;
+  z-index: 900;
+  background-color: #2b3847;
+  position: absolute;
+  display: none;
+  top: 20%;
+  left: 35%;
+
+  color: #d7d7d7;
+  font-family: "Dosis", sans-serif;
+  font-weight: 500;
+  font-size: 1.6vw;
+
+  text-align: center;
+  border-radius: 2vh;
+  padding: 2vh;
+}
+
+#remove_data_confirmation_container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3%;
+  height: 100%;
+  background: linear-gradient(to right, rgb(255, 91, 76) 0%, rgb(255, 91, 76) 100%);
+  z-index: -1;
+  text-align: center;
+  line-height: 4vh;
+}
+
+.check_icon_delete_data {
+  top: 34vh;
+  left: 35%;
+  display: none;
+}
+
+.close_icon_delete_data {
+  top: 34vh;
+  left: 63%;
+  display: none;
 }
 
 .sidebar_sub_button {
@@ -259,7 +310,7 @@ body {
 
   background-color: #2b3847;
   backdrop-filter: blur(10px);
-  height: 80%;
+  height: 85%;
   width: 25vw;
 
   border-radius: 10px 10px 10px 10px;
@@ -276,7 +327,7 @@ body {
 }
 
 .sidebar_sub_button i {
-  margin-top: 1.5vh;
+  margin-top: 2.4vh;
 }
 
 .sidebar_sub_button p {

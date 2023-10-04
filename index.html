@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>I've been there! - Travel log app v1.1.6</title>
+    <title>I've been there! - Travel log app v1.1.7</title>
     <link rel="icon" type="image/x-icon" href="assets/images/globe_icon_black.png" />
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -149,10 +149,7 @@
       </button>
       <button id="sub_overlay_markers" class="sidebar_sub_button">
         <i class="fa-solid fa-location-dot fa-2xl" style="color: #c9c9c9" id="sub_markers_icon"></i>
-        <p>
-          markers <br />
-          -medium-
-        </p>
+        <p>markers [M]</p>
       </button>
       <button id="sub_overlay_polylines" class="sidebar_sub_button">
         <i class="fa-solid fa-wave-square fa-2xl" style="color: #c9c9c9" id="sub_polylines_icon"></i>
@@ -163,6 +160,28 @@
         <p>highlights</p>
       </button>
     </div>
+
+    <div id="sub_settings_container" class="sub_main_container sub_container_settings">
+      <button id="sub_settings_remove_data" class="sidebar_sub_button">
+        <i class="fa-solid fa-eraser fa-2xl" style="color: #d7d7d726" id="sub_settings_remove_data_icon"></i>
+        <p>remove data</p>
+      </button>
+      <button id="sub_settings_report_bug" class="sidebar_sub_button">
+        <i class="fa-solid fa-bug fa-2xl" style="color: #d7d7d726" id="sub_settings_report_bug_icon"></i>
+        <p>report a bug</p>
+      </button>
+    </div>
+
+    <div id="remove_data_confirmation_container" class="remove_data_confirmation_container">
+      Are you sure you want to delete all data? Please note that this action is irreversible.
+    </div>
+
+    <button id="check_button_delete_data" class="icon_settings_container check_icon_delete_data">
+      <i class="fa-solid fa-check fa-2xl" style="color: #c9c9c9" id="check_icon_delete_data"></i>
+    </button>
+    <button id="close_button_delete_data" class="icon_settings_container close_icon_delete_data">
+      <i class="fa-solid fa-xmark fa-2xl" style="color: #c9c9c9" id="close_icon_delete_data"></i>
+    </button>
 
     <div class="jscolor_home_container">
       <p>
@@ -324,7 +343,7 @@
       <img id="custom_cursor_image" src="assets/images/car_icon_small.png" />
     </div>
 
-    <div class="app_version">ver: 1.1.6</div>
+    <div class="app_version">ver: 1.1.7</div>
 
     <div id="info_box">
       <p id="info_box_text"></p>

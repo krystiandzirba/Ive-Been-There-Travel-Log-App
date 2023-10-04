@@ -1,4 +1,4 @@
-// ver: 1.1.6
+// ver: 1.1.7
 
 // Bugs:
 
@@ -90,7 +90,7 @@ let marker_settings_index;
 
 const marker_sizes = [0, 20, 35, 50, 75];
 const anchor_values = [0, 12, 20, 30, 40];
-const labels = ["none", "small", "mid", "big", "large"];
+const labels = ["none", "[S]", "[M]", "[L]", "[XL]"];
 
 // // Sidebar Overlay ↑
 // // Sidebar Page Styles ↓
@@ -159,6 +159,14 @@ const language_icon = document.getElementById("language_icon");
 
 const sidebar_settings_button = document.getElementById("sidebar_settings_button");
 const settings_icon = document.getElementById("settings_icon");
+
+const remove_data_confirmation_container = document.getElementById("remove_data_confirmation_container");
+const check_button_delete_data = document.getElementById("check_button_delete_data");
+const close_button_delete_data = document.getElementById("close_button_delete_data");
+const check_icon_delete_data = document.getElementById("check_icon_delete_data");
+const close_icon_delete_data = document.getElementById("close_icon_delete_data");
+
+let settings_container_timeout;
 
 // // Sidebar Settings ↑
 // // Info box ↓
@@ -599,7 +607,7 @@ sub_overlay_markers.addEventListener("click", () => {
   const current_anchor = anchor_values[marker_settings_index];
 
   const label = labels[marker_settings_index];
-  markers_settings_display.innerHTML = `markers<br>-${label}-`;
+  markers_settings_display.innerHTML = `markers ${label}`;
 
   if (marker_settings_index === 0 || marker_settings_index === 1) {
     overlay_markers_active = toggleIconColor(overlay_markers_active, sub_markers_icon);
@@ -970,13 +978,78 @@ sidebar_language_button.addEventListener("mouseleave", () =>
 // // // Language ↑
 // // // Settings ↓
 
-sidebar_settings_button.addEventListener("mouseenter", () =>
-  changeIconColorOnHover(true, settings_icon, sidebar_settings_button)
+sidebar_settings_button.addEventListener("mouseenter", () => {
+  changeIconColorOnHover(true, settings_icon, sidebar_settings_button);
+  clearTimeout(settings_container_timeout);
+  sidebarButtonsAnimation(sub_settings_container, true);
+});
+
+sidebar_settings_button.addEventListener("mouseleave", () => {
+  changeIconColorOnHover(false, settings_icon, sidebar_settings_button);
+  settings_container_timeout = setTimeout(() => {
+    sidebarButtonsAnimation(sub_settings_container, false);
+  }, 200);
+});
+
+sub_settings_container.addEventListener("mouseenter", () => {
+  clearTimeout(settings_container_timeout);
+  sidebarButtonsAnimation(sub_settings_container, true);
+});
+
+sub_settings_container.addEventListener("mouseleave", () => {
+  settings_container_timeout = setTimeout(() => {
+    sidebarButtonsAnimation(sub_settings_container, false);
+  }, 200);
+});
+
+sub_settings_remove_data.addEventListener("click", () => {
+  if (is_travel_creator_active) {
+    displayInfoBox("Cannot remove the data during the travel log creation.");
+  } else {
+    toggleRemoveDataContainerVisibility(true);
+    toggleTravelLogsGroupMainContainerVisibility(false);
+    toggleTravelLogsIndividualMainContainerVisibility(false);
+  }
+});
+
+check_button_delete_data.addEventListener("click", () => {
+  toggleRemoveDataContainerVisibility(false);
+  localStorage.clear();
+  location.reload();
+});
+
+check_button_delete_data.addEventListener("mouseenter", () =>
+  changeIconColorOnHover(true, check_icon_delete_data, check_button_delete_data)
 );
 
-sidebar_settings_button.addEventListener("mouseleave", () =>
-  changeIconColorOnHover(false, settings_icon, sidebar_settings_button)
+check_button_delete_data.addEventListener("mouseleave", () =>
+  changeIconColorOnHover(false, check_icon_delete_data, check_button_delete_data)
 );
+
+close_button_delete_data.addEventListener("click", () => {
+  toggleRemoveDataContainerVisibility(false);
+  toggleMainLogContainerVisibility(true);
+});
+
+close_button_delete_data.addEventListener("mouseenter", () =>
+  changeIconColorOnHover(true, close_icon_delete_data, close_button_delete_data)
+);
+
+close_button_delete_data.addEventListener("mouseleave", () =>
+  changeIconColorOnHover(false, close_icon_delete_data, close_button_delete_data)
+);
+
+function toggleRemoveDataContainerVisibility(toggle) {
+  if (toggle) {
+    remove_data_confirmation_container.style.display = "block";
+    check_button_delete_data.style.display = "block";
+    close_button_delete_data.style.display = "block";
+  } else {
+    remove_data_confirmation_container.style.display = "none";
+    check_button_delete_data.style.display = "none";
+    close_button_delete_data.style.display = "none";
+  }
+}
 
 // // // Settings ↑
 
@@ -1015,6 +1088,7 @@ add_travel_superset_button.addEventListener("click", () => {
   toggleMainLogContainerVisibility(false);
   toggleTimelineVisibility(false);
   toggleStatisticsVisibility(false);
+  toggleRemoveDataContainerVisibility(false);
   if (!statistics_visibility) {
     statistics_visibility = toggleIconColor(statistics_visibility, statistics_icon);
   }
@@ -1046,6 +1120,7 @@ add_travel_group_button.addEventListener("click", () => {
   toggleMainLogContainerVisibility(false);
   toggleTimelineVisibility(false);
   toggleStatisticsVisibility(false);
+  toggleRemoveDataContainerVisibility(false);
   if (!is_travel_creator_active) {
     current_crud_category = "group";
     allow_individual_log_creation = false;
@@ -1395,7 +1470,6 @@ function travelTypeCreator(travel_type_click, travel_type, icon_type, icon_small
     }
 
     temporaryMarkers.addTo(map);
-    is_travel_creator_active = !is_travel_creator_active;
   }
 }
 
@@ -2697,15 +2771,15 @@ function localStorageLoadPageSettings() {
   }
 
   if (pageSettings.markers_size === 0) {
-    markers_settings_display.innerHTML = `markers<br>-none-`;
+    markers_settings_display.innerHTML = `markers [none]`;
   } else if (pageSettings.markers_size === 20) {
-    markers_settings_display.innerHTML = `markers<br>-small-`;
+    markers_settings_display.innerHTML = `markers [S]`;
   } else if (pageSettings.markers_size === 30) {
-    markers_settings_display.innerHTML = `markers<br>-mid-`;
+    markers_settings_display.innerHTML = `markers [M]`;
   } else if (pageSettings.markers_size === 50) {
-    markers_settings_display.innerHTML = `markers<br>-big-`;
+    markers_settings_display.innerHTML = `markers [L]`;
   } else if (pageSettings.markers_size === 75) {
-    markers_settings_display.innerHTML = `markers<br>-large-`;
+    markers_settings_display.innerHTML = `markers [XL]`;
   }
 }
 
