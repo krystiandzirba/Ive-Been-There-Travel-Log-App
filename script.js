@@ -1,12 +1,10 @@
-// ver: 1.1.9
+// ver: 1.1.10
 
 // Bugs:
 
 // Features to add:
 
 // - black theme for timeline
-// - portrait mode, no UI until mouse click
-// - separate buttons to clear travel log / markers / highlights / timeline ...
 // - add a 0.5s timeout between deleting individual and group logs
 // - add statistic: furthest distance from the home location
 // - city search bar
@@ -16,7 +14,6 @@
 // - Add driver.js
 // - Add D3 to visualize the statistics data
 //       - add continent statistics (how many countries were visited in different continents, how many countries were visited)
-// - populate the settings with options like: erase all data / report a bug / km-mil switch /
 
 // multi options polyline / leaflet motion / polyline decorator / leaflet canvas markers /
 
@@ -555,9 +552,9 @@ function switchTileMap(layer) {
   }
 }
 
-function toggleActiveIconColor(icon_0) {
-  icon_0.classList.remove("black_icon_toggle");
-  icon_0.classList.add("white_icon_toggle");
+function toggleActiveIconColor(icon) {
+  icon.classList.remove("black_icon_toggle");
+  icon.classList.add("white_icon_toggle");
 }
 
 function toggleInactiveIconColor(icon_1, icon_2, icon_3) {
@@ -2844,7 +2841,7 @@ function localStorageRemovePageSettings() {
 }
 
 function localStorageSetMapLayer() {
-  if (pageSettings.current_map_layer === "earth" || pageSettings.current_map_layer === "") {
+  if (typeof pageSettings.current_map_layer === "undefined" || pageSettings.current_map_layer === "earth") {
     switchTileMap(mapTileLayer_A);
     toggleActiveIconColor(sub_map_layer_earth_icon);
     toggleInactiveIconColor(sub_map_layer_bright_icon, sub_map_layer_dark_icon, sub_map_layer_middleage_icon);
