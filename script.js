@@ -1,4 +1,4 @@
-// ver: 1.1.7
+// ver: 1.1.8
 
 // Bugs:
 
@@ -22,6 +22,9 @@
 
 // Variables ↓
 // // Sidebar House ↓
+
+const sidebar_buttons_container = document.getElementById("sidebar_buttons_container");
+
 const sidebar_house_button = document.getElementById("sidebar_house_button");
 const house_icon = document.getElementById("house_icon");
 const sub_house_button_container = document.getElementById("sub_house_button_container");
@@ -160,6 +163,10 @@ const language_icon = document.getElementById("language_icon");
 const sidebar_settings_button = document.getElementById("sidebar_settings_button");
 const settings_icon = document.getElementById("settings_icon");
 
+const sub_settings_portrait_mode = document.getElementById("sub_settings_portrait_mode");
+const sub_settings_remove_data = document.getElementById("sub_settings_remove_data");
+const sub_settings_report_bug = document.getElementById("sub_settings_report_bug");
+
 const remove_data_confirmation_container = document.getElementById("remove_data_confirmation_container");
 const check_button_delete_data = document.getElementById("check_button_delete_data");
 const close_button_delete_data = document.getElementById("close_button_delete_data");
@@ -167,6 +174,8 @@ const check_icon_delete_data = document.getElementById("check_icon_delete_data")
 const close_icon_delete_data = document.getElementById("close_icon_delete_data");
 
 let settings_container_timeout;
+
+let ui_hidden = false;
 
 // // Sidebar Settings ↑
 // // Info box ↓
@@ -279,11 +288,13 @@ let jscolor_highlight_color = "#1495ED";
 let jscolor_highlight_opacity = 0.5;
 
 // // Travel log individual ↑
-// // Custom cursor ↓
+// // Custom cursor / App version ↓
 
 const custom_cursor = document.getElementById("custom_cursor");
 
-// // Custom cursor ↑
+const app_version = document.querySelector(".app_version");
+
+// // Custom cursor / App version ↑
 // // Leaflet map ↓
 
 import leafletConfig from "./LeafletConfig.js";
@@ -1050,6 +1061,45 @@ function toggleRemoveDataContainerVisibility(toggle) {
     close_button_delete_data.style.display = "none";
   }
 }
+
+sub_settings_portrait_mode.addEventListener("click", (event) => {
+  displayInfoBox("Use LMB (left mouse button) to leave the portrait view.");
+  event.stopPropagation();
+
+  if (is_travel_creator_active) {
+    displayInfoBox("Cannot use the portrait mode during the travel log creation.");
+  } else {
+    sidebar_buttons_container.classList.add("hidden");
+    main_logs_container.classList.add("hidden");
+    main_logs_container_arrow.classList.add("hidden");
+
+    timeline_container_arrow.classList.add("hidden");
+    timeline_container.classList.add("hidden");
+    app_version.classList.add("hidden");
+    sub_settings_container.classList.add("hidden");
+
+    main_statistics_container.classList.add("hidden");
+
+    ui_hidden = true;
+  }
+});
+
+document.addEventListener("click", () => {
+  if (ui_hidden) {
+    sidebar_buttons_container.classList.remove("hidden");
+    main_logs_container.classList.remove("hidden");
+    main_logs_container_arrow.classList.remove("hidden");
+
+    timeline_container_arrow.classList.remove("hidden");
+    timeline_container.classList.remove("hidden");
+    app_version.classList.remove("hidden");
+    sub_settings_container.classList.remove("hidden");
+
+    main_statistics_container.classList.remove("hidden");
+  }
+
+  ui_hidden = false;
+});
 
 // // // Settings ↑
 

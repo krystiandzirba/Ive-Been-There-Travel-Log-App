@@ -174,6 +174,8 @@ body {
   padding: 0px;
   margin: 0px;
   padding-top: 1vh;
+
+  transform: translate(0%, 0%);
 }
 
 .sidebar_main_button {
@@ -224,6 +226,7 @@ body {
   height: 9.5%;
   z-index: 790;
 
+  border-radius: 0 1vh 1vh 0;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -252,7 +255,7 @@ body {
 .sub_container_settings {
   left: 0%;
   top: 62.25vh;
-  width: 10vw;
+  width: 15vw;
 }
 
 .remove_data_confirmation_container {
@@ -799,6 +802,10 @@ body {
 
 /* ↑ Travel stats ↑ */
 /* ↓ Other ↓  */
+
+.hidden {
+  display: none;
+}
 
 .app_version {
   color: white;

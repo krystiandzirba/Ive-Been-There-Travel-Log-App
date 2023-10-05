@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>I've been there! - Travel log app v1.1.7</title>
+    <title>I've been there! - Travel log app v1.1.8</title>
     <link rel="icon" type="image/x-icon" href="assets/images/globe_icon_black.png" />
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -53,7 +53,7 @@
 
     <div id="map"></div>
 
-    <div class="sidebar_buttons_container">
+    <div id="sidebar_buttons_container" class="sidebar_buttons_container">
       <button id="sidebar_house_button" class="sidebar_main_button">
         <i class="fa-solid fa-home fa-2xl" style="color: #c9c9c9" id="house_icon"></i>
         <p>house</p>
@@ -162,12 +162,16 @@
     </div>
 
     <div id="sub_settings_container" class="sub_main_container sub_container_settings">
+      <button id="sub_settings_portrait_mode" class="sidebar_sub_button">
+        <i class="fa-solid fa-camera fa-2xl" style="color: #c9c9c9" id="sub_settings_portrait_mode_icon"></i>
+        <p>portrait mode</p>
+      </button>
       <button id="sub_settings_remove_data" class="sidebar_sub_button">
-        <i class="fa-solid fa-eraser fa-2xl" style="color: #d7d7d726" id="sub_settings_remove_data_icon"></i>
+        <i class="fa-solid fa-eraser fa-2xl" style="color: #c9c9c9" id="sub_settings_remove_data_icon"></i>
         <p>remove data</p>
       </button>
       <button id="sub_settings_report_bug" class="sidebar_sub_button">
-        <i class="fa-solid fa-bug fa-2xl" style="color: #d7d7d726" id="sub_settings_report_bug_icon"></i>
+        <i class="fa-solid fa-bug fa-2xl" style="color: #c9c9c9" id="sub_settings_report_bug_icon"></i>
         <p>report a bug</p>
       </button>
     </div>
@@ -343,7 +347,7 @@
       <img id="custom_cursor_image" src="assets/images/car_icon_small.png" />
     </div>
 
-    <div class="app_version">ver: 1.1.7</div>
+    <div class="app_version">ver: 1.1.8</div>
 
     <div id="info_box">
       <p id="info_box_text"></p>
