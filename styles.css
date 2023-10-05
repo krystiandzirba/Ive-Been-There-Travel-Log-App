@@ -190,21 +190,14 @@ body {
 
   border: none;
   color: #d7d7d7;
-  margin-bottom: 7%;
-  margin-top: 7%;
+  margin-bottom: 0.625vh;
+  margin-top: 0.625vh;
 
   border-radius: 10px 10px 10px 10px;
 
   font-family: "Dosis", sans-serif;
   font-weight: 500;
   font-size: 0.8vw;
-}
-
-.jscolor_home_container {
-  top: 9%;
-  left: -6%;
-  z-index: 200;
-  position: absolute;
 }
 
 .sidebar_main_button:hover {
@@ -217,6 +210,13 @@ body {
 
 .sidebar_main_button p {
   margin-top: 1.3vh;
+}
+
+.jscolor_home_container {
+  top: 9%;
+  left: -6%;
+  z-index: 200;
+  position: absolute;
 }
 
 .sub_main_container {
@@ -255,7 +255,7 @@ body {
 .sub_container_settings {
   left: 0%;
   top: 62.25vh;
-  width: 15vw;
+  width: 20vw;
 }
 
 .remove_data_confirmation_container {
@@ -301,6 +301,19 @@ body {
   top: 34vh;
   left: 63%;
   display: none;
+}
+
+.github {
+  width: 45%;
+  height: 4.5%;
+  background-color: #2f3c4c;
+  border: none;
+  border-radius: 1.5vh;
+  margin-top: 22vh;
+}
+
+.github i {
+  margin-top: 1.5vh;
 }
 
 .sidebar_sub_button {
@@ -468,13 +481,13 @@ body {
   text-align: center;
 }
 
-.jscolor_highlight {
-  margin-top: -1vh;
-}
-
 #travel_logs_individual_input::placeholder {
   color: #adadad;
   font-size: 1.5vw;
+}
+
+.jscolor_highlight {
+  margin-top: -1vh;
 }
 
 .jscolor_highlight_container {
