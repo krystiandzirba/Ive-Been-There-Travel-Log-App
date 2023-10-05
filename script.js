@@ -1,4 +1,4 @@
-// ver: 1.1.8
+// ver: 1.1.9
 
 // Bugs:
 
@@ -2712,33 +2712,39 @@ function localStorageLoadTrueHighlights() {
 }
 
 function localStorageCreateTrueHighlights() {
-  createdHighlightLayers = [];
-  trueHighlights.forEach((highlight) => {
-    const { country_name, jscolor_highlight_color, jscolor_highlight_opacity, random_id } = highlight;
+  if (cachedGeoJSON && cachedGeoJSON.features) {
+    createdHighlightLayers = [];
+    trueHighlights.forEach((highlight) => {
+      const { country_name, jscolor_highlight_color, jscolor_highlight_opacity, random_id } = highlight;
 
-    const layer_exist = createdHighlightLayers.some(
-      (layer) => layer.country_name === country_name && layer.random_id === random_id
-    );
+      const layer_exist = createdHighlightLayers.some(
+        (layer) => layer.country_name === country_name && layer.random_id === random_id
+      );
 
-    if (!layer_exist) {
-      const feature = cachedGeoJSON.features.find((f) => f.properties.ADMIN === country_name);
+      if (!layer_exist) {
+        const feature = cachedGeoJSON.features.find((f) => f.properties.ADMIN === country_name);
 
-      if (feature) {
-        const layer = L.geoJSON(feature, {
-          style: {
-            fillColor: jscolor_highlight_color,
-            fillOpacity: jscolor_highlight_opacity,
-            color: "black",
-            weight: 1,
-            opacity: 1,
-          },
-          onEachFeature: function (feature, layer) {},
-        }).addTo(map);
+        if (feature) {
+          const layer = L.geoJSON(feature, {
+            style: {
+              fillColor: jscolor_highlight_color,
+              fillOpacity: jscolor_highlight_opacity,
+              color: "black",
+              weight: 1,
+              opacity: 1,
+            },
+            onEachFeature: function (feature, layer) {},
+          }).addTo(map);
 
-        createdHighlightLayers.push({ country_name, random_id });
+          createdHighlightLayers.push({ country_name, random_id });
+        }
       }
-    }
-  });
+    });
+  } else {
+    setTimeout(function () {
+      localStorageCreateTrueHighlights();
+    }, 200);
+  }
 }
 
 function removeTrueHighlights() {
