@@ -1,5 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Dosis:wght@200&family=Righteous&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Lilita+One&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@200&display=swap");
 
 body {
   padding: 0px;
@@ -132,7 +131,7 @@ body {
 .loading_page_progress_container p {
   font-size: 20px;
   font-weight: bold;
-  font-family: "Dosis", sans-serif;
+  font-family: "Inter", sans-serif;
   color: rgb(211, 211, 211);
 }
 
@@ -195,9 +194,9 @@ body {
 
   border-radius: 10px 10px 10px 10px;
 
-  font-family: "Dosis", sans-serif;
+  font-family: "Inter", sans-serif;
   font-weight: 500;
-  font-size: 0.8vw;
+  font-size: 0.625vw;
 }
 
 .sidebar_main_button:hover {
@@ -209,7 +208,7 @@ body {
 }
 
 .sidebar_main_button p {
-  margin-top: 1.3vh;
+  margin-top: 2vh;
 }
 
 .jscolor_home_container {
@@ -236,7 +235,7 @@ body {
 
 .sub_container_house {
   left: 0%;
-  top: 0.75vh;
+  top: 1vh;
   width: 25vw;
 }
 
@@ -248,7 +247,7 @@ body {
 
 .sub_container_overlay {
   left: 0%;
-  top: 18.5vh;
+  top: 18.25vh;
   width: 35vw;
 }
 
@@ -269,9 +268,9 @@ body {
   left: 35%;
 
   color: #d7d7d7;
-  font-family: "Dosis", sans-serif;
+  font-family: "Inter", sans-serif;
   font-weight: 500;
-  font-size: 1.6vw;
+  font-size: 1.4vw;
 
   text-align: center;
   border-radius: 2vh;
@@ -325,15 +324,15 @@ body {
   border: none;
 
   background-color: #2b3847;
-  backdrop-filter: blur(10px);
+  /* backdrop-filter: blur(10px); */
   height: 85%;
-  width: 25vw;
+  width: 25%;
 
-  border-radius: 10px 10px 10px 10px;
+  border-radius: 1.2vh;
 
-  font-family: "Dosis", sans-serif;
+  font-family: "Inter", sans-serif;
   font-weight: 500;
-  font-size: 0.7vw;
+  font-size: 0.625vw;
   margin: 1%;
   padding: 1%;
 }
@@ -347,7 +346,7 @@ body {
 }
 
 .sidebar_sub_button p {
-  margin-top: 1.5vh;
+  margin-top: 2vh;
 }
 
 .black_icon_toggle {
@@ -424,12 +423,12 @@ body {
 }
 
 .add_travel i {
-  margin-top: 1.5vh;
+  margin-top: 2.5vh;
   font-size: 2vw;
 }
 
 .add_travel p {
-  font-family: "Dosis", sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 1vw;
   margin-top: 1vh;
 }
@@ -475,7 +474,7 @@ body {
   background-color: #26303d;
   color: #d7d7d7;
   font-size: 1vw;
-  font-family: "Dosis", sans-serif;
+  font-family: "Inter", sans-serif;
   margin-left: 1vw;
   margin-right: 1vw;
   text-align: center;
@@ -580,7 +579,7 @@ body {
   text-align: center;
   width: 9vw;
   font-size: 1vw;
-  font-family: "Dosis", sans-serif;
+  font-family: "Inter", sans-serif;
 }
 
 #travel_logs_group_input::placeholder {
@@ -627,13 +626,14 @@ body {
 .travel_logs_group_name {
   height: 4vh;
   font-size: 3vh;
-  font-family: "Dosis", sans-serif;
+  font-family: "Inter", sans-serif;
   display: flex;
   justify-content: center;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
   color: #dddddd;
+  margin-top: 0.25vh;
 }
 
 .travel_logs_group_date {
@@ -644,8 +644,8 @@ body {
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  font-family: "Dosis", sans-serif;
-  margin: 0 0 0.9vw 0;
+  font-family: "Inter", sans-serif;
+  margin-bottom: 0.5vh;
 }
 
 .travel_logs_group_div_content {
@@ -664,12 +664,19 @@ body {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  width: 19.5vw;
+  width: 21.25vw;
   height: 4vh;
   background-color: #2b333d;
   padding: 1vh;
-  margin: 1vh 0 1vh 2vw;
   border-radius: 2vh;
+}
+
+.travel_logs_subset_div_main {
+  margin: 1vh 0 1vh 0.75vw;
+}
+
+.travel_logs_superset_div_main {
+  margin: 1vh 0 1vh 1.5vw;
 }
 
 .travel_logs_individual_name_container {
@@ -679,13 +686,14 @@ body {
   white-space: nowrap;
   text-overflow: ellipsis;
   height: 3vh;
+  margin-bottom: 0.4vh;
 }
 
 .travel_logs_individual_name {
   font-size: 1.2vw;
   color: #dddddd;
-  font-family: "Dosis", sans-serif;
-  padding: 2vw;
+  font-family: "Inter", sans-serif;
+  padding: 2vh;
 }
 
 .travel_logs_individual_travel_type_and_distance_container {
@@ -697,13 +705,13 @@ body {
 .travel_logs_individual_distance {
   color: #dddddd;
   font-size: 1vw;
-  font-family: "Dosis", sans-serif;
+  font-family: "Inter", sans-serif;
 }
 
 .travel_logs_distance_type {
   display: block;
   font-size: 1.8vh;
-  font-family: "Dosis", sans-serif;
+  font-family: "Inter", sans-serif;
   color: #dddddd;
 }
 
@@ -743,7 +751,7 @@ body {
 
   text-align: center;
   font-size: 4vw;
-  font-family: "Dosis", sans-serif;
+  font-family: "Inter", sans-serif;
   font-weight: 400;
 }
 
@@ -792,7 +800,7 @@ body {
 .main_statistics_container {
   background-color: #2f3c4c;
   color: white;
-  font-family: "Dosis", sans-serif;
+  font-family: "Inter", sans-serif;
   position: absolute;
   top: 17vh;
   left: 50vw;
@@ -828,7 +836,7 @@ body {
   width: 100vw;
   position: absolute;
   z-index: 999;
-  font-family: "Dosis", sans-serif;
+  font-family: "Inter", sans-serif;
   text-align: left;
   font-size: 1.4vh;
   background-color: #232d38;
@@ -876,7 +884,7 @@ body {
 
   opacity: 0;
   transition: opacity 0.7s ease;
-  font-family: "Dosis", sans-serif;
+  font-family: "Inter", sans-serif;
 }
 
 #info_box::before {

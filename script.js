@@ -1,4 +1,4 @@
-// ver: 1.1.11
+// ver: 1.2.0
 
 // Bugs:
 
@@ -111,7 +111,7 @@ const timelineOptions = {
   timenav_position: "bottom",
   optimal_tick_width: 100,
   duration: 400,
-  font: "bitter-raleway",
+  font: "lustria-lato",
 };
 
 let timeline_visibility = false;
@@ -682,6 +682,13 @@ function toggleIconColor(toggle, icon) {
 }
 
 // // // Overlay ↑
+// // // Page Styles ↓
+
+sidebar_page_styles_button.addEventListener("click", () => {
+  displayInfoBox("Feature not yet available.");
+});
+
+// // // Page Styles ↑
 // // // Timeline ↓
 
 sidebar_timeline_button.addEventListener("click", () => {
@@ -1010,13 +1017,17 @@ function removeTravelCount(type) {
 // // // Statistics ↑
 // // // Language ↓
 
-sidebar_language_button.addEventListener("mouseenter", () =>
-  changeIconColorOnHover(true, language_icon, sidebar_language_button)
-);
+sidebar_language_button.addEventListener("click", () => {
+  displayInfoBox("Feature not yet available.");
+});
 
-sidebar_language_button.addEventListener("mouseleave", () =>
-  changeIconColorOnHover(false, language_icon, sidebar_language_button)
-);
+sidebar_language_button.addEventListener("mouseenter", () => {
+  // changeIconColorOnHover(true, language_icon, sidebar_language_button)
+});
+
+sidebar_language_button.addEventListener("mouseleave", () => {
+  // changeIconColorOnHover(false, language_icon, sidebar_language_button)
+});
 
 // // // Language ↑
 // // // Settings ↓
@@ -1083,6 +1094,10 @@ close_button_delete_data.addEventListener("mouseenter", () =>
 close_button_delete_data.addEventListener("mouseleave", () =>
   changeIconColorOnHover(false, close_icon_delete_data, close_button_delete_data)
 );
+
+sub_settings_report_bug.addEventListener("click", () => {
+  displayInfoBox("Feature not yet available.");
+});
 
 function toggleRemoveDataContainerVisibility(toggle) {
   if (toggle) {
@@ -2303,7 +2318,7 @@ function buildCRUD() {
         // main subset div
 
         const $travel_logs_individual_div_main = document.createElement("div");
-        $travel_logs_individual_div_main.className = "travel_logs_individual_div_main";
+        $travel_logs_individual_div_main.className = "travel_logs_individual_div_main travel_logs_subset_div_main";
 
         // main subset div
         // individual id
@@ -2486,7 +2501,7 @@ function buildCRUD() {
       // main superset div
 
       const $travel_logs_individual_div_main = document.createElement("div");
-      $travel_logs_individual_div_main.className = "travel_logs_individual_div_main";
+      $travel_logs_individual_div_main.className = "travel_logs_individual_div_main travel_logs_superset_div_main";
 
       // main superset div
       // superset id
