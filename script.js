@@ -1,4 +1,4 @@
-// ver: 1.2.2
+// ver: 1.2.3
 
 // Bugs:
 
@@ -15,8 +15,6 @@
 //       - add continent statistics (how many countries were visited in different continents, how many countries were visited)
 
 // multi options polyline / leaflet motion / polyline decorator / leaflet canvas markers /
-
-// disable labels / train / bicycle and borders on map tile change
 
 // Variables ↓
 // // Sidebar House ↓
@@ -490,7 +488,7 @@ function homeMarkerZoom() {
   if (home_marker && homeData.lat && homeData.lng) {
     map.setView(home_marker.getLatLng(), 7);
   } else {
-    displayInfoBox("Home location is not set!");
+    displayInfoBox("Home location is not set!", 2000);
   }
 }
 
@@ -712,13 +710,22 @@ function toggleIconColor(toggle, icon) {
 // // // Page Styles ↓
 
 sidebar_page_styles_button.addEventListener("click", () => {
-  displayInfoBox("Feature not yet available.");
+  displayInfoBox("Feature not yet available.", 1500);
 });
 
 // // // Page Styles ↑
 // // // Timeline ↓
 
 sidebar_timeline_button.addEventListener("click", () => {
+  if (timeline_enabled) {
+    displayInfoBox("Timeline disabled", 1000);
+    toggleTimelineVisibility(true);
+  }
+
+  if (!timeline_enabled) {
+    displayInfoBox("Timeline enabled", 1000);
+  }
+
   toggleTimelineVisibility(false);
   timeline_enabled = toggleIconColor(timeline_enabled, timeline_icon);
   toggleTimeline();
@@ -1045,7 +1052,7 @@ function removeTravelCount(type) {
 // // // Language ↓
 
 sidebar_language_button.addEventListener("click", () => {
-  displayInfoBox("Feature not yet available.");
+  displayInfoBox("Feature not yet available.", 1500);
 });
 
 sidebar_language_button.addEventListener("mouseenter", () => {
@@ -1085,7 +1092,7 @@ sub_settings_container.addEventListener("mouseleave", () => {
 
 sub_settings_remove_data.addEventListener("click", () => {
   if (is_travel_creator_active) {
-    displayInfoBox("Cannot remove the data during the travel log creation.");
+    displayInfoBox("Cannot remove the data during the travel log creation.", 2500);
   } else {
     toggleRemoveDataContainerVisibility(true);
     toggleTravelLogsGroupMainContainerVisibility(false);
@@ -1123,7 +1130,7 @@ close_button_delete_data.addEventListener("mouseleave", () =>
 );
 
 sub_settings_report_bug.addEventListener("click", () => {
-  displayInfoBox("Feature not yet available.");
+  displayInfoBox("Feature not yet available.", 1500);
 });
 
 function toggleRemoveDataContainerVisibility(toggle) {
@@ -1139,11 +1146,11 @@ function toggleRemoveDataContainerVisibility(toggle) {
 }
 
 sub_settings_portrait_mode.addEventListener("click", (event) => {
-  displayInfoBox("Use LMB (left mouse button) to leave the portrait view.");
+  displayInfoBox("Use LMB (left mouse button) to leave the portrait view.", 2500);
   event.stopPropagation();
 
   if (is_travel_creator_active) {
-    displayInfoBox("Cannot use the portrait mode during the travel log creation.");
+    displayInfoBox("Cannot use the portrait mode during the travel log creation.", 2500);
   } else {
     sidebar_buttons_container.classList.add("hidden");
     main_logs_container.classList.add("hidden");
@@ -1337,11 +1344,11 @@ function toggleMainLogContainerVisibility(toggle) {
 check_button_group.addEventListener("click", () => {
   travel_logs_group_name = travel_logs_group_input.value;
   if (travel_logs_group_name === "") {
-    displayInfoBox("Please enter a valid group name.");
+    displayInfoBox("Please enter a valid group name.", 2000);
     return;
   }
   if (travel_date_start === "" || travel_date_end === "") {
-    displayInfoBox("Please select a valid date range.");
+    displayInfoBox("Please select a valid date range.", 2000);
     return;
   }
 
@@ -1414,7 +1421,7 @@ close_button_group.addEventListener("mouseleave", () =>
 
 jscolor_highlight_container.addEventListener("click", () => {
   if (highlight_color_opacity_customization == false) {
-    displayInfoBox("Cannot change highlight settings after the marker was placed on the map.");
+    displayInfoBox("Cannot change highlight settings after the marker was placed on the map.", 2500);
   }
 });
 
@@ -1433,7 +1440,7 @@ travel_type_car.addEventListener("click", () => {
     travelTypeCreator(travel_type_car_click, "car", car_icon, "assets/images/car_icon_small.png", "assets/images/car_icon.png");
     active_travel_type_icon = "assets/images/car_icon_small.png";
   } else {
-    displayInfoBox("Cannot change travel type after placing markers");
+    displayInfoBox("Cannot change travel type after placing markers", 2500);
   }
 });
 
@@ -1444,7 +1451,7 @@ travel_type_plane.addEventListener("click", () => {
     travelTypeCreator(travel_type_plane_click, "plane", plane_icon, "assets/images/plane_icon_small.png", "assets/images/plane_icon.png");
     active_travel_type_icon = "assets/images/plane_icon_small.png";
   } else {
-    displayInfoBox("Cannot change travel type after placing markers");
+    displayInfoBox("Cannot change travel type after placing markers", 2500);
   }
 });
 
@@ -1455,7 +1462,7 @@ travel_type_boat.addEventListener("click", () => {
     travelTypeCreator(travel_type_boat_click, "boat", boat_icon, "assets/images/boat_icon_small.png", "assets/images/boat_icon.png");
     active_travel_type_icon = "assets/images/boat_icon_small.png";
   } else {
-    displayInfoBox("Cannot change travel type after placing markers");
+    displayInfoBox("Cannot change travel type after placing markers", 2500);
   }
 });
 
@@ -1466,7 +1473,7 @@ travel_type_walk.addEventListener("click", () => {
     travelTypeCreator(travel_type_walk_click, "walk", walk_icon, "assets/images/walk_icon_small.png", "assets/images/walk_icon.png");
     active_travel_type_icon = "assets/images/walk_icon_small.png";
   } else {
-    displayInfoBox("Cannot change travel type after placing markers");
+    displayInfoBox("Cannot change travel type after placing markers", 2500);
   }
 });
 
@@ -1477,7 +1484,7 @@ travel_type_bicycle.addEventListener("click", () => {
     travelTypeCreator(travel_type_bicycle_click, "bicycle", bicycle_icon, "assets/images/bicycle_icon_small.png", "assets/images/bicycle_icon.png");
     active_travel_type_icon = "assets/images/bicycle_icon_small.png";
   } else {
-    displayInfoBox("Cannot change travel type after placing markers");
+    displayInfoBox("Cannot change travel type after placing markers", 2500);
   }
 });
 
@@ -1488,7 +1495,7 @@ travel_type_motorcycle.addEventListener("click", () => {
     travelTypeCreator(travel_type_motorcycle_click, "motorcycle", motorcycle_icon, "assets/images/motorcycle_icon_small.png", "assets/images/motorcycle_icon.png");
     active_travel_type_icon = "assets/images/motorcycle_icon_small.png";
   } else {
-    displayInfoBox("Cannot change travel type after placing markers");
+    displayInfoBox("Cannot change travel type after placing markers", 2500);
   }
 });
 
@@ -1499,7 +1506,7 @@ travel_type_train.addEventListener("click", () => {
     travelTypeCreator(travel_type_train_click, "train", train_icon, "assets/images/train_icon_small.png", "assets/images/train_icon.png");
     active_travel_type_icon = "assets/images/train_icon_small.png";
   } else {
-    displayInfoBox("Cannot change travel type after placing markers");
+    displayInfoBox("Cannot change travel type after placing markers", 2500);
   }
 });
 
@@ -1510,7 +1517,7 @@ travel_type_bus.addEventListener("click", () => {
     travelTypeCreator(travel_type_bus_click, "bus", bus_icon, "assets/images/bus_icon_small.png", "assets/images/bus_icon.png");
     active_travel_type_icon = "assets/images/bus_icon_small.png";
   } else {
-    displayInfoBox("Cannot change travel type after placing markers");
+    displayInfoBox("Cannot change travel type after placing markers", 2500);
   }
 });
 
@@ -1518,11 +1525,11 @@ check_button_individual.addEventListener("click", () => {
   if (allow_individual_log_creation) {
     travel_logs_individual_name = travel_logs_individual_input.value;
     if (travel_logs_individual_name === "") {
-      displayInfoBox("Please enter a travel name.");
+      displayInfoBox("Please enter a travel name.", 2000);
       return;
     }
     if (travel_date_start === "" || travel_date_end === "") {
-      displayInfoBox("Please select a valid date range.");
+      displayInfoBox("Please select a valid date range.", 2000);
       return;
     }
 
@@ -1574,7 +1581,7 @@ check_button_individual.addEventListener("click", () => {
       allow_travel_type_selecting = true;
     }
   } else {
-    displayInfoBox("Please draw a path on the map first.");
+    displayInfoBox("Please draw a path on the map first.", 2500);
   }
 });
 
@@ -2239,7 +2246,7 @@ function buildCRUD() {
           const $travel_logs_group_name_new = $travel_logs_group_name.textContent;
 
           if ($travel_logs_group_name_new === "") {
-            displayInfoBox("Please enter a valid group name.");
+            displayInfoBox("Please enter a valid group name.", 2000);
           } else {
             $travel_logs_group_name.textContent = $travel_logs_group_name_new;
             const logId = $group_log_id.textContent;
@@ -2340,7 +2347,7 @@ function buildCRUD() {
             CRUD.splice(id_to_remove, 1);
           }
         } else if (isTravelGroupEmpty == false) {
-          displayInfoBox("Travel group is not empty. Please remove remaining travel logs first.");
+          displayInfoBox("Travel group is not empty. Please remove remaining travel logs first.", 2500);
         }
 
         if (timelineData.events.length === 0) {
@@ -2465,7 +2472,7 @@ function buildCRUD() {
             const $travel_logs_individual_name_new = $travel_logs_individual_name.textContent;
 
             if ($travel_logs_individual_name_new === "") {
-              displayInfoBox("Please enter a valid name.");
+              displayInfoBox("Please enter a valid name.", 2000);
             } else {
               $travel_logs_individual_name.textContent = $travel_logs_individual_name_new;
               const logId = $individual_log_id.textContent;
@@ -2649,7 +2656,7 @@ function buildCRUD() {
           const $travel_logs_individual_name_new = $travel_logs_individual_name.textContent;
 
           if ($travel_logs_individual_name_new === "") {
-            displayInfoBox("Please enter a valid name.");
+            displayInfoBox("Please enter a valid name.", 2000);
           } else {
             $travel_logs_individual_name.textContent = $travel_logs_individual_name_new;
             const logId = $individual_log_id.textContent;
@@ -3177,7 +3184,7 @@ trackLoadingProgress(resourcesToLoad, progressInfoDisplay, onLoadingComplete);
 
 // Info popup ↓
 
-function displayInfoBox(text) {
+function displayInfoBox(text, time) {
   clearTimeout(info_box_timeout_show);
   clearTimeout(info_box_timeout_hide);
 
@@ -3191,7 +3198,7 @@ function displayInfoBox(text) {
     info_box_timeout_hide = setTimeout(function () {
       info_box.style.display = "none";
     }, 300);
-  }, 2500);
+  }, time);
 }
 
 // Info popup ↑
