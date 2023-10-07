@@ -1,6 +1,9 @@
-// ver: 1.2.4
+// ver: 1.2.5
 
 // Bugs:
+
+// - adding manual home location during travel log creation
+// - geolocation: app throws info "home location not set!" before you allow the page for geolocation
 
 // Features to add:
 
@@ -1610,13 +1613,13 @@ close_button_individual.addEventListener("click", () => {
   map.off("click");
   travelTypeValueUpdate(false, false, false, false, false, false, false, false, false);
 
-  stored_individual_log_id = random_id;
-  removeMarkers(stored_individual_log_id);
-  removeTemporaryHighlights(stored_individual_log_id);
-  removeMarkersCoordinates(stored_individual_log_id);
+  removeMarkers(random_id);
+  removeTemporaryHighlights(random_id);
+  removeMarkersCoordinates(random_id);
+  removeTravelLogs(random_id);
+  removeStoredId(random_id);
+  trueHighlightsArrayRemoveHighlight(random_id);
   drawPolyline();
-  removeTravelLogs(stored_individual_log_id);
-  removeStoredId(stored_individual_log_id);
 
   travel_logs_individual_input.value = "";
 
@@ -1629,8 +1632,8 @@ close_button_individual.addEventListener("click", () => {
     toggleTravelLogsIndividualMainContainerVisibility(false);
   }
   is_travel_creator_active = false;
-  active_travel_type_icon = "";
   allow_travel_type_selecting = true;
+  active_travel_type_icon = "";
 });
 
 close_button_individual.addEventListener("mouseenter", () =>
