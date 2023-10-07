@@ -1,4 +1,4 @@
-// ver: 1.2.3
+// ver: 1.2.4
 
 // Bugs:
 
@@ -634,12 +634,20 @@ sub_overlay_bicycle.addEventListener("click", () => {
   overlay_bicycle_active = toggleIconColor(overlay_bicycle_active, sub_bicycle_icon);
 });
 sub_overlay_labels.addEventListener("click", () => {
-  switchTileAddon(labelsAddon);
-  overlay_labels_active = toggleIconColor(overlay_labels_active, sub_labels_icon);
+  if (pageSettings.current_map_layer !== "middleage") {
+    switchTileAddon(labelsAddon);
+    overlay_labels_active = toggleIconColor(overlay_labels_active, sub_labels_icon);
+  } else {
+    displayInfoBox("Feature disabled on this layer map", 2000);
+  }
 });
 sub_overlay_borders.addEventListener("click", () => {
-  switchTileAddon(bordersAddon);
-  overlay_borders_active = toggleIconColor(overlay_borders_active, sub_borders_icon);
+  if (pageSettings.current_map_layer !== "middleage") {
+    switchTileAddon(bordersAddon);
+    overlay_borders_active = toggleIconColor(overlay_borders_active, sub_borders_icon);
+  } else {
+    displayInfoBox("Feature disabled on this layer map", 2000);
+  }
 });
 
 sub_overlay_markers.addEventListener("click", () => {
