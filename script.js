@@ -1,4 +1,4 @@
-// ver: 1.2.1
+// ver: 1.2.2
 
 // Bugs:
 
@@ -528,6 +528,7 @@ sub_map_tile_layer_A.addEventListener("click", () => {
   switchTileMap(mapTileLayer_A);
   toggleActiveIconColor(sub_map_layer_earth_icon);
   toggleInactiveIconColor(sub_map_layer_bright_icon, sub_map_layer_dark_icon, sub_map_layer_middleage_icon);
+  disableMapAddons();
 });
 sub_map_tile_layer_B.addEventListener("click", () => {
   pageSettings.current_map_layer = "light";
@@ -536,6 +537,7 @@ sub_map_tile_layer_B.addEventListener("click", () => {
   switchTileMap(mapTileLayer_B);
   toggleActiveIconColor(sub_map_layer_bright_icon);
   toggleInactiveIconColor(sub_map_layer_earth_icon, sub_map_layer_dark_icon, sub_map_layer_middleage_icon);
+  disableMapAddons();
 });
 sub_map_tile_layer_C.addEventListener("click", () => {
   pageSettings.current_map_layer = "dark";
@@ -544,6 +546,7 @@ sub_map_tile_layer_C.addEventListener("click", () => {
   switchTileMap(mapTileLayer_C);
   toggleActiveIconColor(sub_map_layer_dark_icon);
   toggleInactiveIconColor(sub_map_layer_earth_icon, sub_map_layer_bright_icon, sub_map_layer_middleage_icon);
+  disableMapAddons();
 });
 sub_map_tile_layer_D.addEventListener("click", () => {
   pageSettings.current_map_layer = "middleage";
@@ -552,6 +555,7 @@ sub_map_tile_layer_D.addEventListener("click", () => {
   switchTileMap(mapTileLayer_D);
   toggleActiveIconColor(sub_map_layer_middleage_icon);
   toggleInactiveIconColor(sub_map_layer_earth_icon, sub_map_layer_bright_icon, sub_map_layer_dark_icon);
+  disableMapAddons();
 });
 
 function switchTileMap(layer) {
@@ -573,6 +577,27 @@ function toggleInactiveIconColor(icon_1, icon_2, icon_3) {
   icon_1.classList.remove("white_icon_toggle");
   icon_2.classList.remove("white_icon_toggle");
   icon_3.classList.remove("white_icon_toggle");
+}
+
+function disableMapAddons() {
+  if (overlay_train_active) {
+    switchTileAddon(trainsAddon);
+    overlay_train_active = toggleIconColor(overlay_train_active, sub_train_icon);
+  }
+
+  if (overlay_bicycle_active) {
+    switchTileAddon(cyclingAddon);
+    overlay_bicycle_active = toggleIconColor(overlay_bicycle_active, sub_bicycle_icon);
+  }
+
+  if (overlay_labels_active) {
+    switchTileAddon(labelsAddon);
+    overlay_labels_active = toggleIconColor(overlay_labels_active, sub_labels_icon);
+  }
+  if (overlay_borders_active) {
+    switchTileAddon(bordersAddon);
+    overlay_borders_active = toggleIconColor(overlay_borders_active, sub_borders_icon);
+  }
 }
 
 // // // Map Layers ↑
