@@ -1,4 +1,4 @@
-// ver: 1.2.0
+// ver: 1.2.1
 
 // Bugs:
 
@@ -15,6 +15,8 @@
 //       - add continent statistics (how many countries were visited in different continents, how many countries were visited)
 
 // multi options polyline / leaflet motion / polyline decorator / leaflet canvas markers /
+
+// disable labels / train / bicycle and borders on map tile change
 
 // Variables ↓
 // // Sidebar House ↓
@@ -1400,51 +1402,91 @@ jscolor_highlight.addEventListener("change", () => {
 });
 
 travel_type_car.addEventListener("click", () => {
-  travelTypeValueUpdate(false, true, false, false, false, false, false, false, false);
-  // prettier-ignore
-  travelTypeCreator(travel_type_car_click, "car", car_icon, "assets/images/car_icon_small.png", "assets/images/car_icon.png");
+  if (allow_travel_type_selecting) {
+    travelTypeValueUpdate(false, true, false, false, false, false, false, false, false);
+    // prettier-ignore
+    travelTypeCreator(travel_type_car_click, "car", car_icon, "assets/images/car_icon_small.png", "assets/images/car_icon.png");
+    active_travel_type_icon = "assets/images/car_icon_small.png";
+  } else {
+    displayInfoBox("Cannot change travel type after placing markers");
+  }
 });
 
 travel_type_plane.addEventListener("click", () => {
-  travelTypeValueUpdate(false, false, true, false, false, false, false, false, false);
-  // prettier-ignore
-  travelTypeCreator(travel_type_plane_click, "plane", plane_icon, "assets/images/plane_icon_small.png", "assets/images/plane_icon.png");
+  if (allow_travel_type_selecting) {
+    travelTypeValueUpdate(false, false, true, false, false, false, false, false, false);
+    // prettier-ignore
+    travelTypeCreator(travel_type_plane_click, "plane", plane_icon, "assets/images/plane_icon_small.png", "assets/images/plane_icon.png");
+    active_travel_type_icon = "assets/images/plane_icon_small.png";
+  } else {
+    displayInfoBox("Cannot change travel type after placing markers");
+  }
 });
 
 travel_type_boat.addEventListener("click", () => {
-  travelTypeValueUpdate(false, false, false, true, false, false, false, false, false);
-  // prettier-ignore
-  travelTypeCreator(travel_type_boat_click, "boat", boat_icon, "assets/images/boat_icon_small.png", "assets/images/boat_icon.png");
+  if (allow_travel_type_selecting) {
+    travelTypeValueUpdate(false, false, false, true, false, false, false, false, false);
+    // prettier-ignore
+    travelTypeCreator(travel_type_boat_click, "boat", boat_icon, "assets/images/boat_icon_small.png", "assets/images/boat_icon.png");
+    active_travel_type_icon = "assets/images/boat_icon_small.png";
+  } else {
+    displayInfoBox("Cannot change travel type after placing markers");
+  }
 });
 
 travel_type_walk.addEventListener("click", () => {
-  travelTypeValueUpdate(false, false, false, false, true, false, false, false, false);
-  // prettier-ignore
-  travelTypeCreator(travel_type_walk_click, "walk", walk_icon, "assets/images/walk_icon_small.png", "assets/images/walk_icon.png");
+  if (allow_travel_type_selecting) {
+    travelTypeValueUpdate(false, false, false, false, true, false, false, false, false);
+    // prettier-ignore
+    travelTypeCreator(travel_type_walk_click, "walk", walk_icon, "assets/images/walk_icon_small.png", "assets/images/walk_icon.png");
+    active_travel_type_icon = "assets/images/walk_icon_small.png";
+  } else {
+    displayInfoBox("Cannot change travel type after placing markers");
+  }
 });
 
 travel_type_bicycle.addEventListener("click", () => {
-  travelTypeValueUpdate(false, false, false, false, false, true, false, false, false);
-  // prettier-ignore
-  travelTypeCreator(travel_type_bicycle_click, "bicycle", bicycle_icon, "assets/images/bicycle_icon_small.png", "assets/images/bicycle_icon.png");
+  if (allow_travel_type_selecting) {
+    travelTypeValueUpdate(false, false, false, false, false, true, false, false, false);
+    // prettier-ignore
+    travelTypeCreator(travel_type_bicycle_click, "bicycle", bicycle_icon, "assets/images/bicycle_icon_small.png", "assets/images/bicycle_icon.png");
+    active_travel_type_icon = "assets/images/bicycle_icon_small.png";
+  } else {
+    displayInfoBox("Cannot change travel type after placing markers");
+  }
 });
 
 travel_type_motorcycle.addEventListener("click", () => {
-  travelTypeValueUpdate(false, false, false, false, false, false, true, false, false);
-  // prettier-ignore
-  travelTypeCreator(travel_type_motorcycle_click, "motorcycle", motorcycle_icon, "assets/images/motorcycle_icon_small.png", "assets/images/motorcycle_icon.png");
+  if (allow_travel_type_selecting) {
+    travelTypeValueUpdate(false, false, false, false, false, false, true, false, false);
+    // prettier-ignore
+    travelTypeCreator(travel_type_motorcycle_click, "motorcycle", motorcycle_icon, "assets/images/motorcycle_icon_small.png", "assets/images/motorcycle_icon.png");
+    active_travel_type_icon = "assets/images/motorcycle_icon_small.png";
+  } else {
+    displayInfoBox("Cannot change travel type after placing markers");
+  }
 });
 
 travel_type_train.addEventListener("click", () => {
-  travelTypeValueUpdate(false, false, false, false, false, false, false, true, false);
-  // prettier-ignore
-  travelTypeCreator(travel_type_train_click, "train", train_icon, "assets/images/train_icon_small.png", "assets/images/train_icon.png");
+  if (allow_travel_type_selecting) {
+    travelTypeValueUpdate(false, false, false, false, false, false, false, true, false);
+    // prettier-ignore
+    travelTypeCreator(travel_type_train_click, "train", train_icon, "assets/images/train_icon_small.png", "assets/images/train_icon.png");
+    active_travel_type_icon = "assets/images/train_icon_small.png";
+  } else {
+    displayInfoBox("Cannot change travel type after placing markers");
+  }
 });
 
 travel_type_bus.addEventListener("click", () => {
-  travelTypeValueUpdate(false, false, false, false, false, false, false, false, true);
-  // prettier-ignore
-  travelTypeCreator(travel_type_bus_click, "bus", bus_icon, "assets/images/bus_icon_small.png", "assets/images/bus_icon.png");
+  if (allow_travel_type_selecting) {
+    travelTypeValueUpdate(false, false, false, false, false, false, false, false, true);
+    // prettier-ignore
+    travelTypeCreator(travel_type_bus_click, "bus", bus_icon, "assets/images/bus_icon_small.png", "assets/images/bus_icon.png");
+    active_travel_type_icon = "assets/images/bus_icon_small.png";
+  } else {
+    displayInfoBox("Cannot change travel type after placing markers");
+  }
 });
 
 check_button_individual.addEventListener("click", () => {
@@ -1503,6 +1545,8 @@ check_button_individual.addEventListener("click", () => {
       timelineInfoToggle();
       is_travel_creator_active = false;
       current_crud_category = "none";
+      active_travel_type_icon = "";
+      allow_travel_type_selecting = true;
     }
   } else {
     displayInfoBox("Please draw a path on the map first.");
@@ -1545,6 +1589,8 @@ close_button_individual.addEventListener("click", () => {
     toggleTravelLogsIndividualMainContainerVisibility(false);
   }
   is_travel_creator_active = false;
+  active_travel_type_icon = "";
+  allow_travel_type_selecting = true;
 });
 
 close_button_individual.addEventListener("mouseenter", () =>
@@ -1554,6 +1600,10 @@ close_button_individual.addEventListener("mouseenter", () =>
 close_button_individual.addEventListener("mouseleave", () =>
   changeIconColorOnHover(false, close_icon_individual, close_button_individual)
 );
+
+let active_travel_type_icon;
+
+let allow_travel_type_selecting = true;
 
 function travelTypeValueUpdate(manual, car, plane, boat, walk, bicycle, motorcycle, train, bus) {
   home_button_manual_click = manual;
@@ -1572,12 +1622,12 @@ function travelTypeCreator(travel_type_click, travel_type, icon_type, icon_small
     allow_individual_log_creation = false;
     createHighlightLayer(cachedGeoJSON);
     updateCursorImage(icon_small_path);
-    travelTypeButtonsGrayscale(icon_small_path);
-    `this.querySelector("img").src = travelTypeButtonImages.get(this);`;
 
     if (travel_type_click == true) {
       map.off("click");
       function onMapClick(e) {
+        allow_travel_type_selecting = false;
+        travelTypeButtonsGrayscale(active_travel_type_icon);
         allow_individual_log_creation = true;
         highlight_color_opacity_customization = false;
         let lat = e.latlng.lat;

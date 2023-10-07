@@ -473,7 +473,7 @@ body {
   border: none;
   background-color: #26303d;
   color: #d7d7d7;
-  font-size: 1vw;
+  font-size: 0.85vw;
   font-family: "Inter", sans-serif;
   margin-left: 1vw;
   margin-right: 1vw;
@@ -482,7 +482,7 @@ body {
 
 #travel_logs_individual_input::placeholder {
   color: #adadad;
-  font-size: 1.5vw;
+  font-size: 1.2vw;
 }
 
 .jscolor_highlight {
@@ -578,12 +578,13 @@ body {
   margin-left: 3vw;
   text-align: center;
   width: 9vw;
-  font-size: 1vw;
+  font-size: 0.7vw;
   font-family: "Inter", sans-serif;
 }
 
 #travel_logs_group_input::placeholder {
   color: #adadad;
+  font-size: 1vw;
 }
 
 .check_icon_group {
