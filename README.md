@@ -22,6 +22,7 @@ Start by navigating to the right-side panel and click either the "Individual" or
 ## Individual <br>
 
 ![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/7102194b-ff5c-4383-8dda-cd6aea1b4d25)
+![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/9db9da08-ef09-45b8-80b9-2b6fd0a490ed)
 
 Here you can create a simple log for short/individual travels that you want to create a log for. (country -> country / city -> city)
 - Start by giving your travel a unique name, select the date when your journey took place. For instance, "Spain - Madrid" | 05.09.2023 - 07.09.2023".
@@ -29,42 +30,45 @@ Here you can create a simple log for short/individual travels that you want to c
 - When you've set everything up, your final step is to choose 1 of 8 available travel types. Then start placing markers on the map to trace your path and adventures.
 - Once you've finished, just hit the "✔️" button to confirm creating your travel log.
 
-![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/20e28daf-00ef-42c1-ac50-f024bee92e89)
+![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/6698259c-36ab-43d9-ad5f-1c02e4bb4dff)
+![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/f5f11c39-e0ca-42d7-aa7b-3288684c0e0d)
+
+And there we go, you created your first travel log!
 
 ## Group <br>
 
 ![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/ee203a68-ab89-428a-a228-ca1a649ac69f)
 
 Here you can create a whole travel log group for much bigger travels, that includes multiple individual travel logs, spanning across multiple days or countries.
-- The provess is familiar, begin with naming your group travel log, and set a date. For instance, "Europe Tour 2023 | 10.09.2023 - 20.09.2023". <br />
+- The process is similar, begin with naming your group travel log, and set a date. For instance, "Europe Tour 2023 | 10.09.2023 - 20.09.2023". <br />
 - Hit the "✔️" button to confirm your choice.
 
-![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/12bc2a35-d646-440d-9e69-9f51ee9ae734)
+![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/f852179a-86a4-4fb4-80e9-215192bf0002)
+![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/31107c14-261a-43c5-8979-d02fdb73dfce)
 
-### **Step 2: Add Sub Travels to Your Main Log**
 
-- For each Main log of the "Europe Tour 2023" adventure, create individual sub-travels using the ➕ button in the main log. Similar to the main log, provide a name and date for each sub-travel.
-But this time you can choose the type of transportation you used for each sub-travel. Plus, you can customize the way countries are highlighted on the map by picking colors and adjusting opacity.
-- Once you've set everything up, start placing markers on the map by simply clicking with the Left Mouse Button (LMB) and then confirming your selection with the ✓ button.
+### **Step 2: Add Sub Travels to Your Group**
+
+For any group you can create individual sub-travels using the ➕ button in the main log.
+The process is exactly the same as creating non-grouped travel logs, but these time, all the logs you have created are related to the specific group
 
 And don't worry, if you happen to make a mistake while creating either a main or sub-travel log, simply click the "❌" button to clear your current input and start fresh.
 
-![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/4aa82b2e-7643-4b86-963b-774140cf5746)
+![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/c4095435-2c42-4c45-a3bf-9f5bd1d0edea)
 
+![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/603e4106-1344-434d-a05f-9e203c21a181)
 
 
 ### **Step 3: Manage travel logs**
 
-In the right-side panel, you have all the tools you need to effortlessly manage your travel logs:
+In the right-side panel, you have all the tools you need to manage your logs:
 
-![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/aca5c161-45fe-4fef-9a71-36aa3f1d7e1a)
+![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/05e2b158-bba3-484f-851c-e8a06086610b)
 
-
-1) Rename Your Logs: Keep your logs organized by giving them meaningful names. Simply click on a pen icon to edit it.
-2) Add sub-travels (we have that covered)
-3) Delete Logs: If you no longer need a travel log, you can easily remove it with the click of a button.
-4) Collapse button: if your travel log is getting out of hands you can simply hide the display of this particular log.
-- Detailed Information: Sub-travel logs provide you with specific details about your journeys. You can see the travel type used and the distance covered during each trip, helping you reminisce about your adventures.
+1) Rename the group or individual travel log.
+2) Add sub-travels (we have that covered).
+3) Delete Log.
+4) Collapse button: if your travel log is getting too big, you can simply hide the display of this particular log.
 
 ### **Left panel settings** 
 Navigate to the left panel to access a range of options, starting from the top:
