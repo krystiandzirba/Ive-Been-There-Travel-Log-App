@@ -1,9 +1,6 @@
-// ver: 1.2.5
+// ver: 1.2.6
 
 // Bugs:
-
-// - adding manual home location during travel log creation
-// - geolocation: app throws info "home location not set!" before you allow the page for geolocation
 
 // Features to add:
 
@@ -83,14 +80,14 @@ let overlay_markers_active = true;
 let overlay_polylines_active = true;
 let overlay_highlights_active = true;
 
-let markers_visibility = true;
+// let markers_visibility = true;
 let polyline_visibility = true;
 
 let overlay_container_timeout;
 
 let marker_settings_index;
 
-const marker_sizes = [0, 20, 35, 50, 75];
+const marker_sizes = [0, 25, 35, 50, 75];
 const anchor_values = [0, 12, 20, 30, 40];
 const labels = ["none", "[S]", "[M]", "[L]", "[XL]"];
 
@@ -212,7 +209,7 @@ let travel_date_start = "";
 let travel_date_end = "";
 
 let stored_group_log_id = "";
-let stored_individual_log_id = "";
+// let stored_individual_log_id = "";
 let isTravelGroupEmpty = "";
 
 let is_travel_creator_active = false;
@@ -389,43 +386,47 @@ jscolor_home.addEventListener("change", () => {
 });
 
 sub_house_manual_location.addEventListener("click", () => {
-  travelTypeValueUpdate(true, false, false, false, false, false, false, false, false);
-  updateCursorImage("assets/images/home_icon_small.png");
-  removeMarkers("home_marker");
-  homeMarkerClear();
+  if (!is_travel_creator_active) {
+    travelTypeValueUpdate(true, false, false, false, false, false, false, false, false);
+    updateCursorImage("assets/images/home_icon_small.png");
+    removeMarkers("home_marker");
+    homeMarkerClear();
 
-  const mapClickListener = (e) => {
-    toggleCustomCursorVisibility(false);
+    const mapClickListener = (e) => {
+      toggleCustomCursorVisibility(false);
 
-    const clickedLatLng = e.latlng;
-    const offset_longitude = clickedLatLng.lng * 1.002;
+      const clickedLatLng = e.latlng;
+      const offset_longitude = clickedLatLng.lng * 1.002;
 
-    if (home_button_manual_click === true) {
-      home_marker = L.marker([clickedLatLng.lat, offset_longitude], {
-        icon: home_icon,
-        id: "home_marker",
-      });
-      home_marker.addTo(map).bounce(1);
-      markers.push(home_marker);
-      home_circle = L.circle([clickedLatLng.lat, clickedLatLng.lng], {
-        radius: 50000,
-        color: jscolor_home_color,
-        fillOpacity: jscolor_home_opacity,
-        weight: 1,
-      }).addTo(map);
-    }
+      if (home_button_manual_click === true) {
+        home_marker = L.marker([clickedLatLng.lat, offset_longitude], {
+          icon: home_icon,
+          id: "home_marker",
+        });
+        home_marker.addTo(map).bounce(1);
+        markers.push(home_marker);
+        home_circle = L.circle([clickedLatLng.lat, clickedLatLng.lng], {
+          radius: 50000,
+          color: jscolor_home_color,
+          fillOpacity: jscolor_home_opacity,
+          weight: 1,
+        }).addTo(map);
+      }
 
-    home_button_manual_click = false;
+      home_button_manual_click = false;
 
-    homeData.lat = clickedLatLng.lat;
-    homeData.lng = clickedLatLng.lng;
-    homeData.color = jscolor_home_color;
-    homeData.opacity = jscolor_home_opacity;
-    localStorageSaveHomeData();
+      homeData.lat = clickedLatLng.lat;
+      homeData.lng = clickedLatLng.lng;
+      homeData.color = jscolor_home_color;
+      homeData.opacity = jscolor_home_opacity;
+      localStorageSaveHomeData();
 
-    map.off("click", mapClickListener);
-  };
-  map.on("click", mapClickListener);
+      map.off("click", mapClickListener);
+    };
+    map.on("click", mapClickListener);
+  } else {
+    displayInfoBox("Cannot set the home location during the travel log creation.", 2500);
+  }
 });
 
 sub_house_geolocation.addEventListener("click", () => {
@@ -461,7 +462,11 @@ sub_house_geolocation.addEventListener("click", () => {
     });
   }
 
-  setTimeout(homeMarkerZoom, 350);
+  if (home_marker) {
+    setTimeout(homeMarkerZoom, 350);
+  } else {
+    displayInfoBox("Allow geolocation first", 2000);
+  }
 });
 
 sub_house_zoom.addEventListener("click", () => {
@@ -1258,7 +1263,7 @@ add_travel_superset_button.addEventListener("click", () => {
   current_crud_category = "superset";
   highlight_color_opacity_customization = true;
   is_travel_creator_active = true;
-  markers_visibility = false;
+  //  markers_visibility = false;
   polyline_visibility = false;
   togglePolylineVisibility();
   travelTypeButtonsColor();
@@ -2305,7 +2310,7 @@ function buildCRUD() {
         reference = stored_group_id_reference;
         highlight_color_opacity_customization = true;
         is_travel_creator_active = true;
-        markers_visibility = false;
+        // markers_visibility = false;
         polyline_visibility = false;
         togglePolylineVisibility();
         travelTypeButtonsColor();
@@ -2525,7 +2530,7 @@ function buildCRUD() {
         $travel_logs_delete.innerHTML = '<i class="fa-regular fa-trash-can fa-xl" style="color: #c9c9c9;"></i>';
         $travel_logs_delete.classList.add("travel_logs_CRUD_buttons");
         $travel_logs_delete.addEventListener("click", () => {
-          markers_visibility = false;
+          //  markers_visibility = false;
           polyline_visibility = false;
           removeTrueHighlights();
           togglePolylineVisibility();
@@ -2709,7 +2714,7 @@ function buildCRUD() {
       $travel_logs_delete.innerHTML = '<i class="fa-regular fa-trash-can fa-xl" style="color: #c9c9c9;"></i>';
       $travel_logs_delete.classList.add("travel_logs_CRUD_buttons");
       $travel_logs_delete.addEventListener("click", () => {
-        markers_visibility = false;
+        // markers_visibility = false;
         polyline_visibility = false;
         removeTrueHighlights();
         togglePolylineVisibility();

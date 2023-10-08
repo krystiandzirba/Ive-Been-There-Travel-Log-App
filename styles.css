@@ -448,7 +448,7 @@ body {
   box-shadow: 30px 30px 7px rgba(0, 0, 0, 0.4);
   position: absolute;
   width: 45vw;
-  min-height: 29vh;
+  min-height: 25vh;
   background-color: #2f3c4c;
   border-radius: 3vh;
   top: 5%;
@@ -464,6 +464,8 @@ body {
   justify-content: space-between;
   align-items: center;
   height: 14vh;
+  position: absolute;
+  top: -2vh;
 }
 
 .individual_input {
@@ -485,14 +487,24 @@ body {
   font-size: 1.2vw;
 }
 
+.data_input {
+  width: 12.2vw;
+  left: 15vw;
+}
+
+.date_input {
+  width: 12.8vw;
+}
+
 .jscolor_highlight {
-  margin-top: -1vh;
+  width: 10vw;
 }
 
 .jscolor_highlight_container {
-  top: 5vh;
+  top: 1.7vh;
+  left: 30vw;
   z-index: 200;
-  position: relative;
+  position: absolute;
   margin-bottom: 9vh;
 }
 
@@ -540,14 +552,14 @@ body {
 }
 
 .check_icon_individual {
-  top: 39vh;
-  left: 30%;
+  top: 36vh;
+  left: 29%;
   display: none;
 }
 
 .close_icon_individual {
-  top: 39vh;
-  left: 65%;
+  top: 36vh;
+  left: 67%;
   display: none;
 }
 
@@ -557,15 +569,16 @@ body {
 .travel_logs_group_main_container {
   border-radius: 2vh;
   position: absolute;
-  width: 30vw;
+  width: 27vw;
   min-height: 10vh;
   background-color: #2f3c4c;
   box-shadow: 30px 30px 9px rgba(0, 0, 0, 0.4);
-  top: 5vh;
+  top: 8vh;
   left: 50vw;
   transform: translate(-50%, 0%);
   z-index: 890;
   display: none;
+  text-align: center;
 }
 
 .group_input {
@@ -574,10 +587,9 @@ body {
   border: none;
   background-color: #26303d;
   color: #d7d7d7;
-  margin-top: 1.5vh;
-  margin-left: 3vw;
+  margin: 1.5vh;
   text-align: center;
-  width: 9vw;
+  width: 11vw;
   font-size: 0.7vw;
   font-family: "Inter", sans-serif;
 }
@@ -588,13 +600,13 @@ body {
 }
 
 .check_icon_group {
-  left: 36%;
-  top: 18vh;
+  left: 36.5vw;
+  top: 20vh;
 }
 
 .close_icon_group {
-  left: 60%;
-  top: 18vh;
+  left: 59.5vw;
+  top: 20vh;
 }
 
 /* ↑ Travel Type Settings Group ↑ */
@@ -626,15 +638,15 @@ body {
 
 .travel_logs_group_name {
   height: 4vh;
-  font-size: 3vh;
+  font-size: 2.5vh;
   font-family: "Inter", sans-serif;
   display: flex;
   justify-content: center;
+  align-items: center;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
   color: #dddddd;
-  margin-top: 0.25vh;
 }
 
 .travel_logs_group_date {
@@ -688,13 +700,14 @@ body {
   text-overflow: ellipsis;
   height: 3vh;
   margin-bottom: 0.4vh;
+  text-align: center;
 }
 
 .travel_logs_individual_name {
   font-size: 1.2vw;
   color: #dddddd;
   font-family: "Inter", sans-serif;
-  padding: 2vh;
+  padding-left: 1vh;
 }
 
 .travel_logs_individual_travel_type_and_distance_container {
