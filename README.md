@@ -3,24 +3,43 @@
 Welcome to "I've Been There," the app that lets you add, view and modify your travel logs from every corner of the globe.
 Whether you're a seasoned explorer or just starting your adventure journey, this app is your ultimate companion. Explore, remember, and relive your travel tales with ease.
 
-![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/183f2d3e-b349-4bb1-890d-4e1f4fa5a976)
+![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/0c5dac14-5518-4395-8ddb-388e690e2698)
+
 ## how it works? 
 
-### **Step 1: Create Your Main Travel Log**
+### **Step 1: Create Your First Travel Log**
 
 
 <br>
-Start by navigating to the right-side panel and click the "Begin New Travel!" button:
-- Give your adventure a unique name and select the date when your journey took place. For instance, "Europe Tour 2023 | 10.09.2023 - 20.09.2023". <br />
-Once you've finished, just hit the "✔️" button to confirm your choice.
-**_This component will serve as the foundation for the sub-travels you'll be adding in the next step._** <br>
+Start by navigating to the right-side panel and click either the "Individual" or "Group" button: 
+<br>
 <br>
 
-![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/6af7c1ee-7c49-488b-9001-6ca835402862)
-![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/ee1514db-f88a-444b-8392-ffbf3956a085)
-![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/42656eaa-a6a4-47e4-b14f-9355eefe7e37)
+![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/6714716e-caae-42da-b427-cac770b920f1)
 
+<br>
 
+## Individual <br>
+
+![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/7102194b-ff5c-4383-8dda-cd6aea1b4d25)
+
+Here you can create a simple log for short/individual travels that you want to create a log for. (country -> country / city -> city)
+- Start by giving your travel a unique name, select the date when your journey took place. For instance, "Spain - Madrid" | 05.09.2023 - 07.09.2023".
+- On the right side, we can see a colored checkerboard. Here you can choose your preferred color and opacity that you want to highlight the specific country with.
+- When you've set everything up, your final step is to choose 1 of 8 available travel types. Then start placing markers on the map to trace your path and adventures.
+- Once you've finished, just hit the "✔️" button to confirm creating your travel log.
+
+![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/20e28daf-00ef-42c1-ac50-f024bee92e89)
+
+## Group <br>
+
+![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/ee203a68-ab89-428a-a228-ca1a649ac69f)
+
+Here you can create a whole travel log group for much bigger travels, that includes multiple individual travel logs, spanning across multiple days or countries.
+- The provess is familiar, begin with naming your group travel log, and set a date. For instance, "Europe Tour 2023 | 10.09.2023 - 20.09.2023". <br />
+- Hit the "✔️" button to confirm your choice.
+
+![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/12bc2a35-d646-440d-9e69-9f51ee9ae734)
 
 ### **Step 2: Add Sub Travels to Your Main Log**
 
