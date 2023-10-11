@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>I've been there! - Travel log app v1.2.6</title>
+    <title>I've been there! - Travel log app v1.2.7</title>
     <link rel="icon" type="image/x-icon" href="assets/images/globe_icon_black.png" />
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -291,6 +291,29 @@
           <img src="assets/images/bus_icon_small.png" alt="bus Icon" />
         </button>
       </div>
+
+      <div class="polyline_width_slider_container">
+        <input type="range" min="1" max="10" value="5" class="polyline_slider" id="polyline_width_slider" />
+      </div>
+
+      <div class="polyline_input_container">
+        <button id="polyline_solid_button" class="polyline_button polyline_solid">solid</button>
+        <button id="polyline_dashed_button" class="polyline_button polyline_dashed">dashed</button>
+      </div>
+
+      <div class="jscolor_polyline_container">
+        <p>
+          <input
+            id="jscolor_polyline"
+            class="individual_input jscolor_polyline"
+            data-jscolor="{
+              hideOnLeave: true, position:'right', format: 'rgb', alphaChannel: false, height: 200, width: 300,crossSize: 9,
+               borderWidth: 0, pointerBorderWidth: 0, closeButton:false, closeText:'OK', backgroundColor:'#333', buttonColor:'#d7d7d7'
+            }"
+            value="rgba(220, 49, 37, 1)"
+          />
+        </p>
+      </div>
     </div>
     <button id="check_button_individual" class="icon_settings_container check_icon_individual">
       <i class="fa-solid fa-check fa-2xl" style="color: #c9c9c9" id="check_icon_individual"></i>
@@ -354,7 +377,7 @@
       <img id="custom_cursor_image" src="assets/images/car_icon_small.png" />
     </div>
 
-    <div class="app_version">ver: 1.2.6</div>
+    <div class="app_version">ver: 1.2.7</div>
 
     <div id="info_box">
       <p id="info_box_text"></p>

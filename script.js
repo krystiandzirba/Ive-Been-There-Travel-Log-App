@@ -1,4 +1,4 @@
-// ver: 1.2.6
+// ver: 1.2.7
 
 // Bugs:
 
@@ -13,8 +13,6 @@
 // - Add driver.js
 // - Add D3 to visualize the statistics data
 //       - add continent statistics (how many countries were visited in different continents, how many countries were visited)
-
-// multi options polyline / leaflet motion / polyline decorator / leaflet canvas markers /
 
 // Variables ↓
 // // Sidebar House ↓
@@ -80,7 +78,6 @@ let overlay_markers_active = true;
 let overlay_polylines_active = true;
 let overlay_highlights_active = true;
 
-// let markers_visibility = true;
 let polyline_visibility = true;
 
 let overlay_container_timeout;
@@ -89,7 +86,7 @@ let marker_settings_index;
 
 const marker_sizes = [0, 25, 35, 50, 75];
 const anchor_values = [0, 12, 20, 30, 40];
-const labels = ["none", "[S]", "[M]", "[L]", "[XL]"];
+const labels = ["<s>markers</s>", "markers [S]", "markers [M]", "markers [L]", "markers [XL]"];
 
 // // Sidebar Overlay ↑
 // // Sidebar Page Styles ↓
@@ -209,8 +206,7 @@ let travel_date_start = "";
 let travel_date_end = "";
 
 let stored_group_log_id = "";
-// let stored_individual_log_id = "";
-let isTravelGroupEmpty = "";
+let is_travel_group_empty = "";
 
 let is_travel_creator_active = false;
 let main_logs_container_arrow_clicked = false;
@@ -219,6 +215,8 @@ let allow_individual_log_creation = false;
 let reference = "";
 
 let current_crud_category = "none";
+
+let polyline_type = "solid";
 
 // // Travel Log Creator ↑
 // // Travel log group ↓
@@ -234,6 +232,9 @@ let travel_logs_group_input = document.getElementById("travel_logs_group_input")
 // // Travel log group ↑
 // // Travel log individual ↓
 
+const jscolor_highlight_container = document.querySelector(".jscolor_highlight_container");
+const jscolor_highlight = document.getElementById("jscolor_highlight");
+
 const travel_type_car = document.getElementById("travel_type_car");
 const travel_type_plane = document.getElementById("travel_type_plane");
 const travel_type_boat = document.getElementById("travel_type_boat");
@@ -242,14 +243,6 @@ const travel_type_bicycle = document.getElementById("travel_type_bicycle");
 const travel_type_motorcycle = document.getElementById("travel_type_motorcycle");
 const travel_type_train = document.getElementById("travel_type_train");
 const travel_type_bus = document.getElementById("travel_type_bus");
-
-const jscolor_highlight_container = document.querySelector(".jscolor_highlight_container");
-const jscolor_highlight = document.getElementById("jscolor_highlight");
-
-const check_button_individual = document.getElementById("check_button_individual");
-const close_button_individual = document.getElementById("close_button_individual");
-const check_icon_individual = document.getElementById("check_icon_individual");
-const close_icon_individual = document.getElementById("close_icon_individual");
 
 const travelTypeButtonImages = new Map();
 travelTypeButtonImages.set(travel_type_car, "assets/images/car_icon_small.png");
@@ -272,8 +265,25 @@ const travelTypeButtons = [
   travel_type_bus,
 ];
 
-let type = "";
+const polyline_width_slider = document.getElementById("polyline_width_slider");
 
+const polyline_solid_button = document.getElementById("polyline_solid_button");
+const polyline_dashed_button = document.getElementById("polyline_dashed_button");
+
+const check_button_individual = document.getElementById("check_button_individual");
+const close_button_individual = document.getElementById("close_button_individual");
+const check_icon_individual = document.getElementById("check_icon_individual");
+const close_icon_individual = document.getElementById("close_icon_individual");
+
+let travel_logs_individual_name = "";
+let travel_logs_individual_input = document.getElementById("travel_logs_individual_input");
+
+let highlight_color_opacity_customization = true;
+let jscolor_highlight_data = "";
+let jscolor_highlight_color = "#1495ED";
+let jscolor_highlight_opacity = 0.5;
+
+let type = "";
 let travel_type_car_click = false;
 let travel_type_plane_click = false;
 let travel_type_boat_click = false;
@@ -283,13 +293,9 @@ let travel_type_motorcycle_click = false;
 let travel_type_train_click = false;
 let travel_type_bus_click = false;
 
-let travel_logs_individual_name = "";
-let travel_logs_individual_input = document.getElementById("travel_logs_individual_input");
+let polyline_width = polyline_width_slider.value;
 
-let highlight_color_opacity_customization = true;
-let jscolor_highlight_data = "";
-let jscolor_highlight_color = "#1495ED";
-let jscolor_highlight_opacity = 0.5;
+let polyline_color = `#DC3125`;
 
 // // Travel log individual ↑
 // // Custom cursor / App version ↓
@@ -663,7 +669,7 @@ sub_overlay_markers.addEventListener("click", () => {
   const current_anchor = anchor_values[marker_settings_index];
 
   const label = labels[marker_settings_index];
-  markers_settings_display.innerHTML = `markers ${label}`;
+  markers_settings_display.innerHTML = `${label}`;
 
   if (marker_settings_index === 0 || marker_settings_index === 1) {
     overlay_markers_active = toggleIconColor(overlay_markers_active, sub_markers_icon);
@@ -1261,9 +1267,9 @@ function changeIconColorOnHover(toggle, element, button) {
 
 add_travel_superset_button.addEventListener("click", () => {
   current_crud_category = "superset";
+  polyline_color = "#DC3125";
   highlight_color_opacity_customization = true;
   is_travel_creator_active = true;
-  //  markers_visibility = false;
   polyline_visibility = false;
   togglePolylineVisibility();
   travelTypeButtonsColor();
@@ -1450,18 +1456,18 @@ jscolor_highlight.addEventListener("change", () => {
 });
 
 travel_type_car.addEventListener("click", () => {
-  if (allow_travel_type_selecting) {
+  if (allow_travel_settings_editing) {
     travelTypeValueUpdate(false, true, false, false, false, false, false, false, false);
     // prettier-ignore
     travelTypeCreator(travel_type_car_click, "car", car_icon, "assets/images/car_icon_small.png", "assets/images/car_icon.png");
     active_travel_type_icon = "assets/images/car_icon_small.png";
   } else {
-    displayInfoBox("Cannot change travel type after placing markers", 2500);
+    displayInfoBox("Cannot change travel type after the marker was placed on the map.", 2500);
   }
 });
 
 travel_type_plane.addEventListener("click", () => {
-  if (allow_travel_type_selecting) {
+  if (allow_travel_settings_editing) {
     travelTypeValueUpdate(false, false, true, false, false, false, false, false, false);
     // prettier-ignore
     travelTypeCreator(travel_type_plane_click, "plane", plane_icon, "assets/images/plane_icon_small.png", "assets/images/plane_icon.png");
@@ -1472,29 +1478,29 @@ travel_type_plane.addEventListener("click", () => {
 });
 
 travel_type_boat.addEventListener("click", () => {
-  if (allow_travel_type_selecting) {
+  if (allow_travel_settings_editing) {
     travelTypeValueUpdate(false, false, false, true, false, false, false, false, false);
     // prettier-ignore
     travelTypeCreator(travel_type_boat_click, "boat", boat_icon, "assets/images/boat_icon_small.png", "assets/images/boat_icon.png");
     active_travel_type_icon = "assets/images/boat_icon_small.png";
   } else {
-    displayInfoBox("Cannot change travel type after placing markers", 2500);
+    displayInfoBox("Cannot change travel type after the marker was placed on the map.", 2500);
   }
 });
 
 travel_type_walk.addEventListener("click", () => {
-  if (allow_travel_type_selecting) {
+  if (allow_travel_settings_editing) {
     travelTypeValueUpdate(false, false, false, false, true, false, false, false, false);
     // prettier-ignore
     travelTypeCreator(travel_type_walk_click, "walk", walk_icon, "assets/images/walk_icon_small.png", "assets/images/walk_icon.png");
     active_travel_type_icon = "assets/images/walk_icon_small.png";
   } else {
-    displayInfoBox("Cannot change travel type after placing markers", 2500);
+    displayInfoBox("Cannot change travel type after the marker was placed on the map.", 2500);
   }
 });
 
 travel_type_bicycle.addEventListener("click", () => {
-  if (allow_travel_type_selecting) {
+  if (allow_travel_settings_editing) {
     travelTypeValueUpdate(false, false, false, false, false, true, false, false, false);
     // prettier-ignore
     travelTypeCreator(travel_type_bicycle_click, "bicycle", bicycle_icon, "assets/images/bicycle_icon_small.png", "assets/images/bicycle_icon.png");
@@ -1505,35 +1511,107 @@ travel_type_bicycle.addEventListener("click", () => {
 });
 
 travel_type_motorcycle.addEventListener("click", () => {
-  if (allow_travel_type_selecting) {
+  if (allow_travel_settings_editing) {
     travelTypeValueUpdate(false, false, false, false, false, false, true, false, false);
     // prettier-ignore
     travelTypeCreator(travel_type_motorcycle_click, "motorcycle", motorcycle_icon, "assets/images/motorcycle_icon_small.png", "assets/images/motorcycle_icon.png");
     active_travel_type_icon = "assets/images/motorcycle_icon_small.png";
   } else {
-    displayInfoBox("Cannot change travel type after placing markers", 2500);
+    displayInfoBox("Cannot change travel type after the marker was placed on the map.", 2500);
   }
 });
 
 travel_type_train.addEventListener("click", () => {
-  if (allow_travel_type_selecting) {
+  if (allow_travel_settings_editing) {
     travelTypeValueUpdate(false, false, false, false, false, false, false, true, false);
     // prettier-ignore
     travelTypeCreator(travel_type_train_click, "train", train_icon, "assets/images/train_icon_small.png", "assets/images/train_icon.png");
     active_travel_type_icon = "assets/images/train_icon_small.png";
   } else {
-    displayInfoBox("Cannot change travel type after placing markers", 2500);
+    displayInfoBox("Cannot change travel type after the marker was placed on the map.", 2500);
   }
 });
 
 travel_type_bus.addEventListener("click", () => {
-  if (allow_travel_type_selecting) {
+  if (allow_travel_settings_editing) {
     travelTypeValueUpdate(false, false, false, false, false, false, false, false, true);
     // prettier-ignore
     travelTypeCreator(travel_type_bus_click, "bus", bus_icon, "assets/images/bus_icon_small.png", "assets/images/bus_icon.png");
     active_travel_type_icon = "assets/images/bus_icon_small.png";
   } else {
     displayInfoBox("Cannot change travel type after placing markers", 2500);
+  }
+});
+
+polyline_width_slider.oninput = function () {
+  if (allow_travel_settings_editing) {
+    polyline_width = this.value;
+  } else {
+    displayInfoBox("Cannot change the polyline width after the marker was placed on the map.", 2000);
+  }
+};
+
+polyline_solid_button.addEventListener("click", () => {
+  if (allow_travel_settings_editing) {
+    polyline_type = "solid";
+
+    polyline_solid_button.style.backgroundColor = "#26303d";
+    polyline_solid_button.style.border = "0px rgb(34, 34, 34) solid";
+    polyline_solid_button.style.transform = "scale(1.15)";
+
+    polyline_dashed_button.style.backgroundColor = "#2f3c4c";
+    polyline_dashed_button.style.border = "2px rgb(32, 34, 44) dashed";
+    polyline_dashed_button.style.transform = "scale(0.85)";
+  } else {
+    displayInfoBox("Cannot change the polyline type after the marker was placed on the map.", 2000);
+  }
+});
+
+polyline_solid_button.addEventListener("mouseenter", () => {
+  if (polyline_type == "20, 20") {
+    polyline_solid_button.style.transform = "scale(1.15)";
+  }
+});
+
+polyline_solid_button.addEventListener("mouseleave", () => {
+  if (polyline_type == "20, 20") {
+    polyline_solid_button.style.transform = "scale(0.85)";
+  }
+});
+
+polyline_dashed_button.addEventListener("click", () => {
+  if (allow_travel_settings_editing) {
+    polyline_type = "20, 20";
+
+    polyline_dashed_button.style.backgroundColor = "#26303d";
+    polyline_dashed_button.style.border = "0px rgb(34, 34, 34) solid";
+    polyline_dashed_button.style.transform = "scale(1.15)";
+
+    polyline_solid_button.style.backgroundColor = "#2f3c4c";
+    polyline_solid_button.style.border = "2px rgb(32, 34, 44) dashed";
+    polyline_solid_button.style.transform = "scale(0.85)";
+  } else {
+    displayInfoBox("Cannot change the polyline type after the marker was placed on the map.", 2000);
+  }
+});
+
+polyline_dashed_button.addEventListener("mouseenter", () => {
+  if (polyline_type == "solid") {
+    polyline_dashed_button.style.transform = "scale(1.15)";
+  }
+});
+
+polyline_dashed_button.addEventListener("mouseleave", () => {
+  if (polyline_type == "solid") {
+    polyline_dashed_button.style.transform = "scale(0.85)";
+  }
+});
+
+jscolor_polyline.addEventListener("change", () => {
+  if (allow_travel_settings_editing) {
+    polyline_color = jscolor_polyline.jscolor.toHEXAString();
+  } else {
+    displayInfoBox("Cannot change the polyline color after the marker was placed on the map.", 2000);
   }
 });
 
@@ -1594,7 +1672,7 @@ check_button_individual.addEventListener("click", () => {
       is_travel_creator_active = false;
       current_crud_category = "none";
       active_travel_type_icon = "";
-      allow_travel_type_selecting = true;
+      allow_travel_settings_editing = true;
     }
   } else {
     displayInfoBox("Please draw a path on the map first.", 2500);
@@ -1637,7 +1715,7 @@ close_button_individual.addEventListener("click", () => {
     toggleTravelLogsIndividualMainContainerVisibility(false);
   }
   is_travel_creator_active = false;
-  allow_travel_type_selecting = true;
+  allow_travel_settings_editing = true;
   active_travel_type_icon = "";
 });
 
@@ -1651,7 +1729,7 @@ close_button_individual.addEventListener("mouseleave", () =>
 
 let active_travel_type_icon;
 
-let allow_travel_type_selecting = true;
+let allow_travel_settings_editing = true;
 
 function travelTypeValueUpdate(manual, car, plane, boat, walk, bicycle, motorcycle, train, bus) {
   home_button_manual_click = manual;
@@ -1674,7 +1752,7 @@ function travelTypeCreator(travel_type_click, travel_type, icon_type, icon_small
     if (travel_type_click == true) {
       map.off("click");
       function onMapClick(e) {
-        allow_travel_type_selecting = false;
+        allow_travel_settings_editing = false;
         travelTypeButtonsGrayscale(active_travel_type_icon);
         allow_individual_log_creation = true;
         highlight_color_opacity_customization = false;
@@ -1692,7 +1770,11 @@ function travelTypeCreator(travel_type_click, travel_type, icon_type, icon_small
         marker.addTo(map).bounce(1);
         markers.push(marker);
 
-        markersData[markersData.length - 1].push([lat, lng, [random_id, type, icon_path]]);
+        markersData[markersData.length - 1].push([
+          lat,
+          lng,
+          [random_id, type, icon_path, polyline_type, polyline_width, polyline_color],
+        ]);
         drawPolyline();
       }
 
@@ -1732,31 +1814,11 @@ function drawPolyline() {
   for (let i = 0; i < markersData.length; i++) {
     const coordinates = markersData[i];
     if (coordinates && coordinates.length > 1) {
-      let color = "";
-
-      if (coordinates[0][2][1] === "car") {
-        color = "red";
-      } else if (coordinates[0][2][1] === "plane") {
-        color = "white";
-      } else if (coordinates[0][2][1] === "boat") {
-        color = "blue";
-      } else if (coordinates[0][2][1] === "walk") {
-        color = "brown";
-      } else if (coordinates[0][2][1] === "bicycle") {
-        color = "green";
-      } else if (coordinates[0][2][1] === "motorcycle") {
-        color = "yellow";
-      } else if (coordinates[0][2][1] === "train") {
-        color = "pink";
-      } else if (coordinates[0][2][1] === "bus") {
-        color = "orange";
-      }
-
       const polyline = L.polyline(coordinates, {
-        color: color,
+        dashArray: coordinates[0][2][3],
+        weight: coordinates[0][2][4],
+        color: coordinates[0][2][5],
         opacity: 1,
-        weight: 5,
-        dashArray: "10, 20",
       }).addTo(map);
 
       polylines.push([polyline, random_id]);
@@ -2090,8 +2152,8 @@ function removeStoredId(id) {
 
 function isGroupContentDivEmpty(id) {
   let storedContentDiv = document.getElementById(id);
-  isTravelGroupEmpty = storedContentDiv.innerHTML.trim() === "";
-  return isTravelGroupEmpty;
+  is_travel_group_empty = storedContentDiv.innerHTML.trim() === "";
+  return is_travel_group_empty;
 }
 
 function toggleTravelLogsGroupMainContainerVisibility(toggle) {
@@ -2310,7 +2372,6 @@ function buildCRUD() {
         reference = stored_group_id_reference;
         highlight_color_opacity_customization = true;
         is_travel_creator_active = true;
-        // markers_visibility = false;
         polyline_visibility = false;
         togglePolylineVisibility();
         travelTypeButtonsColor();
@@ -2344,7 +2405,7 @@ function buildCRUD() {
       $travel_logs_delete.classList.add("travel_logs_CRUD_buttons");
       $travel_logs_delete.addEventListener("click", () => {
         isGroupContentDivEmpty(stored_group_id_reference);
-        if (isTravelGroupEmpty == true) {
+        if (is_travel_group_empty == true) {
           removeTravelLogs(stored_group_id_reference);
           removeStoredId(stored_group_id_reference);
           removeTimelineData(timelineData, stored_group_id_reference);
@@ -2362,7 +2423,7 @@ function buildCRUD() {
           if (id_to_remove !== -1) {
             CRUD.splice(id_to_remove, 1);
           }
-        } else if (isTravelGroupEmpty == false) {
+        } else if (is_travel_group_empty == false) {
           displayInfoBox("Travel group is not empty. Please remove remaining travel logs first.", 2500);
         }
 
@@ -2530,7 +2591,6 @@ function buildCRUD() {
         $travel_logs_delete.innerHTML = '<i class="fa-regular fa-trash-can fa-xl" style="color: #c9c9c9;"></i>';
         $travel_logs_delete.classList.add("travel_logs_CRUD_buttons");
         $travel_logs_delete.addEventListener("click", () => {
-          //  markers_visibility = false;
           polyline_visibility = false;
           removeTrueHighlights();
           togglePolylineVisibility();
@@ -2714,7 +2774,6 @@ function buildCRUD() {
       $travel_logs_delete.innerHTML = '<i class="fa-regular fa-trash-can fa-xl" style="color: #c9c9c9;"></i>';
       $travel_logs_delete.classList.add("travel_logs_CRUD_buttons");
       $travel_logs_delete.addEventListener("click", () => {
-        // markers_visibility = false;
         polyline_visibility = false;
         removeTrueHighlights();
         togglePolylineVisibility();
@@ -3021,7 +3080,7 @@ function localStorageLoadPageSettings() {
   }
 
   if (pageSettings.markers_size === 0) {
-    markers_settings_display.innerHTML = `markers [none]`;
+    markers_settings_display.innerHTML = `<s>markers</s>`;
   } else if (pageSettings.markers_size === 20) {
     markers_settings_display.innerHTML = `markers [S]`;
   } else if (pageSettings.markers_size === 30) {
