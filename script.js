@@ -1,4 +1,4 @@
-// ver: 1.2.7
+// ver: 1.2.8
 
 // Bugs:
 
@@ -87,6 +87,8 @@ let marker_settings_index;
 const marker_sizes = [0, 25, 35, 50, 75];
 const anchor_values = [0, 12, 20, 30, 40];
 const labels = ["<s>markers</s>", "markers [S]", "markers [M]", "markers [L]", "markers [XL]"];
+
+const polyline_status_display = document.querySelector("#sub_overlay_polylines p");
 
 // // Sidebar Overlay ↑
 // // Sidebar Page Styles ↓
@@ -688,6 +690,14 @@ sub_overlay_markers.addEventListener("click", () => {
 sub_overlay_polylines.addEventListener("click", () => {
   togglePolylineVisibility();
   overlay_polylines_active = toggleIconColor(overlay_polylines_active, sub_polylines_icon);
+  if (pageSettings.polyline_visibility) {
+    polyline_status_display.innerHTML = `<s>polylines</s>`;
+  } else if (pageSettings.polyline_visibility !== true) {
+    polyline_status_display.innerHTML = `polylines`;
+  }
+  pageSettings.polyline_visibility = !pageSettings.polyline_visibility;
+
+  localStorageSavePageSettings();
 });
 
 sub_overlay_highlights.addEventListener("click", () => {
@@ -1279,6 +1289,13 @@ add_travel_superset_button.addEventListener("click", () => {
   toggleRemoveDataContainerVisibility(false);
   if (!statistics_visibility) {
     statistics_visibility = toggleIconColor(statistics_visibility, statistics_icon);
+  }
+
+  if (!pageSettings.polyline_visibility === true) {
+    overlay_polylines_active = toggleIconColor(overlay_polylines_active, sub_polylines_icon);
+    polyline_status_display.innerHTML = `polylines`;
+    pageSettings.polyline_visibility = true;
+    localStorageSavePageSettings();
   }
 
   markersData = markersData.filter((coordinatesArray) => coordinatesArray.length > 0);
@@ -3073,6 +3090,7 @@ function localStorageLoadPageSettings() {
     pageSettings.markers_index = 3;
     pageSettings.distance_unit = "km";
     marker_settings_index = pageSettings.markers_index;
+    pageSettings.polyline_visibility = true;
   }
 
   if (marker_settings_index === 1) {
@@ -3223,7 +3241,14 @@ function onLoadingComplete() {
   localStorageCreateStoredIds();
   localStorageCreateTimelineData(travelLogs, timelineData);
   localStorageCreateTrueHighlights();
+
   drawPolyline();
+  if (!pageSettings.polyline_visibility === true) {
+    togglePolylineVisibility();
+    overlay_polylines_active = toggleIconColor(overlay_polylines_active, sub_polylines_icon);
+    polyline_status_display.innerHTML = `<s>polylines</s>`;
+  }
+
   timelineInfoToggle();
   populateTimeline();
   buildCRUD();
