@@ -1,4 +1,4 @@
-// ver: 1.2.9
+// ver: 1.2.10
 
 // Bugs:
 
@@ -656,15 +656,15 @@ sub_overlay_labels.addEventListener("click", () => {
     switchTileAddon(labelsAddon);
     overlay_labels_active = toggleIconColor(overlay_labels_active, sub_labels_icon);
   } else {
-    displayInfoBox("Feature disabled on this layer map", 2000);
+    displayInfoBox("Feature disabled on this map layer.", 2000);
   }
 });
 sub_overlay_borders.addEventListener("click", () => {
-  if (pageSettings.current_map_layer !== "middleage") {
+  if (pageSettings.current_map_layer !== "middleage" && pageSettings.current_map_layer !== "dark") {
     switchTileAddon(bordersAddon);
     overlay_borders_active = toggleIconColor(overlay_borders_active, sub_borders_icon);
   } else {
-    displayInfoBox("Feature disabled on this layer map", 2000);
+    displayInfoBox("Feature disabled on this map layer.", 2000);
   }
 });
 
