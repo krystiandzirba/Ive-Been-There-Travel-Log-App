@@ -1,4 +1,4 @@
-// ver: 1.2.8
+// ver: 1.2.9
 
 // Bugs:
 
@@ -89,6 +89,8 @@ const anchor_values = [0, 12, 20, 30, 40];
 const labels = ["<s>markers</s>", "markers [S]", "markers [M]", "markers [L]", "markers [XL]"];
 
 const polyline_status_display = document.querySelector("#sub_overlay_polylines p");
+
+const highlight_status_display = document.querySelector("#sub_overlay_highlights p");
 
 // // Sidebar Overlay ↑
 // // Sidebar Page Styles ↓
@@ -705,6 +707,20 @@ sub_overlay_highlights.addEventListener("click", () => {
 
   if (overlay_highlights_active) localStorageCreateTrueHighlights();
   else removeTrueHighlights();
+
+  if (pageSettings.highlight_visibility) {
+    highlight_status_display.innerHTML = `<s>highlights</s>`;
+  } else if (pageSettings.highlight_visibility !== true) {
+    highlight_status_display.innerHTML = `highlights`;
+  }
+
+  if (pageSettings.polyline_visibility) {
+    drawPolyline(); // redraw the polyline on top of the highlights
+  }
+
+  pageSettings.highlight_visibility = !pageSettings.highlight_visibility;
+
+  localStorageSavePageSettings();
 });
 
 function switchTileAddon(tile_addon) {
@@ -1291,11 +1307,22 @@ add_travel_superset_button.addEventListener("click", () => {
     statistics_visibility = toggleIconColor(statistics_visibility, statistics_icon);
   }
 
-  if (!pageSettings.polyline_visibility === true) {
+  if (pageSettings.polyline_visibility === false) {
     overlay_polylines_active = toggleIconColor(overlay_polylines_active, sub_polylines_icon);
     polyline_status_display.innerHTML = `polylines`;
     pageSettings.polyline_visibility = true;
     localStorageSavePageSettings();
+  }
+
+  if (pageSettings.highlight_visibility === false) {
+    overlay_highlights_active = toggleIconColor(overlay_highlights_active, sub_highlights_icon);
+    highlight_status_display.innerHTML = `highlights`;
+    pageSettings.highlight_visibility = true;
+    localStorageSavePageSettings();
+    localStorageCreateTrueHighlights();
+    if (pageSettings.polyline_visibility) {
+      drawPolyline(); // redraw the polyline on top of the highlights
+    }
   }
 
   markersData = markersData.filter((coordinatesArray) => coordinatesArray.length > 0);
@@ -1676,7 +1703,11 @@ check_button_individual.addEventListener("click", () => {
       populateTimeline();
       buildCRUD();
       localStorageCreateTrueMarkers(pageSettings.markers_size, pageSettings.markers_anchor);
-      localStorageCreateTrueHighlights();
+
+      if (pageSettings.highlight_visibility === true) {
+        localStorageCreateTrueHighlights();
+      }
+
       drawPolyline();
 
       document.removeEventListener("mousemove", pngMouseTracking);
@@ -2834,6 +2865,20 @@ function buildCRUD() {
         localStorageSaveMarkerCoordinates();
         localStorageCreateTrueMarkers(pageSettings.markers_size, pageSettings.markers_anchor);
 
+        if (pageSettings.polyline_visibility === false) {
+          overlay_polylines_active = toggleIconColor(overlay_polylines_active, sub_polylines_icon);
+          polyline_status_display.innerHTML = `polylines`;
+          pageSettings.polyline_visibility = true;
+          localStorageSavePageSettings();
+        }
+
+        if (pageSettings.highlight_visibility === false) {
+          overlay_highlights_active = toggleIconColor(overlay_highlights_active, sub_highlights_icon);
+          highlight_status_display.innerHTML = `highlights`;
+          pageSettings.highlight_visibility = true;
+          localStorageSavePageSettings();
+        }
+
         if (timelineData.events.length === 0) {
           toggleTimelineVisibility(false);
         }
@@ -3088,9 +3133,10 @@ function localStorageLoadPageSettings() {
     pageSettings.markers_size = 35;
     pageSettings.markers_anchor = 20;
     pageSettings.markers_index = 3;
-    pageSettings.distance_unit = "km";
     marker_settings_index = pageSettings.markers_index;
+    pageSettings.distance_unit = "km";
     pageSettings.polyline_visibility = true;
+    pageSettings.highlight_visibility = true;
   }
 
   if (marker_settings_index === 1) {
@@ -3113,6 +3159,11 @@ function localStorageLoadPageSettings() {
     unit_display.innerHTML = "units [km]";
   } else if (pageSettings.distance_unit == "mil") {
     unit_display.innerHTML = "units [mil]";
+  }
+
+  if (pageSettings.highlight_visibility === false) {
+    highlight_status_display.innerHTML = `<s>highlights</s>`;
+    overlay_highlights_active = toggleIconColor(overlay_highlights_active, sub_highlights_icon);
   }
 }
 
@@ -3240,10 +3291,13 @@ function onLoadingComplete() {
 
   localStorageCreateStoredIds();
   localStorageCreateTimelineData(travelLogs, timelineData);
-  localStorageCreateTrueHighlights();
+
+  if (pageSettings.highlight_visibility === true) {
+    localStorageCreateTrueHighlights();
+  }
 
   drawPolyline();
-  if (!pageSettings.polyline_visibility === true) {
+  if (pageSettings.polyline_visibility === false) {
     togglePolylineVisibility();
     overlay_polylines_active = toggleIconColor(overlay_polylines_active, sub_polylines_icon);
     polyline_status_display.innerHTML = `<s>polylines</s>`;
