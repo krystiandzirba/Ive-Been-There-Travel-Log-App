@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>I've been there! - Travel log app v1.2.10</title>
+    <title>I've been there! - Travel log app v1.2.11</title>
     <link rel="icon" type="image/x-icon" href="assets/images/globe_icon_black.png" />
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -187,8 +187,8 @@
       Are you sure you want to delete all data? Please note that this action is irreversible.
     </div>
 
-    <button id="check_button_delete_data" class="icon_settings_container check_icon_delete_data">
-      <i class="fa-solid fa-check fa-2xl" style="color: #c9c9c9" id="check_icon_delete_data"></i>
+    <button id="confirm_button_delete_data" class="icon_settings_container confirm_icon_delete_data">
+      <i class="fa-solid fa-check fa-2xl" style="color: #c9c9c9" id="confirm_icon_delete_data"></i>
     </button>
     <button id="close_button_delete_data" class="icon_settings_container close_icon_delete_data">
       <i class="fa-solid fa-xmark fa-2xl" style="color: #c9c9c9" id="close_icon_delete_data"></i>
@@ -225,19 +225,23 @@
     </div>
 
     <div class="travel_logs_group_main_container" id="travel_logs_group_main_container">
+      <div class="travel_logs_group_main_buttons">
+        <button id="confirm_button_group" class="group_buttons confirm_button_group">
+          <i class="fa-solid fa-check fa-1xl" style="color: #c9c9c9" id="confirm_icon_group"></i>
+        </button>
+        <button id="close_button_group" class="group_buttons close_button_group">
+          <i class="fa-solid fa-xmark fa-1xl" style="color: #c9c9c9" id="close_icon_group"></i>
+        </button>
+      </div>
       <div class="travel_logs_group_data_input_container">
         <form id="travel_log_form">
+          <p>group name:</p>
           <input type="text" id="travel_logs_group_input" class="group_input" placeholder="Enter group name" />
+          <p>group date:</p>
           <input type="text" name="daterange" id="daterange" class="group_input" value="" />
         </form>
       </div>
     </div>
-    <button id="check_button_group" class="icon_settings_container check_icon_group">
-      <i class="fa-solid fa-check fa-2xl" style="color: #c9c9c9" id="check_icon_group"></i>
-    </button>
-    <button id="close_button_group" class="icon_settings_container close_icon_group">
-      <i class="fa-solid fa-xmark fa-2xl" style="color: #c9c9c9" id="close_icon_group"></i>
-    </button>
 
     <div class="travel_logs_individual_main_container" id="travel_logs_individual_main_container">
       <div class="travel_logs_individual_data_input_container">
@@ -315,8 +319,8 @@
         </p>
       </div>
     </div>
-    <button id="check_button_individual" class="icon_settings_container check_icon_individual">
-      <i class="fa-solid fa-check fa-2xl" style="color: #c9c9c9" id="check_icon_individual"></i>
+    <button id="confirm_button_individual" class="icon_settings_container confirm_icon_individual">
+      <i class="fa-solid fa-check fa-2xl" style="color: #c9c9c9" id="confirm_icon_individual"></i>
     </button>
     <button id="close_button_individual" class="icon_settings_container close_icon_individual">
       <i class="fa-solid fa-xmark fa-2xl" style="color: #c9c9c9" id="close_icon_individual"></i>
@@ -377,7 +381,7 @@
       <img id="custom_cursor_image" src="assets/images/car_icon_small.png" />
     </div>
 
-    <div class="app_version">ver: 1.2.10</div>
+    <div class="app_version">ver: 1.2.11</div>
 
     <div id="info_box">
       <p id="info_box_text"></p>

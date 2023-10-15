@@ -290,7 +290,7 @@ body {
   line-height: 4vh;
 }
 
-.check_icon_delete_data {
+.confirm_icon_delete_data {
   top: 34vh;
   left: 35%;
   display: none;
@@ -371,7 +371,7 @@ body {
   margin-left: 3vw;
   z-index: 699;
   height: 4vh;
-  transition: left 0.5s ease-in-out;
+  transition: left 0.3s ease-in-out;
 }
 
 .main_logs_container_arrow img {
@@ -390,7 +390,7 @@ body {
   left: 100vw;
   padding: 0;
   margin: 0;
-  transition: left 0.5s ease-in-out;
+  transition: left 0.3s ease-in-out;
 }
 
 .travel_creator_butttons {
@@ -416,10 +416,6 @@ body {
   justify-content: center;
   align-items: center;
   text-align: center;
-}
-
-.add_travel:hover {
-  background-color: #374657;
 }
 
 .add_travel i {
@@ -617,7 +613,7 @@ body {
   border: none;
 }
 
-.check_icon_individual {
+.confirm_icon_individual {
   top: 35vh;
   left: 29%;
   display: none;
@@ -633,18 +629,53 @@ body {
 /* ↓ Travel Type Settings Group ↓ */
 
 .travel_logs_group_main_container {
-  border-radius: 2vh;
   position: absolute;
   width: 27vw;
-  min-height: 10vh;
+  height: 100vh;
   background-color: #2f3c4c;
-  box-shadow: 30px 30px 9px rgba(0, 0, 0, 0.4);
-  top: 8vh;
-  left: 50vw;
+  top: 0vh;
+  left: 120vw;
   transform: translate(-50%, 0%);
   z-index: 890;
-  display: none;
   text-align: center;
+  transition: left 0.3s ease;
+}
+
+.travel_logs_group_main_buttons {
+  height: 12vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.group_buttons {
+  width: 45%;
+  height: 9vh;
+  background-color: #2f3c4c;
+  border: none;
+  transition: width 0.3s ease, left 0.3s ease;
+  border: 1px solid #26303d;
+}
+
+.group_buttons i {
+  font-size: 2vw;
+}
+
+.confirm_button_group {
+  left: 0%;
+  border-radius: 2vh 0 0 2vh;
+}
+
+.close_button_group {
+  left: 50%;
+  border-radius: 0 2vh 2vh 0;
+}
+
+.travel_logs_group_data_input_container p {
+  font-family: "Inter", sans-serif;
+  color: #d7d7d7;
+  font-size: 0.9vw;
+  margin-top: 2vh;
 }
 
 .group_input {
@@ -653,26 +684,17 @@ body {
   border: none;
   background-color: #26303d;
   color: #d7d7d7;
-  margin: 1.5vh;
   text-align: center;
-  width: 11vw;
-  font-size: 0.7vw;
+  width: 90%;
+  font-size: 1.5vw;
   font-family: "Inter", sans-serif;
+  display: block;
+  margin: 1vh 0 0 2.5vh;
 }
 
-#travel_logs_group_input::placeholder {
+.group_input::placeholder {
   color: #adadad;
-  font-size: 1vw;
-}
-
-.check_icon_group {
-  left: 36.5vw;
-  top: 20vh;
-}
-
-.close_icon_group {
-  left: 59.5vw;
-  top: 20vh;
+  font-size: 1.8vw;
 }
 
 /* ↑ Travel Type Settings Group ↑ */

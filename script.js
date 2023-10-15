@@ -1,4 +1,4 @@
-// ver: 1.2.10
+// ver: 1.2.11
 
 // Bugs:
 
@@ -165,9 +165,9 @@ const sub_settings_remove_data = document.getElementById("sub_settings_remove_da
 const sub_settings_report_bug = document.getElementById("sub_settings_report_bug");
 
 const remove_data_confirmation_container = document.getElementById("remove_data_confirmation_container");
-const check_button_delete_data = document.getElementById("check_button_delete_data");
+const confirm_button_delete_data = document.getElementById("confirm_button_delete_data");
 const close_button_delete_data = document.getElementById("close_button_delete_data");
-const check_icon_delete_data = document.getElementById("check_icon_delete_data");
+const confirm_icon_delete_data = document.getElementById("confirm_icon_delete_data");
 const close_icon_delete_data = document.getElementById("close_icon_delete_data");
 
 let settings_container_timeout;
@@ -225,9 +225,9 @@ let polyline_type = "solid";
 // // Travel Log Creator ↑
 // // Travel log group ↓
 
-const check_button_group = document.getElementById("check_button_group");
+const confirm_button_group = document.getElementById("confirm_button_group");
 const close_button_group = document.getElementById("close_button_group");
-const check_icon_group = document.getElementById("check_icon_group");
+const confirm_icon_group = document.getElementById("confirm_icon_group");
 const close_icon_group = document.getElementById("close_icon_group");
 
 let travel_logs_group_name = "";
@@ -274,9 +274,9 @@ const polyline_width_slider = document.getElementById("polyline_width_slider");
 const polyline_solid_button = document.getElementById("polyline_solid_button");
 const polyline_dashed_button = document.getElementById("polyline_dashed_button");
 
-const check_button_individual = document.getElementById("check_button_individual");
+const confirm_button_individual = document.getElementById("confirm_button_individual");
 const close_button_individual = document.getElementById("close_button_individual");
-const check_icon_individual = document.getElementById("check_icon_individual");
+const confirm_icon_individual = document.getElementById("confirm_icon_individual");
 const close_icon_individual = document.getElementById("close_icon_individual");
 
 let travel_logs_individual_name = "";
@@ -1143,24 +1143,23 @@ sub_settings_remove_data.addEventListener("click", () => {
     displayInfoBox("Cannot remove the data during the travel log creation.", 2500);
   } else {
     toggleRemoveDataContainerVisibility(true);
-    toggleTravelLogsGroupMainContainerVisibility(false);
     toggleTravelLogsIndividualMainContainerVisibility(false);
     main_statistics_container.classList.add("hidden");
   }
 });
 
-check_button_delete_data.addEventListener("click", () => {
+confirm_button_delete_data.addEventListener("click", () => {
   toggleRemoveDataContainerVisibility(false);
   localStorage.clear();
   location.reload();
 });
 
-check_button_delete_data.addEventListener("mouseenter", () =>
-  changeIconColorOnHover(true, check_icon_delete_data, check_button_delete_data)
+confirm_button_delete_data.addEventListener("mouseenter", () =>
+  changeIconColorOnHover(true, confirm_icon_delete_data, confirm_button_delete_data)
 );
 
-check_button_delete_data.addEventListener("mouseleave", () =>
-  changeIconColorOnHover(false, check_icon_delete_data, check_button_delete_data)
+confirm_button_delete_data.addEventListener("mouseleave", () =>
+  changeIconColorOnHover(false, confirm_icon_delete_data, confirm_button_delete_data)
 );
 
 close_button_delete_data.addEventListener("click", () => {
@@ -1184,11 +1183,11 @@ sub_settings_report_bug.addEventListener("click", () => {
 function toggleRemoveDataContainerVisibility(toggle) {
   if (toggle) {
     remove_data_confirmation_container.style.display = "block";
-    check_button_delete_data.style.display = "block";
+    confirm_button_delete_data.style.display = "block";
     close_button_delete_data.style.display = "block";
   } else {
     remove_data_confirmation_container.style.display = "none";
-    check_button_delete_data.style.display = "none";
+    confirm_button_delete_data.style.display = "none";
     close_button_delete_data.style.display = "none";
   }
 }
@@ -1277,13 +1276,13 @@ function sidebarButtonsAnimation(element, toggle) {
   }
 }
 
-function changeIconColorOnHover(toggle, element, button) {
+function changeIconColorOnHover(toggle, element, icon) {
   if (toggle) {
     element.classList.add("sidebar_icon_brighter");
-    button.style.transform = "scale(1.1)";
+    icon.style.transform = "scale(1.15)";
   } else {
     element.classList.remove("sidebar_icon_brighter");
-    button.style.transform = "scale(1)";
+    icon.style.transform = "scale(1)";
   }
 }
 
@@ -1338,11 +1337,11 @@ add_travel_superset_button.addEventListener("click", () => {
 });
 
 add_travel_superset_button.addEventListener("mouseenter", () => {
-  changeIconColorOnHover(true, travel_superset_icon, add_travel_superset_button);
+  changeIconColorOnHover(true, travel_superset_icon, travel_superset_icon);
 });
 
 add_travel_superset_button.addEventListener("mouseleave", () => {
-  changeIconColorOnHover(false, travel_superset_icon, add_travel_superset_button);
+  changeIconColorOnHover(false, travel_superset_icon, travel_superset_icon);
 });
 
 add_travel_group_button.addEventListener("click", () => {
@@ -1363,22 +1362,17 @@ add_travel_group_button.addEventListener("click", () => {
     travelTypeButtonsColor();
     travel_logs_group_input.value = "";
     travel_logs_individual_input.value = "";
-    if (
-      travel_logs_group_main_container.style.display === "none" ||
-      travel_logs_group_main_container.style.display === ""
-    ) {
-      toggleTravelLogsGroupMainContainerVisibility(true);
-    }
     is_travel_creator_active = !is_travel_creator_active;
+    toggleTravelCreator(true);
   }
 });
 
 add_travel_group_button.addEventListener("mouseenter", () => {
-  changeIconColorOnHover(true, travel_group_icon, add_travel_group_button);
+  changeIconColorOnHover(true, travel_group_icon, travel_group_icon);
 });
 
 add_travel_group_button.addEventListener("mouseleave", () => {
-  changeIconColorOnHover(false, travel_group_icon, add_travel_group_button);
+  changeIconColorOnHover(false, travel_group_icon, travel_group_icon);
 });
 
 main_logs_container_arrow.addEventListener("click", function () {
@@ -1404,10 +1398,48 @@ function toggleMainLogContainerVisibility(toggle) {
   }
 }
 
+function toggleTravelCreator(toggle) {
+  if (toggle) {
+    travel_logs_group_main_container.style.left = "86.5vw";
+  } else if (!toggle) {
+    travel_logs_group_main_container.style.left = "120vw";
+  }
+}
+
+function travelCreatorAnimation(toggle, main_button, secondary_button, is_right_button) {
+  if (toggle) {
+    main_button.style.backgroundColor = "#26303d";
+    if (is_right_button) {
+      main_button.style.width = "60%";
+      secondary_button.style.width = "30%";
+
+      main_button.style.left = "30%";
+    } else if (!is_right_button) {
+      main_button.style.width = "60%";
+      secondary_button.style.width = "30%";
+
+      secondary_button.style.left = "60%";
+    }
+  } else if (!toggle) {
+    main_button.style.backgroundColor = "#2f3c4c";
+    if (is_right_button) {
+      main_button.style.width = "45%";
+      secondary_button.style.width = "45%";
+
+      secondary_button.style.left = "45%";
+    } else if (!is_right_button) {
+      main_button.style.width = "45%";
+      secondary_button.style.width = "45%";
+
+      secondary_button.style.left = "45%";
+    }
+  }
+}
+
 // Travel Log Creator ↑
 // Travel log group ↓
 
-check_button_group.addEventListener("click", () => {
+confirm_button_group.addEventListener("click", () => {
   travel_logs_group_name = travel_logs_group_input.value;
   if (travel_logs_group_name === "") {
     displayInfoBox("Please enter a valid group name.", 2000);
@@ -1443,19 +1475,21 @@ check_button_group.addEventListener("click", () => {
     timelineInfoToggle();
     toggleMainLogContainerVisibility(true);
     toggleTimelineVisibility(true);
-    toggleTravelLogsGroupMainContainerVisibility(false);
     timelineInfoToggle();
     current_crud_category = "none";
+    toggleTravelCreator(false);
   }
 });
 
-check_button_group.addEventListener("mouseenter", () =>
-  changeIconColorOnHover(true, check_icon_group, check_button_group)
-);
+confirm_button_group.addEventListener("mouseenter", () => {
+  travelCreatorAnimation(true, confirm_button_group, close_button_group, false);
+  changeIconColorOnHover(true, confirm_icon_group, confirm_icon_group);
+});
 
-check_button_group.addEventListener("mouseleave", () =>
-  changeIconColorOnHover(false, check_icon_group, check_button_group)
-);
+confirm_button_group.addEventListener("mouseleave", () => {
+  travelCreatorAnimation(false, confirm_button_group, close_button_group, false);
+  changeIconColorOnHover(false, confirm_icon_group, confirm_icon_group);
+});
 
 close_button_group.addEventListener("click", () => {
   current_crud_category = "none";
@@ -1463,24 +1497,20 @@ close_button_group.addEventListener("click", () => {
   stored_group_log_id = random_id;
   removeStoredId(stored_group_log_id);
   travel_logs_group_input.value = "";
-  if (
-    travel_logs_group_main_container.style.display === "none" ||
-    travel_logs_group_main_container.style.display === ""
-  ) {
-    toggleTravelLogsGroupMainContainerVisibility(true);
-  } else {
-    toggleMainLogContainerVisibility(true);
-    toggleTravelLogsGroupMainContainerVisibility(false);
-  }
+
+  toggleMainLogContainerVisibility(true);
+  toggleTravelCreator(false);
 });
 
-close_button_group.addEventListener("mouseenter", () =>
-  changeIconColorOnHover(true, close_icon_group, close_button_group)
-);
+close_button_group.addEventListener("mouseenter", () => {
+  travelCreatorAnimation(true, close_button_group, confirm_button_group, true);
+  changeIconColorOnHover(true, close_icon_group, close_icon_group);
+});
 
-close_button_group.addEventListener("mouseleave", () =>
-  changeIconColorOnHover(false, close_icon_group, close_button_group)
-);
+close_button_group.addEventListener("mouseleave", () => {
+  travelCreatorAnimation(false, close_button_group, confirm_button_group, true);
+  changeIconColorOnHover(false, close_icon_group, close_icon_group);
+});
 
 // Travel log group ↑
 // Travel Log Individual ↓
@@ -1659,7 +1689,7 @@ jscolor_polyline.addEventListener("change", () => {
   }
 });
 
-check_button_individual.addEventListener("click", () => {
+confirm_button_individual.addEventListener("click", () => {
   if (allow_individual_log_creation) {
     travel_logs_individual_name = travel_logs_individual_input.value;
     if (travel_logs_individual_name === "") {
@@ -1727,12 +1757,12 @@ check_button_individual.addEventListener("click", () => {
   }
 });
 
-check_button_individual.addEventListener("mouseenter", () =>
-  changeIconColorOnHover(true, check_icon_individual, check_button_individual)
+confirm_button_individual.addEventListener("mouseenter", () =>
+  changeIconColorOnHover(true, confirm_icon_individual, confirm_button_individual)
 );
 
-check_button_individual.addEventListener("mouseleave", () =>
-  changeIconColorOnHover(false, check_icon_individual, check_button_individual)
+confirm_button_individual.addEventListener("mouseleave", () =>
+  changeIconColorOnHover(false, confirm_icon_individual, confirm_button_individual)
 );
 
 close_button_individual.addEventListener("click", () => {
@@ -2204,26 +2234,14 @@ function isGroupContentDivEmpty(id) {
   return is_travel_group_empty;
 }
 
-function toggleTravelLogsGroupMainContainerVisibility(toggle) {
-  if (toggle) {
-    travel_logs_group_main_container.style.display = "block";
-    check_button_group.style.display = "block";
-    close_button_group.style.display = "block";
-  } else {
-    travel_logs_group_main_container.style.display = "none";
-    check_button_group.style.display = "none";
-    close_button_group.style.display = "none";
-  }
-}
-
 function toggleTravelLogsIndividualMainContainerVisibility(toggle) {
   if (toggle) {
     travel_logs_individual_main_container.style.display = "block";
-    check_button_individual.style.display = "block";
+    confirm_button_individual.style.display = "block";
     close_button_individual.style.display = "block";
   } else {
     travel_logs_individual_main_container.style.display = "none";
-    check_button_individual.style.display = "none";
+    confirm_button_individual.style.display = "none";
     close_button_individual.style.display = "none";
   }
 }
