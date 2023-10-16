@@ -1,4 +1,4 @@
-// ver: 1.2.12
+// ver: 1.2.13
 
 // Bugs:
 
@@ -1337,10 +1337,12 @@ add_travel_superset_button.addEventListener("click", () => {
 });
 
 add_travel_superset_button.addEventListener("mouseenter", () => {
+  travelCreatorAnimation(true, add_travel_superset_button, add_travel_group_button, false);
   changeIconColorOnHover(true, travel_superset_icon, travel_superset_icon);
 });
 
 add_travel_superset_button.addEventListener("mouseleave", () => {
+  travelCreatorAnimation(false, add_travel_superset_button, add_travel_group_button, false);
   changeIconColorOnHover(false, travel_superset_icon, travel_superset_icon);
 });
 
@@ -1368,10 +1370,12 @@ add_travel_group_button.addEventListener("click", () => {
 });
 
 add_travel_group_button.addEventListener("mouseenter", () => {
+  travelCreatorAnimation(true, add_travel_group_button, add_travel_superset_button, true);
   changeIconColorOnHover(true, travel_group_icon, travel_group_icon);
 });
 
 add_travel_group_button.addEventListener("mouseleave", () => {
+  travelCreatorAnimation(false, add_travel_group_button, add_travel_superset_button, true);
   changeIconColorOnHover(false, travel_group_icon, travel_group_icon);
 });
 
@@ -1400,7 +1404,7 @@ function toggleMainLogContainerVisibility(toggle) {
 
 function toggleTravelCreator(toggle) {
   if (toggle) {
-    travel_logs_group_main_container.style.left = "86.5vw";
+    travel_logs_group_main_container.style.left = "87.5vw";
   } else if (!toggle) {
     travel_logs_group_main_container.style.left = "120vw";
   }
@@ -1408,6 +1412,7 @@ function toggleTravelCreator(toggle) {
 
 function travelCreatorAnimation(toggle, main_button, secondary_button, is_right_button) {
   if (toggle) {
+    main_button.style.color = "#f0f0f0";
     main_button.style.backgroundColor = "#26303d";
     if (is_right_button) {
       main_button.style.width = "60%";
@@ -1421,6 +1426,8 @@ function travelCreatorAnimation(toggle, main_button, secondary_button, is_right_
       secondary_button.style.left = "60%";
     }
   } else if (!toggle) {
+    main_button.style.color = "#d7d7d7";
+
     main_button.style.backgroundColor = "#2f3c4c";
     if (is_right_button) {
       main_button.style.width = "45%";

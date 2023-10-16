@@ -393,40 +393,35 @@ body {
   transition: left 0.3s ease-in-out;
 }
 
-.travel_creator_butttons {
+.travel_creator_buttons {
   display: flex;
+  justify-content: center;
+  align-items: center;
   height: 12vh;
   width: 100%;
   background-color: #2f3c4c;
   top: 0vh;
 }
 
-.add_travel {
-  width: 30%;
-  height: 10vh;
-  z-index: 850;
-  background-color: #2f3c4c;
-  color: white;
-  border: none;
-  border-radius: 1vw;
-  margin: 1vh 0.5vw 0vw 3.5vw;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-.add_travel i {
-  margin-top: 2.5vh;
-  font-size: 2vw;
-}
-
-.add_travel p {
-  font-family: "Inter", sans-serif;
+.creator_buttons {
+  color: #d7d7d7;
   font-size: 1vw;
-  margin-top: 1vh;
+  font-family: "Inter", sans-serif;
+  padding-top: 0.75vh;
+}
+
+.creator_buttons p {
+  margin-top: 0.5vh;
+}
+
+.add_travel_individual {
+  left: 0%;
+  border-radius: 2vh 0 0 2vh;
+}
+
+.add_travel_group {
+  left: 50%;
+  border-radius: 0 2vh 2vh 0;
 }
 
 .travel_logs {
@@ -630,7 +625,7 @@ body {
 
 .travel_logs_group_main_container {
   position: absolute;
-  width: 27vw;
+  width: 25vw;
   height: 100vh;
   background-color: #2f3c4c;
   top: 0vh;
@@ -648,7 +643,7 @@ body {
   align-items: center;
 }
 
-.group_buttons {
+.main_buttons {
   width: 45%;
   height: 9vh;
   background-color: #2f3c4c;
@@ -657,7 +652,7 @@ body {
   border: 1px solid #26303d;
 }
 
-.group_buttons i {
+.main_buttons i {
   font-size: 2vw;
 }
 
