@@ -264,7 +264,7 @@ body {
   background-color: #2b3847;
   position: absolute;
   display: none;
-  top: 20%;
+  top: 10%;
   left: 35%;
 
   color: #d7d7d7;
@@ -281,7 +281,7 @@ body {
   content: "";
   position: absolute;
   top: 0;
-  left: 0;
+  right: 0;
   width: 3%;
   height: 100%;
   background: linear-gradient(to right, rgb(255, 91, 76) 0%, rgb(255, 91, 76) 100%);
@@ -291,13 +291,13 @@ body {
 }
 
 .confirm_icon_delete_data {
-  top: 34vh;
+  top: 25vh;
   left: 35%;
   display: none;
 }
 
 .close_icon_delete_data {
-  top: 34vh;
+  top: 25vh;
   left: 63%;
   display: none;
 }
@@ -968,14 +968,14 @@ body {
 #info_box {
   z-index: 899;
   position: fixed;
-  top: 10%;
-  left: 6%;
+  top: 7%;
+  left: 52.5%;
   width: 15vw;
   height: 4vh;
   background-color: #2f3c4c;
   padding: 20px;
   box-shadow: 30px 30px 9px rgba(0, 0, 0, 0.4);
-  border-radius: 0 1.5vh 1.5vh 0;
+  border-radius: 1.5vh 0 0 1.5vh;
   backdrop-filter: blur(3px);
   display: none;
   flex-direction: column;
@@ -993,7 +993,7 @@ body {
   content: "";
   position: absolute;
   top: 0;
-  left: 0;
+  right: 0;
   width: 3%;
   height: 100%;
   background: linear-gradient(to right, rgb(255, 192, 76) 0%, rgb(255, 192, 76) 100%);
