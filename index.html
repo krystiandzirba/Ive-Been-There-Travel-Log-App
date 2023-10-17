@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>I've been there! - Travel log app v1.2.13</title>
+    <title>I've been there! - Travel log app v1.3.0</title>
     <link rel="icon" type="image/x-icon" href="assets/images/globe_icon_black.png" />
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -35,12 +35,8 @@
       </div>
       <div class="loading_animation_container">
         <div class="plane_animation_container">
-          <img
-            src="assets/images/plane_icon_animation.png"
-            class="plane_icon"
-            id="plane_icon_animation"
-            alt="plane Icon"
-          />
+          <!-- prettier-ignore -->
+          <img src="assets/images/plane_icon_animation.png" class="plane_icon" id="plane_icon_animation" alt="plane Icon"/>
         </div>
 
         <img src="assets/images/globe_icon_white.png" class="globe_icon" id="globe_icon_animation" alt="globe Icon" />
@@ -196,13 +192,8 @@
 
     <div class="jscolor_home_container">
       <p>
-        <input
-          id="jscolor_home"
-          data-jscolor="{
-            hideOnLeave: true, position:'right', format: 'rgb', alphaChannel: true, height: 200, width: 300,crossSize: 9, borderWidth: 0, pointerBorderWidth: 0, closeButton:false, closeText:'OK', backgroundColor:'#333', buttonColor:'#d7d7d7'
-          }"
-          value="rgba(138, 255, 20, 0.5)"
-        />
+        <!-- prettier-ignore -->
+        <input id="jscolor_home" data-jscolor="{hideOnLeave: true, position:'right', format: 'rgb', alphaChannel: true, height: 200, width: 300,crossSize: 9, borderWidth: 0, pointerBorderWidth: 0, closeButton:false, closeText:'OK', backgroundColor:'#333', buttonColor:'#d7d7d7'}" value="rgba(138, 255, 20, 0.5)"/>
       </p>
     </div>
 
@@ -211,25 +202,27 @@
     </div>
 
     <div class="main_logs_container">
-      <div class="travel_creator_buttons">
-        <button id="add_travel_superset_button" class="main_buttons creator_buttons add_travel_individual">
+      <div class="travel_creator_buttons_container">
+        <!-- prettier-ignore -->
+        <button id="add_travel_superset_button" class="main_buttons travel_creator_buttons add_travel_individual_button">
           <i class="fa-solid fa-plus fa-1xl" style="color: #c9c9c9" id="travel_superset_icon"></i>
-          <p>individual</p>
+          <p>add travel</p>
         </button>
-        <button id="add_travel_group_button" class="main_buttons creator_buttons add_travel_group">
+        <!-- prettier-ignore -->
+        <button id="add_travel_group_button" class="main_buttons travel_creator_buttons add_travel_group_button">
           <i class="fa-solid fa-folder-plus fa-1xl" style="color: #c9c9c9" id="travel_group_icon"></i>
-          <p>group</p>
+          <p>add group</p>
         </button>
       </div>
       <div id="logs_list" class="travel_logs"></div>
     </div>
 
     <div class="travel_logs_group_main_container" id="travel_logs_group_main_container">
-      <div class="travel_logs_group_main_buttons">
-        <button id="confirm_button_group" class="main_buttons confirm_button_group">
+      <div class="travel_logs_main_buttons">
+        <button id="confirm_button_group" class="main_buttons confirm_main_button">
           <i class="fa-solid fa-check fa-1xl" style="color: #c9c9c9" id="confirm_icon_group"></i>
         </button>
-        <button id="close_button_group" class="main_buttons close_button_group">
+        <button id="close_button_group" class="main_buttons close_main_button">
           <i class="fa-solid fa-xmark fa-1xl" style="color: #c9c9c9" id="close_icon_group"></i>
         </button>
       </div>
@@ -244,87 +237,96 @@
     </div>
 
     <div class="travel_logs_individual_main_container" id="travel_logs_individual_main_container">
-      <div class="travel_logs_individual_data_input_container">
-        <form id="travel_log_form">
-          <input
-            type="text"
-            id="travel_logs_individual_input"
-            class="individual_input data_input"
-            placeholder="Enter travel name"
-          />
-          <input type="text" name="daterange" id="daterange" class="individual_input date_input" value="" />
-        </form>
+      <div class="travel_logs_main_buttons">
+        <button id="confirm_button_individual" class="main_buttons confirm_main_button">
+          <i class="fa-solid fa-check fa-1xl" style="color: #c9c9c9" id="confirm_icon_individual"></i>
+        </button>
+        <button id="close_button_individual" class="main_buttons close_main_button">
+          <i class="fa-solid fa-xmark fa-1xl" style="color: #c9c9c9" id="close_icon_individual"></i>
+        </button>
+      </div>
 
-        <div class="jscolor_highlight_container">
-          <p>
-            <input
-              id="jscolor_highlight"
-              class="individual_input jscolor_highlight"
-              data-jscolor="{
-                hideOnLeave: true, position:'right', format: 'rgb', alphaChannel: true, height: 200, width: 300,crossSize: 9,
-                 borderWidth: 0, pointerBorderWidth: 0, closeButton:false, closeText:'OK', backgroundColor:'#333', buttonColor:'#d7d7d7'
-              }"
-              value="rgba(20, 149, 237, 0.5)"
-            />
-          </p>
+      <div class="travel_logs_individual_data_input_container">
+        <div class="data_grid_container">
+          <p>travel name:</p>
+          <p>travel date:</p>
+          <!-- prettier-ignore -->
+          <input type="text" id="travel_logs_individual_input" class="individual_input data_input" placeholder="Enter travel name"/>
+          <input type="text" name="daterange" id="daterange" class="individual_input date_input" value="" />
         </div>
       </div>
-      <div class="travel_logs_individual_icon_container">
-        <button id="travel_type_car" class="travel_type_button">
-          <img src="assets/images/car_icon_small.png" alt="Car Icon" />
-        </button>
-        <button id="travel_type_plane" class="travel_type_button">
-          <img src="assets/images/plane_icon_small.png" alt="plane Icon" />
-        </button>
-        <button id="travel_type_boat" class="travel_type_button">
-          <img src="assets/images/boat_icon_small.png" alt="boat Icon" />
-        </button>
-        <button id="travel_type_walk" class="travel_type_button">
-          <img src="assets/images/walk_icon_small.png" alt="walk Icon" />
-        </button>
-        <button id="travel_type_bicycle" class="travel_type_button">
-          <img src="assets/images/bicycle_icon_small.png" alt="bicycle Icon" />
-        </button>
-        <button id="travel_type_motorcycle" class="travel_type_button">
-          <img src="assets/images/motorcycle_icon_small.png" alt="motorcycle Icon" />
-        </button>
-        <button id="travel_type_train" class="travel_type_button">
-          <img src="assets/images/train_icon_small.png" alt="train Icon" />
-        </button>
-        <button id="travel_type_bus" class="travel_type_button">
-          <img src="assets/images/bus_icon_small.png" alt="bus Icon" />
-        </button>
+
+      <div class="travel_logs_individual_customization_grid_container">
+        <div class="individual_customization_grid_cell">
+          <p>highlight color:</p>
+          <div class="jscolor_highlight_container">
+            <p>
+              <!-- prettier-ignore -->
+              <input id="jscolor_highlight" class="individual_input jscolor_highlight" data-jscolor="{hideOnLeave: true, position:'right', format: 'rgb', alphaChannel: true, height: 200, width: 300,crossSize: 9, borderWidth: 0, pointerBorderWidth: 0, closeButton:false, closeText:'OK', backgroundColor:'#333', buttonColor:'#d7d7d7'}" value="rgba(20, 149, 237, 0.5)"/>
+            </p>
+          </div>
+        </div>
+
+        <div class="individual_customization_grid_cell">
+          <p>polyline width:</p>
+          <div class="polyline_width_slider_container">
+            <input type="range" min="1" max="10" value="5" class="polyline_slider" id="polyline_width_slider" />
+          </div>
+        </div>
+
+        <div class="individual_customization_grid_cell">
+          <p>polyline color:</p>
+          <div class="jscolor_polyline_container">
+            <p>
+              <!-- prettier-ignore -->
+              <input id="jscolor_polyline" class="individual_input jscolor_polyline" data-jscolor="{ hideOnLeave: true, position:'right', format: 'rgb', alphaChannel: false, height: 200, width: 300,crossSize: 9, borderWidth: 0, pointerBorderWidth: 0, closeButton:false, closeText:'OK', backgroundColor:'#333', buttonColor:'#d7d7d7' }" value="rgba(220, 49, 37, 1)"/>
+            </p>
+          </div>
+        </div>
+
+        <div class="individual_customization_grid_cell">
+          <p>polyline type:</p>
+          <div class="polyline_input_container">
+            <button id="polyline_solid_button" class="polyline_button polyline_solid">solid</button>
+            <button id="polyline_dashed_button" class="polyline_button polyline_dashed">dashed</button>
+          </div>
+        </div>
       </div>
 
-      <div class="polyline_width_slider_container">
-        <input type="range" min="1" max="10" value="5" class="polyline_slider" id="polyline_width_slider" />
-      </div>
-
-      <div class="polyline_input_container">
-        <button id="polyline_solid_button" class="polyline_button polyline_solid">solid</button>
-        <button id="polyline_dashed_button" class="polyline_button polyline_dashed">dashed</button>
-      </div>
-
-      <div class="jscolor_polyline_container">
-        <p>
-          <input
-            id="jscolor_polyline"
-            class="individual_input jscolor_polyline"
-            data-jscolor="{
-              hideOnLeave: true, position:'right', format: 'rgb', alphaChannel: false, height: 200, width: 300,crossSize: 9,
-               borderWidth: 0, pointerBorderWidth: 0, closeButton:false, closeText:'OK', backgroundColor:'#333', buttonColor:'#d7d7d7'
-            }"
-            value="rgba(220, 49, 37, 1)"
-          />
-        </p>
+      <div class="travel_type_container">
+        <p>travel type:</p>
+        <div class="travel_type_sub_container_a">
+          <button id="travel_type_car" class="travel_type_button">
+            <img src="assets/images/car_icon_small.png" alt="Car Icon" />
+          </button>
+          <button id="travel_type_plane" class="travel_type_button">
+            <img src="assets/images/plane_icon_small.png" alt="plane Icon" />
+          </button>
+          <button id="travel_type_boat" class="travel_type_button">
+            <img src="assets/images/boat_icon_small.png" alt="boat Icon" />
+          </button>
+        </div>
+        <div class="travel_type_sub_container_b">
+          <button id="travel_type_walk" class="travel_type_button">
+            <img src="assets/images/walk_icon_small.png" alt="walk Icon" />
+          </button>
+          <button id="travel_type_bicycle" class="travel_type_button">
+            <img src="assets/images/bicycle_icon_small.png" alt="bicycle Icon" />
+          </button>
+          <button id="travel_type_motorcycle" class="travel_type_button">
+            <img src="assets/images/motorcycle_icon_small.png" alt="motorcycle Icon" />
+          </button>
+        </div>
+        <div class="travel_type_sub_container_c">
+          <button id="travel_type_train" class="travel_type_button">
+            <img src="assets/images/train_icon_small.png" alt="train Icon" />
+          </button>
+          <button id="travel_type_bus" class="travel_type_button">
+            <img src="assets/images/bus_icon_small.png" alt="bus Icon" />
+          </button>
+        </div>
       </div>
     </div>
-    <button id="confirm_button_individual" class="icon_settings_container confirm_icon_individual">
-      <i class="fa-solid fa-check fa-2xl" style="color: #c9c9c9" id="confirm_icon_individual"></i>
-    </button>
-    <button id="close_button_individual" class="icon_settings_container close_icon_individual">
-      <i class="fa-solid fa-xmark fa-2xl" style="color: #c9c9c9" id="close_icon_individual"></i>
-    </button>
 
     <div class="timeline_container_arrow">
       <i class="fa-solid fa-circle-chevron-left fa-rotate-90 fa-2xl" style="color: #232d38; font-size: 3em"></i>
@@ -381,7 +383,7 @@
       <img id="custom_cursor_image" src="assets/images/car_icon_small.png" />
     </div>
 
-    <div class="app_version">ver: 1.2.13</div>
+    <div class="app_version">ver: 1.3.0</div>
 
     <div id="info_box">
       <p id="info_box_text"></p>

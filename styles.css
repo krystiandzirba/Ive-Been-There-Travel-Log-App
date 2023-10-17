@@ -41,7 +41,6 @@ body {
 .loading_animation_container {
   height: 250px;
   width: 250px;
-
   position: absolute;
   top: 60%;
   left: 50%;
@@ -66,7 +65,6 @@ body {
   position: absolute;
   height: 200px;
   width: 200px;
-
   top: 50%;
   left: 50%;
   transform: translate(-100%, -100%);
@@ -165,7 +163,6 @@ body {
   z-index: 800;
   top: 0%;
   left: 0%;
-
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -173,7 +170,6 @@ body {
   padding: 0px;
   margin: 0px;
   padding-top: 1vh;
-
   transform: translate(0%, 0%);
 }
 
@@ -182,18 +178,14 @@ body {
   background-color: #2f3c4c;
   height: 7.5%;
   width: 75%;
-
   display: flex;
   flex-direction: column;
   align-items: center;
-
   border: none;
   color: #d7d7d7;
   margin-bottom: 0.625vh;
   margin-top: 0.625vh;
-
   border-radius: 10px 10px 10px 10px;
-
   font-family: "Inter", sans-serif;
   font-weight: 500;
   font-size: 0.625vw;
@@ -224,7 +216,6 @@ body {
   backdrop-filter: blur(10px);
   height: 9.5%;
   z-index: 790;
-
   border-radius: 0 1vh 1vh 0;
   display: flex;
   flex-direction: row;
@@ -266,12 +257,10 @@ body {
   display: none;
   top: 10%;
   left: 35%;
-
   color: #d7d7d7;
   font-family: "Inter", sans-serif;
   font-weight: 500;
   font-size: 1.4vw;
-
   text-align: center;
   border-radius: 2vh;
   padding: 2vh;
@@ -320,16 +309,11 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-
   border: none;
-
   background-color: #2b3847;
-  /* backdrop-filter: blur(10px); */
   height: 85%;
   width: 25%;
-
   border-radius: 1.2vh;
-
   font-family: "Inter", sans-serif;
   font-weight: 500;
   font-size: 0.625vw;
@@ -376,7 +360,6 @@ body {
 
 .main_logs_container_arrow img {
   width: 6vw;
-  height: auto;
 }
 
 .main_logs_container {
@@ -388,38 +371,35 @@ body {
   backdrop-filter: blur(15px);
   top: 0;
   left: 100vw;
-  padding: 0;
-  margin: 0;
   transition: left 0.3s ease-in-out;
 }
 
-.travel_creator_buttons {
+.travel_creator_buttons_container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 12vh;
   width: 100%;
   background-color: #2f3c4c;
-  top: 0vh;
 }
 
-.creator_buttons {
+.travel_creator_buttons {
   color: #d7d7d7;
   font-size: 1vw;
   font-family: "Inter", sans-serif;
   padding-top: 0.75vh;
 }
 
-.creator_buttons p {
+.travel_creator_buttons p {
   margin-top: 0.5vh;
 }
 
-.add_travel_individual {
+.add_travel_individual_button {
   left: 0%;
   border-radius: 2vh 0 0 2vh;
 }
 
-.add_travel_group {
+.add_travel_group_button {
   left: 50%;
   border-radius: 0 2vh 2vh 0;
 }
@@ -428,49 +408,73 @@ body {
   width: 100%;
   height: 85vh;
   z-index: 850;
-  margin-top: 0.5vh;
   overflow-y: auto;
+}
+
+.travel_logs_main_buttons {
+  height: 12vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* ↑ Travel Log Creator ↑  */
 /* ↓ Travel Type Settings Individual ↓ */
 
 .travel_logs_individual_main_container {
-  box-shadow: 30px 30px 7px rgba(0, 0, 0, 0.4);
   position: absolute;
-  width: 45vw;
-  min-height: 32vh;
+  width: 25vw;
+  height: 100vh;
   background-color: #2f3c4c;
-  border-radius: 3vh;
-  top: -1%;
-  left: 50%;
-  transform: translate(-50%, 10%);
+  top: 0vh;
+  left: 120vw;
+  transform: translate(-50%, 0%);
   z-index: 890;
-  display: none;
+  transition: left 0.3s ease;
 }
 
-.travel_logs_individual_data_input_container {
-  margin: 1vh;
-  display: flex;
-  justify-content: space-between;
+.travel_logs_individual_data_input_container p {
+  font-family: "Inter", sans-serif;
+  color: #d7d7d7;
+  font-size: 0.9vw;
+  margin-top: 1vh;
+  padding-bottom: 2vh;
+}
+
+.data_grid_container,
+.travel_logs_individual_customization_grid_container,
+.travel_type_container {
+  width: 96.5%;
+  border: 1px solid #26303d;
+  border-radius: 2vh;
   align-items: center;
-  height: 14vh;
-  position: absolute;
-  top: -2vh;
+  justify-items: center;
+  padding-bottom: 2vh;
+  z-index: 895;
+  margin: 0 0 2vh 1.5%;
+}
+
+.data_grid_container {
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: auto auto;
+  column-gap: 1rem;
+  row-gap: 0;
+  padding: 1vh;
+  width: 92.5%;
+  display: grid;
 }
 
 .individual_input {
   height: 7vh;
   border-radius: 2vh;
-  width: 11vw;
+  width: 100%;
   border: none;
   background-color: #26303d;
   color: #d7d7d7;
   font-size: 0.85vw;
   font-family: "Inter", sans-serif;
-  margin-left: 1vw;
-  margin-right: 1vw;
   text-align: center;
+  margin-top: -2vh;
 }
 
 #travel_logs_individual_input::placeholder {
@@ -478,51 +482,58 @@ body {
   font-size: 1.2vw;
 }
 
-.data_input {
-  width: 12.2vw;
-  left: 15vw;
-}
-
-.date_input {
-  width: 12.8vw;
-}
-
 .jscolor_highlight {
-  width: 10vw;
+  height: 5vh;
+  width: 80%;
+  margin-top: 0vh;
 }
 
-.jscolor_highlight_container {
-  top: 1.7vh;
-  left: 30vw;
-  z-index: 200;
-  position: absolute;
-  margin-bottom: 9vh;
+.travel_logs_individual_customization_grid_container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 0vw;
 }
 
-.travel_logs_individual_icon_container {
-  position: absolute;
-  width: 40vw;
-  min-height: 7vh;
-  top: 35%;
-  left: 50%;
-  transform: translate(-50%, 10%);
-  z-index: 895;
+.individual_customization_grid_cell {
+  text-align: center;
+  height: 12.5vh;
+  width: 90%;
+  font-family: "Inter", sans-serif;
+  color: #d7d7d7;
+  font-size: 0.9vw;
+  margin-top: 1vh;
+}
 
+.travel_type_container {
+  height: 35%;
+}
+
+.travel_type_container p {
+  font-family: "Inter", sans-serif;
+  color: #d7d7d7;
+  font-size: 0.9vw;
+  text-align: center;
+  height: 1vh;
+}
+
+.travel_type_sub_container_a,
+.travel_type_sub_container_b,
+.travel_type_sub_container_c {
+  height: 10vh;
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
 }
 
 .travel_type_button {
-  padding-top: 1.5vh;
-  display: inline-block;
-  width: 15vw;
+  width: 20%;
   text-align: center;
-  line-height: 5vh;
+  height: 7vh;
   background-color: #efefef;
   border: none;
   border-radius: 1.5vh;
-  margin: 0.2vw;
   cursor: pointer;
+  margin: 2.5vh;
 }
 
 .travel_type_button:hover {
@@ -530,17 +541,15 @@ body {
 }
 
 .polyline_width_slider_container {
-  width: 30%;
-  position: absolute;
-  top: 83%;
-  left: 3.5%;
+  width: 90%;
+  margin: 14% 0 0 3.5%;
 }
 
 .polyline_slider {
   appearance: none;
   width: 100%;
   height: 1vh;
-  background: #efefef;
+  background: #26303d;
   border-radius: 1.5vh;
 }
 
@@ -548,19 +557,17 @@ body {
   appearance: none;
   width: 25px;
   height: 25px;
-  background: #26303d;
+  background: #efefef;
   cursor: pointer;
   border-radius: 1.5vh;
 }
 
 .polyline_input_container {
-  position: absolute;
-  top: 79%;
-  left: 38.5%;
-  width: 23%;
-  height: 15%;
+  width: 80%;
+  height: 32.5%;
   display: flex;
   justify-content: space-between;
+  margin-left: 10%;
 }
 
 .polyline_button {
@@ -589,16 +596,14 @@ body {
 }
 
 .jscolor_polyline {
-  position: absolute;
-  top: 79%;
-  left: 62.5%;
-  height: 15%;
+  height: 5vh;
+  width: 80%;
+  margin-top: -0.75vh;
 }
 
 .icon_settings_container {
   position: absolute;
   z-index: 899;
-
   border-radius: 1vh;
   background-color: #2f3c4c;
   box-shadow: 30px 30px 7px rgba(0, 0, 0, 0.4);
@@ -606,18 +611,6 @@ body {
   height: 3.5vh;
   width: 4vw;
   border: none;
-}
-
-.confirm_icon_individual {
-  top: 35vh;
-  left: 29%;
-  display: none;
-}
-
-.close_icon_individual {
-  top: 35vh;
-  left: 67%;
-  display: none;
 }
 
 /* ↑ Travel Type Settings Individual ↑ */
@@ -636,18 +629,10 @@ body {
   transition: left 0.3s ease;
 }
 
-.travel_logs_group_main_buttons {
-  height: 12vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .main_buttons {
-  width: 45%;
+  width: 48%;
   height: 9vh;
   background-color: #2f3c4c;
-  border: none;
   transition: width 0.3s ease, left 0.3s ease;
   border: 1px solid #26303d;
 }
@@ -656,12 +641,12 @@ body {
   font-size: 2vw;
 }
 
-.confirm_button_group {
+.confirm_main_button {
   left: 0%;
   border-radius: 2vh 0 0 2vh;
 }
 
-.close_button_group {
+.close_main_button {
   left: 50%;
   border-radius: 0 2vh 2vh 0;
 }
@@ -841,11 +826,9 @@ body {
   left: 39.7vw;
   transform: translate(-50%, 40%);
   transition: top 0.5s ease, width 0.5s ease-in-out, margin-left 0.5s ease-in-out;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   text-align: center;
   font-size: 4vw;
   font-family: "Inter", sans-serif;
@@ -1019,8 +1002,8 @@ body {
   position: absolute;
   z-index: 899;
   cursor: pointer;
-  /* display: flex; */
   display: none;
+  /* display: flex; */
   text-align: center;
   border: black, 2px, solid;
   transform: translate(-50%, -50%);

@@ -1,4 +1,4 @@
-// ver: 1.2.13
+// ver: 1.3.0
 
 // Bugs:
 
@@ -1143,7 +1143,6 @@ sub_settings_remove_data.addEventListener("click", () => {
     displayInfoBox("Cannot remove the data during the travel log creation.", 2500);
   } else {
     toggleRemoveDataContainerVisibility(true);
-    toggleTravelLogsIndividualMainContainerVisibility(false);
     main_statistics_container.classList.add("hidden");
   }
 });
@@ -1292,7 +1291,6 @@ function changeIconColorOnHover(toggle, element, icon) {
 
 add_travel_superset_button.addEventListener("click", () => {
   current_crud_category = "superset";
-  polyline_color = "#DC3125";
   highlight_color_opacity_customization = true;
   is_travel_creator_active = true;
   polyline_visibility = false;
@@ -1328,12 +1326,7 @@ add_travel_superset_button.addEventListener("click", () => {
   markersData.push([]);
   random_id = "";
   random_id = randomIdGenerator();
-  if (
-    travel_logs_individual_main_container.style.display === "none" ||
-    travel_logs_individual_main_container.style.display === ""
-  ) {
-    toggleTravelLogsIndividualMainContainerVisibility(true);
-  }
+  toggleTravelCreator(true, travel_logs_individual_main_container);
 });
 
 add_travel_superset_button.addEventListener("mouseenter", () => {
@@ -1365,7 +1358,7 @@ add_travel_group_button.addEventListener("click", () => {
     travel_logs_group_input.value = "";
     travel_logs_individual_input.value = "";
     is_travel_creator_active = !is_travel_creator_active;
-    toggleTravelCreator(true);
+    toggleTravelCreator(true, travel_logs_group_main_container);
   }
 });
 
@@ -1402,11 +1395,11 @@ function toggleMainLogContainerVisibility(toggle) {
   }
 }
 
-function toggleTravelCreator(toggle) {
+function toggleTravelCreator(toggle, element) {
   if (toggle) {
-    travel_logs_group_main_container.style.left = "87.5vw";
+    element.style.left = "87.5vw";
   } else if (!toggle) {
-    travel_logs_group_main_container.style.left = "120vw";
+    element.style.left = "120vw";
   }
 }
 
@@ -1415,30 +1408,30 @@ function travelCreatorAnimation(toggle, main_button, secondary_button, is_right_
     main_button.style.color = "#f0f0f0";
     main_button.style.backgroundColor = "#26303d";
     if (is_right_button) {
-      main_button.style.width = "60%";
-      secondary_button.style.width = "30%";
+      main_button.style.width = "63%";
+      secondary_button.style.width = "33%";
 
-      main_button.style.left = "30%";
+      main_button.style.left = "33%";
     } else if (!is_right_button) {
-      main_button.style.width = "60%";
-      secondary_button.style.width = "30%";
+      main_button.style.width = "63%";
+      secondary_button.style.width = "33%";
 
-      secondary_button.style.left = "60%";
+      secondary_button.style.left = "63%";
     }
   } else if (!toggle) {
     main_button.style.color = "#d7d7d7";
 
     main_button.style.backgroundColor = "#2f3c4c";
     if (is_right_button) {
-      main_button.style.width = "45%";
-      secondary_button.style.width = "45%";
+      main_button.style.width = "48%";
+      secondary_button.style.width = "48%";
 
-      secondary_button.style.left = "45%";
+      secondary_button.style.left = "48%";
     } else if (!is_right_button) {
-      main_button.style.width = "45%";
-      secondary_button.style.width = "45%";
+      main_button.style.width = "48%";
+      secondary_button.style.width = "48%";
 
-      secondary_button.style.left = "45%";
+      secondary_button.style.left = "48%";
     }
   }
 }
@@ -1484,7 +1477,7 @@ confirm_button_group.addEventListener("click", () => {
     toggleTimelineVisibility(true);
     timelineInfoToggle();
     current_crud_category = "none";
-    toggleTravelCreator(false);
+    toggleTravelCreator(false, travel_logs_group_main_container);
   }
 });
 
@@ -1506,7 +1499,7 @@ close_button_group.addEventListener("click", () => {
   travel_logs_group_input.value = "";
 
   toggleMainLogContainerVisibility(true);
-  toggleTravelCreator(false);
+  toggleTravelCreator(false, travel_logs_group_main_container);
 });
 
 close_button_group.addEventListener("mouseenter", () => {
@@ -1752,7 +1745,7 @@ confirm_button_individual.addEventListener("click", () => {
       map.off("click");
       toggleMainLogContainerVisibility(true);
       toggleTimelineVisibility(true);
-      toggleTravelLogsIndividualMainContainerVisibility(false);
+      toggleTravelCreator(false, travel_logs_individual_main_container);
       timelineInfoToggle();
       is_travel_creator_active = false;
       current_crud_category = "none";
@@ -1764,13 +1757,15 @@ confirm_button_individual.addEventListener("click", () => {
   }
 });
 
-confirm_button_individual.addEventListener("mouseenter", () =>
-  changeIconColorOnHover(true, confirm_icon_individual, confirm_button_individual)
-);
+confirm_button_individual.addEventListener("mouseenter", () => {
+  travelCreatorAnimation(true, confirm_button_individual, close_button_individual, false);
+  changeIconColorOnHover(true, confirm_icon_individual, confirm_icon_individual);
+});
 
-confirm_button_individual.addEventListener("mouseleave", () =>
-  changeIconColorOnHover(false, confirm_icon_individual, confirm_button_individual)
-);
+confirm_button_individual.addEventListener("mouseleave", () => {
+  travelCreatorAnimation(false, confirm_button_individual, close_button_individual, false);
+  changeIconColorOnHover(false, confirm_icon_individual, confirm_icon_individual);
+});
 
 close_button_individual.addEventListener("click", () => {
   current_crud_category = "none";
@@ -1779,8 +1774,8 @@ close_button_individual.addEventListener("click", () => {
   document.removeEventListener("mousemove", pngMouseTracking);
   toggleCustomCursorVisibility(false);
   map.off("click");
-  travelTypeValueUpdate(false, false, false, false, false, false, false, false, false);
 
+  travelTypeValueUpdate(false, false, false, false, false, false, false, false, false);
   removeMarkers(random_id);
   removeTemporaryHighlights(random_id);
   removeMarkersCoordinates(random_id);
@@ -1788,29 +1783,22 @@ close_button_individual.addEventListener("click", () => {
   removeStoredId(random_id);
   trueHighlightsArrayRemoveHighlight(random_id);
   drawPolyline();
-
-  travel_logs_individual_input.value = "";
-
-  if (
-    travel_logs_individual_main_container.style.display === "none" ||
-    travel_logs_individual_main_container.style.display === ""
-  ) {
-    toggleTravelLogsIndividualMainContainerVisibility(true);
-  } else {
-    toggleTravelLogsIndividualMainContainerVisibility(false);
-  }
+  toggleTravelCreator(false, travel_logs_individual_main_container);
   is_travel_creator_active = false;
   allow_travel_settings_editing = true;
   active_travel_type_icon = "";
+  travel_logs_individual_input.value = "";
 });
 
-close_button_individual.addEventListener("mouseenter", () =>
-  changeIconColorOnHover(true, close_icon_individual, close_button_individual)
-);
+close_button_individual.addEventListener("mouseenter", () => {
+  travelCreatorAnimation(true, close_button_individual, confirm_button_individual, true);
+  changeIconColorOnHover(true, close_icon_individual, close_icon_individual);
+});
 
-close_button_individual.addEventListener("mouseleave", () =>
-  changeIconColorOnHover(false, close_icon_individual, close_button_individual)
-);
+close_button_individual.addEventListener("mouseleave", () => {
+  travelCreatorAnimation(false, close_button_individual, confirm_button_individual, true);
+  changeIconColorOnHover(false, close_icon_individual, close_icon_individual);
+});
 
 let active_travel_type_icon;
 
@@ -2241,18 +2229,6 @@ function isGroupContentDivEmpty(id) {
   return is_travel_group_empty;
 }
 
-function toggleTravelLogsIndividualMainContainerVisibility(toggle) {
-  if (toggle) {
-    travel_logs_individual_main_container.style.display = "block";
-    confirm_button_individual.style.display = "block";
-    close_button_individual.style.display = "block";
-  } else {
-    travel_logs_individual_main_container.style.display = "none";
-    confirm_button_individual.style.display = "none";
-    close_button_individual.style.display = "none";
-  }
-}
-
 function toggleCustomCursorVisibility(toggle) {
   custom_cursor.style.display = toggle ? "flex" : "none";
 }
@@ -2460,13 +2436,7 @@ function buildCRUD() {
         markersData.push([]);
         random_id = "";
         random_id = randomIdGenerator();
-
-        if (
-          travel_logs_individual_main_container.style.display === "none" ||
-          travel_logs_individual_main_container.style.display === ""
-        ) {
-          toggleTravelLogsIndividualMainContainerVisibility(true);
-        }
+        toggleTravelCreator(true, travel_logs_individual_main_container);
       });
       $travel_logs_group_div_settings.appendChild($travel_logs_group_add_travel_button);
 
@@ -3385,18 +3355,18 @@ function displayInfoBox(text, time) {
 // // ---------- TEST ---------- ↓
 
 test_button.addEventListener("click", () => {
-  console.log("-1- " + "pageSettings", pageSettings);
-  console.log("-1- " + "homeData", homeData);
-  console.log("-1- " + "markersData", markersData);
-  console.log("-1- " + "travelLogs", travelLogs);
-  console.log("-1- " + "CRUD", CRUD);
-  console.log("-1- " + "trueHighlights", trueHighlights);
-  console.log("-0- " + "highlights", highlights);
-  console.log("-0- " + "markers", markers);
-  console.log("-0- " + "polylines", polylines);
-  console.log("-0- " + "storedIds", storedIds);
-  console.log("-0- " + "rawCoordinatesDistances", rawCoordinatesDistances);
-  console.log("-0- " + "timelineData", timelineData);
+  console.log("-1- pageSettings", pageSettings);
+  console.log("-1- homeData", homeData);
+  console.log("-1- markersData", markersData);
+  console.log("-1- travelLogs", travelLogs);
+  console.log("-1- CRUD", CRUD);
+  console.log("-1- trueHighlights", trueHighlights);
+  console.log("-0- highlights", highlights);
+  console.log("-0- markers", markers);
+  console.log("-0- polylines", polylines);
+  console.log("-0- storedIds", storedIds);
+  console.log("-0- rawCoordinatesDistances", rawCoordinatesDistances);
+  console.log("-0- timelineData", timelineData);
 
   console.log("Highest Distance:", highest_distance.toFixed(2), "km");
   console.log("Lowest Distance:", lowest_distance.toFixed(2), "km");
