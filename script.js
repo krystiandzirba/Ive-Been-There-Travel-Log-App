@@ -1,4 +1,4 @@
-// ver: 1.3.0
+// ver: 1.3.1
 
 // Bugs:
 
@@ -216,6 +216,7 @@ let is_travel_creator_active = false;
 let main_logs_container_arrow_clicked = false;
 
 let allow_individual_log_creation = false;
+let travel_type_selected = false;
 let reference = "";
 
 let current_crud_category = "none";
@@ -1690,70 +1691,70 @@ jscolor_polyline.addEventListener("change", () => {
 });
 
 confirm_button_individual.addEventListener("click", () => {
+  travel_logs_individual_name = travel_logs_individual_input.value;
+  if (travel_logs_individual_name === "") {
+    displayInfoBox("Please enter a travel name.", 2000);
+    return;
+  }
+
+  if (!allow_individual_log_creation) {
+    displayInfoBox("Please select a travel type.", 2000);
+  }
+
+  if (travel_type_selected) {
+    displayInfoBox("Please draw a path on the map.", 2000);
+  }
+
   if (allow_individual_log_creation) {
-    travel_logs_individual_name = travel_logs_individual_input.value;
-    if (travel_logs_individual_name === "") {
-      displayInfoBox("Please enter a travel name.", 2000);
-      return;
+    travelTypeValueUpdate(false, false, false, false, false, false, false, false, false);
+    timelineData = {
+      events: [],
+    };
+    removeTrueHighlights();
+    removeTemporaryHighlights(random_id);
+    removeTemporaryMarkers();
+    removeContainerTravelLogs();
+
+    calculateDistances();
+    distancesBreakdown(rawCoordinatesDistances);
+    calculateTotalDistances(rawCoordinatesDistances);
+    countTravelType(markersData);
+    updateTravelStats();
+
+    individualDataSubmit();
+
+    localStorageRemoveTravelLogs();
+
+    localStorageSaveTrueHighlights();
+    localStorageSaveTravelLogs();
+    localStorageSaveMarkerCoordinates();
+    localStorageSaveCRUD();
+
+    localStorageLoadMarkerCoordinates();
+    localStorageLoadCRUD();
+
+    localStorageCreateTimelineData(travelLogs, timelineData);
+    populateTimeline();
+    buildCRUD();
+    localStorageCreateTrueMarkers(pageSettings.markers_size, pageSettings.markers_anchor);
+
+    if (pageSettings.highlight_visibility === true) {
+      localStorageCreateTrueHighlights();
     }
-    if (travel_date_start === "" || travel_date_end === "") {
-      displayInfoBox("Please select a valid date range.", 2000);
-      return;
-    }
 
-    if (travel_logs_individual_name !== "") {
-      travelTypeValueUpdate(false, false, false, false, false, false, false, false, false);
-      timelineData = {
-        events: [],
-      };
-      removeTrueHighlights();
-      removeTemporaryHighlights(random_id);
-      removeTemporaryMarkers();
-      removeContainerTravelLogs();
+    drawPolyline();
 
-      calculateDistances();
-      distancesBreakdown(rawCoordinatesDistances);
-      calculateTotalDistances(rawCoordinatesDistances);
-      countTravelType(markersData);
-      updateTravelStats();
-
-      individualDataSubmit();
-
-      localStorageRemoveTravelLogs();
-
-      localStorageSaveTrueHighlights();
-      localStorageSaveTravelLogs();
-      localStorageSaveMarkerCoordinates();
-      localStorageSaveCRUD();
-
-      localStorageLoadMarkerCoordinates();
-      localStorageLoadCRUD();
-
-      localStorageCreateTimelineData(travelLogs, timelineData);
-      populateTimeline();
-      buildCRUD();
-      localStorageCreateTrueMarkers(pageSettings.markers_size, pageSettings.markers_anchor);
-
-      if (pageSettings.highlight_visibility === true) {
-        localStorageCreateTrueHighlights();
-      }
-
-      drawPolyline();
-
-      document.removeEventListener("mousemove", pngMouseTracking);
-      toggleCustomCursorVisibility(false);
-      map.off("click");
-      toggleMainLogContainerVisibility(true);
-      toggleTimelineVisibility(true);
-      toggleTravelCreator(false, travel_logs_individual_main_container);
-      timelineInfoToggle();
-      is_travel_creator_active = false;
-      current_crud_category = "none";
-      active_travel_type_icon = "";
-      allow_travel_settings_editing = true;
-    }
-  } else {
-    displayInfoBox("Please draw a path on the map first.", 2500);
+    document.removeEventListener("mousemove", pngMouseTracking);
+    toggleCustomCursorVisibility(false);
+    map.off("click");
+    toggleMainLogContainerVisibility(true);
+    toggleTimelineVisibility(true);
+    toggleTravelCreator(false, travel_logs_individual_main_container);
+    timelineInfoToggle();
+    is_travel_creator_active = false;
+    current_crud_category = "none";
+    active_travel_type_icon = "";
+    allow_travel_settings_editing = true;
   }
 });
 
@@ -1821,10 +1822,12 @@ function travelTypeCreator(travel_type_click, travel_type, icon_type, icon_small
     allow_individual_log_creation = false;
     createHighlightLayer(cachedGeoJSON);
     updateCursorImage(icon_small_path);
+    travel_type_selected = true;
 
     if (travel_type_click == true) {
       map.off("click");
       function onMapClick(e) {
+        travel_type_selected = false;
         allow_travel_settings_editing = false;
         travelTypeButtonsGrayscale(active_travel_type_icon);
         allow_individual_log_creation = true;
