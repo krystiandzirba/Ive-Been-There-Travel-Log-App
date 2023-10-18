@@ -1,4 +1,4 @@
-// ver: 1.3.1
+// ver: 1.3.2
 
 // Bugs:
 
@@ -237,6 +237,8 @@ let travel_logs_group_input = document.getElementById("travel_logs_group_input")
 // // Travel log group ↑
 // // Travel log individual ↓
 
+const travel_creator_covers = document.querySelectorAll(".travel_creator_cover");
+
 const jscolor_highlight_container = document.querySelector(".jscolor_highlight_container");
 const jscolor_highlight = document.getElementById("jscolor_highlight");
 
@@ -288,6 +290,8 @@ let jscolor_highlight_data = "";
 let jscolor_highlight_color = "#1495ED";
 let jscolor_highlight_opacity = 0.5;
 
+let allow_travel_settings_editing = true;
+
 let type = "";
 let travel_type_car_click = false;
 let travel_type_plane_click = false;
@@ -297,6 +301,7 @@ let travel_type_bicycle_click = false;
 let travel_type_motorcycle_click = false;
 let travel_type_train_click = false;
 let travel_type_bus_click = false;
+let active_travel_type_icon;
 
 let polyline_width = polyline_width_slider.value;
 
@@ -1446,10 +1451,6 @@ confirm_button_group.addEventListener("click", () => {
     displayInfoBox("Please enter a valid group name.", 2000);
     return;
   }
-  if (travel_date_start === "" || travel_date_end === "") {
-    displayInfoBox("Please select a valid date range.", 2000);
-    return;
-  }
 
   if (travel_logs_group_name !== "") {
     is_travel_creator_active = false;
@@ -1515,6 +1516,12 @@ close_button_group.addEventListener("mouseleave", () => {
 
 // Travel log group ↑
 // Travel Log Individual ↓
+
+travel_creator_covers.forEach((element) => {
+  element.addEventListener("click", () => {
+    displayInfoBox("Cannot change the travel log settings after the marker was placed on the map.", 3000);
+  });
+});
 
 jscolor_highlight_container.addEventListener("click", () => {
   if (highlight_color_opacity_customization == false) {
@@ -1751,6 +1758,7 @@ confirm_button_individual.addEventListener("click", () => {
     toggleTimelineVisibility(true);
     toggleTravelCreator(false, travel_logs_individual_main_container);
     timelineInfoToggle();
+    toggleTravelCreatorCover(false);
     is_travel_creator_active = false;
     current_crud_category = "none";
     active_travel_type_icon = "";
@@ -1801,9 +1809,17 @@ close_button_individual.addEventListener("mouseleave", () => {
   changeIconColorOnHover(false, close_icon_individual, close_icon_individual);
 });
 
-let active_travel_type_icon;
+function toggleTravelCreatorCover(toggle) {
+  const travel_creator_covers = document.querySelectorAll(".travel_creator_cover");
 
-let allow_travel_settings_editing = true;
+  travel_creator_covers.forEach((element) => {
+    if (toggle) {
+      element.style.display = "block";
+    } else {
+      element.style.display = "none";
+    }
+  });
+}
 
 function travelTypeValueUpdate(manual, car, plane, boat, walk, bicycle, motorcycle, train, bus) {
   home_button_manual_click = manual;
@@ -1827,6 +1843,7 @@ function travelTypeCreator(travel_type_click, travel_type, icon_type, icon_small
     if (travel_type_click == true) {
       map.off("click");
       function onMapClick(e) {
+        toggleTravelCreatorCover(true);
         travel_type_selected = false;
         allow_travel_settings_editing = false;
         travelTypeButtonsGrayscale(active_travel_type_icon);
