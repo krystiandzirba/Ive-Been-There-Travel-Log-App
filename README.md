@@ -15,14 +15,13 @@ Start by navigating to the right-side panel and click either the "Individual" or
 <br>
 <br>
 
-![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/6714716e-caae-42da-b427-cac770b920f1)
+![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/a8dedc4d-3c8e-4a7b-99a5-a9663bdcde35)
 
 <br>
 
-### Individual <br>
+### Add travel <br>
 
-![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/7102194b-ff5c-4383-8dda-cd6aea1b4d25)
-![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/9db9da08-ef09-45b8-80b9-2b6fd0a490ed)
+![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/6f10d350-026a-40c3-84f4-66c847b4b82b)
 
 Here you can create a simple log for short/individual travels. (country to country / city to city)
 - Start by giving your travel a unique name, select the date when your journey took place. For instance, "Spain - Madrid" | 05.09.2023 - 07.09.2023".
@@ -30,22 +29,19 @@ Here you can create a simple log for short/individual travels. (country to count
 - When you've set everything up, your final step is to choose 1 of 8 available travel types. Start placing markers on the map to trace your path and adventures.
 - Once you've finished, just hit the "✔️" button to confirm creating your travel log.
 
-![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/6698259c-36ab-43d9-ad5f-1c02e4bb4dff)
-![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/f5f11c39-e0ca-42d7-aa7b-3288684c0e0d)
+![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/599f3c60-7494-4863-ac02-49b310e8d012)
+![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/3cf861f1-869a-4d7e-9900-961673b1f773)
 
 And there we go, you created your first travel log!
 
 ### Group <br>
 
-![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/ee203a68-ab89-428a-a228-ca1a649ac69f)
-
 Here you can create a whole group for much bigger travels, that includes multiple travel logs, spanning across multiple days or countries.
 - The process is similar, begin with naming your group and set a date. For instance, "Europe Tour 2023 | 10.09.2023 - 20.09.2023". <br />
 - Hit the "✔️" button to confirm your choice.
 
-![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/f852179a-86a4-4fb4-80e9-215192bf0002)
-![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/31107c14-261a-43c5-8979-d02fdb73dfce)
-
+![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/fd9b1bc5-b325-4e97-8479-8b438724fcd9)
+![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/dbedbfcd-0373-4eca-85df-526ca5d4976f)
 
 ## **Step 2: Add Sub Travels to Your Group**
 
