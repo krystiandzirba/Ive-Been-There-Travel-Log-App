@@ -1,4 +1,4 @@
-// ver: 1.3.3
+// ver: 1.3.4
 
 // Bugs:
 
@@ -1519,7 +1519,7 @@ close_button_group.addEventListener("mouseleave", () => {
 
 travel_creator_covers.forEach((element) => {
   element.addEventListener("click", () => {
-    displayInfoBox("Cannot change the travel log settings after the marker was placed on the map.", 3000);
+    displayInfoBox("Feature not available while placing markers on the map.", 3000);
   });
 });
 
