@@ -555,15 +555,18 @@ body {
   width: 20%;
   text-align: center;
   height: 7vh;
-  background-color: #efefef;
+  background-color: #26303d;
   border: none;
   border-radius: 1.5vh;
   cursor: pointer;
   margin: 2.5vh;
+  border: 1px solid #26303d;
+  border-radius: 2vh;
 }
 
 .travel_type_button:hover {
-  transform: scale(1.1);
+  transform: scale(1.2);
+  background-color: #3f4d60;
 }
 
 .polyline_width_slider_container {
@@ -583,7 +586,7 @@ body {
   appearance: none;
   width: 25px;
   height: 25px;
-  background: #efefef;
+  background: #d6d6d6;
   cursor: pointer;
   border-radius: 1.5vh;
 }
