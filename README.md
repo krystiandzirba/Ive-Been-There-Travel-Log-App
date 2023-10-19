@@ -24,10 +24,13 @@ Start by navigating to the right-side panel and click either the "Individual" or
 ![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/6f10d350-026a-40c3-84f4-66c847b4b82b)
 
 Here you can create a simple log for short/individual travels. (country to country / city to city)
-- Start by giving your travel a unique name, select the date when your journey took place. For instance, "Spain - Madrid" | 05.09.2023 - 07.09.2023".
-- On the right side, we can see a colored checkerboard. Here you can choose your preferred color and opacity that you want to highlight the specific country with.
-- When you've set everything up, your final step is to choose 1 of 8 available travel types. Start placing markers on the map to trace your path and adventures.
-- Once you've finished, just hit the "✔️" button to confirm creating your travel log.
+The travel creator is divided on 3 sections:
+- Basic data: give your travel a unique name, select the date when your journey took place. For instance, "Spain - Madrid" | 05.09.2023 - 07.09.2023".
+- Settings: Choose a country highlight color and opacity, width, color and type of polyline that connects 2 or more markers related to the travel log.
+- Travel type: Here you can pick 1 of 8 travel types that you used during your travel.
+
+Now you can start placing a path on the map.
+Once you've finished, just hit the "✔️" button to confirm creating your travel log.
 
 ![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/599f3c60-7494-4863-ac02-49b310e8d012)
 ![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/3cf861f1-869a-4d7e-9900-961673b1f773)
@@ -48,15 +51,13 @@ Here you can create a whole group for much bigger travels, that includes multipl
 For any present group, you can create sub-travel logs using the ➕ button in the group container we've created before.
 The process is exactly the same as creating non-grouped travel logs (Step: 1), but this time, all the logs you have created will find its way inside this group and will be related to it.
 
-And don't worry, if you happen to make a mistake while creating either a group or travel log, simply click the "❌" button to clear your current input and start fresh.
-
 ![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/63b7c798-800b-49fd-b660-77d5f2759e49)
 
 ![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/f25ea11c-850a-4d4b-90cd-0e4609eaa27d)
 
 ## **Step 3: Manage travel logs**
 
-In the right-side panel, you can manage your logs:
+In the same panel, you can manage your logs:
 
 ![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/a131a4e2-8407-46db-b6d5-72ad9c198c76)
 
