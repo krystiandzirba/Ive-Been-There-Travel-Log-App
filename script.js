@@ -1,18 +1,16 @@
-// ver: 1.3.4
+// ver: 1.3.5
 
 // Bugs:
 
 // Features to add:
 
 // - black theme for timeline
-// - add statistic: furthest distance from the home location
 // - city search bar
 
-// - Add different page styles (font, animations, images, backgrounds, theme) - modern / middleage / other
-// - Add different languages
 // - Add driver.js
 // - Add D3 to visualize the statistics data
 //       - add continent statistics (how many countries were visited in different continents, how many countries were visited)
+// make house and circle display on top of the highlights
 
 // Variables ↓
 // // Sidebar House ↓
@@ -67,6 +65,7 @@ const sub_overlay_borders = document.getElementById("sub_overlay_borders");
 const sub_overlay_markers = document.getElementById("sub_overlay_markers");
 const sub_overlay_polylines = document.getElementById("sub_overlay_polylines");
 const sub_overlay_highlights = document.getElementById("sub_overlay_highlights");
+const sub_overlay_house = document.getElementById("sub_overlay_house");
 
 const markers_settings_display = document.querySelector("#sub_overlay_markers p");
 
@@ -77,6 +76,7 @@ let overlay_borders_active = false;
 let overlay_markers_active = true;
 let overlay_polylines_active = true;
 let overlay_highlights_active = true;
+let overlay_house_active = true;
 
 let polyline_visibility = true;
 
@@ -91,6 +91,8 @@ const labels = ["<s>markers</s>", "markers [S]", "markers [M]", "markers [L]", "
 const polyline_status_display = document.querySelector("#sub_overlay_polylines p");
 
 const highlight_status_display = document.querySelector("#sub_overlay_highlights p");
+
+const house_status_display = document.querySelector("#sub_overlay_house p");
 
 // // Sidebar Overlay ↑
 // // Sidebar Page Styles ↓
@@ -402,86 +404,97 @@ jscolor_home.addEventListener("change", () => {
 });
 
 sub_house_manual_location.addEventListener("click", () => {
-  if (!is_travel_creator_active) {
-    travelTypeValueUpdate(true, false, false, false, false, false, false, false, false);
-    updateCursorImage("assets/images/home_icon_small.png");
-    removeMarkers("home_marker");
-    homeMarkerClear();
+  if (pageSettings.house_visibility === true) {
+    if (!is_travel_creator_active) {
+      travelTypeValueUpdate(true, false, false, false, false, false, false, false, false);
+      updateCursorImage("assets/images/home_icon_small.png");
+      removeMarkers("home_marker");
+      homeMarkerClear();
 
-    const mapClickListener = (e) => {
-      toggleCustomCursorVisibility(false);
+      const mapClickListener = (e) => {
+        toggleCustomCursorVisibility(false);
 
-      const clickedLatLng = e.latlng;
-      const offset_longitude = clickedLatLng.lng * 1.002;
+        const clickedLatLng = e.latlng;
+        const offset_longitude = clickedLatLng.lng * 1.002;
 
-      if (home_button_manual_click === true) {
-        home_marker = L.marker([clickedLatLng.lat, offset_longitude], {
+        if (home_button_manual_click === true) {
+          home_marker = L.marker([clickedLatLng.lat, offset_longitude], {
+            icon: home_icon,
+            id: "home_marker",
+          });
+          home_marker.addTo(map).bounce(1);
+          markers.push(home_marker);
+          home_circle = L.circle([clickedLatLng.lat, clickedLatLng.lng], {
+            radius: 50000,
+            color: jscolor_home_color,
+            fillOpacity: jscolor_home_opacity,
+            weight: 1,
+          }).addTo(map);
+        }
+
+        home_button_manual_click = false;
+
+        homeData.lat = clickedLatLng.lat;
+        homeData.lng = clickedLatLng.lng;
+        homeData.color = jscolor_home_color;
+        homeData.opacity = jscolor_home_opacity;
+        localStorageSaveHomeData();
+
+        map.off("click", mapClickListener);
+      };
+      map.on("click", mapClickListener);
+    } else {
+      displayInfoBox("Cannot set the home location during the travel log creation.", 2500);
+    }
+  } else if (pageSettings.house_visibility === false) {
+    displayInfoBox("House marker is disabled.", 2500);
+  }
+});
+
+sub_house_geolocation.addEventListener("click", () => {
+  if (pageSettings.house_visibility === true) {
+    if ("geolocation" in navigator) {
+      travelTypeValueUpdate(true, false, false, false, false, false, false, false, false);
+      removeMarkers("home_marker");
+      homeMarkerClear();
+      navigator.geolocation.getCurrentPosition((position) => {
+        const { latitude, longitude } = position.coords;
+
+        const offset_longitude = longitude * 1.002;
+
+        home_marker = L.marker([latitude, offset_longitude], {
           icon: home_icon,
           id: "home_marker",
         });
+
         home_marker.addTo(map).bounce(1);
         markers.push(home_marker);
-        home_circle = L.circle([clickedLatLng.lat, clickedLatLng.lng], {
+        home_circle = L.circle([latitude, longitude], {
           radius: 50000,
           color: jscolor_home_color,
           fillOpacity: jscolor_home_opacity,
           weight: 1,
         }).addTo(map);
-      }
 
-      home_button_manual_click = false;
+        homeData.lat = latitude;
+        homeData.lng = longitude;
+        homeData.color = jscolor_home_color;
+        homeData.opacity = jscolor_home_opacity;
+        localStorageSaveHomeData();
 
-      homeData.lat = clickedLatLng.lat;
-      homeData.lng = clickedLatLng.lng;
-      homeData.color = jscolor_home_color;
-      homeData.opacity = jscolor_home_opacity;
-      localStorageSaveHomeData();
-
-      map.off("click", mapClickListener);
-    };
-    map.on("click", mapClickListener);
-  } else {
-    displayInfoBox("Cannot set the home location during the travel log creation.", 2500);
-  }
-});
-
-sub_house_geolocation.addEventListener("click", () => {
-  travelTypeValueUpdate(true, false, false, false, false, false, false, false, false);
-  removeMarkers("home_marker");
-  homeMarkerClear();
-
-  if ("geolocation" in navigator) {
-    navigator.geolocation.getCurrentPosition((position) => {
-      const { latitude, longitude } = position.coords;
-
-      const offset_longitude = longitude * 1.002;
-
-      home_marker = L.marker([latitude, offset_longitude], {
-        icon: home_icon,
-        id: "home_marker",
+        if (home_marker) {
+          setTimeout(homeMarkerZoom, 350);
+        }
       });
+    }
 
-      home_marker.addTo(map).bounce(1);
-      markers.push(home_marker);
-      home_circle = L.circle([latitude, longitude], {
-        radius: 50000,
-        color: jscolor_home_color,
-        fillOpacity: jscolor_home_opacity,
-        weight: 1,
-      }).addTo(map);
-
-      homeData.lat = latitude;
-      homeData.lng = longitude;
-      homeData.color = jscolor_home_color;
-      homeData.opacity = jscolor_home_opacity;
-      localStorageSaveHomeData();
+    navigator.permissions.query({ name: "geolocation" }).then((permissionStatus) => {
+      if (permissionStatus.state !== "granted") {
+        displayInfoBox("Allow geolocation to use this feature", 2000);
+      }
     });
-  }
-
-  if (home_marker) {
-    setTimeout(homeMarkerZoom, 350);
-  } else {
-    displayInfoBox("Allow geolocation first", 2000);
+  } else if (pageSettings.house_visibility === false) {
+    displayInfoBox("House marker is disabled.", 2500);
   }
 });
 
@@ -725,7 +738,26 @@ sub_overlay_highlights.addEventListener("click", () => {
   }
 
   pageSettings.highlight_visibility = !pageSettings.highlight_visibility;
+  localStorageSavePageSettings();
+});
 
+sub_overlay_house.addEventListener("click", () => {
+  overlay_house_active = toggleIconColor(overlay_house_active, sub_house_icon);
+
+  if (overlay_house_active) {
+    localStorageCreateHomeMarkerAndCircle();
+  } else if (!overlay_house_active) {
+    removeMarkers("home_marker");
+    homeMarkerClear();
+  }
+
+  if (pageSettings.house_visibility) {
+    house_status_display.innerHTML = `<s>house</s>`;
+  } else if (pageSettings.house_visibility !== true) {
+    house_status_display.innerHTML = `house`;
+  }
+
+  pageSettings.house_visibility = !pageSettings.house_visibility;
   localStorageSavePageSettings();
 });
 
@@ -1084,7 +1116,14 @@ function countTravelType(markersData) {
   highest_count = Number.NEGATIVE_INFINITY;
 
   for (const marker of markersData) {
+    console.log("data error 2 ?", markersData); // temporary, looking for error
+    const test = marker[0][2]; // temporary, looking for error
+    // markersData = []; // temporary, looking for error
+    // localStorageLoadMarkerCoordinates() // temporary, looking for error
+    console.log("test", test); // temporary, looking for error
     const type = marker[0][2][1];
+    console.log(type); // temporary, looking for error
+    console.log("data error 3 ?", markersData); // temporary, looking for error
     if (type in travel_type_count) {
       travel_type_count[type]++;
       if (travel_type_count[type] > highest_count) {
@@ -1793,6 +1832,7 @@ close_button_individual.addEventListener("click", () => {
   trueHighlightsArrayRemoveHighlight(random_id);
   drawPolyline();
   toggleTravelCreator(false, travel_logs_individual_main_container);
+  toggleTravelCreatorCover(false);
   is_travel_creator_active = false;
   allow_travel_settings_editing = true;
   active_travel_type_icon = "";
@@ -1810,7 +1850,7 @@ close_button_individual.addEventListener("mouseleave", () => {
 });
 
 function toggleTravelCreatorCover(toggle) {
-  const travel_creator_covers = document.querySelectorAll(".travel_creator_cover");
+  // const travel_creator_covers = document.querySelectorAll(".travel_creator_cover");
 
   travel_creator_covers.forEach((element) => {
     if (toggle) {
@@ -3152,6 +3192,7 @@ function localStorageLoadPageSettings() {
     pageSettings.distance_unit = "km";
     pageSettings.polyline_visibility = true;
     pageSettings.highlight_visibility = true;
+    pageSettings.house_visibility = true;
   }
 
   if (marker_settings_index === 1) {
@@ -3179,6 +3220,11 @@ function localStorageLoadPageSettings() {
   if (pageSettings.highlight_visibility === false) {
     highlight_status_display.innerHTML = `<s>highlights</s>`;
     overlay_highlights_active = toggleIconColor(overlay_highlights_active, sub_highlights_icon);
+  }
+
+  if (pageSettings.house_visibility === false) {
+    house_status_display.innerHTML = `<s>house</s>`;
+    overlay_house_active = toggleIconColor(overlay_house_active, sub_house_icon);
   }
 }
 
@@ -3324,7 +3370,9 @@ function onLoadingComplete() {
 
   localStorageCreateTrueMarkers(pageSettings.markers_size, pageSettings.markers_anchor);
 
-  localStorageCreateHomeMarkerAndCircle();
+  if (pageSettings.house_visibility === true) {
+    localStorageCreateHomeMarkerAndCircle();
+  }
 
   localStorageSetMapLayer();
   calculateDistances();
