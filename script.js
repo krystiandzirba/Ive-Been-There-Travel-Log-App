@@ -1,4 +1,4 @@
-// ver: 1.3.5
+// ver: 1.3.6
 
 // Bugs:
 
@@ -10,7 +10,6 @@
 // - Add driver.js
 // - Add D3 to visualize the statistics data
 //       - add continent statistics (how many countries were visited in different continents, how many countries were visited)
-// make house and circle display on top of the highlights
 
 // Variables ↓
 // // Sidebar House ↓
@@ -1786,6 +1785,14 @@ confirm_button_individual.addEventListener("click", () => {
 
     if (pageSettings.highlight_visibility === true) {
       localStorageCreateTrueHighlights();
+    }
+
+    if (pageSettings.house_visibility === true) {
+      if (home_marker) {
+        removeMarkers("home_marker");
+        homeMarkerClear();
+        localStorageCreateHomeMarkerAndCircle();
+      }
     }
 
     drawPolyline();
