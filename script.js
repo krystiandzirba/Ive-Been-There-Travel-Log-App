@@ -1,6 +1,8 @@
-// ver: 1.3.7
+// ver: 1.3.8
 
 // Bugs:
+
+// partially fixed?: - irreproductible, extremely rare chance for countTravelType function to throw an error after trying to access empty markersData array while markersData should never be accessible in this state
 
 // Features to add:
 
@@ -147,7 +149,7 @@ let highest_distance_type = "";
 let lowest_distance_type = "";
 let most_common_travel_type = "";
 
-let statistics_visibility = true;
+let statistics_visibility = false;
 
 // // Sidebar Statistics ↑
 // // Sidebar Language ↓
@@ -372,9 +374,9 @@ sidebar_house_button.addEventListener("mouseenter", () => {
   if (is_travel_creator_active) {
     displayInfoBox("Cannot use this feature during travel log creation.", 2500);
   } else {
-  changeIconColorOnHover(true, house_icon, sidebar_house_button);
-  clearTimeout(house_container_timeout);
-  sidebarButtonsAnimation(sub_house_button_container, true);
+    changeIconColorOnHover(true, house_icon, sidebar_house_button);
+    clearTimeout(house_container_timeout);
+    sidebarButtonsAnimation(sub_house_button_container, true);
   }
 });
 
@@ -408,44 +410,43 @@ jscolor_home.addEventListener("change", () => {
 
 sub_house_manual_location.addEventListener("click", () => {
   if (pageSettings.house_visibility === true) {
-      travelTypeValueUpdate(true, false, false, false, false, false, false, false, false);
-      updateCursorImage("assets/images/home_icon_small.png");
-      removeMarkers("home_marker");
-      homeMarkerClear();
+    travelTypeValueUpdate(true, false, false, false, false, false, false, false, false);
+    updateCursorImage("assets/images/home_icon_small.png");
+    removeMarkers("home_marker");
+    homeMarkerClear();
 
-      const mapClickListener = (e) => {
-        toggleCustomCursorVisibility(false);
+    const mapClickListener = (e) => {
+      toggleCustomCursorVisibility(false);
 
-        const clickedLatLng = e.latlng;
-        const offset_longitude = clickedLatLng.lng * 1.002;
+      const clickedLatLng = e.latlng;
+      const offset_longitude = clickedLatLng.lng * 1.002;
 
-        if (home_button_manual_click === true) {
-          home_marker = L.marker([clickedLatLng.lat, offset_longitude], {
-            icon: home_icon,
-            id: "home_marker",
-          });
-          home_marker.addTo(map).bounce(1);
-          markers.push(home_marker);
-          home_circle = L.circle([clickedLatLng.lat, clickedLatLng.lng], {
-            radius: 50000,
-            color: jscolor_home_color,
-            fillOpacity: jscolor_home_opacity,
-            weight: 1,
-          }).addTo(map);
-        }
+      if (home_button_manual_click === true) {
+        home_marker = L.marker([clickedLatLng.lat, offset_longitude], {
+          icon: home_icon,
+          id: "home_marker",
+        });
+        home_marker.addTo(map).bounce(1);
+        markers.push(home_marker);
+        home_circle = L.circle([clickedLatLng.lat, clickedLatLng.lng], {
+          radius: 50000,
+          color: jscolor_home_color,
+          fillOpacity: jscolor_home_opacity,
+          weight: 1,
+        }).addTo(map);
+      }
 
-        home_button_manual_click = false;
+      home_button_manual_click = false;
 
-        homeData.lat = clickedLatLng.lat;
-        homeData.lng = clickedLatLng.lng;
-        homeData.color = jscolor_home_color;
-        homeData.opacity = jscolor_home_opacity;
-        localStorageSaveHomeData();
+      homeData.lat = clickedLatLng.lat;
+      homeData.lng = clickedLatLng.lng;
+      homeData.color = jscolor_home_color;
+      homeData.opacity = jscolor_home_opacity;
+      localStorageSaveHomeData();
 
-        map.off("click", mapClickListener);
-      };
-      map.on("click", mapClickListener);
-
+      map.off("click", mapClickListener);
+    };
+    map.on("click", mapClickListener);
   } else if (pageSettings.house_visibility === false) {
     displayInfoBox("House marker is disabled.", 2500);
   }
@@ -806,19 +807,19 @@ sidebar_timeline_button.addEventListener("click", () => {
   if (is_travel_creator_active) {
     displayInfoBox("Cannot use this feature during travel log creation.", 2500);
   } else {
-  if (timeline_enabled) {
-    displayInfoBox("Timeline disabled", 1000);
-    toggleTimelineVisibility(true);
-  }
+    if (timeline_enabled) {
+      displayInfoBox("Timeline disabled", 1000);
+      toggleTimelineVisibility(true);
+    }
 
-  if (!timeline_enabled) {
-    displayInfoBox("Timeline enabled", 1000);
-  }
+    if (!timeline_enabled) {
+      displayInfoBox("Timeline enabled", 1000);
+    }
 
-  toggleTimelineVisibility(false);
-  timeline_enabled = toggleIconColor(timeline_enabled, timeline_icon);
-  toggleTimeline();
-}
+    toggleTimelineVisibility(false);
+    timeline_enabled = toggleIconColor(timeline_enabled, timeline_icon);
+    toggleTimeline();
+  }
 });
 
 sidebar_timeline_button.addEventListener("mouseover", () =>
@@ -868,13 +869,13 @@ sidebar_statistics_button.addEventListener("click", () => {
   if (is_travel_creator_active) {
     displayInfoBox("Cannot use this feature during travel log creation.", 2500);
   } else {
-  statistics_visibility = toggleIconColor(statistics_visibility, statistics_icon);
-    if (!statistics_visibility) {
+    statistics_visibility = toggleIconColor(statistics_visibility, statistics_icon);
+    if (statistics_visibility) {
       toggleStatisticsVisibility(true);
     } else {
       toggleStatisticsVisibility(false);
     }
-}
+  }
 });
 
 sidebar_statistics_button.addEventListener("mouseenter", () =>
@@ -1016,9 +1017,9 @@ function formatDistance(distance) {
 
 function toggleStatisticsVisibility(toggle) {
   if (toggle) {
-    main_statistics_container.style.transform = "translate(-50%, -24%)";
+    main_statistics_container.style.transform = "translate(-50%, -17.5vh)";
   } else {
-    main_statistics_container.style.transform = "translate(-50%, -130%)";
+    main_statistics_container.style.transform = "translate(-50%, -130vh)";
   }
 }
 
@@ -1121,26 +1122,34 @@ function countTravelType(markersData) {
   highest_count_travel_types = [];
   highest_count = Number.NEGATIVE_INFINITY;
 
-  for (const marker of markersData) {
-    console.log("data error 2 ?", markersData); // temporary, looking for error
-    const test = marker[0][2]; // temporary, looking for error
-    // markersData = []; // temporary, looking for error
-    // localStorageLoadMarkerCoordinates() // temporary, looking for error
-    console.log("test", test); // temporary, looking for error
-    const type = marker[0][2][1];
-    console.log(type); // temporary, looking for error
-    console.log("data error 3 ?", markersData); // temporary, looking for error
-    if (type in travel_type_count) {
-      travel_type_count[type]++;
-      if (travel_type_count[type] > highest_count) {
-        highest_count = travel_type_count[type];
-        highest_count_travel_types = [type];
-      } else if (travel_type_count[type] === highest_count) {
-        highest_count_travel_types.push(type);
+  try {
+    for (const marker of markersData) {
+      console.log("data error 2 ?", markersData); // temporary, looking for error
+      const test = marker[0][2]; // temporary, looking for error
+      // markersData = []; // temporary, looking for error
+      // localStorageLoadMarkerCoordinates() // temporary, looking for error
+      console.log("test", test); // temporary, looking for error
+      const type = marker[0][2][1];
+      console.log(type); // temporary, looking for error
+      console.log("data error 3 ?", markersData); // temporary, looking for error
+      if (type in travel_type_count) {
+        travel_type_count[type]++;
+        if (travel_type_count[type] > highest_count) {
+          highest_count = travel_type_count[type];
+          highest_count_travel_types = [type];
+        } else if (travel_type_count[type] === highest_count) {
+          highest_count_travel_types.push(type);
+        }
       }
     }
+
+    return { travel_type_count, highest_count_travel_types };
+  } catch (error) {
+    console.log(error);
+    console.log("%c markersData error", "color: red; font-weight: bold;");
+
+    markersData = [];
   }
-  return { travel_type_count, highest_count_travel_types };
 }
 
 function removeTravelCount(type) {
@@ -1169,9 +1178,9 @@ sidebar_settings_button.addEventListener("mouseenter", () => {
   if (is_travel_creator_active) {
     displayInfoBox("Cannot use this feature during travel log creation.", 2500);
   } else {
-  changeIconColorOnHover(true, settings_icon, sidebar_settings_button);
-  clearTimeout(settings_container_timeout);
-  sidebarButtonsAnimation(sub_settings_container, true);
+    changeIconColorOnHover(true, settings_icon, sidebar_settings_button);
+    clearTimeout(settings_container_timeout);
+    sidebarButtonsAnimation(sub_settings_container, true);
   }
 });
 
@@ -1194,8 +1203,8 @@ sub_settings_container.addEventListener("mouseleave", () => {
 });
 
 sub_settings_remove_data.addEventListener("click", () => {
-    toggleRemoveDataContainerVisibility(true);
-    main_statistics_container.classList.add("hidden");
+  toggleRemoveDataContainerVisibility(true);
+  main_statistics_container.classList.add("hidden");
 });
 
 confirm_button_delete_data.addEventListener("click", () => {
@@ -1246,18 +1255,18 @@ sub_settings_portrait_mode.addEventListener("click", (event) => {
   displayInfoBox("Use LMB (left mouse button) to leave the portrait view.", 2500);
   event.stopPropagation();
 
-    sidebar_buttons_container.classList.add("hidden");
-    main_logs_container.classList.add("hidden");
-    main_logs_container_arrow.classList.add("hidden");
+  sidebar_buttons_container.classList.add("hidden");
+  main_logs_container.classList.add("hidden");
+  main_logs_container_arrow.classList.add("hidden");
 
-    timeline_container_arrow.classList.add("hidden");
-    timeline_container.classList.add("hidden");
-    app_version.classList.add("hidden");
-    sub_settings_container.classList.add("hidden");
+  timeline_container_arrow.classList.add("hidden");
+  timeline_container.classList.add("hidden");
+  app_version.classList.add("hidden");
+  sub_settings_container.classList.add("hidden");
 
-    main_statistics_container.classList.add("hidden");
+  main_statistics_container.classList.add("hidden");
 
-    ui_hidden = true;
+  ui_hidden = true;
 });
 
 document.addEventListener("click", () => {
@@ -1347,7 +1356,7 @@ add_travel_superset_button.addEventListener("click", () => {
   toggleTimelineVisibility(false);
   toggleStatisticsVisibility(false);
   toggleRemoveDataContainerVisibility(false);
-  if (!statistics_visibility) {
+  if (statistics_visibility) {
     statistics_visibility = toggleIconColor(statistics_visibility, statistics_icon);
   }
 
@@ -1387,7 +1396,7 @@ add_travel_superset_button.addEventListener("mouseleave", () => {
 });
 
 add_travel_group_button.addEventListener("click", () => {
-  if (!statistics_visibility) {
+  if (statistics_visibility) {
     statistics_visibility = toggleIconColor(statistics_visibility, statistics_icon);
   }
   toggleMainLogContainerVisibility(false);
@@ -2497,7 +2506,7 @@ function buildCRUD() {
         toggleMainLogContainerVisibility(false);
         toggleTimelineVisibility(false);
         toggleStatisticsVisibility(false);
-        if (!statistics_visibility) {
+        if (statistics_visibility) {
           statistics_visibility = toggleIconColor(statistics_visibility, statistics_icon);
         }
 
@@ -3388,7 +3397,10 @@ function onLoadingComplete() {
   calculateDistances();
   distancesBreakdown(rawCoordinatesDistances);
   calculateTotalDistances(rawCoordinatesDistances);
-  updateTravelStats();
+
+  if (markersData.length > 0) {
+    updateTravelStats();
+  }
 
   hideAppTitle();
   progress_info.textContent = "All resources loaded!";

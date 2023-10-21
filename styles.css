@@ -582,6 +582,11 @@ body {
   background-color: #3f4d60;
 }
 
+.travel_type_button img {
+  height: 85%;
+  width: 65%;
+}
+
 .polyline_width_slider_container {
   width: 90%;
   margin: 14% 0 0 3.5%;
@@ -926,7 +931,7 @@ body {
   position: absolute;
   top: 17vh;
   left: 50vw;
-  transform: translate(-50%, -150%);
+  transform: translate(-50%, -150vh);
   z-index: 899;
   min-height: 10vh;
   width: 40vw;
@@ -1042,7 +1047,7 @@ body {
   height: 50px;
   width: 100px;
   position: absolute;
-  z-index: 899;
+  z-index: 2000;
   cursor: pointer;
   display: none;
   /* display: flex; */
