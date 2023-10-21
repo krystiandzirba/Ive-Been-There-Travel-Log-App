@@ -1,4 +1,4 @@
-// ver: 1.3.6
+// ver: 1.3.7
 
 // Bugs:
 
@@ -369,9 +369,13 @@ let trueMarkers = L.layerGroup();
 // // // House ↓
 
 sidebar_house_button.addEventListener("mouseenter", () => {
+  if (is_travel_creator_active) {
+    displayInfoBox("Cannot use this feature during travel log creation.", 2500);
+  } else {
   changeIconColorOnHover(true, house_icon, sidebar_house_button);
   clearTimeout(house_container_timeout);
   sidebarButtonsAnimation(sub_house_button_container, true);
+  }
 });
 
 sidebar_house_button.addEventListener("mouseleave", () => {
@@ -404,7 +408,6 @@ jscolor_home.addEventListener("change", () => {
 
 sub_house_manual_location.addEventListener("click", () => {
   if (pageSettings.house_visibility === true) {
-    if (!is_travel_creator_active) {
       travelTypeValueUpdate(true, false, false, false, false, false, false, false, false);
       updateCursorImage("assets/images/home_icon_small.png");
       removeMarkers("home_marker");
@@ -442,9 +445,7 @@ sub_house_manual_location.addEventListener("click", () => {
         map.off("click", mapClickListener);
       };
       map.on("click", mapClickListener);
-    } else {
-      displayInfoBox("Cannot set the home location during the travel log creation.", 2500);
-    }
+
   } else if (pageSettings.house_visibility === false) {
     displayInfoBox("House marker is disabled.", 2500);
   }
@@ -802,6 +803,9 @@ sidebar_page_styles_button.addEventListener("click", () => {
 // // // Timeline ↓
 
 sidebar_timeline_button.addEventListener("click", () => {
+  if (is_travel_creator_active) {
+    displayInfoBox("Cannot use this feature during travel log creation.", 2500);
+  } else {
   if (timeline_enabled) {
     displayInfoBox("Timeline disabled", 1000);
     toggleTimelineVisibility(true);
@@ -814,6 +818,7 @@ sidebar_timeline_button.addEventListener("click", () => {
   toggleTimelineVisibility(false);
   timeline_enabled = toggleIconColor(timeline_enabled, timeline_icon);
   toggleTimeline();
+}
 });
 
 sidebar_timeline_button.addEventListener("mouseover", () =>
@@ -860,14 +865,16 @@ function changeTimelineDimensions(toggle) {
 // // // Statistics ↓
 
 sidebar_statistics_button.addEventListener("click", () => {
+  if (is_travel_creator_active) {
+    displayInfoBox("Cannot use this feature during travel log creation.", 2500);
+  } else {
   statistics_visibility = toggleIconColor(statistics_visibility, statistics_icon);
-  if (!is_travel_creator_active) {
     if (!statistics_visibility) {
       toggleStatisticsVisibility(true);
     } else {
       toggleStatisticsVisibility(false);
     }
-  }
+}
 });
 
 sidebar_statistics_button.addEventListener("mouseenter", () =>
@@ -1159,9 +1166,13 @@ sidebar_language_button.addEventListener("mouseleave", () => {
 // // // Settings ↓
 
 sidebar_settings_button.addEventListener("mouseenter", () => {
+  if (is_travel_creator_active) {
+    displayInfoBox("Cannot use this feature during travel log creation.", 2500);
+  } else {
   changeIconColorOnHover(true, settings_icon, sidebar_settings_button);
   clearTimeout(settings_container_timeout);
   sidebarButtonsAnimation(sub_settings_container, true);
+  }
 });
 
 sidebar_settings_button.addEventListener("mouseleave", () => {
@@ -1183,12 +1194,8 @@ sub_settings_container.addEventListener("mouseleave", () => {
 });
 
 sub_settings_remove_data.addEventListener("click", () => {
-  if (is_travel_creator_active) {
-    displayInfoBox("Cannot remove the data during the travel log creation.", 2500);
-  } else {
     toggleRemoveDataContainerVisibility(true);
     main_statistics_container.classList.add("hidden");
-  }
 });
 
 confirm_button_delete_data.addEventListener("click", () => {
@@ -1239,9 +1246,6 @@ sub_settings_portrait_mode.addEventListener("click", (event) => {
   displayInfoBox("Use LMB (left mouse button) to leave the portrait view.", 2500);
   event.stopPropagation();
 
-  if (is_travel_creator_active) {
-    displayInfoBox("Cannot use the portrait mode during the travel log creation.", 2500);
-  } else {
     sidebar_buttons_container.classList.add("hidden");
     main_logs_container.classList.add("hidden");
     main_logs_container_arrow.classList.add("hidden");
@@ -1254,7 +1258,6 @@ sub_settings_portrait_mode.addEventListener("click", (event) => {
     main_statistics_container.classList.add("hidden");
 
     ui_hidden = true;
-  }
 });
 
 document.addEventListener("click", () => {
