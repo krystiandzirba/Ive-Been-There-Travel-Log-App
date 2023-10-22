@@ -1,4 +1,4 @@
-// ver: 1.3.8
+// ver: 1.3.9
 
 // Bugs:
 
@@ -240,6 +240,7 @@ let travel_logs_group_input = document.getElementById("travel_logs_group_input")
 // // Travel log group ↑
 // // Travel log individual ↓
 
+const sidebar_covers = document.querySelectorAll(".sidebar_cover");
 const travel_creator_covers = document.querySelectorAll(".travel_creator_cover");
 
 const jscolor_highlight_container = document.querySelector(".jscolor_highlight_container");
@@ -1356,6 +1357,7 @@ add_travel_superset_button.addEventListener("click", () => {
   toggleTimelineVisibility(false);
   toggleStatisticsVisibility(false);
   toggleRemoveDataContainerVisibility(false);
+  toggleSidebarCover(true);
   if (statistics_visibility) {
     statistics_visibility = toggleIconColor(statistics_visibility, statistics_icon);
   }
@@ -1567,9 +1569,15 @@ close_button_group.addEventListener("mouseleave", () => {
 // Travel log group ↑
 // Travel Log Individual ↓
 
+sidebar_covers.forEach((element) => {
+  element.addEventListener("click", () => {
+    displayInfoBox("This sidebar feature is unavailable while adding markers to the map.", 3000);
+  });
+});
+
 travel_creator_covers.forEach((element) => {
   element.addEventListener("click", () => {
-    displayInfoBox("Feature not available while placing markers on the map.", 3000);
+    displayInfoBox("You cannot customize the travel log once you've added markers to the map.", 3000);
   });
 });
 
@@ -1605,7 +1613,7 @@ travel_type_plane.addEventListener("click", () => {
     travelTypeCreator(travel_type_plane_click, "plane", plane_icon, "assets/images/plane_icon_small.png", "assets/images/plane_icon.png");
     active_travel_type_icon = "assets/images/plane_icon_small.png";
   } else {
-    displayInfoBox("Cannot change travel type after placing markers", 2500);
+    displayInfoBox("Cannot change travel type after the marker was placed on the map.", 2500);
   }
 });
 
@@ -1638,7 +1646,7 @@ travel_type_bicycle.addEventListener("click", () => {
     travelTypeCreator(travel_type_bicycle_click, "bicycle", bicycle_icon, "assets/images/bicycle_icon_small.png", "assets/images/bicycle_icon.png");
     active_travel_type_icon = "assets/images/bicycle_icon_small.png";
   } else {
-    displayInfoBox("Cannot change travel type after placing markers", 2500);
+    displayInfoBox("Cannot change travel type after the marker was placed on the map.", 2500);
   }
 });
 
@@ -1671,7 +1679,7 @@ travel_type_bus.addEventListener("click", () => {
     travelTypeCreator(travel_type_bus_click, "bus", bus_icon, "assets/images/bus_icon_small.png", "assets/images/bus_icon.png");
     active_travel_type_icon = "assets/images/bus_icon_small.png";
   } else {
-    displayInfoBox("Cannot change travel type after placing markers", 2500);
+    displayInfoBox("Cannot change travel type after the marker was placed on the map.", 2500);
   }
 });
 
@@ -1795,6 +1803,8 @@ confirm_button_individual.addEventListener("click", () => {
     buildCRUD();
     localStorageCreateTrueMarkers(pageSettings.markers_size, pageSettings.markers_anchor);
 
+    toggleSidebarCover(false);
+
     if (pageSettings.highlight_visibility === true) {
       localStorageCreateTrueHighlights();
     }
@@ -1852,6 +1862,7 @@ close_button_individual.addEventListener("click", () => {
   drawPolyline();
   toggleTravelCreator(false, travel_logs_individual_main_container);
   toggleTravelCreatorCover(false);
+  toggleSidebarCover(false);
   is_travel_creator_active = false;
   allow_travel_settings_editing = true;
   active_travel_type_icon = "";
@@ -1868,9 +1879,17 @@ close_button_individual.addEventListener("mouseleave", () => {
   changeIconColorOnHover(false, close_icon_individual, close_icon_individual);
 });
 
-function toggleTravelCreatorCover(toggle) {
-  // const travel_creator_covers = document.querySelectorAll(".travel_creator_cover");
+function toggleSidebarCover(toggle) {
+  sidebar_covers.forEach((element) => {
+    if (toggle) {
+      element.style.display = "block";
+    } else {
+      element.style.display = "none";
+    }
+  });
+}
 
+function toggleTravelCreatorCover(toggle) {
   travel_creator_covers.forEach((element) => {
     if (toggle) {
       element.style.display = "block";

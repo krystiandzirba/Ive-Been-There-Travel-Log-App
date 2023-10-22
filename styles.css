@@ -454,6 +454,7 @@ body {
   margin: 0 0 2vh 1.5%;
 }
 
+.sidebar_cover,
 .travel_creator_cover {
   display: none;
   z-index: 900;
@@ -462,8 +463,8 @@ body {
   position: absolute;
   background: repeating-linear-gradient(
     45deg,
-    rgba(111, 111, 111, 0.4),
-    rgba(116, 116, 116, 0.4) 10px,
+    rgba(111, 111, 111, 0.3),
+    rgba(116, 116, 116, 0.3) 10px,
     rgba(255, 255, 255, 0) 10px,
     rgba(255, 255, 255, 0) 20px
   );
