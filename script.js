@@ -1,4 +1,4 @@
-// ver: 1.3.9
+// ver: 1.3.10
 
 // Bugs:
 
@@ -167,6 +167,8 @@ const sub_settings_portrait_mode = document.getElementById("sub_settings_portrai
 const sub_settings_remove_data = document.getElementById("sub_settings_remove_data");
 const sub_settings_report_bug = document.getElementById("sub_settings_report_bug");
 
+const unit_display = document.querySelector("#sub_settings_distance_unit p");
+
 const remove_data_confirmation_container = document.getElementById("remove_data_confirmation_container");
 const confirm_button_delete_data = document.getElementById("confirm_button_delete_data");
 const close_button_delete_data = document.getElementById("close_button_delete_data");
@@ -312,13 +314,21 @@ let polyline_width = polyline_width_slider.value;
 let polyline_color = `#DC3125`;
 
 // // Travel log individual ↑
-// // Custom cursor / App version ↓
+// // Custom cursor / App version / Page loading ↓
 
 const custom_cursor = document.getElementById("custom_cursor");
 
 const app_version = document.querySelector(".app_version");
 
-// // Custom cursor / App version ↑
+const progress_info = document.getElementById("progress_info");
+const title_screen_background = document.querySelector(".title_screen_background");
+
+// // Custom cursor / App version / Page loading ↑
+// // D3 ↓
+
+const bar_chart_type_distance_unit_display = document.querySelector("#bar_chart_type_distance_container p");
+
+// // D3 ↑
 // // Leaflet map ↓
 
 import leafletConfig from "./LeafletConfig.js";
@@ -873,8 +883,11 @@ sidebar_statistics_button.addEventListener("click", () => {
     statistics_visibility = toggleIconColor(statistics_visibility, statistics_icon);
     if (statistics_visibility) {
       toggleStatisticsVisibility(true);
+      toggleMainLogContainerVisibility(false);
+      barChartTypeDistanceCreate();
     } else {
       toggleStatisticsVisibility(false);
+      toggleMainLogContainerVisibility(true);
     }
   }
 });
@@ -944,7 +957,10 @@ function distancesBreakdown(distances) {
   };
 }
 
+// prettier-ignore
 function updateTravelStats() {
+  bar_chart_type_distance_data = [];
+
   const display_highest_distance = highest_distance === Number.NEGATIVE_INFINITY ? 0 : highest_distance;
   const display_lowest_distance = lowest_distance === Number.POSITIVE_INFINITY ? 0 : lowest_distance;
 
@@ -953,11 +969,9 @@ function updateTravelStats() {
   const lowest_distance_display = lowest_distance === Number.POSITIVE_INFINITY ? "" : "(" + lowest_distance_type + ")";
 
   if (pageSettings.distance_unit == "km") {
-    document.getElementById("highest_distance").textContent =
-      formatDistance(display_highest_distance) + " km " + highest_distance_display;
-
-    document.getElementById("lowest_distance").textContent =
-      formatDistance(display_lowest_distance) + " km " + lowest_distance_display;
+    document.getElementById("highest_distance").textContent = formatDistance(display_highest_distance) + " km " + highest_distance_display;
+    document.getElementById("lowest_distance").textContent = formatDistance(display_lowest_distance) + " km " + lowest_distance_display;
+    document.getElementById("average_travel_distance").textContent = formatDistance(average_distance) + " km";
 
     document.getElementById("total_distance").textContent = formatDistance(total_distance) + " km";
     document.getElementById("total_car_distance").textContent = formatDistance(total_car_distance) + " km";
@@ -965,37 +979,47 @@ function updateTravelStats() {
     document.getElementById("total_boat_distance").textContent = formatDistance(total_boat_distance) + " km";
     document.getElementById("total_walk_distance").textContent = formatDistance(total_walk_distance) + " km";
     document.getElementById("total_bicycle_distance").textContent = formatDistance(total_bicycle_distance) + " km";
-    document.getElementById("total_motorcycle_distance").textContent =
-      formatDistance(total_motorcycle_distance) + " km";
+    document.getElementById("total_motorcycle_distance").textContent = formatDistance(total_motorcycle_distance) + " km";
     document.getElementById("total_train_distance").textContent = formatDistance(total_train_distance) + " km";
     document.getElementById("total_bus_distance").textContent = formatDistance(total_bus_distance) + " km";
 
-    document.getElementById("average_travel_distance").textContent = formatDistance(average_distance) + " km";
-  } else if (pageSettings.distance_unit == "mil") {
-    document.getElementById("highest_distance").textContent =
-      formatDistance(display_highest_distance * 0.6213712) + " mil " + highest_distance_display;
+    bar_chart_type_distance_data = [
+      { label: "Car", value: formatDistance(total_car_distance) },
+      { label: "Plane", value: formatDistance(total_plane_distance) },
+      { label: "Boat", value: formatDistance(total_boat_distance) },
+      { label: "Walk", value: formatDistance(total_walk_distance) },
+      { label: "Bicyc.", value: formatDistance(total_bicycle_distance) },
+      { label: "Motorc.", value: formatDistance(total_motorcycle_distance)},
+      { label: "Train", value: formatDistance(total_train_distance) },
+      { label: "Bus", value: formatDistance(total_bus_distance) },
+    ];
 
-    document.getElementById("lowest_distance").textContent =
-      formatDistance(display_lowest_distance * 0.6213712) + " mil " + lowest_distance_display;
+  } else if (pageSettings.distance_unit == "mil") {
+    document.getElementById("highest_distance").textContent = formatDistance(display_highest_distance * 0.6213712) + " mil " + highest_distance_display;
+    document.getElementById("lowest_distance").textContent = formatDistance(display_lowest_distance * 0.6213712) + " mil " + lowest_distance_display;
+    document.getElementById("average_travel_distance").textContent = formatDistance(average_distance * 0.6213712) + " mil";
 
     document.getElementById("total_distance").textContent = formatDistance(total_distance * 0.6213712) + " mil";
     document.getElementById("total_car_distance").textContent = formatDistance(total_car_distance * 0.6213712) + " mil";
-    document.getElementById("total_plane_distance").textContent =
-      formatDistance(total_plane_distance * 0.6213712) + " mil";
-    document.getElementById("total_boat_distance").textContent =
-      formatDistance(total_boat_distance * 0.6213712) + " mil";
-    document.getElementById("total_walk_distance").textContent =
-      formatDistance(total_walk_distance * 0.6213712) + " mil";
-    document.getElementById("total_bicycle_distance").textContent =
-      formatDistance(total_bicycle_distance * 0.6213712) + " mil";
-    document.getElementById("total_motorcycle_distance").textContent =
-      formatDistance(total_motorcycle_distance * 0.6213712) + " mil";
-    document.getElementById("total_train_distance").textContent =
-      formatDistance(total_train_distance * 0.6213712) + " mil";
+    document.getElementById("total_plane_distance").textContent = formatDistance(total_plane_distance * 0.6213712) + " mil";
+    document.getElementById("total_boat_distance").textContent = formatDistance(total_boat_distance * 0.6213712) + " mil";
+    document.getElementById("total_walk_distance").textContent = formatDistance(total_walk_distance * 0.6213712) + " mil";
+    document.getElementById("total_bicycle_distance").textContent = formatDistance(total_bicycle_distance * 0.6213712) + " mil";
+    document.getElementById("total_motorcycle_distance").textContent = formatDistance(total_motorcycle_distance * 0.6213712) + " mil";
+    document.getElementById("total_train_distance").textContent = formatDistance(total_train_distance * 0.6213712) + " mil";
     document.getElementById("total_bus_distance").textContent = formatDistance(total_bus_distance * 0.6213712) + " mil";
 
-    document.getElementById("average_travel_distance").textContent =
-      formatDistance(average_distance * 0.6213712) + " mil";
+    bar_chart_type_distance_data = [
+      { label: "Car", value: formatDistance(total_car_distance * 0.6213712) },
+      { label: "Plane", value: formatDistance(total_plane_distance * 0.6213712) },
+      { label: "Boat", value: formatDistance(total_boat_distance * 0.6213712) },
+      { label: "Walk", value: formatDistance(total_walk_distance * 0.6213712) },
+      { label: "Bicyc.", value: formatDistance(total_bicycle_distance * 0.6213712) },
+      { label: "Motorc.", value: formatDistance(total_motorcycle_distance * 0.6213712)},
+      { label: "Train", value: formatDistance(total_train_distance * 0.6213712) },
+      { label: "Bus", value: formatDistance(total_bus_distance * 0.6213712) },
+    ];
+
   }
 
   let most_common_travel_type = document.getElementById("most_common_travel_type");
@@ -1287,28 +1311,23 @@ document.addEventListener("click", () => {
   ui_hidden = false;
 });
 
-const unit_display = document.querySelector("#sub_settings_distance_unit p");
-
 sub_settings_distance_unit.addEventListener("click", () => {
   if (pageSettings.distance_unit == "km") {
     distance_unit = "mil";
     pageSettings.distance_unit = "mil";
     unit_display.innerHTML = "units [mil]";
-
-    localStorageSavePageSettings();
-    removeContainerTravelLogs();
-    buildCRUD();
-    updateTravelStats();
+    bar_chart_type_distance_unit_display.innerHTML = "distance by travel type [mil]";
   } else if (pageSettings.distance_unit == "mil") {
     distance_unit = "km";
     pageSettings.distance_unit = "km";
     unit_display.innerHTML = "units [km]";
-
-    localStorageSavePageSettings();
-    removeContainerTravelLogs();
-    buildCRUD();
-    updateTravelStats();
+    bar_chart_type_distance_unit_display.innerHTML = "distance by travel type [km]";
   }
+
+  localStorageSavePageSettings();
+  removeContainerTravelLogs();
+  buildCRUD();
+  updateTravelStats();
 });
 
 // // // Settings ↑
@@ -3251,8 +3270,10 @@ function localStorageLoadPageSettings() {
 
   if (pageSettings.distance_unit == "km") {
     unit_display.innerHTML = "units [km]";
+    bar_chart_type_distance_unit_display.innerHTML = "distance by travel type [km]";
   } else if (pageSettings.distance_unit == "mil") {
     unit_display.innerHTML = "units [mil]";
+    bar_chart_type_distance_unit_display.innerHTML = "distance by travel type [mil]";
   }
 
   if (pageSettings.highlight_visibility === false) {
@@ -3294,13 +3315,9 @@ function localStorageSetMapLayer() {
 
 // Loading progress info ↓
 
-const progress_info = document.getElementById("progress_info");
-
 showAppTitle();
 
 function showAppTitle() {
-  const title_screen_background = document.querySelector(".title_screen_background");
-
   title_screen_background.style.left = "20%";
   title_screen_background.style.transform = "translateX(-50%)";
   title_screen_background.style.top = "30%";
@@ -3308,8 +3325,6 @@ function showAppTitle() {
 }
 
 function hideAppTitle() {
-  const title_screen_background = document.querySelector(".title_screen_background");
-
   title_screen_background.style.left = "90%";
   title_screen_background.style.transform = "translateX(-50%)";
   title_screen_background.style.top = "30%";
@@ -3491,8 +3506,133 @@ test_button.addEventListener("click", () => {
   // console.log("Total Bus Distance:", total_bus_distance.toFixed(2), "km");
 });
 
-test_button_2.addEventListener("click", () => {});
+test_button_2.addEventListener("click", () => {
+  // barChartTypeDistanceCreate();
+});
 
-test_button_3.addEventListener("click", () => {});
+// D3 ↓
 
-test_button_4.addEventListener("click", () => {});
+let type_distance_max_value;
+
+let bar_chart_type_distance_data = [];
+
+const bar_chart_type_distance_bar_gradient = ["#58508d", "#bc5090", "#ff6361"];
+
+function barChartTypeDistanceCreate() {
+  const chart_div = document.getElementById("bar_chart_type_distance");
+
+  d3.select("#bar_chart_type_distance svg").remove();
+
+  type_distance_max_value = (
+    Math.max(
+      total_car_distance,
+      total_plane_distance,
+      total_boat_distance,
+      total_walk_distance,
+      total_bicycle_distance,
+      total_motorcycle_distance,
+      total_train_distance,
+      total_bus_distance
+    ) * 1.1
+  ).toFixed(1);
+
+  if (pageSettings.distance_unit === "mil") {
+    type_distance_max_value = type_distance_max_value * 0.6213712;
+  }
+
+  const svgHeight = chart_div.clientHeight * 1.2;
+  const svgWidth = chart_div.clientWidth;
+  const margin = { top: 20, right: 20, bottom: 70, left: 60 };
+
+  const chartWidth = svgWidth - margin.left - margin.right;
+  const chartHeight = svgHeight - margin.top - margin.bottom;
+
+  // prettier-ignore
+  const svg = d3.select("#bar_chart_type_distance")
+  .append("svg")
+  .attr("width", svgWidth)
+  .attr("height", svgHeight)
+
+  const gradient = svg
+    .append("defs")
+    .append("linearGradient")
+    .attr("id", "barGradient")
+    .attr("x1", "0%")
+    .attr("x2", "50%")
+    .attr("y1", "0%")
+    .attr("y2", "100%");
+
+  bar_chart_type_distance_bar_gradient.forEach((color, index) => {
+    gradient
+      .append("stop")
+      .attr("offset", (index * 100) / (bar_chart_type_distance_bar_gradient.length - 1) + "%")
+      .attr("stop-color", color);
+  });
+
+  // prettier-ignore
+  const chart = svg
+  .append("g")
+  .attr("transform", `translate(${margin.left},${margin.top})`);
+
+  // prettier-ignore
+  const xScale = d3
+    .scaleBand()
+    .domain(bar_chart_type_distance_data.map((d) => d.label))
+    .range([0, chartWidth])
+    .padding(0.1);
+
+  // prettier-ignore
+  const yScale = d3
+  .scaleLinear()
+  .domain([0, type_distance_max_value])
+  .range([chartHeight, 0])
+
+  // prettier-ignore (chart bars)
+  chart
+    .selectAll("rect")
+    .data(bar_chart_type_distance_data)
+    .enter()
+    .append("rect")
+    .attr("x", (d) => xScale(d.label))
+    .attr("y", (d) => yScale(d.value))
+    .attr("width", xScale.bandwidth())
+    .attr("height", (d) => chartHeight - yScale(d.value))
+    .attr("fill", "url(#barGradient");
+
+  // prettier ignore (bars distance text display)
+  chart
+    .selectAll("text")
+    .data(bar_chart_type_distance_data)
+    .enter()
+    .append("text")
+    .text((d) => d.value)
+    .attr("x", (d) => xScale(d.label) + xScale.bandwidth() / 2)
+    .attr("y", (d) => yScale(d.value) - 5)
+    .attr("text-anchor", "middle")
+    .style("font-size", "15px")
+    .style("fill", "white");
+
+  // prettier-ignore (labels display)
+  chart
+    .append("g")
+    .attr("class", "x-axis")
+    .attr("transform", `translate(0, ${chartHeight})`)
+    .call(d3.axisBottom(xScale))
+    .selectAll("text")
+    .style("font-size", "12px")
+    .style("font-family", "Inter, sans-serif")
+    .style("font-weight", "thin")
+    .attr("transform", "rotate(-45) translate(-16, 8)");
+
+  // prettier-ignore (Y axis numbers)
+  chart
+    .append("g")
+    .attr("class", "y-axis")
+    .call(d3.axisLeft(yScale))
+    .selectAll("text")
+    .style("font-size", "12px")
+    .style("font-family", "Inter, sans-serif")
+    .style("font-weight", "thin");
+}
+
+// D3 ↑

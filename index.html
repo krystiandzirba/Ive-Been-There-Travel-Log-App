@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>I've been there! - Travel log app v1.3.9</title>
+    <title>I've been there! - Travel log app v1.3.10</title>
     <link rel="icon" type="image/x-icon" href="assets/images/globe_icon_black.png" />
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -22,6 +22,8 @@
     <script type="text/javascript" src="assets/data/LeafletEdgeBuffer/leaflet.edgebuffer.js"></script>
     <script type="text/javascript" src="assets/data/LeafletGridLayerFadeOut/Leaflet.GridLayer.FadeOut.js"></script>
     <script type="text/javascript" src="assets/data/SmoothMarkerBouncing/bundle.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
 
     <!-- prettier-ignore -->
     <script src="https://cdn.knightlab.com/libs/timeline3/latest/js/timeline.js"></script>
@@ -346,44 +348,50 @@
     </div>
 
     <div class="main_statistics_container">
-      <div class="grid_item">
-        <p>longest travel distance: <span id="highest_distance"></span></p>
+      <div class="basic_statistics">
+        <div class="grid_item">
+          <p>longest travel distance: <span id="highest_distance"></span></p>
+        </div>
+        <div class="grid_item">
+          <p>shortest travel distance: <span id="lowest_distance"></span></p>
+        </div>
+        <div class="grid_item">
+          <p>average travel distance: <span id="average_travel_distance"></span></p>
+        </div>
+        <div class="grid_item">
+          <p>most common travel type: <span id="most_common_travel_type"></span></p>
+        </div>
+        <div class="grid_item">
+          <p>total distance: <span id="total_distance"></span></p>
+        </div>
+        <div class="grid_item">
+          <p>car distance: <span id="total_car_distance"></span></p>
+        </div>
+        <div class="grid_item">
+          <p>plane distance: <span id="total_plane_distance"></span></p>
+        </div>
+        <div class="grid_item">
+          <p>boat distance: <span id="total_boat_distance"></span></p>
+        </div>
+        <div class="grid_item">
+          <p>walk distance: <span id="total_walk_distance"></span></p>
+        </div>
+        <div class="grid_item">
+          <p>bicycle distance: <span id="total_bicycle_distance"></span></p>
+        </div>
+        <div class="grid_item">
+          <p>motorcycle distance: <span id="total_motorcycle_distance"></span></p>
+        </div>
+        <div class="grid_item">
+          <p>train distance: <span id="total_train_distance"></span></p>
+        </div>
+        <div class="grid_item">
+          <p>bus distance: <span id="total_bus_distance"></span></p>
+        </div>
       </div>
-      <div class="grid_item">
-        <p>shortest travel distance: <span id="lowest_distance"></span></p>
-      </div>
-      <div class="grid_item">
-        <p>average travel distance: <span id="average_travel_distance"></span></p>
-      </div>
-      <div class="grid_item">
-        <p>most common travel type: <span id="most_common_travel_type"></span></p>
-      </div>
-      <div class="grid_item">
-        <p>total distance: <span id="total_distance"></span></p>
-      </div>
-      <div class="grid_item">
-        <p>car distance: <span id="total_car_distance"></span></p>
-      </div>
-      <div class="grid_item">
-        <p>plane distance: <span id="total_plane_distance"></span></p>
-      </div>
-      <div class="grid_item">
-        <p>boat distance: <span id="total_boat_distance"></span></p>
-      </div>
-      <div class="grid_item">
-        <p>walk distance: <span id="total_walk_distance"></span></p>
-      </div>
-      <div class="grid_item">
-        <p>bicycle distance: <span id="total_bicycle_distance"></span></p>
-      </div>
-      <div class="grid_item">
-        <p>motorcycle distance: <span id="total_motorcycle_distance"></span></p>
-      </div>
-      <div class="grid_item">
-        <p>train distance: <span id="total_train_distance"></span></p>
-      </div>
-      <div class="grid_item">
-        <p>bus distance: <span id="total_bus_distance"></span></p>
+      <div id="bar_chart_type_distance_container" class="bar_chart_type_distance_container">
+        <div id="bar_chart_type_distance" class="bar_chart_type_distance"></div>
+        <p>distance by travel type [km]</p>
       </div>
     </div>
 
@@ -391,7 +399,7 @@
       <img id="custom_cursor_image" src="assets/images/car_icon_small.png" />
     </div>
 
-    <div class="app_version">ver: 1.3.9</div>
+    <div class="app_version">ver: 1.3.10</div>
 
     <div id="info_box">
       <p id="info_box_text"></p>
@@ -399,7 +407,5 @@
 
     <button id="test_button" class="test_button t1">TEST console</button>
     <button id="test_button_2" class="test_button t2">t2</button>
-    <button id="test_button_3" class="test_button t3">t3</button>
-    <button id="test_button_4" class="test_button t4">t4</button>
   </body>
 </html>
