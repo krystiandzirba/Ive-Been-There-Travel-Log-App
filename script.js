@@ -1,4 +1,4 @@
-// ver: 1.3.11
+// ver: 1.3.12
 
 // Bugs:
 
@@ -324,11 +324,6 @@ const progress_info = document.getElementById("progress_info");
 const title_screen_background = document.querySelector(".title_screen_background");
 
 // // Custom cursor / App version / Page loading ↑
-// // D3 ↓
-
-const bar_chart_type_distance_unit_display = document.querySelector("#bar_chart_type_distance_container p");
-
-// // D3 ↑
 // // Leaflet map ↓
 
 import leafletConfig from "./LeafletConfig.js";
@@ -355,11 +350,15 @@ let trueMarkers = L.layerGroup();
 // // Leaflet map ↑
 // // D3 ↓
 
+//prettier-ignore
+const pie_chart_type_count_pie_gradient = {Car: "#ffd667", Plane: "#efff67", Boat: "#71ff92", Walk: "#5ffffd", Bicycle: "#5fabff", Motorcycle: "#715fff", Train: "#bd5fff",Bus: "#ff5ffe"};
+const pie_chart_type_count = document.getElementById("pie_chart_type_count");
+
+const bar_chart_type_distance_bar_gradient = ["#58508d", "#bc5090", "#ff6361"];
+const bar_chart_type_distance_unit_display = document.querySelector("#bar_chart_type_distance_container p");
 const bar_chart_type_distance = document.getElementById("bar_chart_type_distance");
 
 let type_distance_max_value;
-
-const bar_chart_type_distance_bar_gradient = ["#58508d", "#bc5090", "#ff6361"];
 
 // // D3 ↑
 
@@ -383,7 +382,8 @@ const bar_chart_type_distance_bar_gradient = ["#58508d", "#bc5090", "#ff6361"];
 /* 0 */ let timelineData = {
   events: [],
 };
-/* 0 */ let bar_chart_type_distance_data = [];
+/* 0 */ let barChartTypeDistanceData = [];
+/* 0 */ let pieChartTypeDistributionData = [];
 
 // Variables ↑
 
@@ -894,7 +894,9 @@ sidebar_statistics_button.addEventListener("click", () => {
     if (statistics_visibility) {
       toggleStatisticsVisibility(true);
       toggleMainLogContainerVisibility(false);
+
       barChartTypeDistanceCreate();
+      pieChartTypeDistributionCreate();
     } else {
       toggleStatisticsVisibility(false);
       toggleMainLogContainerVisibility(true);
@@ -969,7 +971,7 @@ function distancesBreakdown(distances) {
 
 // prettier-ignore
 function updateTravelStats() {
-  bar_chart_type_distance_data = [];
+  barChartTypeDistanceData = [];
 
   const display_highest_distance = highest_distance === Number.NEGATIVE_INFINITY ? 0 : highest_distance;
   const display_lowest_distance = lowest_distance === Number.POSITIVE_INFINITY ? 0 : lowest_distance;
@@ -1006,7 +1008,7 @@ function updateTravelStats() {
     document.getElementById("total_train_distance").textContent = formatDistance(total_train_distance) + " km";
     document.getElementById("total_bus_distance").textContent = formatDistance(total_bus_distance) + " km";
 
-    bar_chart_type_distance_data = [
+    barChartTypeDistanceData = [
       { label: "Car", value: formatDistance(total_car_distance) },
       { label: "Plane", value: formatDistance(total_plane_distance) },
       { label: "Boat", value: formatDistance(total_boat_distance) },
@@ -1032,7 +1034,7 @@ function updateTravelStats() {
     document.getElementById("total_train_distance").textContent = formatDistance(total_train_distance * 0.6213712) + " mil";
     document.getElementById("total_bus_distance").textContent = formatDistance(total_bus_distance * 0.6213712) + " mil";
 
-    bar_chart_type_distance_data = [
+    barChartTypeDistanceData = [
       { label: "Car", value: formatDistance(total_car_distance * 0.6213712) },
       { label: "Plane", value: formatDistance(total_plane_distance * 0.6213712) },
       { label: "Boat", value: formatDistance(total_boat_distance * 0.6213712) },
@@ -1174,14 +1176,14 @@ function countTravelType(markersData) {
 
   try {
     for (const marker of markersData) {
-      console.log("data error 2 ?", markersData); // temporary, looking for error
+      ////  console.log("data error 2 ?", markersData); // temporary, looking for error
       const test = marker[0][2]; // temporary, looking for error
       // markersData = []; // temporary, looking for error
       // localStorageLoadMarkerCoordinates() // temporary, looking for error
-      console.log("test", test); // temporary, looking for error
+      //// console.log("test", test); // temporary, looking for error
       const type = marker[0][2][1];
-      console.log(type); // temporary, looking for error
-      console.log("data error 3 ?", markersData); // temporary, looking for error
+      ////  console.log(type); // temporary, looking for error
+      //// console.log("data error 3 ?", markersData); // temporary, looking for error
       if (type in travel_type_count) {
         travel_type_count[type]++;
         if (travel_type_count[type] > highest_count) {
@@ -1192,6 +1194,17 @@ function countTravelType(markersData) {
         }
       }
     }
+
+    pieChartTypeDistributionData = [
+      { label: "Car", value: travel_type_count.car },
+      { label: "Plane", value: travel_type_count.plane },
+      { label: "Boat", value: travel_type_count.boat },
+      { label: "Walk", value: travel_type_count.walk },
+      { label: "Bicycle", value: travel_type_count.bicycle },
+      { label: "Motorcycle", value: travel_type_count.motorcycle },
+      { label: "Train", value: travel_type_count.train },
+      { label: "Bus", value: travel_type_count.bus },
+    ];
 
     return { travel_type_count, highest_count_travel_types };
   } catch (error) {
@@ -3517,9 +3530,12 @@ test_button.addEventListener("click", () => {
   console.log("-0- rawCoordinatesDistances", rawCoordinatesDistances);
   console.log("-0- timelineData", timelineData);
 
-  console.log("Highest Distance:", highest_distance.toFixed(2), "km");
-  console.log("Lowest Distance:", lowest_distance.toFixed(2), "km");
-  console.log("Total Distance:", total_distance.toFixed(2), "km");
+  console.log("-0- barChartTypeDistanceData", barChartTypeDistanceData);
+  console.log("-0- pieChartTypeDistributionData", pieChartTypeDistributionData);
+
+  // console.log("Highest Distance:", highest_distance.toFixed(2), "km");
+  // console.log("Lowest Distance:", lowest_distance.toFixed(2), "km");
+  // console.log("Total Distance:", total_distance.toFixed(2), "km");
 
   // console.log("Total Car Distance:", total_car_distance.toFixed(2), "km");
   // console.log("Total Plane Distance:", total_plane_distance.toFixed(2), "km");
@@ -3531,9 +3547,7 @@ test_button.addEventListener("click", () => {
   // console.log("Total Bus Distance:", total_bus_distance.toFixed(2), "km");
 });
 
-test_button_2.addEventListener("click", () => {
-  console.log(statistics_visibility);
-});
+test_button_2.addEventListener("click", () => {});
 
 // D3 ↓
 
@@ -3549,10 +3563,11 @@ function barChartTypeDistanceCreate() {
 
   // prettier-ignore
   const svg = d3.select("#bar_chart_type_distance")
-  .append("svg")
-  .attr("width", svgWidth)
-  .attr("height", svgHeight)
+    .append("svg")
+    .attr("width", svgWidth)
+    .attr("height", svgHeight)
 
+  //prettier-ignore
   const gradient = svg
     .append("defs")
     .append("linearGradient")
@@ -3571,23 +3586,28 @@ function barChartTypeDistanceCreate() {
 
   // prettier-ignore
   const chart = svg
-  .append("g")
-  .attr("transform", `translate(${margin.left},${margin.top})`);
+    .append("g")
+    .attr("transform", `translate(${margin.left},${margin.top})`);
 
   // prettier-ignore
   const xScale = d3
     .scaleBand()
-    .domain(bar_chart_type_distance_data.map((d) => d.label))
+    .domain(barChartTypeDistanceData.map((d) => d.label))
     .range([0, chartWidth])
     .padding(0.1);
 
-  // prettier-ignore (Y scaled to the highest value)
-  const yScale = d3.scaleLinear().domain([0, type_distance_max_value]).range([chartHeight, 0]);
+  // (Y scaled to the highest value)
+  //prettier-ignore
+  const yScale = d3
+    .scaleLinear()
+    .domain([0, type_distance_max_value])
+    .range([chartHeight, 0]);
 
-  // prettier-ignore (chart bars)
+  // (chart bars)
+  //prettier-ignore
   chart
     .selectAll("rect")
-    .data(bar_chart_type_distance_data)
+    .data(barChartTypeDistanceData)
     .enter()
     .append("rect")
     .attr("x", (d) => xScale(d.label))
@@ -3600,10 +3620,11 @@ function barChartTypeDistanceCreate() {
     .attr("y", (d) => yScale(d.value))
     .attr("height", (d) => chartHeight - yScale(d.value));
 
-  // prettier ignore (bars distance text display)
+  // (bars distance text display)
+  //prettier-ignore
   chart
     .selectAll("text")
-    .data(bar_chart_type_distance_data)
+    .data(barChartTypeDistanceData)
     .enter()
     .append("text")
     .text((d) => d.value)
@@ -3613,10 +3634,11 @@ function barChartTypeDistanceCreate() {
     .style("font-size", "15px")
     .style("fill", "white")
     .transition()
-    .duration(1000)
+    .duration(1200)
     .attr("y", (d) => yScale(d.value) - 5);
 
-  // prettier-ignore (labels display)
+  // (labels display)
+  //prettier-ignore
   chart
     .append("g")
     .attr("class", "x-axis")
@@ -3628,7 +3650,8 @@ function barChartTypeDistanceCreate() {
     .style("font-weight", "thin")
     .attr("transform", "rotate(-45) translate(-16, 8)");
 
-  // prettier-ignore (Y axis numbers)
+  // (Y axis numbers)
+  //prettier-ignore
   chart
     .append("g")
     .attr("class", "y-axis")
@@ -3637,6 +3660,90 @@ function barChartTypeDistanceCreate() {
     .style("font-size", "12px")
     .style("font-family", "Inter, sans-serif")
     .style("font-weight", "thin");
+}
+
+function pieChartTypeDistributionCreate() {
+  d3.select("#pie_chart_type_count svg").remove();
+
+  const svgHeight = pie_chart_type_count.clientHeight * 0.9;
+  const svgWidth = pie_chart_type_count.clientWidth * 0.9;
+
+  const radius = Math.min(svgWidth, svgHeight) / 2;
+  const innerRadius = radius / 3;
+
+  const gradientColors = pieChartTypeDistributionData.map((d) => {
+    return pie_chart_type_count_pie_gradient[d.label];
+  });
+
+  // prettier-ignore
+  const svg = d3
+    .select("#pie_chart_type_count")
+    .append("svg")
+    .attr("width", svgWidth)
+    .attr("height", svgHeight);
+
+  // (group element)
+  // prettier-ignore
+  const g = svg
+    .append("g")
+    .attr("transform", "translate(" + svgWidth / 2 + "," + svgHeight / 2 + ")");
+
+  //(pie layout)
+  // prettier-ignore
+  const pie = d3
+    .pie()
+    .padAngle(.03)
+    .value(function (d) {
+    return d.value;
+  });
+
+  // (generate pie chart data)
+  // prettier-ignore
+  const arc = d3
+    .arc()
+    .outerRadius(radius)
+    .innerRadius(innerRadius)
+    .cornerRadius(10);
+
+  // (pass the data without the 0 value)
+  const filteredData = pieChartTypeDistributionData.filter(function (d) {
+    return d.value > 0;
+  });
+
+  // prettier-ignore
+  const arcs = g
+    .selectAll("arc")
+    .data(pie(filteredData))
+    .enter()
+    .append("g");
+
+  //  (draw the pie chart)
+  // prettier-ignore (draw the pie chart)
+  arcs
+    .append("path")
+    .attr("d", arc)
+    .attr("fill", function (d) {
+      return pie_chart_type_count_pie_gradient[d.data.label];
+    })
+    .transition()
+    .duration(1200)
+    .attrTween("d", function (d) {
+      var interpolate = d3.interpolate({ startAngle: 0, endAngle: 0 }, d);
+      return function (t) {
+        return arc(interpolate(t));
+      };
+    });
+
+  // prettier-ignore (add labels)
+  arcs
+    .append("text")
+    .attr("transform", function (d) {
+      return "translate(" + arc.centroid(d) + ")";
+    })
+    .attr("text-anchor", "middle")
+    .text(function (d) {
+      return d.data.value;
+    });
 }
 
 // D3 ↑

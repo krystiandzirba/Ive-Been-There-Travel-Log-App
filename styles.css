@@ -923,7 +923,7 @@ body {
 }
 
 /* ↑ TimelineJS ↑ */
-/* ↓ Travel stats ↓ */
+/* ↓ D3 ↓ */
 
 .main_statistics_container {
   background-color: rgba(42, 42, 42, 0.5);
@@ -960,20 +960,31 @@ body {
   border-image-width: 1px 0 0;
 }
 
-.bar_chart_type_distance_container {
+.bar_chart_type_distance_container,
+.pie_chart_type_count_container {
   position: absolute;
-  left: 65%;
-  top: 2.5%;
-  height: 40vh;
-  width: 32.5vw;
   background-color: #2b333d7e;
   border-radius: 3vh;
+  top: 2.5%;
+  height: 40vh;
 }
 
-.bar_chart_type_distance_container p {
+.bar_chart_type_distance_container {
+  left: 35%;
+  width: 32.5vw;
+}
+
+.pie_chart_type_count_container {
+  left: 70%;
+  width: 27.5vw;
+}
+
+.bar_chart_type_distance_container p,
+.pie_chart_type_count_container p {
   text-align: center;
 }
 
+.pie_chart_type_count,
 .bar_chart_type_distance {
   height: 80%;
   width: 100%;
@@ -981,7 +992,35 @@ body {
   top: 10%;
 }
 
-/* ↑ Travel stats ↑ */
+.pie_chart_type_count {
+  padding-top: 2vh;
+  margin-left: -2vw;
+}
+
+.pie_chart_type_distance_legend {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  left: 75%;
+  top: 17.5%;
+  width: 20%;
+}
+
+.type_distance_legend {
+  display: flex;
+  align-items: center;
+  margin-top: 1.5vh;
+  font-size: 0.9vw;
+}
+
+.type_distance_legend_colorbox {
+  width: 1vw;
+  height: 2vh;
+  border-radius: 0.5vh;
+  margin-right: 0.3vw;
+}
+
+/* ↑ D3 ↑ */
 /* ↓ Other ↓  */
 
 .hidden {
