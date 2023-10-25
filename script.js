@@ -1,4 +1,4 @@
-// ver: 1.3.10
+// ver: 1.3.11
 
 // Bugs:
 
@@ -353,6 +353,15 @@ let temporaryMarkers = L.layerGroup();
 let trueMarkers = L.layerGroup();
 
 // // Leaflet map ↑
+// // D3 ↓
+
+const bar_chart_type_distance = document.getElementById("bar_chart_type_distance");
+
+let type_distance_max_value;
+
+const bar_chart_type_distance_bar_gradient = ["#58508d", "#bc5090", "#ff6361"];
+
+// // D3 ↑
 
 // 1 = local storage / 0 = temporary
 
@@ -374,6 +383,7 @@ let trueMarkers = L.layerGroup();
 /* 0 */ let timelineData = {
   events: [],
 };
+/* 0 */ let bar_chart_type_distance_data = [];
 
 // Variables ↑
 
@@ -968,6 +978,19 @@ function updateTravelStats() {
     highest_distance === Number.NEGATIVE_INFINITY ? "" : "(" + highest_distance_type + ")";
   const lowest_distance_display = lowest_distance === Number.POSITIVE_INFINITY ? "" : "(" + lowest_distance_type + ")";
 
+  type_distance_max_value = (
+    Math.max(
+      total_car_distance,
+      total_plane_distance,
+      total_boat_distance,
+      total_walk_distance,
+      total_bicycle_distance,
+      total_motorcycle_distance,
+      total_train_distance,
+      total_bus_distance
+    ) * 1.1
+  ).toFixed(1);
+
   if (pageSettings.distance_unit == "km") {
     document.getElementById("highest_distance").textContent = formatDistance(display_highest_distance) + " km " + highest_distance_display;
     document.getElementById("lowest_distance").textContent = formatDistance(display_lowest_distance) + " km " + lowest_distance_display;
@@ -1019,6 +1042,8 @@ function updateTravelStats() {
       { label: "Train", value: formatDistance(total_train_distance * 0.6213712) },
       { label: "Bus", value: formatDistance(total_bus_distance * 0.6213712) },
     ];
+
+    type_distance_max_value = type_distance_max_value * 0.6213712;
 
   }
 
@@ -3507,41 +3532,16 @@ test_button.addEventListener("click", () => {
 });
 
 test_button_2.addEventListener("click", () => {
-  // barChartTypeDistanceCreate();
+  console.log(statistics_visibility);
 });
 
 // D3 ↓
 
-let type_distance_max_value;
-
-let bar_chart_type_distance_data = [];
-
-const bar_chart_type_distance_bar_gradient = ["#58508d", "#bc5090", "#ff6361"];
-
 function barChartTypeDistanceCreate() {
-  const chart_div = document.getElementById("bar_chart_type_distance");
-
   d3.select("#bar_chart_type_distance svg").remove();
 
-  type_distance_max_value = (
-    Math.max(
-      total_car_distance,
-      total_plane_distance,
-      total_boat_distance,
-      total_walk_distance,
-      total_bicycle_distance,
-      total_motorcycle_distance,
-      total_train_distance,
-      total_bus_distance
-    ) * 1.1
-  ).toFixed(1);
-
-  if (pageSettings.distance_unit === "mil") {
-    type_distance_max_value = type_distance_max_value * 0.6213712;
-  }
-
-  const svgHeight = chart_div.clientHeight * 1.2;
-  const svgWidth = chart_div.clientWidth;
+  const svgHeight = bar_chart_type_distance.clientHeight * 1.2;
+  const svgWidth = bar_chart_type_distance.clientWidth;
   const margin = { top: 20, right: 20, bottom: 70, left: 60 };
 
   const chartWidth = svgWidth - margin.left - margin.right;
@@ -3581,11 +3581,8 @@ function barChartTypeDistanceCreate() {
     .range([0, chartWidth])
     .padding(0.1);
 
-  // prettier-ignore
-  const yScale = d3
-  .scaleLinear()
-  .domain([0, type_distance_max_value])
-  .range([chartHeight, 0])
+  // prettier-ignore (Y scaled to the highest value)
+  const yScale = d3.scaleLinear().domain([0, type_distance_max_value]).range([chartHeight, 0]);
 
   // prettier-ignore (chart bars)
   chart
@@ -3594,10 +3591,14 @@ function barChartTypeDistanceCreate() {
     .enter()
     .append("rect")
     .attr("x", (d) => xScale(d.label))
-    .attr("y", (d) => yScale(d.value))
+    .attr("y", (d) => chartHeight)
     .attr("width", xScale.bandwidth())
-    .attr("height", (d) => chartHeight - yScale(d.value))
-    .attr("fill", "url(#barGradient");
+    .attr("height", 0)
+    .attr("fill", "url(#barGradient")
+    .transition()
+    .duration(1200)
+    .attr("y", (d) => yScale(d.value))
+    .attr("height", (d) => chartHeight - yScale(d.value));
 
   // prettier ignore (bars distance text display)
   chart
@@ -3607,10 +3608,13 @@ function barChartTypeDistanceCreate() {
     .append("text")
     .text((d) => d.value)
     .attr("x", (d) => xScale(d.label) + xScale.bandwidth() / 2)
-    .attr("y", (d) => yScale(d.value) - 5)
+    .attr("y", (d) => chartHeight - 5)
     .attr("text-anchor", "middle")
     .style("font-size", "15px")
-    .style("fill", "white");
+    .style("fill", "white")
+    .transition()
+    .duration(1000)
+    .attr("y", (d) => yScale(d.value) - 5);
 
   // prettier-ignore (labels display)
   chart
