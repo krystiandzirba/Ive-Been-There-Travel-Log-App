@@ -565,7 +565,7 @@ body {
 }
 
 .travel_type_button {
-  width: 20%;
+  width: 18.5%;
   text-align: center;
   height: 7vh;
   background-color: #26303d;
@@ -961,26 +961,37 @@ body {
 }
 
 .bar_chart_type_distance_container,
-.pie_chart_type_count_container {
+.pie_chart_type_count_container,
+.line_chart_distance_container {
   position: absolute;
-  background-color: #2b333d7e;
+  background-color: #2b333da0;
   border-radius: 3vh;
-  top: 2.5%;
-  height: 40vh;
 }
 
 .bar_chart_type_distance_container {
   left: 35%;
   width: 32.5vw;
+  height: 40vh;
+  top: 2.5%;
 }
 
 .pie_chart_type_count_container {
   left: 70%;
   width: 27.5vw;
+  height: 40vh;
+  top: 2.5%;
+}
+
+.line_chart_distance_container {
+  left: 35%;
+  width: 61vw;
+  height: 52.5vh;
+  top: 44%;
 }
 
 .bar_chart_type_distance_container p,
-.pie_chart_type_count_container p {
+.pie_chart_type_count_container p,
+.line_chart_distance_container p {
   text-align: center;
 }
 
@@ -990,6 +1001,12 @@ body {
   width: 100%;
   position: absolute;
   top: 10%;
+}
+
+.line_chart_distance {
+  width: 100%;
+  height: 100%;
+  position: absolute;
 }
 
 .pie_chart_type_count {
@@ -1018,6 +1035,38 @@ body {
   height: 2vh;
   border-radius: 0.5vh;
   margin-right: 0.3vw;
+}
+
+.line_chart_legend {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 90%;
+  height: 7.5%;
+  position: relative;
+  left: 7.5%;
+  margin-top: 1vh;
+}
+
+.line_chart_legend_colorbox {
+  width: 5vw;
+  height: 0.5vh;
+  border-radius: 1vw;
+  margin-left: 2.75vw;
+}
+
+.line_chart_legend_element {
+  display: flex;
+  align-items: center;
+  width: 30%;
+}
+
+.line_chart_legend_element span {
+  margin-left: 1vw;
+}
+
+.line_chart_legend_element p {
+  margin-left: 3vw;
 }
 
 /* ↑ D3 ↑ */

@@ -1,13 +1,16 @@
-// ver: 1.3.12
+// ver: 1.3.13
 
 // Bugs:
 
 // partially fixed?: - irreproductible, extremely rare chance for countTravelType function to throw an error after trying to access empty markersData array while markersData should never be accessible in this state
+// adding subset travel does not block the sidebar inputs
+// block the bar chart from rendering if all data = 0
 
 // Features to add:
 
 // - black theme for timeline
 // - city search bar
+// - group collapse button gray/white state on collapsed/not collapsed
 
 // - Add driver.js
 // - Add D3 to visualize the statistics data
@@ -358,7 +361,11 @@ const bar_chart_type_distance_bar_gradient = ["#58508d", "#bc5090", "#ff6361"];
 const bar_chart_type_distance_unit_display = document.querySelector("#bar_chart_type_distance_container p");
 const bar_chart_type_distance = document.getElementById("bar_chart_type_distance");
 
+const line_chart_type_distance_unit_display = document.querySelector("#line_chart_distance_container p");
+
 let type_distance_max_value;
+
+let max_line_chart_height_value;
 
 // // D3 ↑
 
@@ -384,6 +391,8 @@ let type_distance_max_value;
 };
 /* 0 */ let barChartTypeDistanceData = [];
 /* 0 */ let pieChartTypeDistributionData = [];
+/* 0 */ let lineChartDistanceData = [];
+/* 0 */ let lineChartTravelLogDataValue = {};
 
 // Variables ↑
 
@@ -756,7 +765,7 @@ sub_overlay_highlights.addEventListener("click", () => {
   }
 
   if (pageSettings.polyline_visibility) {
-    drawPolyline(); // redraw the polyline on top of the highlights
+    drawPolyline(); // (redraw the polyline on top of the highlights)
   }
 
   pageSettings.highlight_visibility = !pageSettings.highlight_visibility;
@@ -895,8 +904,14 @@ sidebar_statistics_button.addEventListener("click", () => {
       toggleStatisticsVisibility(true);
       toggleMainLogContainerVisibility(false);
 
-      barChartTypeDistanceCreate();
-      pieChartTypeDistributionCreate();
+      removeChartsData();
+
+      if (travelLogs.length > 0) {
+        barChartTypeDistanceCreate();
+        pieChartTypeDistributionCreate();
+        lineChartDataRetrieve();
+        lineChartDistanceCreate();
+      }
     } else {
       toggleStatisticsVisibility(false);
       toggleMainLogContainerVisibility(true);
@@ -1355,11 +1370,13 @@ sub_settings_distance_unit.addEventListener("click", () => {
     pageSettings.distance_unit = "mil";
     unit_display.innerHTML = "units [mil]";
     bar_chart_type_distance_unit_display.innerHTML = "distance by travel type [mil]";
+    line_chart_type_distance_unit_display.innerHTML = "distance over time [mil]";
   } else if (pageSettings.distance_unit == "mil") {
     distance_unit = "km";
     pageSettings.distance_unit = "km";
     unit_display.innerHTML = "units [km]";
     bar_chart_type_distance_unit_display.innerHTML = "distance by travel type [km]";
+    line_chart_type_distance_unit_display.innerHTML = "distance over time [km]";
   }
 
   localStorageSavePageSettings();
@@ -1433,7 +1450,7 @@ add_travel_superset_button.addEventListener("click", () => {
     localStorageSavePageSettings();
     localStorageCreateTrueHighlights();
     if (pageSettings.polyline_visibility) {
-      drawPolyline(); // redraw the polyline on top of the highlights
+      drawPolyline(); // (redraw the polyline on top of the highlights)
     }
   }
 
@@ -2256,11 +2273,8 @@ function groupDataSubmit() {
   CRUDGroup = {};
 
   CRUDGroup.CRUD_category = "group";
-
   CRUDGroup.CRUD_group_id = random_id;
-
   CRUDGroup.CRUD_group_name = travel_logs_group_name;
-
   CRUDGroup.CRUD_group_date_start = travel_date_start;
   CRUDGroup.CRUD_group_date_end = travel_date_end;
 
@@ -2283,15 +2297,15 @@ function individualDataSubmit() {
     CRUDSubset = {};
 
     CRUDSubset.CRUD_category = "subset";
-
     CRUDSubset.CRUD_subset_id = random_id;
-
     CRUDSubset.CRUD_subset_name = travel_logs_individual_name;
 
     calculateTotalIdDistance(rawCoordinatesDistances, CRUDSubset.CRUD_subset_id);
 
     CRUDSubset.CRUD_subset_distance = total_id_distance;
     CRUDSubset.CRUD_subset_distance_type = type;
+    CRUDSubset.CRUD_subset_date_start = travel_date_start;
+    CRUDSubset.CRUD_subset_date_end = travel_date_end;
 
     travelLogs.push([
       CRUDSubset.CRUD_subset_name,
@@ -2310,7 +2324,6 @@ function individualDataSubmit() {
     CRUDSuperset = {};
 
     CRUDSuperset.CRUD_category = "superset";
-
     CRUDSuperset.CRUD_superset_id = random_id;
     CRUDSuperset.CRUD_superset_name = travel_logs_individual_name;
 
@@ -2318,6 +2331,8 @@ function individualDataSubmit() {
 
     CRUDSuperset.CRUD_superset_distance = total_id_distance;
     CRUDSuperset.CRUD_superset_distance_type = type;
+    CRUDSuperset.CRUD_superset_date_start = travel_date_start;
+    CRUDSuperset.CRUD_superset_date_end = travel_date_end;
 
     travelLogs.push([
       CRUDSuperset.CRUD_superset_name,
@@ -3309,9 +3324,11 @@ function localStorageLoadPageSettings() {
   if (pageSettings.distance_unit == "km") {
     unit_display.innerHTML = "units [km]";
     bar_chart_type_distance_unit_display.innerHTML = "distance by travel type [km]";
+    line_chart_type_distance_unit_display.innerHTML = "distance over time [km]";
   } else if (pageSettings.distance_unit == "mil") {
     unit_display.innerHTML = "units [mil]";
     bar_chart_type_distance_unit_display.innerHTML = "distance by travel type [mil]";
+    line_chart_type_distance_unit_display.innerHTML = "distance over time [mil]";
   }
 
   if (pageSettings.highlight_visibility === false) {
@@ -3552,8 +3569,6 @@ test_button_2.addEventListener("click", () => {});
 // D3 ↓
 
 function barChartTypeDistanceCreate() {
-  d3.select("#bar_chart_type_distance svg").remove();
-
   const svgHeight = bar_chart_type_distance.clientHeight * 1.2;
   const svgWidth = bar_chart_type_distance.clientWidth;
   const margin = { top: 20, right: 20, bottom: 70, left: 60 };
@@ -3663,17 +3678,11 @@ function barChartTypeDistanceCreate() {
 }
 
 function pieChartTypeDistributionCreate() {
-  d3.select("#pie_chart_type_count svg").remove();
-
   const svgHeight = pie_chart_type_count.clientHeight * 0.9;
   const svgWidth = pie_chart_type_count.clientWidth * 0.9;
 
   const radius = Math.min(svgWidth, svgHeight) / 2;
   const innerRadius = radius / 3;
-
-  const gradientColors = pieChartTypeDistributionData.map((d) => {
-    return pie_chart_type_count_pie_gradient[d.label];
-  });
 
   // prettier-ignore
   const svg = d3
@@ -3743,7 +3752,315 @@ function pieChartTypeDistributionCreate() {
     .attr("text-anchor", "middle")
     .text(function (d) {
       return d.data.value;
+    })
+    .style("opacity", 0)
+    .transition()
+    .duration(1000)
+    .style("opacity", 1)
+    .style("font-family", "Inter, sans-serif")
+    .style("font-weight", "thin")
+    .style("font-size", "20px");
+}
+
+function lineChartDataRetrieve() {
+  if (CRUD.length > 0) {
+    max_line_chart_height_value = total_distance;
+
+    lineChartDistanceData = [];
+    lineChartTravelLogDataValue = {};
+
+    if (pageSettings.distance_unit === "mil") {
+      max_line_chart_height_value *= 0.6213712;
+    }
+
+    for (let i = 0; i < CRUD.length; i++) {
+      if (CRUD[i].CRUD_category === "superset") {
+        let distanceValue = CRUD[i].CRUD_superset_distance;
+
+        if (pageSettings.distance_unit === "km") {
+        } else if (pageSettings.distance_unit === "mil") {
+          distanceValue *= 0.6213712;
+        }
+
+        lineChartTravelLogDataValue = {
+          date_start: CRUD[i].CRUD_superset_date_start,
+          date_end: CRUD[i].CRUD_superset_date_end,
+          name: CRUD[i].CRUD_superset_name,
+          value: distanceValue,
+        };
+        lineChartDistanceData.push(lineChartTravelLogDataValue);
+      } else if (CRUD[i].CRUD_category === "group") {
+        for (let j = 0; j < CRUD[i].CRUD_subset.length; j++) {
+          let distanceValue = CRUD[i].CRUD_subset[j].CRUD_subset_distance;
+
+          if (pageSettings.distance_unit === "km") {
+          } else if (pageSettings.distance_unit === "mil") {
+            distanceValue *= 0.6213712;
+          }
+
+          lineChartTravelLogDataValue = {
+            date_start: CRUD[i].CRUD_subset[j].CRUD_subset_date_start,
+            date_end: CRUD[i].CRUD_subset[j].CRUD_subset_date_end,
+            name: CRUD[i].CRUD_subset[j].CRUD_subset_name,
+            value: distanceValue,
+          };
+
+          lineChartDistanceData.push(lineChartTravelLogDataValue);
+        }
+      }
+    }
+
+    lineChartDistanceData.sort((a, b) => {
+      const dateA = new Date(a.date_start);
+      const dateB = new Date(b.date_start);
+
+      if (dateA < dateB) {
+        return -1;
+      }
+      if (dateA > dateB) {
+        return 1;
+      }
+      return 0;
     });
+  }
+}
+
+function lineChartDistanceCreate() {
+  // (max and min date in data)
+  const minDate = d3.min(lineChartDistanceData, (d) => new Date(d.date_start));
+  const maxDate = d3.max(lineChartDistanceData, (d) => new Date(d.date_end));
+
+  // (date range)
+  const startDate = new Date(minDate);
+  startDate.setDate(startDate.getDate() - 3);
+  const endDate = new Date(maxDate);
+  endDate.setDate(endDate.getDate() + 3);
+
+  let cumulative_sum = 0;
+  const cumulative_data = lineChartDistanceData.map((data) => {
+    cumulative_sum += data.value;
+
+    return {
+      date_start: new Date(data.date_start),
+      cumulative_value: cumulative_sum,
+    };
+  });
+
+  const chart_container = document.getElementById("line_chart_distance");
+  const containerWidth = chart_container.clientWidth;
+  const containerHeight = chart_container.clientHeight;
+
+  const margin = { top: 10, right: 20, bottom: 60, left: 100 };
+  const width = `${containerWidth * 0.975}` - margin.left - margin.right;
+  const height = `${containerHeight * 0.9}` - margin.top - margin.bottom;
+
+  const svg = d3
+    .select("#line_chart_distance")
+    .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", `translate(${margin.left},${margin.top})`);
+
+  // (define X scale)
+  // prettier-ignore
+  const xScale = d3
+  .scaleTime()
+  .domain([startDate, endDate])
+  .range([0, width]);
+
+  // (define Y scale)
+  // prettier-ignore
+  const yScale = d3
+    .scaleLinear()
+    .domain([0, max_line_chart_height_value * 1.1])
+    .range([height, 0]);
+
+  // (create X scale)
+  // prettier-ignore
+  svg.append("g")
+  .attr("transform", `translate(0,${height})`)
+  .call(d3.axisBottom(xScale))
+  .style("font-size", "12px")
+  .style("font-family", "Inter, sans-serif")
+  .style("font-weight", "thin");
+
+  // (create Y scale)
+  // prettier-ignore
+  svg.append("g")
+  .call(d3.axisLeft(yScale))
+  .style("font-size", "12px")
+  .style("font-family", "Inter, sans-serif")
+  .style("font-weight", "thin");
+
+  // (starting and ending date for chart)
+  lineChartDistanceData.forEach((data) => {
+    const dateStart = new Date(data.date_start);
+    const dateEnd = new Date(data.date_end);
+
+    const rectWidth = xScale(dateEnd) - xScale(dateStart);
+
+    // (create data bars)
+    // prettier-ignore
+    svg
+    .append("rect")
+    .attr("x", xScale(dateStart))
+    .attr("y", height)
+    .attr("width", rectWidth)
+    .attr("height", 0)
+    .attr("fill", "#10efff")
+    .style("opacity", 0.5)
+    .transition()
+    .duration(1000)
+    .attr("y", yScale(data.value))
+    .attr("height", height - yScale(data.value));
+  });
+
+  // (X scale label)
+  // prettier-ignore
+  svg
+    .append("text")
+    .attr("transform", `translate(${width / 2},${height + margin.top + 32.5})`)
+    .style("text-anchor", "middle")
+    .text("Date")
+    .style("fill", "white")
+    .style("font-size", "18px")
+    .style("font-family", "Inter, sans-serif")
+    .style("font-weight", "thin");
+
+  // (Y scale label)
+  // prettier-ignore
+  svg
+    .append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("y", 20 - margin.left)
+    .attr("x", 0 - height / 2)
+    .attr("dy", "1em")
+    .style("text-anchor", "middle")
+    .text("Distance")
+    .style("fill", "white")
+    .style("font-size", "18px")
+    .style("font-family", "Inter, sans-serif")
+    .style("font-weight", "thin");
+
+  // (cumulative line gradient)
+  // prettier-ignore
+  const gradient = svg
+    .append("linearGradient")
+    .attr("id", "line-gradient")
+    .attr("x1", "0%")
+    .attr("x2", "100%")
+    .attr("y1", "0%")
+    .attr("y2", "0%");
+
+  // (cumulative line gradient)
+  // prettier-ignore
+  gradient
+    .append("stop")
+    .attr("offset", "0%")
+    .style("stop-color", "#00ff87");
+
+  // (cumulative line gradient)
+  // prettier-ignore
+  gradient
+    .append("stop")
+    .attr("offset", "100%")
+    .style("stop-color", "#f4f269");
+
+  // (line generator for cumulative data)
+  // prettier-ignore
+  const lineGenerator = d3
+    .line()
+    .x((d) => xScale(d.date_start))
+    .y((d) => yScale(d.cumulative_value))
+    .curve(d3.curveBasis);
+
+  // (create a cumulative data line)
+  cumulative_data.unshift({
+    date_start: startDate,
+    cumulative_value: 0,
+  });
+
+  // prettier-ignore
+  svg
+    .append("path")
+    .datum(cumulative_data)
+    .attr("class", "line")
+    .attr("d", lineGenerator)
+    .style("fill", "none")
+    .style("stroke", "url(#line-gradient)")
+    .attr("stroke-width", 4)
+    .style("stroke-dasharray", width)
+    .style("stroke-dashoffset", width)
+    .transition()
+    .duration(1000)
+    .style("stroke-dashoffset", 0);
+
+  // (name and value bar display)
+  lineChartDistanceData.forEach((data) => {
+    const dateStart = new Date(data.date_start);
+    const dateEnd = new Date(data.date_end);
+
+    const rectWidth = xScale(dateEnd) - xScale(dateStart);
+
+    const labelX = xScale(dateStart) + rectWidth / 2;
+    const labelYName = yScale(data.value) - 20;
+    const labelYValue = labelYName + 16;
+
+    svg
+      .append("text")
+      .attr("x", labelX)
+      .attr("y", labelYName)
+      .text(data.name)
+      .style("text-anchor", "middle")
+      .style("fill", "white")
+      .style("font-size", "17px")
+      .style("font-family", "Inter, sans-serif")
+      .style("font-weight", "thin")
+      .style("opacity", 0)
+      .transition()
+      .duration(1000)
+      .style("opacity", 1);
+
+    svg
+      .append("text")
+      .attr("x", labelX)
+      .attr("y", labelYValue)
+      .text(data.value.toFixed(0))
+      .style("text-anchor", "middle")
+      .style("fill", "white")
+      .style("font-size", "12px")
+      .style("font-family", "Inter, sans-serif")
+      .style("font-weight", "thin")
+      .style("opacity", 0)
+      .transition()
+      .duration(1000)
+      .style("opacity", 1);
+  });
+
+  // (tick values from the Y scale)
+  const yTicks = yScale.ticks();
+
+  // (horizontal grid lines)
+  yTicks.forEach((value) => {
+    const yPosition = yScale(value);
+
+    svg
+      .append("line")
+      .attr("x1", 0)
+      .attr("x2", width)
+      .attr("y1", yPosition)
+      .attr("y2", yPosition)
+      .style("stroke", "gray")
+      .style("stroke-dasharray", "5 5")
+      .style("opacity", 0.5);
+  });
+}
+
+function removeChartsData() {
+  d3.select("#bar_chart_type_distance svg").remove();
+  d3.select("#pie_chart_type_count svg").remove();
+  d3.select("#line_chart_distance svg").remove();
 }
 
 // D3 ↑
