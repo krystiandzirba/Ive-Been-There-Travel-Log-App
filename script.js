@@ -1,10 +1,9 @@
-// ver: 1.3.13
+// ver: 1.3.14
 
 // Bugs:
 
 // partially fixed?: - irreproductible, extremely rare chance for countTravelType function to throw an error after trying to access empty markersData array while markersData should never be accessible in this state
 // adding subset travel does not block the sidebar inputs
-// block the bar chart from rendering if all data = 0
 
 // Features to add:
 
@@ -3603,6 +3602,8 @@ function barChartTypeDistanceCreate() {
   const chart = svg
     .append("g")
     .attr("transform", `translate(${margin.left},${margin.top})`);
+
+  barChartTypeDistanceData.sort((a, b) => b.value - a.value);
 
   // prettier-ignore
   const xScale = d3
