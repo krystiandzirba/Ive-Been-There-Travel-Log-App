@@ -1,4 +1,4 @@
-// ver: 1.3.16
+// ver: 1.3.17
 
 // Bugs:
 
@@ -362,6 +362,9 @@ const line_chart_type_distance_unit_display = document.querySelector("#line_char
 let type_distance_max_value;
 
 let max_line_chart_height_value;
+
+let current_resolution = `${window.innerWidth}x${window.innerHeight}`;
+let resolution_change_interval = null;
 
 // // D3 ↑
 
@@ -897,6 +900,8 @@ sidebar_statistics_button.addEventListener("click", () => {
   } else {
     statistics_visibility = toggleIconColor(statistics_visibility, statistics_icon);
     if (statistics_visibility) {
+      startResolutionCheck();
+
       toggleStatisticsVisibility(true);
       toggleMainLogContainerVisibility(false);
       toggleTimelineVisibility(false);
@@ -911,6 +916,8 @@ sidebar_statistics_button.addEventListener("click", () => {
         lineChartDistanceCreate();
       }
     } else {
+      stopResolutionCheck();
+
       toggleStatisticsVisibility(false);
       toggleMainLogContainerVisibility(true);
       toggleTimelineVisibility(true);
@@ -4080,6 +4087,31 @@ function removeChartsData() {
   d3.select("#bar_chart_type_distance svg").remove();
   d3.select("#pie_chart_type_count svg").remove();
   d3.select("#line_chart_distance svg").remove();
+}
+
+function checkResolutionChange() {
+  const newResolution = `${window.innerWidth}x${window.innerHeight}`;
+  if (newResolution !== current_resolution) {
+    current_resolution = newResolution;
+    removeChartsData();
+    barChartTypeDistanceCreate();
+    pieChartTypeDistributionCreate();
+    lineChartDataRetrieve();
+    lineChartDistanceCreate();
+  }
+}
+
+function startResolutionCheck() {
+  if (resolution_change_interval === null) {
+    resolution_change_interval = setInterval(checkResolutionChange, 250);
+  }
+}
+
+function stopResolutionCheck() {
+  if (resolution_change_interval !== null) {
+    clearInterval(resolution_change_interval);
+    resolution_change_interval = null;
+  }
 }
 
 // D3 ↑
