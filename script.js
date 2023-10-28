@@ -1,19 +1,15 @@
-// ver: 1.3.14
+// ver: 1.3.15
 
 // Bugs:
 
 // partially fixed?: - irreproductible, extremely rare chance for countTravelType function to throw an error after trying to access empty markersData array while markersData should never be accessible in this state
-// adding subset travel does not block the sidebar inputs
 
 // Features to add:
 
 // - black theme for timeline
 // - city search bar
 // - group collapse button gray/white state on collapsed/not collapsed
-
 // - Add driver.js
-// - Add D3 to visualize the statistics data
-//       - add continent statistics (how many countries were visited in different continents, how many countries were visited)
 
 // Variables ↓
 // // Sidebar House ↓
@@ -98,35 +94,6 @@ const highlight_status_display = document.querySelector("#sub_overlay_highlights
 const house_status_display = document.querySelector("#sub_overlay_house p");
 
 // // Sidebar Overlay ↑
-// // Sidebar Page Styles ↓
-
-const page_styles_icon = document.getElementById("page_styles_icon");
-
-// // Sidebar Page Styles ↑
-// // Sidebar Timeline ↓
-
-const timeline_container = document.querySelector(".timeline_container");
-const timeline_info = document.querySelector(".timeline_info");
-const timeline = document.querySelector("#timeline");
-const timeline_container_arrow = document.querySelector(".timeline_container_arrow");
-const sidebar_timeline_button = document.getElementById("sidebar_timeline_button");
-const timeline_icon = document.getElementById("timeline_icon");
-
-const timelineOptions = {
-  initial_zoom: 1,
-  timenav_position: "bottom",
-  optimal_tick_width: 100,
-  duration: 400,
-  font: "lustria-lato",
-};
-
-let timeline_visibility = false;
-let timeline_enabled = true;
-
-let timeline_start = "";
-let timeline_end = "";
-
-// // Sidebar Timeline ↑
 // // Sidebar Statistics ↓
 
 const main_statistics_container = document.querySelector(".main_statistics_container");
@@ -154,6 +121,35 @@ let most_common_travel_type = "";
 let statistics_visibility = false;
 
 // // Sidebar Statistics ↑
+// // Sidebar Timeline ↓
+
+const timeline_container = document.querySelector(".timeline_container");
+const timeline_info = document.querySelector(".timeline_info");
+const timeline = document.querySelector("#timeline");
+const timeline_container_arrow = document.querySelector(".timeline_container_arrow");
+const sidebar_timeline_button = document.getElementById("sidebar_timeline_button");
+const timeline_icon = document.getElementById("timeline_icon");
+
+const timelineOptions = {
+  initial_zoom: 1,
+  timenav_position: "bottom",
+  optimal_tick_width: 100,
+  duration: 400,
+  font: "lustria-lato",
+};
+
+let timeline_visibility = false;
+let timeline_enabled = true;
+
+let timeline_start = "";
+let timeline_end = "";
+
+// // Sidebar Timeline ↑
+// // Sidebar Page Styles ↓
+
+const page_styles_icon = document.getElementById("page_styles_icon");
+
+// // Sidebar Page Styles ↑
 // // Sidebar Language ↓
 
 const sidebar_language_button = document.getElementById("sidebar_language_button");
@@ -332,7 +328,7 @@ import leafletConfig from "./LeafletConfig.js";
 
 const { L } = window;
 
-const maxBounds = L.latLngBounds(L.latLng(-90, -180), L.latLng(90, 180));
+const maxBounds = L.latLngBounds(L.latLng(-90, -300), L.latLng(90, 300));
 const map = L.map("map", {
   zoomControl: false,
   maxBounds: maxBounds,
@@ -1013,14 +1009,14 @@ function updateTravelStats() {
     document.getElementById("average_travel_distance").textContent = formatDistance(average_distance) + " km";
 
     document.getElementById("total_distance").textContent = formatDistance(total_distance) + " km";
-    document.getElementById("total_car_distance").textContent = formatDistance(total_car_distance) + " km";
-    document.getElementById("total_plane_distance").textContent = formatDistance(total_plane_distance) + " km";
-    document.getElementById("total_boat_distance").textContent = formatDistance(total_boat_distance) + " km";
-    document.getElementById("total_walk_distance").textContent = formatDistance(total_walk_distance) + " km";
-    document.getElementById("total_bicycle_distance").textContent = formatDistance(total_bicycle_distance) + " km";
-    document.getElementById("total_motorcycle_distance").textContent = formatDistance(total_motorcycle_distance) + " km";
-    document.getElementById("total_train_distance").textContent = formatDistance(total_train_distance) + " km";
-    document.getElementById("total_bus_distance").textContent = formatDistance(total_bus_distance) + " km";
+  //  document.getElementById("total_car_distance").textContent = formatDistance(total_car_distance) + " km";
+  // document.getElementById("total_plane_distance").textContent = formatDistance(total_plane_distance) + " km";
+  // document.getElementById("total_boat_distance").textContent = formatDistance(total_boat_distance) + " km";
+  //  document.getElementById("total_walk_distance").textContent = formatDistance(total_walk_distance) + " km";
+  //  document.getElementById("total_bicycle_distance").textContent = formatDistance(total_bicycle_distance) + " km";
+  //  document.getElementById("total_motorcycle_distance").textContent = formatDistance(total_motorcycle_distance) + " km";
+  //  document.getElementById("total_train_distance").textContent = formatDistance(total_train_distance) + " km";
+  //   document.getElementById("total_bus_distance").textContent = formatDistance(total_bus_distance) + " km";
 
     barChartTypeDistanceData = [
       { label: "Car", value: formatDistance(total_car_distance) },
@@ -1039,14 +1035,14 @@ function updateTravelStats() {
     document.getElementById("average_travel_distance").textContent = formatDistance(average_distance * 0.6213712) + " mil";
 
     document.getElementById("total_distance").textContent = formatDistance(total_distance * 0.6213712) + " mil";
-    document.getElementById("total_car_distance").textContent = formatDistance(total_car_distance * 0.6213712) + " mil";
-    document.getElementById("total_plane_distance").textContent = formatDistance(total_plane_distance * 0.6213712) + " mil";
-    document.getElementById("total_boat_distance").textContent = formatDistance(total_boat_distance * 0.6213712) + " mil";
-    document.getElementById("total_walk_distance").textContent = formatDistance(total_walk_distance * 0.6213712) + " mil";
-    document.getElementById("total_bicycle_distance").textContent = formatDistance(total_bicycle_distance * 0.6213712) + " mil";
-    document.getElementById("total_motorcycle_distance").textContent = formatDistance(total_motorcycle_distance * 0.6213712) + " mil";
-    document.getElementById("total_train_distance").textContent = formatDistance(total_train_distance * 0.6213712) + " mil";
-    document.getElementById("total_bus_distance").textContent = formatDistance(total_bus_distance * 0.6213712) + " mil";
+  //  document.getElementById("total_car_distance").textContent = formatDistance(total_car_distance * 0.6213712) + " mil";
+  //  document.getElementById("total_plane_distance").textContent = formatDistance(total_plane_distance * 0.6213712) + " mil";
+  //  document.getElementById("total_boat_distance").textContent = formatDistance(total_boat_distance * 0.6213712) + " mil";
+  //  document.getElementById("total_walk_distance").textContent = formatDistance(total_walk_distance * 0.6213712) + " mil";
+  //  document.getElementById("total_bicycle_distance").textContent = formatDistance(total_bicycle_distance * 0.6213712) + " mil";
+  //  document.getElementById("total_motorcycle_distance").textContent = formatDistance(total_motorcycle_distance * 0.6213712) + " mil";
+  //  document.getElementById("total_train_distance").textContent = formatDistance(total_train_distance * 0.6213712) + " mil";
+  //  document.getElementById("total_bus_distance").textContent = formatDistance(total_bus_distance * 0.6213712) + " mil";
 
     barChartTypeDistanceData = [
       { label: "Car", value: formatDistance(total_car_distance * 0.6213712) },
@@ -2596,6 +2592,7 @@ function buildCRUD() {
         toggleMainLogContainerVisibility(false);
         toggleTimelineVisibility(false);
         toggleStatisticsVisibility(false);
+        toggleSidebarCover(true);
         if (statistics_visibility) {
           statistics_visibility = toggleIconColor(statistics_visibility, statistics_icon);
         }
@@ -3713,7 +3710,7 @@ function pieChartTypeDistributionCreate() {
     .arc()
     .outerRadius(radius)
     .innerRadius(innerRadius)
-    .cornerRadius(10);
+    .cornerRadius(5);
 
   // (pass the data without the 0 value)
   const filteredData = pieChartTypeDistributionData.filter(function (d) {
