@@ -1,4 +1,4 @@
-// ver: 1.3.15
+// ver: 1.3.16
 
 // Bugs:
 
@@ -240,8 +240,9 @@ let travel_logs_group_input = document.getElementById("travel_logs_group_input")
 // // Travel log group ↑
 // // Travel log individual ↓
 
-const sidebar_covers = document.querySelectorAll(".sidebar_cover");
-const travel_creator_covers = document.querySelectorAll(".travel_creator_cover");
+const sidebar_covers = document.querySelectorAll(".travel_creator_cover");
+const travel_creator_covers = document.querySelectorAll(".travel_type_cover");
+const statistics_covers = document.querySelectorAll(".statistics_cover");
 
 const jscolor_highlight_container = document.querySelector(".jscolor_highlight_container");
 const jscolor_highlight = document.getElementById("jscolor_highlight");
@@ -898,6 +899,8 @@ sidebar_statistics_button.addEventListener("click", () => {
     if (statistics_visibility) {
       toggleStatisticsVisibility(true);
       toggleMainLogContainerVisibility(false);
+      toggleTimelineVisibility(false);
+      toggleStatisticsCover(true);
 
       removeChartsData();
 
@@ -910,6 +913,8 @@ sidebar_statistics_button.addEventListener("click", () => {
     } else {
       toggleStatisticsVisibility(false);
       toggleMainLogContainerVisibility(true);
+      toggleTimelineVisibility(true);
+      toggleStatisticsCover(false);
     }
   }
 });
@@ -1650,6 +1655,12 @@ travel_creator_covers.forEach((element) => {
   });
 });
 
+statistics_covers.forEach((element) => {
+  element.addEventListener("click", () => {
+    displayInfoBox("You cannot customize the travel log once you've added markers to the map.", 3000);
+  });
+});
+
 jscolor_highlight_container.addEventListener("click", () => {
   if (highlight_color_opacity_customization == false) {
     displayInfoBox("Cannot change highlight settings after the marker was placed on the map.", 2500);
@@ -1960,6 +1971,16 @@ function toggleSidebarCover(toggle) {
 
 function toggleTravelCreatorCover(toggle) {
   travel_creator_covers.forEach((element) => {
+    if (toggle) {
+      element.style.display = "block";
+    } else {
+      element.style.display = "none";
+    }
+  });
+}
+
+function toggleStatisticsCover(toggle) {
+  statistics_covers.forEach((element) => {
     if (toggle) {
       element.style.display = "block";
     } else {

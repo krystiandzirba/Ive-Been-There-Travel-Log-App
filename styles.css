@@ -454,8 +454,9 @@ body {
   margin: 0 0 2vh 1.5%;
 }
 
-.sidebar_cover,
-.travel_creator_cover {
+.travel_creator_cover,
+.travel_type_cover,
+.statistics_cover {
   display: none;
   z-index: 900;
   position: absolute;
@@ -491,6 +492,18 @@ body {
 .input_cover {
   height: 37%;
   width: 96.5%;
+}
+
+.statistics_cover_a {
+  top: 1.5%;
+  height: 25.25%;
+  width: 88%;
+}
+
+.statistics_cover_b {
+  top: 35.85%;
+  height: 35.25%;
+  width: 88%;
 }
 
 .data_grid_container {

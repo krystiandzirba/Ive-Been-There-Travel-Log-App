@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>I've been there! - Travel log app v1.3.15</title>
+    <title>I've been there! - Travel log app v1.3.16</title>
     <link rel="icon" type="image/x-icon" href="assets/images/globe_icon_black.png" />
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -24,7 +24,6 @@
     <script type="text/javascript" src="assets/data/SmoothMarkerBouncing/bundle.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-
     <!-- prettier-ignore -->
     <script src="https://cdn.knightlab.com/libs/timeline3/latest/js/timeline.js"></script>
     <link rel="stylesheet" href="https://cdn.knightlab.com/libs/timeline3/latest/css/timeline.css" />
@@ -52,7 +51,8 @@
     <div id="map"></div>
 
     <div id="sidebar_buttons_container" class="sidebar_buttons_container">
-      <div id="sidebar_cover" class="sidebar_cover house_cover"></div>
+      <div id="travel_creator_cover" class="travel_creator_cover house_cover"></div>
+      <div id="statistics_cover" class="statistics_cover statistics_cover_a"></div>
       <button id="sidebar_house_button" class="sidebar_main_button">
         <i class="fa-solid fa-home fa-2xl" style="color: #c9c9c9" id="house_icon"></i>
         <p>house</p>
@@ -65,11 +65,12 @@
         <i class="fa-solid fa-circle-half-stroke fa-2xl" style="color: #c9c9c9" id="overlay_icon"></i>
         <p>overlay</p>
       </button>
-      <div id="sidebar_cover" class="sidebar_cover page_styles_cover"></div>
+      <div id="travel_creator_cover" class="travel_creator_cover page_styles_cover"></div>
       <button id="sidebar_statistics_button" class="sidebar_main_button">
         <i class="fa-solid fa-chart-simple fa-2xl" style="color: #d7d7d726" id="statistics_icon"></i>
         <p>statistics</p>
       </button>
+      <div id="statistics_cover" class="statistics_cover statistics_cover_b"></div>
       <button id="sidebar_timeline_button" class="sidebar_main_button">
         <i class="fa-solid fa-timeline fa-2xl" style="color: #c9c9c9" id="timeline_icon"> </i>
         <p>timeline</p>
@@ -264,7 +265,7 @@
         </div>
       </div>
 
-      <div id="travel_creator_cover" class="travel_creator_cover customization_cover"></div>
+      <div id="travel_type_cover" class="travel_type_cover customization_cover"></div>
       <div class="travel_logs_individual_customization_grid_container">
         <div class="individual_customization_grid_cell">
           <p>highlight color:</p>
@@ -303,7 +304,7 @@
       </div>
 
       <div class="travel_type_container">
-        <div id="travel_creator_cover" class="travel_creator_cover input_cover"></div>
+        <div id="travel_type_cover" class="travel_type_cover input_cover"></div>
         <p>travel type:</p>
         <div class="travel_type_sub_container_a">
           <button id="travel_type_car" class="travel_type_button">
@@ -429,7 +430,7 @@
       <img id="custom_cursor_image" src="assets/images/car_icon_small.png" />
     </div>
 
-    <div class="app_version">ver: 1.3.15</div>
+    <div class="app_version">ver: 1.3.16</div>
 
     <div id="info_box">
       <p id="info_box_text"></p>
