@@ -1,12 +1,9 @@
-// ver: 1.3.17
+// ver: 1.3.18
 
 // Bugs:
 
-// partially fixed?: - irreproductible, extremely rare chance for countTravelType function to throw an error after trying to access empty markersData array while markersData should never be accessible in this state
-
 // Features to add:
 
-// - black theme for timeline
 // - city search bar
 // - group collapse button gray/white state on collapsed/not collapsed
 // - Add driver.js
@@ -357,8 +354,6 @@ const bar_chart_type_distance_bar_gradient = ["#58508d", "#bc5090", "#ff6361"];
 const bar_chart_type_distance_unit_display = document.querySelector("#bar_chart_type_distance_container p");
 const bar_chart_type_distance = document.getElementById("bar_chart_type_distance");
 
-const line_chart_type_distance_unit_display = document.querySelector("#line_chart_distance_container p");
-
 let type_distance_max_value;
 
 let max_line_chart_height_value;
@@ -390,8 +385,10 @@ let resolution_change_interval = null;
 };
 /* 0 */ let barChartTypeDistanceData = [];
 /* 0 */ let pieChartTypeDistributionData = [];
-/* 0 */ let lineChartDistanceData = [];
+/* 0 */ let lineChartTravelLogData = [];
 /* 0 */ let lineChartTravelLogDataValue = {};
+/* 0 */ let lineChartGroupData = [];
+/* 0 */ let lineChartGroupDataValue = {};
 
 // Variables ↑
 
@@ -1377,13 +1374,11 @@ sub_settings_distance_unit.addEventListener("click", () => {
     pageSettings.distance_unit = "mil";
     unit_display.innerHTML = "units [mil]";
     bar_chart_type_distance_unit_display.innerHTML = "distance by travel type [mil]";
-    line_chart_type_distance_unit_display.innerHTML = "distance over time [mil]";
   } else if (pageSettings.distance_unit == "mil") {
     distance_unit = "km";
     pageSettings.distance_unit = "km";
     unit_display.innerHTML = "units [km]";
     bar_chart_type_distance_unit_display.innerHTML = "distance by travel type [km]";
-    line_chart_type_distance_unit_display.innerHTML = "distance over time [km]";
   }
 
   localStorageSavePageSettings();
@@ -3348,11 +3343,9 @@ function localStorageLoadPageSettings() {
   if (pageSettings.distance_unit == "km") {
     unit_display.innerHTML = "units [km]";
     bar_chart_type_distance_unit_display.innerHTML = "distance by travel type [km]";
-    line_chart_type_distance_unit_display.innerHTML = "distance over time [km]";
   } else if (pageSettings.distance_unit == "mil") {
     unit_display.innerHTML = "units [mil]";
     bar_chart_type_distance_unit_display.innerHTML = "distance by travel type [mil]";
-    line_chart_type_distance_unit_display.innerHTML = "distance over time [mil]";
   }
 
   if (pageSettings.highlight_visibility === false) {
@@ -3391,205 +3384,6 @@ function localStorageSetMapLayer() {
 }
 
 // Local Storage ↑
-
-// Loading progress info ↓
-
-showAppTitle();
-
-function showAppTitle() {
-  title_screen_background.style.left = "20%";
-  title_screen_background.style.transform = "translateX(-50%)";
-  title_screen_background.style.top = "30%";
-  title_screen_background.style.transform = "translateY(-50%)";
-}
-
-function hideAppTitle() {
-  title_screen_background.style.left = "90%";
-  title_screen_background.style.transform = "translateX(-50%)";
-  title_screen_background.style.top = "30%";
-  title_screen_background.style.transform = "translateY(-50%)";
-}
-
-function trackLoadingProgress(resources, progressInfoDisplay, onLoadingComplete) {
-  const totalResources = resources.length;
-  let loadedResources = 0;
-  let currentResourceIndex = 0;
-
-  function loadNextResource() {
-    if (currentResourceIndex < totalResources) {
-      const resource = resources[currentResourceIndex];
-      const resourceUrl = resource.url;
-      const label = resource.label;
-
-      fetch(resourceUrl)
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(`Failed to fetch ${resourceUrl}`);
-          }
-          return response;
-        })
-        .then(() => {
-          loadedResources++;
-          const progress = (loadedResources / totalResources) * 100;
-          progressInfoDisplay(label, progress);
-
-          currentResourceIndex++;
-          loadNextResource();
-        })
-        .catch((error) => {
-          console.error(error);
-          loadedResources++;
-          currentResourceIndex++;
-          loadNextResource();
-        });
-    } else {
-      onLoadingComplete();
-    }
-  }
-
-  loadNextResource();
-}
-
-const resourcesToLoad = [
-  { url: "styles.css", label: "Main CSS" },
-  { url: "assets/data/LeafletMap/leaflet.css", label: "Leaflet CSS" },
-  { url: "assets/data/DateRangePicker/daterangepicker.css", label: "DateRangePicker CSS" },
-  { url: "assets/data/FontAwesome/css/all.min.css", label: "FontAwesome CSS" },
-  { url: "script.js", label: "Main JS" },
-  { url: "assets/data/LeafletMap/leaflet.js", label: "Leaflet JS" },
-  { url: "assets/data/JScolor/jscolor.js", label: "JScolor JS" },
-  { url: "assets/data/Jquery/jquery.js", label: "Jquery JS" },
-  { url: "assets/data/Moment/moment.min.js", label: "Moment JS" },
-  { url: "assets/data/DateRangePicker/daterangepicker.js", label: "DateRangePicker JS" },
-  { url: "assets/data/LeafletEdgeBuffer/leaflet.edgebuffer.js", label: "Leaflet EdgeBuffer JS" },
-  { url: "assets/data/LeafletGridLayerFadeOut/Leaflet.GridLayer.FadeOut.js", label: "Leaflet Grid Layer Fade-out JS" },
-  { url: "assets/data/SmoothMarkerBouncing/bundle.js", label: "SmoothMarkerBouncing JS" },
-
-  // { url: "https://cdn.knightlab.com/libs/timeline3/latest/js/timeline.js", label: "TimelineJS JS" },
-  // { url: "https://cdn.knightlab.com/libs/timeline3/latest/css/timeline.css", label: "TimelineJS CSS" },
-];
-
-function progressInfoDisplay(label, progress) {
-  progress_info.textContent = ` ${label} (Progress: ${progress.toFixed(2)}%)`;
-}
-
-function onLoadingComplete() {
-  localStorageLoadPageSettings();
-  localStorageLoadTrueHighlights();
-  localStorageLoadTravelLogs();
-  localStorageLoadMarkerCoordinates();
-  localStorageLoadCRUD();
-
-  localStorageLoadHomeData();
-
-  localStorageCreateStoredIds();
-  localStorageCreateTimelineData(travelLogs, timelineData);
-
-  if (pageSettings.highlight_visibility === true) {
-    localStorageCreateTrueHighlights();
-  }
-
-  drawPolyline();
-  if (pageSettings.polyline_visibility === false) {
-    togglePolylineVisibility();
-    overlay_polylines_active = toggleIconColor(overlay_polylines_active, sub_polylines_icon);
-    polyline_status_display.innerHTML = `<s>polylines</s>`;
-  }
-
-  timelineInfoToggle();
-  populateTimeline();
-  buildCRUD();
-
-  localStorageCreateTrueMarkers(pageSettings.markers_size, pageSettings.markers_anchor);
-
-  if (pageSettings.house_visibility === true) {
-    localStorageCreateHomeMarkerAndCircle();
-  }
-
-  localStorageSetMapLayer();
-  calculateDistances();
-  distancesBreakdown(rawCoordinatesDistances);
-  calculateTotalDistances(rawCoordinatesDistances);
-
-  if (markersData.length > 0) {
-    updateTravelStats();
-  }
-
-  hideAppTitle();
-  progress_info.textContent = "All resources loaded!";
-
-  setTimeout(() => {
-    if (timelineData.events.length > 0) {
-      toggleTimelineVisibility(true);
-    }
-  }, 1500);
-
-  setTimeout(() => {
-    plane_icon_animation.classList.add("loading_page_fade_out_fast");
-    globe_icon_animation.classList.add("loading_page_fade_out_fast");
-    removeLoadingPageContent();
-  }, 500);
-}
-trackLoadingProgress(resourcesToLoad, progressInfoDisplay, onLoadingComplete);
-
-// Loading progress info ↑
-
-// Info popup ↓
-
-function displayInfoBox(text, time) {
-  clearTimeout(info_box_timeout_show);
-  clearTimeout(info_box_timeout_hide);
-
-  info_box_text.textContent = text;
-  info_box.style.display = "flex";
-  info_box.style.opacity = 1;
-
-  info_box_timeout_show = setTimeout(function () {
-    info_box.style.opacity = 0;
-
-    info_box_timeout_hide = setTimeout(function () {
-      info_box.style.display = "none";
-    }, 300);
-  }, time);
-}
-
-// Info popup ↑
-
-// // ---------- TEST ---------- ↓
-
-test_button.addEventListener("click", () => {
-  console.log("-1- pageSettings", pageSettings);
-  console.log("-1- homeData", homeData);
-  console.log("-1- markersData", markersData);
-  console.log("-1- travelLogs", travelLogs);
-  console.log("-1- CRUD", CRUD);
-  console.log("-1- trueHighlights", trueHighlights);
-  console.log("-0- highlights", highlights);
-  console.log("-0- markers", markers);
-  console.log("-0- polylines", polylines);
-  console.log("-0- storedIds", storedIds);
-  console.log("-0- rawCoordinatesDistances", rawCoordinatesDistances);
-  console.log("-0- timelineData", timelineData);
-
-  console.log("-0- barChartTypeDistanceData", barChartTypeDistanceData);
-  console.log("-0- pieChartTypeDistributionData", pieChartTypeDistributionData);
-
-  // console.log("Highest Distance:", highest_distance.toFixed(2), "km");
-  // console.log("Lowest Distance:", lowest_distance.toFixed(2), "km");
-  // console.log("Total Distance:", total_distance.toFixed(2), "km");
-
-  // console.log("Total Car Distance:", total_car_distance.toFixed(2), "km");
-  // console.log("Total Plane Distance:", total_plane_distance.toFixed(2), "km");
-  // console.log("Total Boat Distance:", total_boat_distance.toFixed(2), "km");
-  // console.log("Total Walk Distance:", total_walk_distance.toFixed(2), "km");
-  // console.log("Total Bicycle Distance:", total_bicycle_distance.toFixed(2), "km");
-  // console.log("Total Motorcycle Distance:", total_motorcycle_distance.toFixed(2), "km");
-  // console.log("Total Train Distance:", total_train_distance.toFixed(2), "km");
-  // console.log("Total Bus Distance:", total_bus_distance.toFixed(2), "km");
-});
-
-test_button_2.addEventListener("click", () => {});
-
 // D3 ↓
 
 function barChartTypeDistanceCreate() {
@@ -3792,8 +3586,11 @@ function lineChartDataRetrieve() {
   if (CRUD.length > 0) {
     max_line_chart_height_value = total_distance;
 
-    lineChartDistanceData = [];
+    lineChartTravelLogData = [];
     lineChartTravelLogDataValue = {};
+
+    lineChartGroupData = [];
+    lineChartGroupDataValue = {};
 
     if (pageSettings.distance_unit === "mil") {
       max_line_chart_height_value *= 0.6213712;
@@ -3814,8 +3611,16 @@ function lineChartDataRetrieve() {
           name: CRUD[i].CRUD_superset_name,
           value: distanceValue,
         };
-        lineChartDistanceData.push(lineChartTravelLogDataValue);
+        lineChartTravelLogData.push(lineChartTravelLogDataValue);
       } else if (CRUD[i].CRUD_category === "group") {
+        lineChartGroupDataValue = {
+          group_date_start: CRUD[i].CRUD_group_date_start,
+          group_date_end: CRUD[i].CRUD_group_date_end,
+          group_name: CRUD[i].CRUD_group_name,
+        };
+
+        lineChartGroupData.push(lineChartGroupDataValue);
+
         for (let j = 0; j < CRUD[i].CRUD_subset.length; j++) {
           let distanceValue = CRUD[i].CRUD_subset[j].CRUD_subset_distance;
 
@@ -3831,12 +3636,12 @@ function lineChartDataRetrieve() {
             value: distanceValue,
           };
 
-          lineChartDistanceData.push(lineChartTravelLogDataValue);
+          lineChartTravelLogData.push(lineChartTravelLogDataValue);
         }
       }
     }
 
-    lineChartDistanceData.sort((a, b) => {
+    lineChartTravelLogData.sort((a, b) => {
       const dateA = new Date(a.date_start);
       const dateB = new Date(b.date_start);
 
@@ -3852,18 +3657,24 @@ function lineChartDataRetrieve() {
 }
 
 function lineChartDistanceCreate() {
-  // (max and min date in data)
-  const minDate = d3.min(lineChartDistanceData, (d) => new Date(d.date_start));
-  const maxDate = d3.max(lineChartDistanceData, (d) => new Date(d.date_end));
+  // (min and max dates from both datasets)
+  const minDateTravelLog = d3.min(lineChartTravelLogData, (d) => new Date(d.date_start));
+  const maxDateTravelLog = d3.max(lineChartTravelLogData, (d) => new Date(d.date_end));
 
-  // (date range)
+  const minDateGroup = d3.min(lineChartGroupData, (d) => new Date(d.group_date_start));
+  const maxDateGroup = d3.max(lineChartGroupData, (d) => new Date(d.group_date_end));
+
+  const minDate = new Date(Math.min(minDateTravelLog, minDateGroup));
+  const maxDate = new Date(Math.max(maxDateTravelLog, maxDateGroup));
+
+  // (set the chart date range)
   const startDate = new Date(minDate);
   startDate.setDate(startDate.getDate() - 3);
   const endDate = new Date(maxDate);
   endDate.setDate(endDate.getDate() + 3);
 
   let cumulative_sum = 0;
-  const cumulative_data = lineChartDistanceData.map((data) => {
+  const cumulative_data = lineChartTravelLogData.map((data) => {
     cumulative_sum += data.value;
 
     return {
@@ -3876,9 +3687,11 @@ function lineChartDistanceCreate() {
   const containerWidth = chart_container.clientWidth;
   const containerHeight = chart_container.clientHeight;
 
-  const margin = { top: 10, right: 20, bottom: 60, left: 100 };
-  const width = `${containerWidth * 0.975}` - margin.left - margin.right;
-  const height = `${containerHeight * 0.9}` - margin.top - margin.bottom;
+  const margin = { top: 40, right: 20, bottom: 30, left: 200 };
+  const width = containerWidth * 0.975 - margin.left - margin.right;
+  const height = containerHeight * 0.995 - margin.top - margin.bottom;
+
+  let unitText;
 
   const svg = d3
     .select("#line_chart_distance")
@@ -3891,85 +3704,71 @@ function lineChartDistanceCreate() {
   // (define X scale)
   // prettier-ignore
   const xScale = d3
-  .scaleTime()
-  .domain([startDate, endDate])
-  .range([0, width]);
+    .scaleTime()
+    .domain([startDate, endDate])
+    .range([0, width]);
 
   // (define Y scale)
   // prettier-ignore
   const yScale = d3
     .scaleLinear()
-    .domain([0, max_line_chart_height_value * 1.1])
+    .domain([0, max_line_chart_height_value * 1.15])
     .range([height, 0]);
 
   // (create X scale)
   // prettier-ignore
   svg.append("g")
-  .attr("transform", `translate(0,${height})`)
-  .call(d3.axisBottom(xScale))
-  .style("font-size", "12px")
-  .style("font-family", "Inter, sans-serif")
-  .style("font-weight", "thin");
+    .attr("transform", `translate(0,${height})`)
+    .call(d3.axisBottom(xScale))
+    .style("font-size", "12px")
+    .style("font-family", "Inter, sans-serif")
+    .style("font-weight", "thin");
 
   // (create Y scale)
   // prettier-ignore
   svg.append("g")
-  .call(d3.axisLeft(yScale))
-  .style("font-size", "12px")
-  .style("font-family", "Inter, sans-serif")
-  .style("font-weight", "thin");
+    .call(d3.axisLeft(yScale))
+    .style("font-size", "12px")
+    .style("font-family", "Inter, sans-serif")
+    .style("font-weight", "thin");
 
   // (starting and ending date for chart)
-  lineChartDistanceData.forEach((data) => {
+  lineChartTravelLogData.forEach((data) => {
     const dateStart = new Date(data.date_start);
     const dateEnd = new Date(data.date_end);
 
     const rectWidth = xScale(dateEnd) - xScale(dateStart);
 
+    unitText = pageSettings.distance_unit === "mil" ? "mil" : "km";
+
     // (create data bars)
     // prettier-ignore
     svg
-    .append("rect")
-    .attr("x", xScale(dateStart))
-    .attr("y", height)
-    .attr("width", rectWidth)
-    .attr("height", 0)
-    .attr("fill", "#10efff")
-    .style("opacity", 0.5)
-    .transition()
-    .duration(1000)
-    .attr("y", yScale(data.value))
-    .attr("height", height - yScale(data.value));
+      .append("rect")
+      .attr("x", xScale(dateStart))
+      .attr("y", height)
+      .attr("width", rectWidth)
+      .attr("height", 0)
+      .attr("fill", "#5cd1ff")
+      .style("opacity", 1)
+      .transition()
+      .duration(1000)
+      .attr("y", yScale(data.value))
+      .attr("height", height - yScale(data.value));
   });
 
   // (X scale label)
   // prettier-ignore
   svg
     .append("text")
-    .attr("transform", `translate(${width / 2},${height + margin.top + 32.5})`)
+    .attr("transform", `translate(${width / 2},${height / -40})`)
     .style("text-anchor", "middle")
-    .text("Date")
+    .text(`Distance over time [${unitText}]`)
     .style("fill", "white")
     .style("font-size", "18px")
     .style("font-family", "Inter, sans-serif")
     .style("font-weight", "thin");
 
-  // (Y scale label)
-  // prettier-ignore
-  svg
-    .append("text")
-    .attr("transform", "rotate(-90)")
-    .attr("y", 20 - margin.left)
-    .attr("x", 0 - height / 2)
-    .attr("dy", "1em")
-    .style("text-anchor", "middle")
-    .text("Distance")
-    .style("fill", "white")
-    .style("font-size", "18px")
-    .style("font-family", "Inter, sans-serif")
-    .style("font-weight", "thin");
-
-  // (cumulative line gradient)
   // prettier-ignore
   const gradient = svg
     .append("linearGradient")
@@ -3979,14 +3778,12 @@ function lineChartDistanceCreate() {
     .attr("y1", "0%")
     .attr("y2", "0%");
 
-  // (cumulative line gradient)
   // prettier-ignore
   gradient
     .append("stop")
     .attr("offset", "0%")
     .style("stop-color", "#00ff87");
 
-  // (cumulative line gradient)
   // prettier-ignore
   gradient
     .append("stop")
@@ -4020,10 +3817,23 @@ function lineChartDistanceCreate() {
     .style("stroke-dashoffset", width)
     .transition()
     .duration(1000)
-    .style("stroke-dashoffset", 0);
+    .style("stroke-dashoffset", 0)
+
+  const lastDataPoint = cumulative_data[cumulative_data.length - 1];
+
+  svg
+    .append("text")
+    .attr("x", xScale(lastDataPoint.date_start))
+    .attr("y", yScale(lastDataPoint.cumulative_value) - 10)
+    .text(`${max_line_chart_height_value.toFixed(0)} ${unitText}`)
+    .attr("text-anchor", "middle")
+    .attr("fill", "white")
+    .style("font-size", "12px")
+    .style("font-family", "Inter, sans-serif")
+    .style("font-weight", "thin");
 
   // (name and value bar display)
-  lineChartDistanceData.forEach((data) => {
+  lineChartTravelLogData.forEach((data) => {
     const dateStart = new Date(data.date_start);
     const dateEnd = new Date(data.date_end);
 
@@ -4052,7 +3862,7 @@ function lineChartDistanceCreate() {
       .append("text")
       .attr("x", labelX)
       .attr("y", labelYValue)
-      .text(data.value.toFixed(0))
+      .text(data.value.toFixed(0) + ` ${unitText}`)
       .style("text-anchor", "middle")
       .style("fill", "white")
       .style("font-size", "12px")
@@ -4080,6 +3890,58 @@ function lineChartDistanceCreate() {
       .style("stroke", "gray")
       .style("stroke-dasharray", "5 5")
       .style("opacity", 0.5);
+  });
+
+  lineChartGroupData.forEach((data) => {
+    const groupStart = new Date(data.group_date_start);
+    const groupEnd = new Date(data.group_date_end);
+
+    const rectWidth = xScale(groupEnd) - xScale(groupStart);
+
+    const barGradient = svg
+      .append("defs")
+      .append("linearGradient")
+      .attr("id", "bar-gradient")
+      .attr("x1", "0%")
+      .attr("x2", "0%")
+      .attr("y1", "0%")
+      .attr("y2", "100%");
+
+    // prettier-ignore
+    barGradient
+      .append("stop")
+      .attr("offset", "0%")
+      .style("stop-color", "#5cffd6");
+
+    //prettier-ignore
+    barGradient
+      .append("stop")
+      .attr("offset", "100%")
+      .style("stop-opacity", 0);
+
+    svg
+      .append("rect")
+      .attr("x", xScale(groupStart))
+      .attr("y", 2.5)
+      .attr("width", rectWidth)
+      .attr("height", 0)
+      .attr("fill", "url(#bar-gradient)")
+      .attr("stroke", "url(#bar-gradient)")
+      .attr("stroke-width", 2)
+      .style("opacity", 0.15)
+      .transition()
+      .duration(1000)
+      .attr("y", 2.5)
+      .attr("height", height);
+
+    svg
+      .append("text")
+      .attr("x", xScale(groupStart) + rectWidth / 2)
+      .attr("y", height / 15 - 7.5)
+      .text(data.group_name)
+      .attr("text-anchor", "middle")
+      .attr("fill", "white")
+      .style("opacity", 1);
   });
 }
 
@@ -4115,3 +3977,199 @@ function stopResolutionCheck() {
 }
 
 // D3 ↑
+// Loading progress info ↓
+
+showAppTitle();
+
+function showAppTitle() {
+  title_screen_background.style.left = "20%";
+  title_screen_background.style.transform = "translateX(-50%)";
+  title_screen_background.style.top = "30%";
+  title_screen_background.style.transform = "translateY(-50%)";
+}
+
+function hideAppTitle() {
+  title_screen_background.style.left = "90%";
+  title_screen_background.style.transform = "translateX(-50%)";
+  title_screen_background.style.top = "30%";
+  title_screen_background.style.transform = "translateY(-50%)";
+}
+
+function trackLoadingProgress(resources, progressInfoDisplay, onLoadingComplete) {
+  const totalResources = resources.length;
+  let loadedResources = 0;
+  let currentResourceIndex = 0;
+
+  function loadNextResource() {
+    if (currentResourceIndex < totalResources) {
+      const resource = resources[currentResourceIndex];
+      const resourceUrl = resource.url;
+      const label = resource.label;
+
+      fetch(resourceUrl)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`Failed to fetch ${resourceUrl}`);
+          }
+          return response;
+        })
+        .then(() => {
+          loadedResources++;
+          const progress = (loadedResources / totalResources) * 100;
+          progressInfoDisplay(label, progress);
+
+          currentResourceIndex++;
+          loadNextResource();
+        })
+        .catch((error) => {
+          console.error(error);
+          loadedResources++;
+          currentResourceIndex++;
+          loadNextResource();
+        });
+    } else {
+      onLoadingComplete();
+    }
+  }
+
+  loadNextResource();
+}
+
+const resourcesToLoad = [
+  { url: "styles.css", label: "Main CSS" },
+  { url: "assets/data/LeafletMap/leaflet.css", label: "Leaflet CSS" },
+  { url: "assets/data/DateRangePicker/daterangepicker.css", label: "DateRangePicker CSS" },
+  { url: "assets/data/FontAwesome/css/all.min.css", label: "FontAwesome CSS" },
+  { url: "script.js", label: "Main JS" },
+  { url: "assets/data/LeafletMap/leaflet.js", label: "Leaflet JS" },
+  { url: "assets/data/JScolor/jscolor.js", label: "JScolor JS" },
+  { url: "assets/data/Jquery/jquery.js", label: "Jquery JS" },
+  { url: "assets/data/Moment/moment.min.js", label: "Moment JS" },
+  { url: "assets/data/DateRangePicker/daterangepicker.js", label: "DateRangePicker JS" },
+  { url: "assets/data/LeafletEdgeBuffer/leaflet.edgebuffer.js", label: "Leaflet EdgeBuffer JS" },
+  { url: "assets/data/LeafletGridLayerFadeOut/Leaflet.GridLayer.FadeOut.js", label: "Leaflet Grid Layer Fade-out JS" },
+  { url: "assets/data/SmoothMarkerBouncing/bundle.js", label: "SmoothMarkerBouncing JS" },
+
+  // { url: "https://cdn.knightlab.com/libs/timeline3/latest/js/timeline.js", label: "TimelineJS JS" },
+  // { url: "https://cdn.knightlab.com/libs/timeline3/latest/css/timeline.css", label: "TimelineJS CSS" },
+];
+
+function progressInfoDisplay(label, progress) {
+  progress_info.textContent = ` ${label} (Progress: ${progress.toFixed(2)}%)`;
+}
+
+function onLoadingComplete() {
+  localStorageLoadPageSettings();
+  localStorageLoadTrueHighlights();
+  localStorageLoadTravelLogs();
+  localStorageLoadMarkerCoordinates();
+  localStorageLoadCRUD();
+
+  localStorageLoadHomeData();
+
+  localStorageCreateStoredIds();
+  localStorageCreateTimelineData(travelLogs, timelineData);
+
+  if (pageSettings.highlight_visibility === true) {
+    localStorageCreateTrueHighlights();
+  }
+
+  drawPolyline();
+  if (pageSettings.polyline_visibility === false) {
+    togglePolylineVisibility();
+    overlay_polylines_active = toggleIconColor(overlay_polylines_active, sub_polylines_icon);
+    polyline_status_display.innerHTML = `<s>polylines</s>`;
+  }
+
+  timelineInfoToggle();
+  populateTimeline();
+  buildCRUD();
+
+  localStorageCreateTrueMarkers(pageSettings.markers_size, pageSettings.markers_anchor);
+
+  if (pageSettings.house_visibility === true) {
+    localStorageCreateHomeMarkerAndCircle();
+  }
+
+  localStorageSetMapLayer();
+  calculateDistances();
+  distancesBreakdown(rawCoordinatesDistances);
+  calculateTotalDistances(rawCoordinatesDistances);
+
+  if (markersData.length > 0) {
+    updateTravelStats();
+  }
+
+  hideAppTitle();
+  progress_info.textContent = "All resources loaded!";
+
+  setTimeout(() => {
+    if (timelineData.events.length > 0) {
+      toggleTimelineVisibility(true);
+    }
+  }, 1500);
+
+  setTimeout(() => {
+    plane_icon_animation.classList.add("loading_page_fade_out_fast");
+    globe_icon_animation.classList.add("loading_page_fade_out_fast");
+    removeLoadingPageContent();
+  }, 500);
+}
+trackLoadingProgress(resourcesToLoad, progressInfoDisplay, onLoadingComplete);
+
+// Loading progress info ↑
+// Info popup ↓
+
+function displayInfoBox(text, time) {
+  clearTimeout(info_box_timeout_show);
+  clearTimeout(info_box_timeout_hide);
+
+  info_box_text.textContent = text;
+  info_box.style.display = "flex";
+  info_box.style.opacity = 1;
+
+  info_box_timeout_show = setTimeout(function () {
+    info_box.style.opacity = 0;
+
+    info_box_timeout_hide = setTimeout(function () {
+      info_box.style.display = "none";
+    }, 300);
+  }, time);
+}
+
+// Info popup ↑
+
+// // ---------- TEST ---------- ↓
+
+test_button.addEventListener("click", () => {
+  console.log("-1- pageSettings", pageSettings);
+  console.log("-1- homeData", homeData);
+  console.log("-1- markersData", markersData);
+  console.log("-1- travelLogs", travelLogs);
+  console.log("-1- CRUD", CRUD);
+  console.log("-1- trueHighlights", trueHighlights);
+  console.log("-0- highlights", highlights);
+  console.log("-0- markers", markers);
+  console.log("-0- polylines", polylines);
+  console.log("-0- storedIds", storedIds);
+  console.log("-0- rawCoordinatesDistances", rawCoordinatesDistances);
+  console.log("-0- timelineData", timelineData);
+
+  console.log("-0- barChartTypeDistanceData", barChartTypeDistanceData);
+  console.log("-0- pieChartTypeDistributionData", pieChartTypeDistributionData);
+
+  // console.log("Highest Distance:", highest_distance.toFixed(2), "km");
+  // console.log("Lowest Distance:", lowest_distance.toFixed(2), "km");
+  // console.log("Total Distance:", total_distance.toFixed(2), "km");
+
+  // console.log("Total Car Distance:", total_car_distance.toFixed(2), "km");
+  // console.log("Total Plane Distance:", total_plane_distance.toFixed(2), "km");
+  // console.log("Total Boat Distance:", total_boat_distance.toFixed(2), "km");
+  // console.log("Total Walk Distance:", total_walk_distance.toFixed(2), "km");
+  // console.log("Total Bicycle Distance:", total_bicycle_distance.toFixed(2), "km");
+  // console.log("Total Motorcycle Distance:", total_motorcycle_distance.toFixed(2), "km");
+  // console.log("Total Train Distance:", total_train_distance.toFixed(2), "km");
+  // console.log("Total Bus Distance:", total_bus_distance.toFixed(2), "km");
+});
+
+test_button_2.addEventListener("click", () => {});
