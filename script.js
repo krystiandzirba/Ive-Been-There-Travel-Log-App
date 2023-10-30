@@ -1,4 +1,4 @@
-// ver: 1.3.18
+// ver: 1.3.19
 
 // Bugs:
 
@@ -361,6 +361,8 @@ let max_line_chart_height_value;
 let current_resolution = `${window.innerWidth}x${window.innerHeight}`;
 let resolution_change_interval = null;
 
+let unitText;
+
 // // D3 ↑
 
 // 1 = local storage / 0 = temporary
@@ -389,6 +391,7 @@ let resolution_change_interval = null;
 /* 0 */ let lineChartTravelLogDataValue = {};
 /* 0 */ let lineChartGroupData = [];
 /* 0 */ let lineChartGroupDataValue = {};
+/* 0 */ let basicStatisticsData = [];
 
 // Variables ↑
 
@@ -911,6 +914,7 @@ sidebar_statistics_button.addEventListener("click", () => {
         pieChartTypeDistributionCreate();
         lineChartDataRetrieve();
         lineChartDistanceCreate();
+        basicStatisticsChartCreate();
       }
     } else {
       stopResolutionCheck();
@@ -991,6 +995,7 @@ function distancesBreakdown(distances) {
 // prettier-ignore
 function updateTravelStats() {
   barChartTypeDistanceData = [];
+  basicStatisticsData = [];
 
   const display_highest_distance = highest_distance === Number.NEGATIVE_INFINITY ? 0 : highest_distance;
   const display_lowest_distance = lowest_distance === Number.POSITIVE_INFINITY ? 0 : lowest_distance;
@@ -1038,6 +1043,13 @@ function updateTravelStats() {
       { label: "Bus", value: formatDistance(total_bus_distance) },
     ];
 
+    basicStatisticsData = [
+      {label: "total", value: formatDistance(total_distance)},
+      {label: "average", value: formatDistance(average_distance)},
+      {label: "highest", value: formatDistance(display_highest_distance)},
+      {label: "lowest", value: formatDistance(display_lowest_distance)},
+    ]
+
   } else if (pageSettings.distance_unit == "mil") {
     document.getElementById("highest_distance").textContent = formatDistance(display_highest_distance * 0.6213712) + " mil " + highest_distance_display;
     document.getElementById("lowest_distance").textContent = formatDistance(display_lowest_distance * 0.6213712) + " mil " + lowest_distance_display;
@@ -1063,6 +1075,13 @@ function updateTravelStats() {
       { label: "Train", value: formatDistance(total_train_distance * 0.6213712) },
       { label: "Bus", value: formatDistance(total_bus_distance * 0.6213712) },
     ];
+
+    basicStatisticsData = [
+      {label: "highest", value: formatDistance(display_highest_distance* 0.6213712)},
+      {label: "lowest", value: formatDistance(display_lowest_distance* 0.6213712)},
+      {label: "average", value: formatDistance(average_distance* 0.6213712)},
+      {label: "total", value: formatDistance(total_distance* 0.6213712)}
+    ]
 
     type_distance_max_value = type_distance_max_value * 0.6213712;
 
@@ -3557,7 +3576,7 @@ function pieChartTypeDistributionCreate() {
     .transition()
     .duration(1200)
     .attrTween("d", function (d) {
-      var interpolate = d3.interpolate({ startAngle: 0, endAngle: 0 }, d);
+      const interpolate = d3.interpolate({ startAngle: 0, endAngle: 0 }, d);
       return function (t) {
         return arc(interpolate(t));
       };
@@ -3658,14 +3677,18 @@ function lineChartDataRetrieve() {
 
 function lineChartDistanceCreate() {
   // (min and max dates from both datasets)
-  const minDateTravelLog = d3.min(lineChartTravelLogData, (d) => new Date(d.date_start));
-  const maxDateTravelLog = d3.max(lineChartTravelLogData, (d) => new Date(d.date_end));
+  const minDateTravelLog =
+    lineChartTravelLogData.length > 0 ? d3.min(lineChartTravelLogData, (d) => new Date(d.date_start)) : null;
+  const maxDateTravelLog =
+    lineChartTravelLogData.length > 0 ? d3.max(lineChartTravelLogData, (d) => new Date(d.date_end)) : null;
 
-  const minDateGroup = d3.min(lineChartGroupData, (d) => new Date(d.group_date_start));
-  const maxDateGroup = d3.max(lineChartGroupData, (d) => new Date(d.group_date_end));
+  const minDateGroup =
+    lineChartGroupData.length > 0 ? d3.min(lineChartGroupData, (d) => new Date(d.group_date_start)) : null;
+  const maxDateGroup =
+    lineChartGroupData.length > 0 ? d3.max(lineChartGroupData, (d) => new Date(d.group_date_end)) : null;
 
-  const minDate = new Date(Math.min(minDateTravelLog, minDateGroup));
-  const maxDate = new Date(Math.max(maxDateTravelLog, maxDateGroup));
+  const minDate = new Date(Math.min(minDateTravelLog || Infinity, minDateGroup || Infinity));
+  const maxDate = new Date(Math.max(maxDateTravelLog || -Infinity, maxDateGroup || -Infinity));
 
   // (set the chart date range)
   const startDate = new Date(minDate);
@@ -3690,8 +3713,6 @@ function lineChartDistanceCreate() {
   const margin = { top: 40, right: 20, bottom: 30, left: 200 };
   const width = containerWidth * 0.975 - margin.left - margin.right;
   const height = containerHeight * 0.995 - margin.top - margin.bottom;
-
-  let unitText;
 
   const svg = d3
     .select("#line_chart_distance")
@@ -3945,10 +3966,124 @@ function lineChartDistanceCreate() {
   });
 }
 
+function basicStatisticsChartCreate() {
+  unitText = pageSettings.distance_unit === "mil" ? "mil" : "km";
+
+  const svgHeight = bar_chart_basic_statistics.clientHeight * 1.075;
+  const svgWidth = bar_chart_basic_statistics.clientWidth;
+  const margin = { top: 20, right: 20, bottom: 77.5, left: 45 };
+
+  const chartWidth = svgWidth - margin.left - margin.right;
+  const chartHeight = svgHeight - margin.top - margin.bottom;
+
+  const svg = d3
+    .select("#bar_chart_basic_statistics")
+    .append("svg")
+    .attr("width", chartWidth + margin.left + margin.right)
+    .attr("height", chartHeight + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", `translate(${margin.left},${margin.top})`);
+
+  // (defining X scale)
+  const xScale = d3
+    .scaleBand()
+    .domain(basicStatisticsData.map((d) => d.label))
+    .range([0, chartWidth])
+    .padding(0.1);
+
+  // (defining Y scale)
+  // prettier-ignore
+  const yScale = d3
+  .scaleLinear()
+  .domain([0, total_distance * 1.025])
+  .nice()
+  .range([chartHeight, 0]);
+
+  // (Creating the bars)
+  svg
+    .selectAll(".bar")
+    .data(basicStatisticsData)
+    .enter()
+    .append("rect")
+    .attr("class", "bar")
+    .attr("x", (d) => xScale(d.label))
+    .attr("y", chartHeight)
+    .attr("width", xScale.bandwidth())
+    .attr("height", 0)
+    .attr("fill", "#acd1ff")
+    .transition()
+    .duration(1000)
+    .attr("y", (d) => yScale(d.value))
+    .attr("height", (d) => chartHeight - yScale(d.value));
+
+  // (displaying bar values)
+  svg
+    .selectAll(".bar-label")
+    .data(basicStatisticsData)
+    .enter()
+    .append("text")
+    .attr("class", "bar-label")
+    .attr("x", (d) => xScale(d.label) + xScale.bandwidth() / 2)
+    .attr("y", chartHeight) // Start from the bottom of the chart
+    .style("fill", "white")
+    .style("font-size", "12px")
+    .style("font-family", "Inter, sans-serif")
+    .style("font-weight", "thin")
+    .attr("text-anchor", "middle")
+    .text((d) => `${d.value} ${unitText}`)
+    .transition()
+    .duration(1000)
+    .attr("y", (d) => yScale(d.value) - 5);
+
+  // ("distance X axis label under every bar")
+  // prettier-ignore
+  svg
+    .selectAll(".bar-distance-label")
+    .data(basicStatisticsData)
+    .enter()
+    .append("text")
+    .attr("class", "bar-distance-label")
+    .attr("x", (d) => xScale(d.label) + xScale.bandwidth() / 2)
+    .attr("y", chartHeight + 35)
+    .style("text-anchor", "middle")
+    .style("fill", "white")
+    .style("font-size", "12px")
+    .style("font-family", "Inter, sans-serif")
+    .style("font-weight", "thin")
+    .text("distance");
+
+  // (Adding X axis)
+  // prettier-ignore
+  svg
+  .append("g")
+  .attr("class", "x-axis")
+  .attr("transform", `translate(0,${chartHeight})`)
+  .call(
+    d3
+      .axisBottom(xScale)
+      .tickFormat((d) => {
+        return d;
+      })
+  )
+  .selectAll("text")
+  .style("fill", "white")
+  .style("font-size", "12px")
+  .style("font-family", "Inter, sans-serif");
+
+  // (Adding Y axis)
+  // prettier-ignore
+  svg
+  .append("g")
+  .attr("class", "y-axis")
+  .call(d3.axisLeft(yScale)
+  .ticks(5));
+}
+
 function removeChartsData() {
   d3.select("#bar_chart_type_distance svg").remove();
   d3.select("#pie_chart_type_count svg").remove();
   d3.select("#line_chart_distance svg").remove();
+  d3.select("#bar_chart_basic_statistics svg").remove();
 }
 
 function checkResolutionChange() {
@@ -3960,6 +4095,7 @@ function checkResolutionChange() {
     pieChartTypeDistributionCreate();
     lineChartDataRetrieve();
     lineChartDistanceCreate();
+    basicStatisticsChartCreate();
   }
 }
 
@@ -4158,9 +4294,9 @@ test_button.addEventListener("click", () => {
   console.log("-0- barChartTypeDistanceData", barChartTypeDistanceData);
   console.log("-0- pieChartTypeDistributionData", pieChartTypeDistributionData);
 
-  // console.log("Highest Distance:", highest_distance.toFixed(2), "km");
-  // console.log("Lowest Distance:", lowest_distance.toFixed(2), "km");
-  // console.log("Total Distance:", total_distance.toFixed(2), "km");
+  console.log("Highest Distance:", highest_distance.toFixed(2), "km");
+  console.log("Lowest Distance:", lowest_distance.toFixed(2), "km");
+  console.log("Total Distance:", total_distance.toFixed(2), "km");
 
   // console.log("Total Car Distance:", total_car_distance.toFixed(2), "km");
   // console.log("Total Plane Distance:", total_plane_distance.toFixed(2), "km");

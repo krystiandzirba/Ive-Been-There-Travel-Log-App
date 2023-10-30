@@ -975,7 +975,8 @@ body {
 
 .bar_chart_type_distance_container,
 .pie_chart_type_count_container,
-.line_chart_distance_container {
+.line_chart_distance_container,
+.bar_chart_basic_statistics_container {
   position: absolute;
   background-color: #2b333da0;
   border-radius: 3vh;
@@ -1002,9 +1003,17 @@ body {
   top: 44%;
 }
 
+.bar_chart_basic_statistics_container {
+  left: 1%;
+  width: 27.5vw;
+  height: 52.5vh;
+  top: 44%;
+}
+
 .bar_chart_type_distance_container p,
 .pie_chart_type_count_container p,
-.line_chart_distance_container p {
+.line_chart_distance_container p,
+.bar_chart_basic_statistics_container p {
   text-align: center;
 }
 
@@ -1017,6 +1026,12 @@ body {
 }
 
 .line_chart_distance {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+
+.bar_chart_basic_statistics {
   width: 100%;
   height: 100%;
   position: absolute;
@@ -1179,12 +1194,12 @@ body {
 
 .test_button {
   height: 50px;
-  width: 100px;
+  width: 50px;
   position: absolute;
   z-index: 2000;
   cursor: pointer;
-  display: none;
-  /* display: flex; */
+  /* display: none; */
+  display: flex;
   text-align: center;
   border: black, 2px, solid;
   transform: translate(-50%, -50%);
@@ -1192,12 +1207,12 @@ body {
 
 .t1 {
   top: 75%;
-  left: 10%;
+  left: 3%;
   background-color: rgb(255, 128, 126);
 }
 
 .t2 {
   top: 80%;
-  left: 10%;
+  left: 3%;
   background-color: rgb(160, 255, 126);
 }
