@@ -1,4 +1,4 @@
-// ver: 1.4.1
+// ver: 1.4.2
 
 // Bugs:
 
@@ -373,6 +373,7 @@ const pie_chart_type_count = document.getElementById("pie_chart_type_count");
 
 const bar_chart_type_distance_bar_gradient = ["#58508d", "#bc5090", "#ff6361"];
 const bar_chart_type_distance_unit_display = document.querySelector("#bar_chart_type_distance_container p");
+const basic_statistics_chart_display = document.querySelector("#bar_chart_basic_statistics_container p");
 const bar_chart_type_distance = document.getElementById("bar_chart_type_distance");
 
 let type_distance_max_value;
@@ -1385,11 +1386,13 @@ sub_settings_distance_unit.addEventListener("click", () => {
     pageSettings.distance_unit = "mil";
     unit_display.innerHTML = "units [mil]";
     bar_chart_type_distance_unit_display.innerHTML = "distance by travel type [mil]";
+    basic_statistics_chart_display.innerHTML = "basic statistics [mil]";
   } else if (pageSettings.distance_unit == "mil") {
     distance_unit = "km";
     pageSettings.distance_unit = "km";
     unit_display.innerHTML = "units [km]";
     bar_chart_type_distance_unit_display.innerHTML = "distance by travel type [km]";
+    basic_statistics_chart_display.innerHTML = "basic statistics [km]";
   }
 
   localStorageSavePageSettings();
@@ -3354,9 +3357,11 @@ function localStorageLoadPageSettings() {
   if (pageSettings.distance_unit == "km") {
     unit_display.innerHTML = "units [km]";
     bar_chart_type_distance_unit_display.innerHTML = "distance by travel type [km]";
+    basic_statistics_chart_display.innerHTML = "basic statistics [km]";
   } else if (pageSettings.distance_unit == "mil") {
     unit_display.innerHTML = "units [mil]";
     bar_chart_type_distance_unit_display.innerHTML = "distance by travel type [mil]";
+    basic_statistics_chart_display.innerHTML = "basic statistics [mil]";
   }
 
   if (pageSettings.highlight_visibility === false) {
@@ -3436,6 +3441,80 @@ function getContinentsForHighlights(data) {
   countries_visited_asia = continents.Asia && continents.Asia.length > 0 ? continents.Asia.length : 0;
   // prettier-ignore
   countries_visited_africa = continents.Africa && continents.Africa.length > 0 ? continents.Africa.length : 0;
+}
+
+function lineChartDataRetrieve() {
+  if (CRUD.length > 0) {
+    max_line_chart_height_value = total_distance;
+
+    lineChartTravelLogData = [];
+    lineChartTravelLogDataValue = {};
+
+    lineChartGroupData = [];
+    lineChartGroupDataValue = {};
+
+    if (pageSettings.distance_unit === "mil") {
+      max_line_chart_height_value *= 0.6213712;
+    }
+
+    for (let i = 0; i < CRUD.length; i++) {
+      if (CRUD[i].CRUD_category === "superset") {
+        let distanceValue = CRUD[i].CRUD_superset_distance;
+
+        if (pageSettings.distance_unit === "km") {
+        } else if (pageSettings.distance_unit === "mil") {
+          distanceValue *= 0.6213712;
+        }
+
+        lineChartTravelLogDataValue = {
+          date_start: CRUD[i].CRUD_superset_date_start,
+          date_end: CRUD[i].CRUD_superset_date_end,
+          name: CRUD[i].CRUD_superset_name,
+          value: distanceValue,
+        };
+        lineChartTravelLogData.push(lineChartTravelLogDataValue);
+      } else if (CRUD[i].CRUD_category === "group") {
+        lineChartGroupDataValue = {
+          group_date_start: CRUD[i].CRUD_group_date_start,
+          group_date_end: CRUD[i].CRUD_group_date_end,
+          group_name: CRUD[i].CRUD_group_name,
+        };
+
+        lineChartGroupData.push(lineChartGroupDataValue);
+
+        for (let j = 0; j < CRUD[i].CRUD_subset.length; j++) {
+          let distanceValue = CRUD[i].CRUD_subset[j].CRUD_subset_distance;
+
+          if (pageSettings.distance_unit === "km") {
+          } else if (pageSettings.distance_unit === "mil") {
+            distanceValue *= 0.6213712;
+          }
+
+          lineChartTravelLogDataValue = {
+            date_start: CRUD[i].CRUD_subset[j].CRUD_subset_date_start,
+            date_end: CRUD[i].CRUD_subset[j].CRUD_subset_date_end,
+            name: CRUD[i].CRUD_subset[j].CRUD_subset_name,
+            value: distanceValue,
+          };
+
+          lineChartTravelLogData.push(lineChartTravelLogDataValue);
+        }
+      }
+    }
+
+    lineChartTravelLogData.sort((a, b) => {
+      const dateA = new Date(a.date_start);
+      const dateB = new Date(b.date_start);
+
+      if (dateA < dateB) {
+        return -1;
+      }
+      if (dateA > dateB) {
+        return 1;
+      }
+      return 0;
+    });
+  }
 }
 
 function updateStatisticsProgressBars() {
@@ -3733,78 +3812,117 @@ function pieChartTypeDistributionCreate() {
     .style("font-size", "20px");
 }
 
-function lineChartDataRetrieve() {
-  if (CRUD.length > 0) {
-    max_line_chart_height_value = total_distance;
+function basicStatisticsChartCreate() {
+  unitText = pageSettings.distance_unit === "mil" ? "mil" : "km";
 
-    lineChartTravelLogData = [];
-    lineChartTravelLogDataValue = {};
+  const svgHeight = bar_chart_basic_statistics.clientHeight * 1.075;
+  const svgWidth = bar_chart_basic_statistics.clientWidth;
+  const margin = { top: 5, right: 20, bottom: 130, left: 50 };
 
-    lineChartGroupData = [];
-    lineChartGroupDataValue = {};
+  const chartWidth = svgWidth - margin.left - margin.right;
+  const chartHeight = svgHeight - margin.top - margin.bottom;
 
-    if (pageSettings.distance_unit === "mil") {
-      max_line_chart_height_value *= 0.6213712;
-    }
+  const svg = d3
+    .select("#bar_chart_basic_statistics")
+    .append("svg")
+    .attr("width", chartWidth + margin.left + margin.right)
+    .attr("height", chartHeight + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    for (let i = 0; i < CRUD.length; i++) {
-      if (CRUD[i].CRUD_category === "superset") {
-        let distanceValue = CRUD[i].CRUD_superset_distance;
+  // (defining X scale)
+  const xScale = d3
+    .scaleBand()
+    .domain(basicStatisticsData.map((d) => d.label))
+    .range([0, chartWidth])
+    .padding(0.1);
 
-        if (pageSettings.distance_unit === "km") {
-        } else if (pageSettings.distance_unit === "mil") {
-          distanceValue *= 0.6213712;
-        }
+  // (defining Y scale)
+  // prettier-ignore
+  const yScale = d3
+    .scaleLinear()
+    .domain([0, max_line_chart_height_value * 1.0125])
+    .nice()
+    .range([chartHeight, 0]);
 
-        lineChartTravelLogDataValue = {
-          date_start: CRUD[i].CRUD_superset_date_start,
-          date_end: CRUD[i].CRUD_superset_date_end,
-          name: CRUD[i].CRUD_superset_name,
-          value: distanceValue,
-        };
-        lineChartTravelLogData.push(lineChartTravelLogDataValue);
-      } else if (CRUD[i].CRUD_category === "group") {
-        lineChartGroupDataValue = {
-          group_date_start: CRUD[i].CRUD_group_date_start,
-          group_date_end: CRUD[i].CRUD_group_date_end,
-          group_name: CRUD[i].CRUD_group_name,
-        };
+  // (Creating the bars)
+  svg
+    .selectAll(".bar")
+    .data(basicStatisticsData)
+    .enter()
+    .append("rect")
+    .attr("class", "bar")
+    .attr("x", (d) => xScale(d.label))
+    .attr("y", chartHeight)
+    .attr("width", xScale.bandwidth())
+    .attr("height", 0)
+    .attr("fill", "#acd1ff")
+    .transition()
+    .duration(1000)
+    .attr("y", (d) => yScale(d.value))
+    .attr("height", (d) => chartHeight - yScale(d.value));
 
-        lineChartGroupData.push(lineChartGroupDataValue);
+  // (displaying bar values)
+  svg
+    .selectAll(".bar-label")
+    .data(basicStatisticsData)
+    .enter()
+    .append("text")
+    .attr("class", "bar-label")
+    .attr("x", (d) => xScale(d.label) + xScale.bandwidth() / 2)
+    .attr("y", chartHeight)
+    .style("fill", "white")
+    .style("font-size", "12px")
+    .style("font-family", "Inter, sans-serif")
+    .style("font-weight", "thin")
+    .attr("text-anchor", "middle")
+    .text((d) => `${d.value} ${unitText}`)
+    .transition()
+    .duration(1000)
+    .attr("y", (d) => yScale(d.value) - 5);
 
-        for (let j = 0; j < CRUD[i].CRUD_subset.length; j++) {
-          let distanceValue = CRUD[i].CRUD_subset[j].CRUD_subset_distance;
+  // ("distance X axis label under every bar")
+  // prettier-ignore
+  svg
+    .selectAll(".bar-distance-label")
+    .data(basicStatisticsData)
+    .enter()
+    .append("text")
+    .attr("class", "bar-distance-label")
+    .attr("x", (d) => xScale(d.label) + xScale.bandwidth() / 2)
+    .attr("y", chartHeight + 35)
+    .style("text-anchor", "middle")
+    .style("fill", "white")
+    .style("font-size", "12px")
+    .style("font-family", "Inter, sans-serif")
+    .style("font-weight", "thin")
+    .text("distance");
 
-          if (pageSettings.distance_unit === "km") {
-          } else if (pageSettings.distance_unit === "mil") {
-            distanceValue *= 0.6213712;
-          }
+  // (Adding X axis)
+  // prettier-ignore
+  svg
+  .append("g")
+  .attr("class", "x-axis")
+  .attr("transform", `translate(0,${chartHeight})`)
+  .call(
+    d3
+      .axisBottom(xScale)
+      .tickFormat((d) => {
+        return d;
+      })
+  )
+  .selectAll("text")
+  .style("fill", "white")
+  .style("font-size", "12px")
+  .style("font-family", "Inter, sans-serif");
 
-          lineChartTravelLogDataValue = {
-            date_start: CRUD[i].CRUD_subset[j].CRUD_subset_date_start,
-            date_end: CRUD[i].CRUD_subset[j].CRUD_subset_date_end,
-            name: CRUD[i].CRUD_subset[j].CRUD_subset_name,
-            value: distanceValue,
-          };
-
-          lineChartTravelLogData.push(lineChartTravelLogDataValue);
-        }
-      }
-    }
-
-    lineChartTravelLogData.sort((a, b) => {
-      const dateA = new Date(a.date_start);
-      const dateB = new Date(b.date_start);
-
-      if (dateA < dateB) {
-        return -1;
-      }
-      if (dateA > dateB) {
-        return 1;
-      }
-      return 0;
-    });
-  }
+  // (Adding Y axis)
+  // prettier-ignore
+  svg
+  .append("g")
+  .attr("class", "y-axis")
+  .call(d3.axisLeft(yScale)
+  .ticks(5));
 }
 
 function lineChartDistanceCreate() {
@@ -3842,7 +3960,7 @@ function lineChartDistanceCreate() {
   const containerWidth = chart_container.clientWidth;
   const containerHeight = chart_container.clientHeight;
 
-  const margin = { top: 40, right: 20, bottom: 30, left: 200 };
+  const margin = { top: 40, right: 20, bottom: 30, left: 150 };
   const width = containerWidth * 0.975 - margin.left - margin.right;
   const height = containerHeight * 0.995 - margin.top - margin.bottom;
 
@@ -3914,11 +4032,11 @@ function lineChartDistanceCreate() {
   // prettier-ignore
   svg
     .append("text")
-    .attr("transform", `translate(${width / 2},${height / -40})`)
+    .attr("transform", `translate(${width / 2},${height / -25})`)
     .style("text-anchor", "middle")
     .text(`Distance over time [${unitText}]`)
     .style("fill", "white")
-    .style("font-size", "18px")
+    .style("font-size", "2vh")
     .style("font-family", "Inter, sans-serif")
     .style("font-weight", "thin");
 
@@ -3935,7 +4053,7 @@ function lineChartDistanceCreate() {
   gradient
     .append("stop")
     .attr("offset", "0%")
-    .style("stop-color", "#00ff87");
+    .style("stop-color", "rgba(0, 255, 135, 0.1)");
 
   // prettier-ignore
   gradient
@@ -4096,119 +4214,6 @@ function lineChartDistanceCreate() {
       .attr("fill", "white")
       .style("opacity", 1);
   });
-}
-
-function basicStatisticsChartCreate() {
-  unitText = pageSettings.distance_unit === "mil" ? "mil" : "km";
-
-  const svgHeight = bar_chart_basic_statistics.clientHeight * 1.075;
-  const svgWidth = bar_chart_basic_statistics.clientWidth;
-  const margin = { top: 20, right: 20, bottom: 77.5, left: 45 };
-
-  const chartWidth = svgWidth - margin.left - margin.right;
-  const chartHeight = svgHeight - margin.top - margin.bottom;
-
-  const svg = d3
-    .select("#bar_chart_basic_statistics")
-    .append("svg")
-    .attr("width", chartWidth + margin.left + margin.right)
-    .attr("height", chartHeight + margin.top + margin.bottom)
-    .append("g")
-    .attr("transform", `translate(${margin.left},${margin.top})`);
-
-  // (defining X scale)
-  const xScale = d3
-    .scaleBand()
-    .domain(basicStatisticsData.map((d) => d.label))
-    .range([0, chartWidth])
-    .padding(0.1);
-
-  // (defining Y scale)
-  // prettier-ignore
-  const yScale = d3
-  .scaleLinear()
-  .domain([0, total_distance * 1.025])
-  .nice()
-  .range([chartHeight, 0]);
-
-  // (Creating the bars)
-  svg
-    .selectAll(".bar")
-    .data(basicStatisticsData)
-    .enter()
-    .append("rect")
-    .attr("class", "bar")
-    .attr("x", (d) => xScale(d.label))
-    .attr("y", chartHeight)
-    .attr("width", xScale.bandwidth())
-    .attr("height", 0)
-    .attr("fill", "#acd1ff")
-    .transition()
-    .duration(1000)
-    .attr("y", (d) => yScale(d.value))
-    .attr("height", (d) => chartHeight - yScale(d.value));
-
-  // (displaying bar values)
-  svg
-    .selectAll(".bar-label")
-    .data(basicStatisticsData)
-    .enter()
-    .append("text")
-    .attr("class", "bar-label")
-    .attr("x", (d) => xScale(d.label) + xScale.bandwidth() / 2)
-    .attr("y", chartHeight) // Start from the bottom of the chart
-    .style("fill", "white")
-    .style("font-size", "12px")
-    .style("font-family", "Inter, sans-serif")
-    .style("font-weight", "thin")
-    .attr("text-anchor", "middle")
-    .text((d) => `${d.value} ${unitText}`)
-    .transition()
-    .duration(1000)
-    .attr("y", (d) => yScale(d.value) - 5);
-
-  // ("distance X axis label under every bar")
-  // prettier-ignore
-  svg
-    .selectAll(".bar-distance-label")
-    .data(basicStatisticsData)
-    .enter()
-    .append("text")
-    .attr("class", "bar-distance-label")
-    .attr("x", (d) => xScale(d.label) + xScale.bandwidth() / 2)
-    .attr("y", chartHeight + 35)
-    .style("text-anchor", "middle")
-    .style("fill", "white")
-    .style("font-size", "12px")
-    .style("font-family", "Inter, sans-serif")
-    .style("font-weight", "thin")
-    .text("distance");
-
-  // (Adding X axis)
-  // prettier-ignore
-  svg
-  .append("g")
-  .attr("class", "x-axis")
-  .attr("transform", `translate(0,${chartHeight})`)
-  .call(
-    d3
-      .axisBottom(xScale)
-      .tickFormat((d) => {
-        return d;
-      })
-  )
-  .selectAll("text")
-  .style("fill", "white")
-  .style("font-size", "12px")
-  .style("font-family", "Inter, sans-serif");
-
-  // (Adding Y axis)
-  // prettier-ignore
-  svg
-  .append("g")
-  .attr("class", "y-axis")
-  .call(d3.axisLeft(yScale)
-  .ticks(5));
 }
 
 function removeChartsData() {

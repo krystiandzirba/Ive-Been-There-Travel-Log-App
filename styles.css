@@ -1063,6 +1063,9 @@ body {
 .line_chart_distance_container p,
 .bar_chart_basic_statistics_container p {
   text-align: center;
+  margin-top: 0.5vh;
+  font-family: "Inter", sans-serif;
+  font-size: 2vh;
 }
 
 .pie_chart_type_count,
@@ -1120,13 +1123,14 @@ body {
   width: 10%;
   height: 80%;
   position: absolute;
-  left: 1%;
+  left: 6%;
   top: 6%;
   margin-top: 1vh;
+  margin-left: -4.5vw;
 }
 
 .line_chart_legend_colorbox {
-  width: 70%;
+  width: 50%;
   height: 0.5vh;
   border-radius: 1vw;
   position: absolute;
@@ -1143,6 +1147,7 @@ body {
 
 .line_chart_legend_element span {
   margin-top: 0.75vh;
+  text-align: center;
 }
 
 /* ↑ D3 ↑ */

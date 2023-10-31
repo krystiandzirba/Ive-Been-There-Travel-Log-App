@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>I've been there! - Travel log app v1.4.1</title>
+    <title>I've been there! - Travel log app v1.4.2</title>
     <link rel="icon" type="image/x-icon" href="assets/images/globe_icon_black.png" />
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -532,16 +532,23 @@
           </div>
           <div class="line_chart_legend_element">
             <div class="line_chart_legend_colorbox" style="background-color: #c1ff75"></div>
-            <span>total distance</span>
+            <span
+              >total<br />
+              dist.</span
+            >
           </div>
           <div class="line_chart_legend_element">
             <div class="line_chart_legend_colorbox" style="background-color: #5cd1ff"></div>
-            <span>travel logs</span>
+            <span
+              >travel<br />
+              logs</span
+            >
           </div>
         </div>
         <div id="line_chart_distance" class="line_chart_distance"></div>
       </div>
-      <div class="bar_chart_basic_statistics_container">
+      <div id="bar_chart_basic_statistics_container" class="bar_chart_basic_statistics_container">
+        <p>basic statistics [km]</p>
         <div id="bar_chart_basic_statistics" class="bar_chart_basic_statistics"></div>
       </div>
     </div>
@@ -550,7 +557,7 @@
       <img id="custom_cursor_image" src="assets/images/car_icon_small.png" />
     </div>
 
-    <div class="app_version">ver: 1.4.1</div>
+    <div class="app_version">ver: 1.4.2</div>
 
     <div id="info_box">
       <p id="info_box_text"></p>
