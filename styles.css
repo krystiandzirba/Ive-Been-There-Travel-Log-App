@@ -973,6 +973,7 @@ body {
   border-image-width: 1px 0 0;
 }
 
+.continents_statistics_container,
 .bar_chart_type_distance_container,
 .pie_chart_type_count_container,
 .line_chart_distance_container,
@@ -982,11 +983,58 @@ body {
   border-radius: 3vh;
 }
 
+.continents_statistics_container {
+  left: 1%;
+  width: 31.5vw;
+  height: 40vh;
+  top: 2.5%;
+}
+
+.continents_statistics_container p {
+  margin-top: 0.5vh;
+  margin-bottom: 1.25vh;
+  text-align: center;
+  font-family: "Inter", sans-serif;
+  font-size: 2vh;
+}
+
+.continents_statistics_grid {
+  display: flex;
+}
+
+.continents_statistics_element {
+  display: flex;
+  flex-direction: column;
+  width: 47.5%;
+  height: 8vh;
+  margin: auto;
+  margin-top: 1vh;
+}
+
+.continents_statistics_element p {
+  text-align: center;
+  margin-top: 0;
+  font-family: "Inter", sans-serif;
+  font-size: 1.6vh;
+}
+
 .bar_chart_type_distance_container {
   left: 35%;
   width: 32.5vw;
   height: 40vh;
   top: 2.5%;
+}
+
+.ldBar {
+  position: absolute;
+  top: -35%;
+}
+
+.ldBar-label {
+  position: absolute;
+  margin-top: 2vh;
+  font-family: "Inter", sans-serif;
+  font-size: 1.6vh;
 }
 
 .pie_chart_type_count_container {
@@ -1198,8 +1246,8 @@ body {
   position: absolute;
   z-index: 2000;
   cursor: pointer;
-  /* display: none; */
-  display: flex;
+  display: none;
+  /* display: flex; */
   text-align: center;
   border: black, 2px, solid;
   transform: translate(-50%, -50%);
@@ -1207,12 +1255,12 @@ body {
 
 .t1 {
   top: 75%;
-  left: 3%;
+  left: 2%;
   background-color: rgb(255, 128, 126);
 }
 
 .t2 {
   top: 80%;
-  left: 3%;
+  left: 2%;
   background-color: rgb(160, 255, 126);
 }

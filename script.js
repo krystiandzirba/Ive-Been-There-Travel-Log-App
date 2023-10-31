@@ -1,4 +1,4 @@
-// ver: 1.3.19
+// ver: 1.4.0
 
 // Bugs:
 
@@ -323,6 +323,7 @@ const title_screen_background = document.querySelector(".title_screen_background
 // // Leaflet map ↓
 
 import leafletConfig from "./LeafletConfig.js";
+import continentMapping from "./continentMapping.js";
 
 const { L } = window;
 
@@ -345,6 +346,26 @@ let trueMarkers = L.layerGroup();
 
 // // Leaflet map ↑
 // // D3 ↓
+
+let total_countries = 211;
+let total_continents = 6;
+let total_countries_europe = 50;
+let total_countries_north_america = 32;
+let total_countries_south_america = 14;
+let total_countries_australia = 14;
+let total_countries_asia = 44;
+let total_countries_africa = 57;
+
+let countries_visited = 0;
+let continents_visited = 0;
+let countries_visited_europe = 0;
+let countries_visited_north_america = 0;
+let countries_visited_south_america = 0;
+let countries_visited_australia = 0;
+let countries_visited_asia = 0;
+let countries_visited_africa = 0;
+
+let locations_visited_other = 0;
 
 //prettier-ignore
 const pie_chart_type_count_pie_gradient = {Car: "#ffd667", Plane: "#efff67", Boat: "#71ff92", Walk: "#5ffffd", Bicycle: "#5fabff", Motorcycle: "#715fff", Train: "#bd5fff",Bus: "#ff5ffe"};
@@ -915,6 +936,9 @@ sidebar_statistics_button.addEventListener("click", () => {
         lineChartDataRetrieve();
         lineChartDistanceCreate();
         basicStatisticsChartCreate();
+        countUniqueCountries(trueHighlights);
+        getContinentsForHighlights(trueHighlights);
+        updateStatisticsProgressBars();
       }
     } else {
       stopResolutionCheck();
@@ -1018,19 +1042,6 @@ function updateTravelStats() {
   ).toFixed(1);
 
   if (pageSettings.distance_unit == "km") {
-    document.getElementById("highest_distance").textContent = formatDistance(display_highest_distance) + " km " + highest_distance_display;
-    document.getElementById("lowest_distance").textContent = formatDistance(display_lowest_distance) + " km " + lowest_distance_display;
-    document.getElementById("average_travel_distance").textContent = formatDistance(average_distance) + " km";
-
-    document.getElementById("total_distance").textContent = formatDistance(total_distance) + " km";
-  //  document.getElementById("total_car_distance").textContent = formatDistance(total_car_distance) + " km";
-  // document.getElementById("total_plane_distance").textContent = formatDistance(total_plane_distance) + " km";
-  // document.getElementById("total_boat_distance").textContent = formatDistance(total_boat_distance) + " km";
-  //  document.getElementById("total_walk_distance").textContent = formatDistance(total_walk_distance) + " km";
-  //  document.getElementById("total_bicycle_distance").textContent = formatDistance(total_bicycle_distance) + " km";
-  //  document.getElementById("total_motorcycle_distance").textContent = formatDistance(total_motorcycle_distance) + " km";
-  //  document.getElementById("total_train_distance").textContent = formatDistance(total_train_distance) + " km";
-  //   document.getElementById("total_bus_distance").textContent = formatDistance(total_bus_distance) + " km";
 
     barChartTypeDistanceData = [
       { label: "Car", value: formatDistance(total_car_distance) },
@@ -1051,19 +1062,6 @@ function updateTravelStats() {
     ]
 
   } else if (pageSettings.distance_unit == "mil") {
-    document.getElementById("highest_distance").textContent = formatDistance(display_highest_distance * 0.6213712) + " mil " + highest_distance_display;
-    document.getElementById("lowest_distance").textContent = formatDistance(display_lowest_distance * 0.6213712) + " mil " + lowest_distance_display;
-    document.getElementById("average_travel_distance").textContent = formatDistance(average_distance * 0.6213712) + " mil";
-
-    document.getElementById("total_distance").textContent = formatDistance(total_distance * 0.6213712) + " mil";
-  //  document.getElementById("total_car_distance").textContent = formatDistance(total_car_distance * 0.6213712) + " mil";
-  //  document.getElementById("total_plane_distance").textContent = formatDistance(total_plane_distance * 0.6213712) + " mil";
-  //  document.getElementById("total_boat_distance").textContent = formatDistance(total_boat_distance * 0.6213712) + " mil";
-  //  document.getElementById("total_walk_distance").textContent = formatDistance(total_walk_distance * 0.6213712) + " mil";
-  //  document.getElementById("total_bicycle_distance").textContent = formatDistance(total_bicycle_distance * 0.6213712) + " mil";
-  //  document.getElementById("total_motorcycle_distance").textContent = formatDistance(total_motorcycle_distance * 0.6213712) + " mil";
-  //  document.getElementById("total_train_distance").textContent = formatDistance(total_train_distance * 0.6213712) + " mil";
-  //  document.getElementById("total_bus_distance").textContent = formatDistance(total_bus_distance * 0.6213712) + " mil";
 
     barChartTypeDistanceData = [
       { label: "Car", value: formatDistance(total_car_distance * 0.6213712) },
@@ -1087,13 +1085,13 @@ function updateTravelStats() {
 
   }
 
-  let most_common_travel_type = document.getElementById("most_common_travel_type");
+ // let most_common_travel_type = document.getElementById("most_common_travel_type");
   const { travel_type_count, highest_count_travel_types } = countTravelType(markersData);
   if (highest_count_travel_types.length > 0) {
-    const mostCommonTravelTypesText = highest_count_travel_types.join(", ");
-    most_common_travel_type.textContent = mostCommonTravelTypesText;
+   const mostCommonTravelTypesText = highest_count_travel_types.join(", ");
+   // most_common_travel_type.textContent = mostCommonTravelTypesText;
   } else {
-    most_common_travel_type.textContent = "none";
+   // most_common_travel_type.textContent = "none";
   }
 }
 
@@ -1214,14 +1212,8 @@ function countTravelType(markersData) {
 
   try {
     for (const marker of markersData) {
-      ////  console.log("data error 2 ?", markersData); // temporary, looking for error
-      const test = marker[0][2]; // temporary, looking for error
-      // markersData = []; // temporary, looking for error
-      // localStorageLoadMarkerCoordinates() // temporary, looking for error
-      //// console.log("test", test); // temporary, looking for error
+      const test = marker[0][2];
       const type = marker[0][2][1];
-      ////  console.log(type); // temporary, looking for error
-      //// console.log("data error 3 ?", markersData); // temporary, looking for error
       if (type in travel_type_count) {
         travel_type_count[type]++;
         if (travel_type_count[type] > highest_count) {
@@ -2181,7 +2173,7 @@ let defaultCountryHighlight = 0;
 let cachedGeoJSON = null;
 
 if (!cachedGeoJSON) {
-  fetch("assets/data/countries.geojson")
+  fetch("./countriesBorders.geojson")
     .then((response) => response.json())
     .then((data) => {
       cachedGeoJSON = data;
@@ -3405,6 +3397,146 @@ function localStorageSetMapLayer() {
 // Local Storage ↑
 // D3 ↓
 
+function countUniqueCountries(data) {
+  const unique_countries = new Set();
+
+  for (const highlight of data) {
+    unique_countries.add(highlight.country_name);
+  }
+  countries_visited = unique_countries.size;
+}
+
+function getContinentsForHighlights(data) {
+  const continents = {};
+
+  data.forEach((highlight) => {
+    const countryName = highlight.country_name;
+    const continent = continentMapping[countryName];
+
+    if (continent) {
+      continents[continent] = continents[continent] || new Set();
+      continents[continent].add(countryName);
+    }
+  });
+
+  for (const continent in continents) {
+    continents[continent] = Array.from(continents[continent]);
+  }
+  continents_visited = Object.keys(continents).length;
+
+  //return continents;
+  countries_visited_europe = continents.Europe && continents.Europe.length > 0 ? continents.Europe.length : 0;
+  // prettier-ignore
+  countries_visited_north_america = continents.NorthAmerica && continents.NorthAmerica.length > 0 ? continents.NorthAmerica.length : 0;
+  // prettier-ignore
+  countries_visited_south_america = continents.SouthAmerica && continents.SouthAmerica.length > 0 ? continents.SouthAmerica.length : 0;
+  // prettier-ignore
+  countries_visited_australia = continents.Australia && continents.Australia.length > 0 ? continents.Australia.length : 0;
+  // prettier-ignore
+  countries_visited_asia = continents.Asia && continents.Asia.length > 0 ? continents.Asia.length : 0;
+  // prettier-ignore
+  countries_visited_africa = continents.Africa && continents.Africa.length > 0 ? continents.Africa.length : 0;
+}
+
+function updateStatisticsProgressBars() {
+  // countries visited
+
+  const countries_visited_label = document.getElementById("countries_visited_label");
+  // prettier-ignore
+  countries_visited_label.textContent = "Countries visited " + countries_visited + "/" + total_countries;
+  // prettier-ignore
+  const countries_visited_bar_value = (countries_visited / total_countries) * 100;
+
+  const countries_visited_bar = new ldBar("#countries_visited_bar");
+  countries_visited_bar.set(countries_visited_bar_value);
+
+  // countries visited
+  // continents visited
+
+  const continents_visited_label = document.getElementById("continents_visited_label");
+  // prettier-ignore
+  continents_visited_label.textContent = "Continents visited " + continents_visited + "/" + total_continents;
+  // prettier-ignore
+  const continents_visited_bar_value = (continents_visited / total_continents) * 100;
+
+  const continents_visited_bar = new ldBar("#continents_visited_bar");
+  continents_visited_bar.set(continents_visited_bar_value);
+
+  // continents visited
+  // europe countries visited
+
+  const countries_visited_europe_label = document.getElementById("countries_visited_europe_label");
+  // prettier-ignore
+  countries_visited_europe_label.textContent = "Europe countries " + countries_visited_europe + "/" + total_countries_europe;
+  // prettier-ignore
+  const countries_visited_europe_bar_value = (countries_visited_europe / total_countries_europe) * 100;
+
+  const countries_visited_europe_bar = new ldBar("#countries_visited_europe_bar");
+  countries_visited_europe_bar.set(countries_visited_europe_bar_value);
+
+  // europe countries visited
+  // north america countries visited
+
+  const countries_visited_north_america_label = document.getElementById("countries_visited_north_america_label");
+  // prettier-ignore
+  countries_visited_north_america_label.textContent = "North America countries " + countries_visited_north_america + "/" + total_countries_north_america;
+  // prettier-ignore
+  const countries_visited_north_america_bar_value = (countries_visited_north_america / total_countries_north_america) * 100;
+
+  const countries_visited_north_america_bar = new ldBar("#countries_visited_north_america_bar");
+  countries_visited_north_america_bar.set(countries_visited_north_america_bar_value);
+
+  // north america countries visited
+  // south america countries visited
+
+  const countries_visited_south_america_label = document.getElementById("countries_visited_south_america_label");
+  // prettier-ignore
+  countries_visited_south_america_label.textContent = "South America countries " + countries_visited_south_america + "/" + total_countries_south_america;
+  // prettier-ignore
+  const countries_visited_south_america_bar_value = (countries_visited_south_america / total_countries_south_america) * 100;
+
+  const countries_visited_south_america_bar = new ldBar("#countries_visited_south_america_bar");
+  countries_visited_south_america_bar.set(countries_visited_south_america_bar_value);
+
+  // south america countries visited
+  // australia america countries visited
+
+  const countries_visited_australia_label = document.getElementById("countries_visited_australia_label");
+  // prettier-ignore
+  countries_visited_australia_label.textContent = "Australia countries " + countries_visited_australia + "/" + total_countries_australia;
+  // prettier-ignore
+  const countries_visited_australia_bar_value = (countries_visited_australia / total_countries_australia) * 100;
+
+  const countries_visited_australia_bar = new ldBar("#countries_visited_australia_bar");
+  countries_visited_australia_bar.set(countries_visited_australia_bar_value);
+
+  // australia america countries visited
+  // asia america countries visited
+
+  const countries_visited_asia_label = document.getElementById("countries_visited_asia_label");
+  // prettier-ignore
+  countries_visited_asia_label.textContent = "Asia countries " + countries_visited_asia + "/" + total_countries_asia;
+  // prettier-ignore
+  const countries_visited_asia_bar_value = (countries_visited_asia / total_countries_asia) * 100;
+
+  const countries_visited_asia_bar = new ldBar("#countries_visited_asia_bar");
+  countries_visited_asia_bar.set(countries_visited_asia_bar_value);
+
+  // asia america countries visited
+  // africa america countries visited
+
+  const countries_visited_africa_label = document.getElementById("countries_visited_africa_label");
+  // prettier-ignore
+  countries_visited_africa_label.textContent = "Africa countries " + countries_visited_africa + "/" + total_countries_africa;
+  // prettier-ignore
+  const countries_visited_africa_bar_value = (countries_visited_africa / total_countries_africa) * 100;
+
+  const countries_visited_africa_bar = new ldBar("#countries_visited_africa_bar");
+  countries_visited_africa_bar.set(countries_visited_africa_bar_value);
+
+  // africa america countries visited
+}
+
 function barChartTypeDistanceCreate() {
   const svgHeight = bar_chart_type_distance.clientHeight * 1.2;
   const svgWidth = bar_chart_type_distance.clientWidth;
@@ -4091,11 +4223,13 @@ function checkResolutionChange() {
   if (newResolution !== current_resolution) {
     current_resolution = newResolution;
     removeChartsData();
-    barChartTypeDistanceCreate();
-    pieChartTypeDistributionCreate();
-    lineChartDataRetrieve();
-    lineChartDistanceCreate();
-    basicStatisticsChartCreate();
+    if (travelLogs.length > 0) {
+      barChartTypeDistanceCreate();
+      pieChartTypeDistributionCreate();
+      lineChartDataRetrieve();
+      lineChartDistanceCreate();
+      basicStatisticsChartCreate();
+    }
   }
 }
 
@@ -4176,6 +4310,8 @@ const resourcesToLoad = [
   { url: "assets/data/LeafletMap/leaflet.css", label: "Leaflet CSS" },
   { url: "assets/data/DateRangePicker/daterangepicker.css", label: "DateRangePicker CSS" },
   { url: "assets/data/FontAwesome/css/all.min.css", label: "FontAwesome CSS" },
+  { url: "assets/data/loadingBar/loading-bar.css", label: "LoadingBar CSS" },
+
   { url: "script.js", label: "Main JS" },
   { url: "assets/data/LeafletMap/leaflet.js", label: "Leaflet JS" },
   { url: "assets/data/JScolor/jscolor.js", label: "JScolor JS" },
@@ -4185,6 +4321,7 @@ const resourcesToLoad = [
   { url: "assets/data/LeafletEdgeBuffer/leaflet.edgebuffer.js", label: "Leaflet EdgeBuffer JS" },
   { url: "assets/data/LeafletGridLayerFadeOut/Leaflet.GridLayer.FadeOut.js", label: "Leaflet Grid Layer Fade-out JS" },
   { url: "assets/data/SmoothMarkerBouncing/bundle.js", label: "SmoothMarkerBouncing JS" },
+  { url: "assets/data/loadingBar/loading-bar.js", label: "LoadingBar JS" },
 
   // { url: "https://cdn.knightlab.com/libs/timeline3/latest/js/timeline.js", label: "TimelineJS JS" },
   // { url: "https://cdn.knightlab.com/libs/timeline3/latest/css/timeline.css", label: "TimelineJS CSS" },
@@ -4294,18 +4431,14 @@ test_button.addEventListener("click", () => {
   console.log("-0- barChartTypeDistanceData", barChartTypeDistanceData);
   console.log("-0- pieChartTypeDistributionData", pieChartTypeDistributionData);
 
-  console.log("Highest Distance:", highest_distance.toFixed(2), "km");
-  console.log("Lowest Distance:", lowest_distance.toFixed(2), "km");
-  console.log("Total Distance:", total_distance.toFixed(2), "km");
-
-  // console.log("Total Car Distance:", total_car_distance.toFixed(2), "km");
-  // console.log("Total Plane Distance:", total_plane_distance.toFixed(2), "km");
-  // console.log("Total Boat Distance:", total_boat_distance.toFixed(2), "km");
-  // console.log("Total Walk Distance:", total_walk_distance.toFixed(2), "km");
-  // console.log("Total Bicycle Distance:", total_bicycle_distance.toFixed(2), "km");
-  // console.log("Total Motorcycle Distance:", total_motorcycle_distance.toFixed(2), "km");
-  // console.log("Total Train Distance:", total_train_distance.toFixed(2), "km");
-  // console.log("Total Bus Distance:", total_bus_distance.toFixed(2), "km");
+  console.log("continents_visited:", continents_visited);
+  console.log("countries_visited:", countries_visited);
+  console.log("countries visited europe:", countries_visited_europe);
+  console.log("countries visited north america:", countries_visited_north_america);
+  console.log("countries visited south america:", countries_visited_south_america);
+  console.log("countries visited australia:", countries_visited_australia);
+  console.log("countries visited asia:", countries_visited_asia);
+  console.log("countries visited africa:", countries_visited_africa);
 });
 
 test_button_2.addEventListener("click", () => {});

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>I've been there! - Travel log app v1.3.19</title>
+    <title>I've been there! - Travel log app v1.4.0</title>
     <link rel="icon" type="image/x-icon" href="assets/images/globe_icon_black.png" />
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="assets/data/LeafletMap/leaflet.css" />
     <link rel="stylesheet" href="assets/data/DateRangePicker/daterangepicker.css" />
     <link rel="stylesheet" href="assets/data/FontAwesome/css/all.min.css" />
+    <link rel="stylesheet" href="assets/data/loadingBar/loading-bar.css" />
 
     <script type="module" src="script.js"></script>
     <script type="text/javascript" src="assets/data/LeafletMap/leaflet.js"></script>
@@ -22,6 +23,7 @@
     <script type="text/javascript" src="assets/data/LeafletEdgeBuffer/leaflet.edgebuffer.js"></script>
     <script type="text/javascript" src="assets/data/LeafletGridLayerFadeOut/Leaflet.GridLayer.FadeOut.js"></script>
     <script type="text/javascript" src="assets/data/SmoothMarkerBouncing/bundle.js"></script>
+    <script type="text/javascript" src="assets/data/loadingBar/loading-bar.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
     <!-- prettier-ignore -->
@@ -349,21 +351,135 @@
     </div>
 
     <div class="main_statistics_container">
-      <div class="basic_statistics">
-        <div class="grid_item">
-          <p>longest travel distance: <span id="highest_distance"></span></p>
+      <div class="continents_statistics_container">
+        <p>Countries and continents visits</p>
+        <div class="continents_statistics_grid">
+          <div class="continents_statistics_element">
+            <p id="countries_visited_label">Countries visited 0/211</p>
+            <div
+              class="ldBar label-center"
+              data-value="0"
+              style="width: 100%; height: 60px"
+              id="countries_visited_bar"
+              data-precision="0.01"
+              data-stroke="data:ldbar/res,gradient(0,5,#f99,#ff9)"
+              data-stroke-trail="#26303d"
+              data-stroke-width="6"
+              data-stroke-trail-width="2"
+              data-aspect-ratio="none"
+            ></div>
+          </div>
+          <div class="continents_statistics_element">
+            <p id="continents_visited_label">Continents visited 0/6</p>
+            <div
+              class="ldBar label-center"
+              data-value="0"
+              style="width: 100%; height: 60px"
+              id="continents_visited_bar"
+              data-precision="1"
+              data-stroke="data:ldbar/res,gradient(0,5,#f99,#ff9)"
+              data-stroke-trail="#26303d"
+              data-stroke-width="6"
+              data-stroke-trail-width="2"
+              data-aspect-ratio="none"
+            ></div>
+          </div>
         </div>
-        <div class="grid_item">
-          <p>shortest travel distance: <span id="lowest_distance"></span></p>
+        <div class="continents_statistics_grid">
+          <div class="continents_statistics_element">
+            <p id="countries_visited_europe_label">Europe Countries 0/50</p>
+            <div
+              class="ldBar label-center"
+              data-value="0"
+              style="width: 100%; height: 60px"
+              id="countries_visited_europe_bar"
+              data-precision="0.01"
+              data-stroke="data:ldbar/res,gradient(0,5,#87dfff,#4073ff)"
+              data-stroke-trail="#26303d"
+              data-stroke-width="6"
+              data-stroke-trail-width="2"
+              data-aspect-ratio="none"
+            ></div>
+          </div>
+          <div class="continents_statistics_element">
+            <p id="countries_visited_north_america_label">North America Countries 0/50</p>
+            <div
+              class="ldBar label-center"
+              data-value="0"
+              style="width: 100%; height: 60px"
+              id="countries_visited_north_america_bar"
+              data-precision="0.01"
+              data-stroke="data:ldbar/res,gradient(0,5,#b3ffc3,#52ff77)"
+              data-stroke-trail="#26303d"
+              data-stroke-width="6"
+              data-stroke-trail-width="2"
+              data-aspect-ratio="none"
+            ></div>
+          </div>
         </div>
-        <div class="grid_item">
-          <p>average travel distance: <span id="average_travel_distance"></span></p>
+        <div class="continents_statistics_grid">
+          <div class="continents_statistics_element">
+            <p id="countries_visited_south_america_label">South America Countries 0/14</p>
+            <div
+              class="ldBar label-center"
+              data-value="0"
+              style="width: 100%; height: 60px"
+              id="countries_visited_south_america_bar"
+              data-precision="0.01"
+              data-stroke="data:ldbar/res,gradient(0,5,#ffd77a,#7affbd)"
+              data-stroke-trail="#26303d"
+              data-stroke-width="6"
+              data-stroke-trail-width="2"
+              data-aspect-ratio="none"
+            ></div>
+          </div>
+          <div class="continents_statistics_element">
+            <p id="countries_visited_australia_label">Australia countries 0/14</p>
+            <div
+              class="ldBar label-center"
+              data-value="0"
+              style="width: 100%; height: 60px"
+              id="countries_visited_australia_bar"
+              data-precision="0.01"
+              data-stroke="data:ldbar/res,gradient(0,5,#ff7a91,#ff3053)"
+              data-stroke-trail="#26303d"
+              data-stroke-width="6"
+              data-stroke-trail-width="2"
+              data-aspect-ratio="none"
+            ></div>
+          </div>
         </div>
-        <div class="grid_item">
-          <p>most common travel type: <span id="most_common_travel_type"></span></p>
-        </div>
-        <div class="grid_item">
-          <p>total distance: <span id="total_distance"></span></p>
+        <div class="continents_statistics_grid">
+          <div class="continents_statistics_element">
+            <p id="countries_visited_asia_label">Asia Countries 0/44</p>
+            <div
+              class="ldBar label-center"
+              data-value="0"
+              style="width: 100%; height: 60px"
+              id="countries_visited_asia_bar"
+              data-precision="0.01"
+              data-stroke="data:ldbar/res,gradient(0,5,#a07aff,#ff9e7a)"
+              data-stroke-trail="#26303d"
+              data-stroke-width="6"
+              data-stroke-trail-width="2"
+              data-aspect-ratio="none"
+            ></div>
+          </div>
+          <div class="continents_statistics_element">
+            <p id="countries_visited_africa_label">Africa Countries 0/44</p>
+            <div
+              class="ldBar label-center"
+              data-value="0"
+              style="width: 100%; height: 60px"
+              id="countries_visited_africa_bar"
+              data-precision="0.01"
+              data-stroke="data:ldbar/res,gradient(0,5,#fcffb3,#ff5252)"
+              data-stroke-trail="#26303d"
+              data-stroke-width="6"
+              data-stroke-trail-width="2"
+              data-aspect-ratio="none"
+            ></div>
+          </div>
         </div>
       </div>
       <div id="bar_chart_type_distance_container" class="bar_chart_type_distance_container">
@@ -434,13 +550,13 @@
       <img id="custom_cursor_image" src="assets/images/car_icon_small.png" />
     </div>
 
-    <div class="app_version">ver: 1.3.19</div>
+    <div class="app_version">ver: 1.4.0</div>
 
     <div id="info_box">
       <p id="info_box_text"></p>
     </div>
 
-    <button id="test_button" class="test_button t1">TEST console</button>
-    <button id="test_button_2" class="test_button t2">t2</button>
+    <button id="test_button" class="test_button t1"></button>
+    <button id="test_button_2" class="test_button t2"></button>
   </body>
 </html>
