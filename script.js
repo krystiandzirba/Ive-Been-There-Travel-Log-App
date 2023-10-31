@@ -1,4 +1,4 @@
-// ver: 1.4.0
+// ver: 1.4.1
 
 // Bugs:
 
@@ -1056,8 +1056,8 @@ function updateTravelStats() {
 
     basicStatisticsData = [
       {label: "total", value: formatDistance(total_distance)},
-      {label: "average", value: formatDistance(average_distance)},
       {label: "highest", value: formatDistance(display_highest_distance)},
+      {label: "average", value: formatDistance(average_distance)},
       {label: "lowest", value: formatDistance(display_lowest_distance)},
     ]
 
@@ -1075,10 +1075,10 @@ function updateTravelStats() {
     ];
 
     basicStatisticsData = [
+      {label: "total", value: formatDistance(total_distance* 0.6213712)},
       {label: "highest", value: formatDistance(display_highest_distance* 0.6213712)},
-      {label: "lowest", value: formatDistance(display_lowest_distance* 0.6213712)},
       {label: "average", value: formatDistance(average_distance* 0.6213712)},
-      {label: "total", value: formatDistance(total_distance* 0.6213712)}
+      {label: "lowest", value: formatDistance(display_lowest_distance* 0.6213712)},
     ]
 
     type_distance_max_value = type_distance_max_value * 0.6213712;
