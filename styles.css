@@ -1246,26 +1246,28 @@ body {
 /* ↑ Other ↑  */
 
 .test_button {
-  height: 50px;
-  width: 50px;
+  height: 1vh;
+  width: 2vw;
   position: absolute;
   z-index: 2000;
-  cursor: pointer;
-  display: none;
-  /* display: flex; */
+  /* display: none; */
+  display: flex;
   text-align: center;
-  border: black, 2px, solid;
   transform: translate(-50%, -50%);
+  border: none;
+  font-size: 1.2vh;
 }
 
 .t1 {
-  top: 75%;
-  left: 2%;
-  background-color: rgb(255, 128, 126);
+  top: 98.75%;
+  left: 6vw;
+  background-color: rgba(0, 0, 0, 0);
+  color: #d7d7d7;
 }
 
 .t2 {
   top: 80%;
   left: 2%;
   background-color: rgb(160, 255, 126);
+  display: none;
 }

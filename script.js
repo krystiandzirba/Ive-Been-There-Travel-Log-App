@@ -1,4 +1,4 @@
-// ver: 1.4.2
+// ver: 1.4.3
 
 // Bugs:
 
@@ -385,9 +385,18 @@ let resolution_change_interval = null;
 
 let unitText;
 
-// // D3 ↑
+let highest_travel_value = 0;
+let lowest_travel_value = 0;
 
-// 1 = local storage / 0 = temporary
+let lowest_distance_superset = 0;
+let highest_distance_superset = 0;
+let lowest_distance_subset = 0;
+let highest_distance_subset = 0;
+
+// // D3 ↑
+// // Storage ↓
+
+// 1 = local storage | 0 = temporary / builded on local storage data
 
 /* 1 */ let pageSettings = {};
 /* 1 */ let homeData = {};
@@ -415,6 +424,7 @@ let unitText;
 /* 0 */ let lineChartGroupDataValue = {};
 /* 0 */ let basicStatisticsData = [];
 
+// // Storage ↑
 // Variables ↑
 
 // Page interaction ↓
@@ -931,16 +941,21 @@ sidebar_statistics_button.addEventListener("click", () => {
 
       removeChartsData();
 
-      if (travelLogs.length > 0) {
+      if (polylines.length > 0) {
         barChartTypeDistanceCreate();
         pieChartTypeDistributionCreate();
         lineChartDataRetrieve();
         lineChartDistanceCreate();
+        findLowestAndHighestSupersetDistance(CRUD);
+        findLowestAndHighestSubsetDistance(CRUD);
+        basicStatisticsChartLowestAndHighestCRUDValue();
+        updateTravelStats();
         basicStatisticsChartCreate();
-        countUniqueCountries(trueHighlights);
-        getContinentsForHighlights(trueHighlights);
-        updateStatisticsProgressBars();
       }
+
+      countUniqueCountries(trueHighlights);
+      getContinentsForHighlights(trueHighlights);
+      updateStatisticsProgressBars();
     } else {
       stopResolutionCheck();
 
@@ -1055,11 +1070,19 @@ function updateTravelStats() {
       { label: "Bus", value: formatDistance(total_bus_distance) },
     ];
 
+if (polylines.length <= 1) {
+  average_distance = 0;
+  highest_travel_value = 0;
+  lowest_travel_value = 0;
+}
+
     basicStatisticsData = [
-      {label: "total", value: formatDistance(total_distance)},
-      {label: "highest", value: formatDistance(display_highest_distance)},
-      {label: "average", value: formatDistance(average_distance)},
-      {label: "lowest", value: formatDistance(display_lowest_distance)},
+      {label: "total", type: "(travel)", value: formatDistance(total_distance)},
+      {label: "high.", type: "(travel)", value: formatDistance(highest_travel_value)},
+      {label: "avg.", type: "(travel)", value: formatDistance(average_distance)},
+      {label: "low.", type: "(travel)", value: formatDistance(lowest_travel_value)},
+      {label: "max.", type: "(A → B)", value: formatDistance(highest_distance)},
+      {label: "min.", type: "(A → B)", value: formatDistance(lowest_distance)},
     ]
 
   } else if (pageSettings.distance_unit == "mil") {
@@ -1076,10 +1099,12 @@ function updateTravelStats() {
     ];
 
     basicStatisticsData = [
-      {label: "total", value: formatDistance(total_distance* 0.6213712)},
-      {label: "highest", value: formatDistance(display_highest_distance* 0.6213712)},
-      {label: "average", value: formatDistance(average_distance* 0.6213712)},
-      {label: "lowest", value: formatDistance(display_lowest_distance* 0.6213712)},
+      {label: "total", type: "(travel)", value: formatDistance(total_distance* 0.6213712)},
+      {label: "high.", type: "(travel)", value: formatDistance(highest_travel_value* 0.6213712)},
+      {label: "avg.", type: "(travel)", value: formatDistance(average_distance* 0.6213712)},
+      {label: "low.", type: "(travel)", value: formatDistance(lowest_travel_value* 0.6213712)},
+      {label: "max.", type: "(A → B)", value: formatDistance(highest_distance* 0.6213712)},
+      {label: "min.", type: "(A → B)", value: formatDistance(lowest_distance* 0.6213712)},
     ]
 
     type_distance_max_value = type_distance_max_value * 0.6213712;
@@ -1398,6 +1423,9 @@ sub_settings_distance_unit.addEventListener("click", () => {
   localStorageSavePageSettings();
   removeContainerTravelLogs();
   buildCRUD();
+  findLowestAndHighestSupersetDistance(CRUD);
+  findLowestAndHighestSubsetDistance(CRUD);
+  basicStatisticsChartLowestAndHighestCRUDValue();
   updateTravelStats();
 });
 
@@ -1880,6 +1908,9 @@ confirm_button_individual.addEventListener("click", () => {
     distancesBreakdown(rawCoordinatesDistances);
     calculateTotalDistances(rawCoordinatesDistances);
     countTravelType(markersData);
+    findLowestAndHighestSupersetDistance(CRUD);
+    findLowestAndHighestSubsetDistance(CRUD);
+    basicStatisticsChartLowestAndHighestCRUDValue();
     updateTravelStats();
 
     individualDataSubmit();
@@ -2853,6 +2884,9 @@ function buildCRUD() {
           calculateTotalDistances(rawCoordinatesDistances);
           removeTravelCount(stored_subset_distance_type_reference);
           countTravelType(markersData);
+          findLowestAndHighestSupersetDistance(CRUD);
+          findLowestAndHighestSubsetDistance(CRUD);
+          basicStatisticsChartLowestAndHighestCRUDValue();
           updateTravelStats();
           localStorageCreateTrueHighlights();
           drawPolyline();
@@ -3036,6 +3070,9 @@ function buildCRUD() {
         calculateTotalDistances(rawCoordinatesDistances);
         removeTravelCount(stored_superset_direct_distance_type_reference);
         countTravelType(markersData);
+        findLowestAndHighestSupersetDistance(CRUD);
+        findLowestAndHighestSubsetDistance(CRUD);
+        basicStatisticsChartLowestAndHighestCRUDValue();
         updateTravelStats();
         localStorageCreateTrueHighlights();
         drawPolyline();
@@ -3616,6 +3653,84 @@ function updateStatisticsProgressBars() {
   // africa america countries visited
 }
 
+function findLowestAndHighestSupersetDistance(array) {
+  lowest_distance_superset = 0;
+  highest_distance_superset = 0;
+  const supersetObjects = array.filter((item) => item.CRUD_category === "superset");
+
+  if (supersetObjects.length === 0) {
+    return {
+      lowest_distance_superset: 0,
+      highest_distance_superset: 0,
+    };
+  }
+
+  lowest_distance_superset = Number.POSITIVE_INFINITY;
+  highest_distance_superset = Number.NEGATIVE_INFINITY;
+
+  for (const superset of supersetObjects) {
+    const distance = superset.CRUD_superset_distance;
+    if (typeof distance === "number") {
+      if (distance < lowest_distance_superset) {
+        lowest_distance_superset = distance;
+      }
+      if (distance > highest_distance_superset) {
+        highest_distance_superset = distance;
+      }
+    }
+  }
+}
+
+function findLowestAndHighestSubsetDistance(array) {
+  lowest_distance_subset = 0;
+  highest_distance_subset = 0;
+  const subsetObjects = array
+    .filter((item) => item.CRUD_category === "group")
+    .map((item) => item.CRUD_subset)
+    .flat();
+
+  if (subsetObjects.length === 0) {
+    return {
+      lowest_distance_subset: 0,
+      highest_distance_subset: 0,
+    };
+  }
+
+  lowest_distance_subset = Number.POSITIVE_INFINITY;
+  highest_distance_subset = Number.NEGATIVE_INFINITY;
+
+  for (const subset of subsetObjects) {
+    const distance = subset.CRUD_subset_distance;
+    if (typeof distance === "number") {
+      if (distance < lowest_distance_subset) {
+        lowest_distance_subset = distance;
+      }
+      if (distance > highest_distance_subset) {
+        highest_distance_subset = distance;
+      }
+    }
+  }
+}
+
+function basicStatisticsChartLowestAndHighestCRUDValue() {
+  if (polylines.length > 1) {
+    const extruded_crud_values = [
+      lowest_distance_subset,
+      highest_distance_subset,
+      lowest_distance_superset,
+      highest_distance_superset,
+    ].filter((value) => value !== 0);
+
+    if (extruded_crud_values.length > 0) {
+      lowest_travel_value = parseFloat(Math.min(...extruded_crud_values));
+      highest_travel_value = parseFloat(Math.max(...extruded_crud_values));
+    } else {
+      lowest_travel_value = 0;
+      highest_travel_value = 0;
+    }
+  }
+}
+
 function barChartTypeDistanceCreate() {
   const svgHeight = bar_chart_type_distance.clientHeight * 1.2;
   const svgWidth = bar_chart_type_distance.clientWidth;
@@ -3634,7 +3749,7 @@ function barChartTypeDistanceCreate() {
   const gradient = svg
     .append("defs")
     .append("linearGradient")
-    .attr("id", "barGradient")
+    .attr("id", "typeDistanceGradient")
     .attr("x1", "0%")
     .attr("x2", "50%")
     .attr("y1", "0%")
@@ -3679,7 +3794,7 @@ function barChartTypeDistanceCreate() {
     .attr("y", (d) => chartHeight)
     .attr("width", xScale.bandwidth())
     .attr("height", 0)
-    .attr("fill", "url(#barGradient")
+    .attr("fill", "url(#typeDistanceGradient")
     .transition()
     .duration(1200)
     .attr("y", (d) => yScale(d.value))
@@ -3817,7 +3932,7 @@ function basicStatisticsChartCreate() {
 
   const svgHeight = bar_chart_basic_statistics.clientHeight * 1.075;
   const svgWidth = bar_chart_basic_statistics.clientWidth;
-  const margin = { top: 5, right: 20, bottom: 130, left: 50 };
+  const margin = { top: 5, right: 20, bottom: 145, left: 60 };
 
   const chartWidth = svgWidth - margin.left - margin.right;
   const chartHeight = svgHeight - margin.top - margin.bottom;
@@ -3841,9 +3956,31 @@ function basicStatisticsChartCreate() {
   // prettier-ignore
   const yScale = d3
     .scaleLinear()
-    .domain([0, max_line_chart_height_value * 1.0125])
+    .domain([0, max_line_chart_height_value * 1.050])
     .nice()
     .range([chartHeight, 0]);
+
+  // prettier-ignore
+  const gradient = svg
+    .append("defs")
+    .append("linearGradient")
+    .attr("id", "basicGradient")
+    .attr("x1", "0%")
+    .attr("y1", "0%")
+    .attr("x2", "0%")
+    .attr("y2", "100%");
+
+  // prettier-ignore
+  gradient
+    .append("stop")
+    .attr("offset", "0%")
+    .style("stop-color", "#ff7a93");
+
+  // prettier-ignore
+  gradient
+    .append("stop")
+    .attr("offset", "100%")
+    .style("stop-color", "#ffbc75");
 
   // (Creating the bars)
   svg
@@ -3856,7 +3993,8 @@ function basicStatisticsChartCreate() {
     .attr("y", chartHeight)
     .attr("width", xScale.bandwidth())
     .attr("height", 0)
-    .attr("fill", "#acd1ff")
+    .attr("fill", "url(#basicGradient)")
+    .attr("opacity", 1)
     .transition()
     .duration(1000)
     .attr("y", (d) => yScale(d.value))
@@ -3893,10 +4031,10 @@ function basicStatisticsChartCreate() {
     .attr("y", chartHeight + 35)
     .style("text-anchor", "middle")
     .style("fill", "white")
-    .style("font-size", "12px")
+    .style("font-size", "15px")
     .style("font-family", "Inter, sans-serif")
     .style("font-weight", "thin")
-    .text("distance");
+    .text("dist.");
 
   // (Adding X axis)
   // prettier-ignore
@@ -3913,16 +4051,37 @@ function basicStatisticsChartCreate() {
   )
   .selectAll("text")
   .style("fill", "white")
-  .style("font-size", "12px")
+  .style("font-size", "15px")
   .style("font-family", "Inter, sans-serif");
 
-  // (Adding Y axis)
+  // (type display under every bar)
+  // prettier-ignore
+  svg
+  .selectAll(".bar-type-label")
+  .data(basicStatisticsData)
+  .enter()
+  .append("text")
+  .attr("class", "bar-type-label")
+  .attr("x", (d) => xScale(d.label) + xScale.bandwidth() / 2)
+  .attr("y", chartHeight + 50)
+  .style("text-anchor", "middle")
+  .style("fill", "white")
+  .style("font-size", "12px")
+  .style("font-family", "Inter, sans-serif")
+  .style("font-weight", "thin")
+  .text((d) => d.type);
+
+  // (Adding Y axis scale labels)
   // prettier-ignore
   svg
   .append("g")
   .attr("class", "y-axis")
   .call(d3.axisLeft(yScale)
-  .ticks(5));
+  .ticks(5))
+  .selectAll("text")
+  .style("fill", "white")
+  .style("font-size", "12px")
+  .style("font-family", "Inter, sans-serif");
 }
 
 function lineChartDistanceCreate() {
@@ -4172,7 +4331,7 @@ function lineChartDistanceCreate() {
     const barGradient = svg
       .append("defs")
       .append("linearGradient")
-      .attr("id", "bar-gradient")
+      .attr("id", "distanceOverTimeGradient")
       .attr("x1", "0%")
       .attr("x2", "0%")
       .attr("y1", "0%")
@@ -4196,8 +4355,8 @@ function lineChartDistanceCreate() {
       .attr("y", 2.5)
       .attr("width", rectWidth)
       .attr("height", 0)
-      .attr("fill", "url(#bar-gradient)")
-      .attr("stroke", "url(#bar-gradient)")
+      .attr("fill", "url(#distanceOverTimeGradient)")
+      .attr("stroke", "url(#distanceOverTimeGradient)")
       .attr("stroke-width", 2)
       .style("opacity", 0.15)
       .transition()
@@ -4374,7 +4533,10 @@ function onLoadingComplete() {
   distancesBreakdown(rawCoordinatesDistances);
   calculateTotalDistances(rawCoordinatesDistances);
 
-  if (markersData.length > 0) {
+  if (polylines.length > 0) {
+    findLowestAndHighestSupersetDistance(CRUD);
+    findLowestAndHighestSubsetDistance(CRUD);
+    basicStatisticsChartLowestAndHighestCRUDValue();
     updateTravelStats();
   }
 
@@ -4420,21 +4582,26 @@ function displayInfoBox(text, time) {
 // // ---------- TEST ---------- ↓
 
 test_button.addEventListener("click", () => {
-  console.log("-1- pageSettings", pageSettings);
-  console.log("-1- homeData", homeData);
-  console.log("-1- markersData", markersData);
-  console.log("-1- travelLogs", travelLogs);
-  console.log("-1- CRUD", CRUD);
-  console.log("-1- trueHighlights", trueHighlights);
-  console.log("-0- highlights", highlights);
-  console.log("-0- markers", markers);
-  console.log("-0- polylines", polylines);
-  console.log("-0- storedIds", storedIds);
-  console.log("-0- rawCoordinatesDistances", rawCoordinatesDistances);
-  console.log("-0- timelineData", timelineData);
+  console.log("%c-1- pageSettings", "color: lightgreen;", pageSettings);
+  console.log("%c-1- homeData", "color: lightgreen;", homeData);
+  console.log("%c-1- markersData", "color: lightgreen;", markersData);
+  console.log("%c-1- travelLogs", "color: lightgreen;", travelLogs);
+  console.log("%c-1- CRUD", "color: lightgreen;", CRUD);
+  console.log("%c-1- trueHighlights", "color: lightgreen;", trueHighlights);
+  console.log("%c-0- highlights", "color: #ffc973;", highlights);
+  console.log("%c-0- markers", "color: #ffc973;", markers);
+  console.log("%c-0- polylines", "color: #ffc973;", polylines);
+  console.log("%c-0- storedIds", "color: #ffc973;", storedIds);
+  console.log("%c-0- rawCoordinatesDistances", "color: #ffc973;", rawCoordinatesDistances);
+  console.log("%c-0- timelineData", "color: #ffc973;", timelineData);
+  console.log("%c-0- barChartTypeDistanceData", "color: #ffc973;", barChartTypeDistanceData);
+  console.log("%c-0- pieChartTypeDistributionData", "color: #ffc973;", pieChartTypeDistributionData);
+  console.log("%c-0- lineChartTravelLogData", "color: #ffc973;", lineChartTravelLogData);
+  console.log("%c-0- lineChartGroupData", "color: #ffc973;", lineChartGroupData);
+  console.log("%c-0- basicStatisticsData", "color: #ffc973;", basicStatisticsData);
 
-  console.log("-0- barChartTypeDistanceData", barChartTypeDistanceData);
-  console.log("-0- pieChartTypeDistributionData", pieChartTypeDistributionData);
+  countUniqueCountries(trueHighlights);
+  getContinentsForHighlights(trueHighlights);
 
   console.log("continents_visited:", continents_visited);
   console.log("countries_visited:", countries_visited);
