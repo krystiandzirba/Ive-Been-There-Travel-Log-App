@@ -1,6 +1,8 @@
-// ver: 1.4.6
+// ver: 1.4.7
 
 // Bugs:
+
+// - jscolor home highlight clickable through the map
 
 // Features to add:
 
