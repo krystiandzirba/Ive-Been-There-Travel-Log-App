@@ -1,4 +1,4 @@
-// ver: 1.4.5
+// ver: 1.4.6
 
 // Bugs:
 
@@ -349,13 +349,13 @@ let trueMarkers = L.layerGroup();
 // // Leaflet map ↑
 // // D3 ↓
 
-let total_countries = 211;
+let total_countries = 225;
 let total_continents = 6;
 let total_countries_europe = 50;
-let total_countries_north_america = 32;
-let total_countries_south_america = 14;
-let total_countries_australia = 14;
-let total_countries_asia = 44;
+let total_countries_north_america = 35;
+let total_countries_south_america = 15;
+let total_countries_australia = 18;
+let total_countries_asia = 50;
 let total_countries_africa = 57;
 
 let countries_visited = 0;
@@ -3590,7 +3590,7 @@ function updateStatisticsProgressBars() {
 
   const countries_visited_label = document.getElementById("countries_visited_label");
   // prettier-ignore
-  countries_visited_label.textContent = "Countries visited " + countries_visited + "/" + total_countries;
+  countries_visited_label.textContent = "Countries & lands visited " + countries_visited + "/" + total_countries;
   // prettier-ignore
   const countries_visited_bar_value = (countries_visited / total_countries) * 100;
 
@@ -3614,7 +3614,7 @@ function updateStatisticsProgressBars() {
 
   const countries_visited_europe_label = document.getElementById("countries_visited_europe_label");
   // prettier-ignore
-  countries_visited_europe_label.textContent = "Europe countries " + countries_visited_europe + "/" + total_countries_europe;
+  countries_visited_europe_label.textContent = "Europe " + countries_visited_europe + "/" + total_countries_europe;
   // prettier-ignore
   const countries_visited_europe_bar_value = (countries_visited_europe / total_countries_europe) * 100;
 
@@ -3626,7 +3626,7 @@ function updateStatisticsProgressBars() {
 
   const countries_visited_north_america_label = document.getElementById("countries_visited_north_america_label");
   // prettier-ignore
-  countries_visited_north_america_label.textContent = "North America countries " + countries_visited_north_america + "/" + total_countries_north_america;
+  countries_visited_north_america_label.textContent = "North America " + countries_visited_north_america + "/" + total_countries_north_america;
   // prettier-ignore
   const countries_visited_north_america_bar_value = (countries_visited_north_america / total_countries_north_america) * 100;
 
@@ -3638,7 +3638,7 @@ function updateStatisticsProgressBars() {
 
   const countries_visited_south_america_label = document.getElementById("countries_visited_south_america_label");
   // prettier-ignore
-  countries_visited_south_america_label.textContent = "South America countries " + countries_visited_south_america + "/" + total_countries_south_america;
+  countries_visited_south_america_label.textContent = "South America " + countries_visited_south_america + "/" + total_countries_south_america;
   // prettier-ignore
   const countries_visited_south_america_bar_value = (countries_visited_south_america / total_countries_south_america) * 100;
 
@@ -3650,7 +3650,7 @@ function updateStatisticsProgressBars() {
 
   const countries_visited_australia_label = document.getElementById("countries_visited_australia_label");
   // prettier-ignore
-  countries_visited_australia_label.textContent = "Australia countries " + countries_visited_australia + "/" + total_countries_australia;
+  countries_visited_australia_label.textContent = "Australia " + countries_visited_australia + "/" + total_countries_australia;
   // prettier-ignore
   const countries_visited_australia_bar_value = (countries_visited_australia / total_countries_australia) * 100;
 
@@ -3662,7 +3662,7 @@ function updateStatisticsProgressBars() {
 
   const countries_visited_asia_label = document.getElementById("countries_visited_asia_label");
   // prettier-ignore
-  countries_visited_asia_label.textContent = "Asia countries " + countries_visited_asia + "/" + total_countries_asia;
+  countries_visited_asia_label.textContent = "Asia " + countries_visited_asia + "/" + total_countries_asia;
   // prettier-ignore
   const countries_visited_asia_bar_value = (countries_visited_asia / total_countries_asia) * 100;
 
@@ -3674,7 +3674,7 @@ function updateStatisticsProgressBars() {
 
   const countries_visited_africa_label = document.getElementById("countries_visited_africa_label");
   // prettier-ignore
-  countries_visited_africa_label.textContent = "Africa countries " + countries_visited_africa + "/" + total_countries_africa;
+  countries_visited_africa_label.textContent = "Africa " + countries_visited_africa + "/" + total_countries_africa;
   // prettier-ignore
   const countries_visited_africa_bar_value = (countries_visited_africa / total_countries_africa) * 100;
 

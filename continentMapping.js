@@ -6,7 +6,6 @@ const continentMapping = {
   "Burkina Faso": "Africa",
   Burundi: "Africa",
   Cameroon: "Africa",
-  "Cape Verde": "Africa",
   "Central African Republic": "Africa",
   Chad: "Africa",
   Comoros: "Africa",
@@ -22,10 +21,9 @@ const continentMapping = {
   Ghana: "Africa",
   Guinea: "Africa",
   "Guinea Bissau": "Africa",
-  "Ivory Coast": "Africa",
+  "Ivory Coast": "Africa", //
   Kenya: "Africa",
   Lesotho: "Africa",
-  "French Southern and Antarctic Lands": "Africa",
   Liberia: "Africa",
   Libya: "Africa",
   Madagascar: "Africa",
@@ -48,15 +46,22 @@ const continentMapping = {
   "South Africa": "Africa",
   "South Sudan": "Africa",
   Sudan: "Africa",
-  Swaziland: "Africa",
+  Swaziland: "Africa", // Eswatini
   "United Republic of Tanzania": "Africa",
   Togo: "Africa",
   Tunisia: "Africa",
   Uganda: "Africa",
-  "Western Sahara": "Africa",
   Zambia: "Africa",
   Zimbabwe: "Africa",
+
+  "Cape Verde": "Africa", // island, Africa continent
+  "French Southern and Antarctic Lands": "Africa", // French islands, continent Africa
+  "Saint Helena": "Africa", // volcanic island
+  "Western Sahara": "", // Africa, part of Morocco
+
+  Armenia: "Asia",
   Afghanistan: "Asia",
+  Azerbaijan: "Asia",
   Bahrain: "Asia",
   Bangladesh: "Asia",
   Bhutan: "Asia",
@@ -85,6 +90,7 @@ const continentMapping = {
   Nepal: "Asia",
   Oman: "Asia",
   Pakistan: "Asia",
+  Georgia: "Asia",
   Philippines: "Asia",
   Qatar: "Asia",
   "Saudi Arabia": "Asia",
@@ -96,15 +102,18 @@ const continentMapping = {
   Turkey: "Asia",
   Turkmenistan: "Asia",
   Taiwan: "Asia",
+  Palestine: "Asia",
   "United Arab Emirates": "Asia",
   Uzbekistan: "Asia",
   Vietnam: "Asia",
   Yemen: "Asia",
+
+  "Hong Kong S.A.R.": "Asia",
+  "Macao S.A.R": "Asia",
+
   Albania: "Europe",
   Andorra: "Europe",
-  Armenia: "Europe",
   Austria: "Europe",
-  Azerbaijan: "Europe",
   Russia: "Europe",
   Belarus: "Europe",
   Belgium: "Europe",
@@ -119,7 +128,6 @@ const continentMapping = {
   Estonia: "Europe",
   Finland: "Europe",
   France: "Europe",
-  Georgia: "Europe",
   Germany: "Europe",
   Greece: "Europe",
   Hungary: "Europe",
@@ -150,14 +158,21 @@ const continentMapping = {
   Ukraine: "Europe",
   "United Kingdom": "Europe",
   Vatican: "Europe",
+
+  "Faroe Islands": "Europe", // island Denmark
+  "Isle of Man": "Europe", // island UK
+  Gibraltar: "Europe", // UK
+
   "Antigua and Barbuda": "NorthAmerica",
   Montserrat: "NorthAmerica",
   "The Bahamas": "NorthAmerica",
   Barbados: "NorthAmerica",
   Belize: "NorthAmerica",
+  Bermuda: "NorthAmerica",
   Canada: "NorthAmerica",
   "Costa Rica": "NorthAmerica",
   Cuba: "NorthAmerica",
+  "Cayman Islands": "NorthAmerica",
   Dominica: "NorthAmerica",
   "Dominican Republic": "NorthAmerica",
   "El Salvador": "NorthAmerica",
@@ -168,6 +183,7 @@ const continentMapping = {
   Jamaica: "NorthAmerica",
   Mexico: "NorthAmerica",
   Nicaragua: "NorthAmerica",
+  "Turks and Caicos Islands": "NorthAmerica",
   Panama: "NorthAmerica",
   "Puerto Rico": "NorthAmerica",
   "Saint Kitts and Nevis": "NorthAmerica",
@@ -182,20 +198,7 @@ const continentMapping = {
   "Saint Barthelemy": "NorthAmerica",
   "Trinidad and Tobago": "NorthAmerica",
   "Sint Maarten": "NorthAmerica",
-  Australia: "Australia",
-  Fiji: "Australia",
-  Kiribati: "Australia",
-  "Marshall Islands": "Australia",
-  Micronesia: "Australia",
-  Nauru: "Australia",
-  "New Zealand": "Australia",
-  Palau: "Australia",
-  "Papua New Guinea": "Australia",
-  Samoa: "Australia",
-  "Solomon Islands": "Australia",
-  Tonga: "Australia",
-  Tuvalu: "Australia",
-  Vanuatu: "Australia",
+
   Argentina: "SouthAmerica",
   Bolivia: "SouthAmerica",
   Brazil: "SouthAmerica",
@@ -210,6 +213,28 @@ const continentMapping = {
   Venezuela: "SouthAmerica",
   Aruba: "SouthAmerica",
   Curaçao: "SouthAmerica",
+
+  "Falkland Islands": "SouthAmerica", // island
+
+  Australia: "Australia",
+  Fiji: "Australia",
+  Kiribati: "Australia",
+  "Marshall Islands": "Australia",
+  Micronesia: "Australia",
+  Nauru: "Australia",
+  "New Zealand": "Australia",
+  Palau: "Australia",
+  "Papua New Guinea": "Australia",
+  Samoa: "Australia",
+  "Solomon Islands": "Australia",
+  Tonga: "Australia",
+  Tuvalu: "Australia",
+  Vanuatu: "Australia",
+
+  "French Polynesia": "Australia", // island
+  "New Caledonia": "Australia", // island
+  Guam: "Australia", // island
+  "Northern Mariana Islands": "Australia", // island
 
   "Baykonur Cosmodrome": "Other",
   "Siachen Glacier": "Other",
