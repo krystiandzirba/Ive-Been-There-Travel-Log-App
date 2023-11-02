@@ -317,8 +317,7 @@ body {
   font-family: "Inter", sans-serif;
   font-weight: 500;
   font-size: 0.625vw;
-  margin: 1%;
-  padding: 1%;
+  margin: 0.3vw;
 }
 
 .sidebar_sub_button:hover {
