@@ -1,11 +1,10 @@
-// ver: 1.4.3
+// ver: 1.4.4
 
 // Bugs:
 
 // Features to add:
 
 // - city search bar
-// - group collapse button gray/white state on collapsed/not collapsed
 // - Add driver.js
 
 // Variables ↓
@@ -211,6 +210,9 @@ let travel_date_end = "";
 
 let stored_group_log_id = "";
 let is_travel_group_empty = "";
+
+let child_div_count = 0;
+let is_div_empty;
 
 let is_travel_creator_active = false;
 let main_logs_container_arrow_clicked = false;
@@ -2462,6 +2464,18 @@ function isGroupContentDivEmpty(id) {
   return is_travel_group_empty;
 }
 
+function countDivContent(id) {
+  child_div_count = 0;
+  let storedContentDiv = document.getElementById(id);
+  if (storedContentDiv) {
+    is_div_empty = storedContentDiv.innerHTML.trim() === "";
+    if (!is_div_empty) {
+      let childDivs = storedContentDiv.querySelectorAll("div");
+      child_div_count = childDivs.length / 3;
+    }
+  }
+}
+
 function toggleCustomCursorVisibility(toggle) {
   custom_cursor.style.display = toggle ? "flex" : "none";
 }
@@ -2715,21 +2729,38 @@ function buildCRUD() {
       $travel_logs_group_div_settings.appendChild($travel_logs_delete);
 
       // group delete
+      // group list counter
+
+      const $group_list_counter = document.createElement("button");
+      $group_list_counter.id = "group_list_counter";
+      $group_list_counter.classList.add("group_list_counter");
+      $travel_logs_group_div_settings.appendChild($group_list_counter);
+
+      // group list counter
       // group list collapse
 
       let list_collapsed = false;
       const $list_collapse_button = document.createElement("button");
-      $list_collapse_button.innerHTML = '<i class="fa-solid fa-list fa-xl" style="color: #c9c9c9;"></i>';
+      $list_collapse_button.innerHTML = '<i class="fa-solid fa-list fa-xl" style="color: #d7d7d726;"></i>';
       $list_collapse_button.classList.add("travel_logs_CRUD_buttons");
       $travel_logs_group_div_settings.appendChild($list_collapse_button);
 
       $list_collapse_button.addEventListener("click", () => {
+        countDivContent(stored_group_id_reference);
         if (list_collapsed) {
           $travel_logs_group_content.style.height = "auto";
           $travel_logs_group_div_main.style.height = "auto";
+
+          $group_list_counter.style.display = "none";
+          $list_collapse_button.innerHTML = '<i class="fa-solid fa-list fa-xl" style="color: #d7d7d726;"></i>';
         } else {
-          $travel_logs_group_content.style.height = 0;
-          $travel_logs_group_div_main.style.height = "8.6vh";
+          if (child_div_count >= 1) {
+            $group_list_counter.style.display = "block";
+            $group_list_counter.textContent = child_div_count;
+            $list_collapse_button.innerHTML = '<i class="fa-solid fa-list fa-xl" style="color: #c9c9c9;"></i>';
+            $travel_logs_group_content.style.height = 0;
+            $travel_logs_group_div_main.style.height = "8.6vh";
+          }
         }
         list_collapsed = !list_collapsed;
       });

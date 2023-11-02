@@ -874,6 +874,22 @@ body {
   transform: scale(1.2);
 }
 
+.group_list_counter {
+  width: 1.4vw;
+  height: 1.4vw;
+  background-color: rgb(224, 224, 224);
+  margin-top: -4.5vh;
+  margin-left: 22.5vw;
+  border-radius: 1.5vh;
+  position: absolute;
+  pointer-events: none;
+  display: none;
+  border: none;
+  font-size: 1vw;
+  font-family: "Inter", sans-serif;
+  text-align: center;
+}
+
 /* ↑ CRUD Individual ↑ */
 /* ↓ TimelineJS ↓ */
 
@@ -1250,7 +1266,6 @@ body {
   width: 2vw;
   position: absolute;
   z-index: 2000;
-  /* display: none; */
   display: flex;
   text-align: center;
   transform: translate(-50%, -50%);
