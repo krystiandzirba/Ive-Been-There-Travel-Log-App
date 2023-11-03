@@ -1,4 +1,4 @@
-// ver: 1.4.8
+// ver: 1.4.9
 
 // Bugs:
 
@@ -246,6 +246,7 @@ let travel_logs_group_input = document.getElementById("travel_logs_group_input")
 const sidebar_covers = document.querySelectorAll(".travel_creator_cover");
 const travel_creator_covers = document.querySelectorAll(".travel_type_cover");
 const statistics_covers = document.querySelectorAll(".statistics_cover");
+const overlay_buttons_covers = document.querySelectorAll(".overlay_buttons_cover");
 
 const jscolor_highlight_container = document.querySelector(".jscolor_highlight_container");
 const jscolor_highlight = document.getElementById("jscolor_highlight");
@@ -1506,6 +1507,7 @@ add_travel_superset_button.addEventListener("click", () => {
   toggleStatisticsVisibility(false);
   toggleRemoveDataContainerVisibility(false);
   toggleSidebarCover(true);
+  toggleOverlayButtonsCover(true);
   if (statistics_visibility) {
     statistics_visibility = toggleIconColor(statistics_visibility, statistics_icon);
   }
@@ -1719,7 +1721,7 @@ close_button_group.addEventListener("mouseleave", () => {
 
 sidebar_covers.forEach((element) => {
   element.addEventListener("click", () => {
-    displayInfoBox("This sidebar feature is unavailable while adding markers to the map.", 3000);
+    displayInfoBox("This sidebar feature is unavailable during travel log creation.", 3000);
   });
 });
 
@@ -1732,6 +1734,12 @@ travel_creator_covers.forEach((element) => {
 statistics_covers.forEach((element) => {
   element.addEventListener("click", () => {
     displayInfoBox("You cannot customize the travel log once you've added markers to the map.", 3000);
+  });
+});
+
+overlay_buttons_covers.forEach((element) => {
+  element.addEventListener("click", () => {
+    displayInfoBox("This overlay feature is unavailable during travel log creation.", 3000);
   });
 });
 
@@ -1961,6 +1969,7 @@ confirm_button_individual.addEventListener("click", () => {
     localStorageCreateTrueMarkers(pageSettings.markers_size, pageSettings.markers_anchor);
 
     toggleSidebarCover(false);
+    toggleOverlayButtonsCover(false);
 
     if (pageSettings.highlight_visibility === true) {
       localStorageCreateTrueHighlights();
@@ -2020,6 +2029,7 @@ close_button_individual.addEventListener("click", () => {
   toggleTravelCreator(false, travel_logs_individual_main_container);
   toggleTravelCreatorCover(false);
   toggleSidebarCover(false);
+  toggleOverlayButtonsCover(false);
   is_travel_creator_active = false;
   allow_travel_settings_editing = true;
   active_travel_type_icon = "";
@@ -2058,6 +2068,16 @@ function toggleTravelCreatorCover(toggle) {
 
 function toggleStatisticsCover(toggle) {
   statistics_covers.forEach((element) => {
+    if (toggle) {
+      element.style.display = "block";
+    } else {
+      element.style.display = "none";
+    }
+  });
+}
+
+function toggleOverlayButtonsCover(toggle) {
+  overlay_buttons_covers.forEach((element) => {
     if (toggle) {
       element.style.display = "block";
     } else {
@@ -2703,6 +2723,7 @@ function buildCRUD() {
         toggleTimelineVisibility(false);
         toggleStatisticsVisibility(false);
         toggleSidebarCover(true);
+        toggleOverlayButtonsCover(true);
         if (statistics_visibility) {
           statistics_visibility = toggleIconColor(statistics_visibility, statistics_icon);
         }

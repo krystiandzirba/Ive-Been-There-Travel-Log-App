@@ -455,7 +455,8 @@ body {
 
 .travel_creator_cover,
 .travel_type_cover,
-.statistics_cover {
+.statistics_cover,
+.overlay_buttons_cover {
   display: none;
   z-index: 900;
   position: absolute;
@@ -503,6 +504,12 @@ body {
   top: 35.85%;
   height: 35.25%;
   width: 88%;
+}
+
+.buttons_cover {
+  width: 20vw;
+  height: 90%;
+  left: 55%;
 }
 
 .data_grid_container {
