@@ -1,4 +1,4 @@
-// ver: 1.4.7
+// ver: 1.4.8
 
 // Bugs:
 
@@ -55,6 +55,7 @@ let map_layers_container_timeout;
 const sidebar_overlay_button = document.getElementById("sidebar_overlay_button");
 const overlay_icon = document.getElementById("overlay_icon");
 const sub_overlay_container = document.getElementById("sub_overlay_container");
+const sub_overlay_geocoder = document.getElementById("sub_overlay_geocoder");
 const sub_overlay_train = document.getElementById("sub_overlay_train");
 const sub_overlay_bicycle = document.getElementById("sub_overlay_bicycle");
 const sub_overlay_labels = document.getElementById("sub_overlay_labels");
@@ -66,6 +67,7 @@ const sub_overlay_house = document.getElementById("sub_overlay_house");
 
 const markers_settings_display = document.querySelector("#sub_overlay_markers p");
 
+let overlay_geocoder_active = false;
 let overlay_train_active = false;
 let overlay_bicycle_active = false;
 let overlay_labels_active = false;
@@ -337,6 +339,8 @@ const map = L.map("map", {
   maxBounds: maxBounds,
   maxBoundsViscosity: 0.8,
 }).setView([50, 10], 6);
+
+let geocoder;
 
 const { mapTileLayer_A, mapTileLayer_B, mapTileLayer_C, mapTileLayer_D } = leafletConfig.tilemaps;
 const { home_icon, car_icon, plane_icon, boat_icon, walk_icon, bicycle_icon, motorcycle_icon, train_icon, bus_icon } =
@@ -728,6 +732,11 @@ sub_overlay_container.addEventListener("mouseleave", () => {
   }, 200);
 });
 
+sub_overlay_geocoder.addEventListener("click", () => {
+  toggleMapGeocoder();
+  overlay_geocoder_active = toggleIconColor(overlay_geocoder_active, sub_geocoder_icon);
+});
+
 sub_overlay_train.addEventListener("click", () => {
   switchTileAddon(trainsAddon);
   overlay_train_active = toggleIconColor(overlay_train_active, sub_train_icon);
@@ -827,6 +836,23 @@ sub_overlay_house.addEventListener("click", () => {
   localStorageSavePageSettings();
 });
 
+function toggleMapGeocoder() {
+  if (!overlay_geocoder_active) {
+    geocoder = L.Control.geocoder({
+      defaultMarkGeocode: false,
+    })
+      .on("markgeocode", function (e) {
+        var bbox = e.geocode.bbox;
+        var poly = L.polygon([bbox.getSouthEast(), bbox.getNorthEast(), bbox.getNorthWest(), bbox.getSouthWest()]);
+
+        map.fitBounds(poly.getBounds());
+      })
+      .addTo(map);
+  } else if (overlay_geocoder_active) {
+    map.removeControl(geocoder);
+  }
+}
+
 function switchTileAddon(tile_addon) {
   if (map.hasLayer(tile_addon)) {
     tile_addon.removeFrom(map);
@@ -887,7 +913,7 @@ sidebar_timeline_button.addEventListener("click", () => {
   }
 });
 
-sidebar_timeline_button.addEventListener("mouseover", () =>
+sidebar_timeline_button.addEventListener("mouseenter", () =>
   changeIconColorOnHover(true, timeline_icon, sidebar_timeline_button)
 );
 
@@ -4507,7 +4533,8 @@ const resourcesToLoad = [
   { url: "assets/data/LeafletMap/leaflet.css", label: "Leaflet CSS" },
   { url: "assets/data/DateRangePicker/daterangepicker.css", label: "DateRangePicker CSS" },
   { url: "assets/data/FontAwesome/css/all.min.css", label: "FontAwesome CSS" },
-  { url: "assets/data/loadingBar/loading-bar.css", label: "LoadingBar CSS" },
+  { url: "assets/data/LoadingBar/loading-bar.css", label: "LoadingBar CSS" },
+  { url: "assets/data/LeafletControlGeocoder/Control.Geocoder.css", label: "Leaflet Control Geocoder CSS" },
 
   { url: "script.js", label: "Main JS" },
   { url: "assets/data/LeafletMap/leaflet.js", label: "Leaflet JS" },
@@ -4518,10 +4545,7 @@ const resourcesToLoad = [
   { url: "assets/data/LeafletEdgeBuffer/leaflet.edgebuffer.js", label: "Leaflet EdgeBuffer JS" },
   { url: "assets/data/LeafletGridLayerFadeOut/Leaflet.GridLayer.FadeOut.js", label: "Leaflet Grid Layer Fade-out JS" },
   { url: "assets/data/SmoothMarkerBouncing/bundle.js", label: "SmoothMarkerBouncing JS" },
-  { url: "assets/data/loadingBar/loading-bar.js", label: "LoadingBar JS" },
-
-  // { url: "https://cdn.knightlab.com/libs/timeline3/latest/js/timeline.js", label: "TimelineJS JS" },
-  // { url: "https://cdn.knightlab.com/libs/timeline3/latest/css/timeline.css", label: "TimelineJS CSS" },
+  { url: "assets/data/LoadingBar/loading-bar.js", label: "LoadingBar JS" },
 ];
 
 function progressInfoDisplay(label, progress) {
