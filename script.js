@@ -1,10 +1,9 @@
-// ver: 1.4.10
+// ver: 1.4.11
 
 // Bugs:
 
 // Features to add:
 
-// - city search bar
 // - Add driver.js
 
 // Variables ↓
@@ -4553,6 +4552,7 @@ const resourcesToLoad = [
   { url: "assets/data/DateRangePicker/daterangepicker.css", label: "DateRangePicker CSS" },
   { url: "assets/data/FontAwesome/css/all.min.css", label: "FontAwesome CSS" },
   { url: "assets/data/LoadingBar/loading-bar.css", label: "LoadingBar CSS" },
+  { url: "assets/data/TimelineJS3/timeline.theme.dark.css", label: "TimelineJS3 CSS" },
   { url: "assets/data/LeafletControlGeocoder/Control.Geocoder.css", label: "Leaflet Control Geocoder CSS" },
 
   { url: "script.js", label: "Main JS" },
@@ -4565,6 +4565,7 @@ const resourcesToLoad = [
   { url: "assets/data/LeafletGridLayerFadeOut/Leaflet.GridLayer.FadeOut.js", label: "Leaflet Grid Layer Fade-out JS" },
   { url: "assets/data/SmoothMarkerBouncing/bundle.js", label: "SmoothMarkerBouncing JS" },
   { url: "assets/data/LoadingBar/loading-bar.js", label: "LoadingBar JS" },
+  { url: "assets/data/TimelineJS3/timeline.js", label: "TimelineJS3 JS" },
 ];
 
 function progressInfoDisplay(label, progress) {
