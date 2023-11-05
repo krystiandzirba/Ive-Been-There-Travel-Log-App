@@ -1,4 +1,4 @@
-// ver: 1.4.16
+// ver: 1.4.17
 
 // Bugs:
 
@@ -2007,6 +2007,7 @@ close_button_individual.addEventListener("click", () => {
   toggleCustomCursorVisibility(false);
   map.off("click");
 
+  removeEmptyMarkersData(markersData);
   travelTypeValueUpdate(false, false, false, false, false, false, false, false, false);
   removeMarkers(random_id);
   removeTemporaryHighlights(random_id);
@@ -2449,6 +2450,17 @@ function individualDataSubmit() {
 }
 
 // CRUD data submit ↑
+
+function removeEmptyMarkersData(data) {
+  if (Array.isArray(data)) {
+    for (let i = 0; i < data.length; i++) {
+      if (Array.isArray(data[i]) && data[i].length === 0) {
+        data.splice(i, 1);
+        break;
+      }
+    }
+  }
+}
 
 function removeMarkers(id) {
   for (let i = markers.length - 1; i >= 0; i--) {
