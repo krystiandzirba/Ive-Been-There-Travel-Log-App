@@ -81,10 +81,6 @@ body {
   }
 }
 
-.home_button {
-  display: none;
-}
-
 .plane_icon {
   position: absolute;
   height: 50px;
@@ -1196,6 +1192,16 @@ body {
   float: right;
   cursor: pointer;
   font-size: 40px;
+}
+
+.search_icon {
+  position: absolute;
+  height: 3vh;
+  width: 1.75vw;
+  top: 2.5%;
+  left: 37.5%;
+  z-index: 999;
+  display: none;
 }
 
 #info_box {

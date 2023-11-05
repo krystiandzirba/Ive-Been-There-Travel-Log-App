@@ -1,4 +1,4 @@
-// ver: 1.4.13
+// ver: 1.4.14
 
 // Bugs:
 
@@ -845,8 +845,10 @@ function toggleMapGeocoder() {
         map.fitBounds(poly.getBounds());
       })
       .addTo(map);
+    search_icon.style.display = "block";
   } else if (overlay_geocoder_active) {
     map.removeControl(geocoder);
+    search_icon.style.display = "none";
   }
 }
 
