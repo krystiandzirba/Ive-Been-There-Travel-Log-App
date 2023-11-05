@@ -1,4 +1,4 @@
-// ver: 1.4.15
+// ver: 1.4.16
 
 // Bugs:
 
@@ -943,6 +943,7 @@ function changeTimelineDimensions(toggle) {
 // // // Statistics ↓
 
 sidebar_statistics_button.addEventListener("click", () => {
+  main_logs_container_arrow_clicked = false;
   if (is_travel_creator_active) {
     displayInfoBox("Cannot use this feature during travel log creation.", 2500);
   } else {
@@ -977,8 +978,10 @@ sidebar_statistics_button.addEventListener("click", () => {
 
       toggleStatisticsVisibility(false);
       toggleMainLogContainerVisibility(true);
-      toggleTimelineVisibility(true);
       toggleStatisticsCover(false);
+      toggleMainLogContainerVisibility(true);
+      toggleTimelineVisibility(true);
+      changeTimelineDimensions(true);
     }
   }
 });
