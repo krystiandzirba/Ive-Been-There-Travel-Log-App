@@ -1269,11 +1269,12 @@ body {
   font-size: 1.2vh;
 }
 
-.t1 {
+.console_log_button {
   top: 98.75%;
   left: 6vw;
   background-color: rgba(0, 0, 0, 0);
   color: #d7d7d7;
+  display: block;
 }
 
 .t2 {

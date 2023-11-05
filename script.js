@@ -1,4 +1,4 @@
-// ver: 1.4.14
+// ver: 1.4.15
 
 // Bugs:
 
@@ -168,6 +168,7 @@ const confirm_button_delete_data = document.getElementById("confirm_button_delet
 const close_button_delete_data = document.getElementById("close_button_delete_data");
 const confirm_icon_delete_data = document.getElementById("confirm_icon_delete_data");
 const close_icon_delete_data = document.getElementById("close_icon_delete_data");
+const console_log_button = document.getElementById("console_log_button");
 
 let settings_container_timeout;
 
@@ -1398,6 +1399,7 @@ sub_settings_portrait_mode.addEventListener("click", (event) => {
   sub_settings_container.classList.add("hidden");
 
   main_statistics_container.classList.add("hidden");
+  console_log_button.style.display = "none";
 
   ui_hidden = true;
 });
@@ -1413,6 +1415,7 @@ document.addEventListener("click", () => {
     sub_settings_container.classList.remove("hidden");
 
     main_statistics_container.classList.remove("hidden");
+    console_log_button.style.display = "block";
   }
 
   ui_hidden = false;
@@ -4644,7 +4647,7 @@ function displayInfoBox(text, time) {
 
 // // ---------- TEST ---------- ↓
 
-test_button.addEventListener("click", () => {
+console_log_button.addEventListener("click", () => {
   console.log("%c-1- pageSettings", "color: lightgreen;", pageSettings);
   console.log("%c-1- homeData", "color: lightgreen;", homeData);
   console.log("%c-1- markersData", "color: lightgreen;", markersData);
