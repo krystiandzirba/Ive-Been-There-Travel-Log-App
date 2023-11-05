@@ -567,6 +567,8 @@
   top: 100%;
   left: 50%;
   left: 0;
+  height: 14vh;
+  margin-bottom: 5.5vh;
 }
 /* Skinny
 ================================================== */
@@ -636,7 +638,7 @@
 .tl-menubar-button {
   border: none;
   font-size: 18px;
-  height: 3vh;
+  height: 2.75vh;
   background-color: #2f3c4c;
   cursor: pointer;
   padding: 5px 10px 5px 10px;
@@ -644,7 +646,6 @@
   display: block;
   color: #c3c3c3;
   margin-bottom: 0.5vh;
-  border: solid black 1px;
 }
 .tl-menubar-button:disabled {
   opacity: 0.33;
@@ -812,7 +813,7 @@
   background-color: rgba(248, 3, 3, 0);
   position: relative;
   overflow: hidden;
-  border-top: 1px solid #404040;
+  /* display: none; */
 }
 .tl-timenav .tl-timenav-line {
   position: absolute;
@@ -853,6 +854,8 @@
   height: 100%;
   width: 100%;
   top: 0;
+  /*display: none;  temporary /////////////// */
+  /* display: none; */
 }
 .tl-timenav .tl-timenav-slider.tl-timenav-slider-animate {
   -webkit-transition: all 1000ms cubic-bezier(0.77, 0, 0.175, 1);
@@ -870,6 +873,8 @@
   width: 100%;
   cursor: move;
   z-index: 6;
+  /* display: none;  temporary ///////////////  do ruszania myszką */
+  /* display: none; */
 }
 .tl-timenav .tl-timenav-slider .tl-timenav-container-mask {
   position: absolute;
@@ -1027,7 +1032,7 @@
   bottom: 0px;
   height: 6px;
   width: 6px;
-  background-color: #000000;
+  background-color: #b1b1b1;
   z-index: 8;
   -webkit-border-radius: 50%;
   -moz-border-radius: 50%;
@@ -1083,8 +1088,8 @@
   box-orient: vertical;
   -webkit-box-orient: vertical;
   text-overflow: ellipsis;
-  font-size: 12px;
-  line-height: 12px;
+  font-size: 15px;
+  line-height: 19px;
   height: 100%;
   overflow: hidden;
   font-weight: normal;
@@ -1199,7 +1204,7 @@
 .tl-timemarker:hover .tl-timemarker-timespan,
 .tl-timemarker:focus .tl-timemarker-timespan {
   /* important  */
-  background-color: rgba(54, 72, 105, 0.573);
+  background-color: rgba(54, 72, 105, 0.5);
 }
 .tl-timemarker:hover .tl-timemarker-timespan .tl-timemarker-timespan-content,
 .tl-timemarker:focus .tl-timemarker-timespan .tl-timemarker-timespan-content {
@@ -1334,7 +1339,7 @@
 .tl-timemarker:focus.tl-timemarker-active .tl-timemarker-line-left,
 .tl-timemarker:hover.tl-timemarker-active .tl-timemarker-line-right,
 .tl-timemarker:focus.tl-timemarker-active .tl-timemarker-line-right {
-  border-color: rgb(143, 167, 218);
+  border-color: rgb(0, 0, 0);
 }
 .tl-timemarker:hover.tl-timemarker-active .tl-timemarker-line-left:after,
 .tl-timemarker:focus.tl-timemarker-active .tl-timemarker-line-left:after,
@@ -1363,11 +1368,11 @@
   background-color: #ccc;
 }
 .tl-timemarker.tl-timemarker-active .tl-timemarker-content-container {
-  background-color: #303030;
+  background-color: #1e2730;
   color: #ccc;
   z-index: 9;
   border-color: rgba(0, 0, 0, 0.5);
-  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
 }
 .tl-timemarker.tl-timemarker-active
   .tl-timemarker-content-container
@@ -1455,7 +1460,7 @@
   background-color: rgba(0, 0, 0, 0.35);
 }
 .tl-timemarker.tl-timemarker-with-end.tl-timemarker-active .tl-timemarker-timespan:after {
-  background-color: rgba(47, 55, 81, 0.5);
+  background-color: rgba(105, 112, 136, 0.5);
 }
 .tl-timemarker.tl-timemarker-with-end.tl-timemarker-active .tl-timemarker-line-left,
 .tl-timemarker.tl-timemarker-with-end.tl-timemarker-active .tl-timemarker-line-right {
@@ -1857,6 +1862,7 @@
   margin: 0;
   overflow-x: hidden;
   overflow-y: auto;
+  display: none;
 }
 .tl-slide .tl-slide-background {
   position: absolute;
@@ -1890,6 +1896,7 @@
   width: 100%;
   z-index: 3;
   background-color: #2b333d;
+  display: none;
 }
 .tl-slide .tl-slide-content-container .tl-slide-content {
   display: table;
@@ -2180,6 +2187,8 @@
 .tl-slidenav-next .tl-slidenav-content-container {
   width: 100px;
   position: absolute;
+  display: none;
+  /* do wyjebania */
 }
 .tl-slidenav-previous .tl-slidenav-title,
 .tl-slidenav-next .tl-slidenav-title,
@@ -2438,6 +2447,8 @@
   position: relative;
   box-sizing: content-box;
   z-index: 8;
+  background-color: red;
+  top: 100%;
 }
 .tl-storyslider img,
 .tl-storyslider embed,
@@ -2452,8 +2463,11 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+  height: 10px;
   z-index: 1;
+  /*  do wypierdolenia */
+  display: none;
+  background-color: red;
 }
 .tl-storyslider .tl-slider-touch-mask {
   width: 100%;
@@ -2469,6 +2483,7 @@
   height: 100%;
   position: relative;
   z-index: 5;
+  display: none;
 }
 .tl-storyslider .tl-slider-container-mask .tl-slider-container {
   position: absolute;
@@ -3033,11 +3048,12 @@
   -ms-user-select: none;
   -o-user-select: none;
   user-select: none;
-  background-color: #33333300;
+  background-color: #e14b4b00;
   color: #808080;
   -webkit-box-sizing: content-box;
   -moz-box-sizing: content-box;
   box-sizing: content-box;
+  /* background-color: red; */
 }
 .tl-timeline.tl-timeline-embed {
   box-sizing: border-box;
@@ -3059,7 +3075,7 @@
   font-size: 10px;
   line-height: 10px;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
-  background-color: rgba(51, 51, 51, 0.85);
+  background-color: rgba(51, 51, 51, 0);
   padding: 3px;
 }
 .tl-timeline .tl-attribution a {
@@ -3123,3 +3139,14 @@
 .tl-rtl .tl-credit {
   text-align: left;
 }
+
+/* git */
+/* git */
+
+/* git */
+/* git */
+
+/* git */
+/* git */
+/* git */
+/* git */
