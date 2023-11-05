@@ -1,4 +1,4 @@
-// ver: 1.4.12
+// ver: 1.4.13
 
 // Bugs:
 
@@ -123,7 +123,6 @@ let statistics_visibility = false;
 const timeline_container = document.querySelector(".timeline_container");
 const timeline_info = document.querySelector(".timeline_info");
 const timeline = document.querySelector("#timeline");
-const timeline_container_arrow = document.querySelector(".timeline_container_arrow");
 const sidebar_timeline_button = document.getElementById("sidebar_timeline_button");
 const timeline_icon = document.getElementById("timeline_icon");
 
@@ -893,21 +892,19 @@ sidebar_page_styles_button.addEventListener("click", () => {
 // // // Timeline ↓
 
 sidebar_timeline_button.addEventListener("click", () => {
-  if (is_travel_creator_active) {
-    displayInfoBox("Cannot use this feature during travel log creation.", 2500);
-  } else {
-    if (timeline_enabled) {
-      displayInfoBox("Timeline disabled", 1000);
+  timeline_enabled = toggleIconColor(timeline_enabled, timeline_icon);
+  if (!is_travel_creator_active) {
+    if (timeline_visibility == true) {
+      toggleTimelineVisibility(false);
+      setTimeout(function () {
+        toggleTimeline();
+      }, 500);
+    } else {
       toggleTimelineVisibility(true);
+      setTimeout(function () {
+        toggleTimeline();
+      }, 200);
     }
-
-    if (!timeline_enabled) {
-      displayInfoBox("Timeline enabled", 1000);
-    }
-
-    toggleTimelineVisibility(false);
-    timeline_enabled = toggleIconColor(timeline_enabled, timeline_icon);
-    toggleTimeline();
   }
 });
 
@@ -919,24 +916,12 @@ sidebar_timeline_button.addEventListener("mouseleave", () =>
   changeIconColorOnHover(false, timeline_icon, sidebar_timeline_button)
 );
 
-timeline_container_arrow.addEventListener("click", () => {
-  if (!is_travel_creator_active) {
-    if (timeline_visibility == true) {
-      toggleTimelineVisibility(false);
-    } else {
-      toggleTimelineVisibility(true);
-    }
-  }
-});
-
 function toggleTimelineVisibility(toggle) {
   if (toggle && timeline_enabled) {
     timeline_container.style.top = "63.2%";
-    timeline_container_arrow.style.top = "71%";
     timeline_visibility = true;
   } else {
     timeline_container.style.top = "89%";
-    timeline_container_arrow.style.top = "96%";
     timeline_visibility = false;
   }
 }
@@ -1406,7 +1391,6 @@ sub_settings_portrait_mode.addEventListener("click", (event) => {
   main_logs_container.classList.add("hidden");
   main_logs_container_arrow.classList.add("hidden");
 
-  timeline_container_arrow.classList.add("hidden");
   timeline_container.classList.add("hidden");
   app_version.classList.add("hidden");
   sub_settings_container.classList.add("hidden");
@@ -1422,7 +1406,6 @@ document.addEventListener("click", () => {
     main_logs_container.classList.remove("hidden");
     main_logs_container_arrow.classList.remove("hidden");
 
-    timeline_container_arrow.classList.remove("hidden");
     timeline_container.classList.remove("hidden");
     app_version.classList.remove("hidden");
     sub_settings_container.classList.remove("hidden");
@@ -1699,6 +1682,7 @@ close_button_group.addEventListener("click", () => {
   removeStoredId(stored_group_log_id);
   travel_logs_group_input.value = "";
 
+  toggleTimelineVisibility(true);
   toggleMainLogContainerVisibility(true);
   toggleTravelCreator(false, travel_logs_group_main_container);
 });

@@ -941,22 +941,6 @@ body {
   display: block;
 }
 
-.timeline_container_arrow {
-  position: absolute;
-  z-index: 699;
-  height: 4vh;
-  top: 96vh;
-  left: 50vw;
-  transform: translate(-50%, 0%);
-  transition: top 0.5s ease;
-}
-
-.timeline_container_arrow img {
-  width: 10vh;
-  height: auto;
-  transform: rotate(90deg);
-}
-
 /* ↑ TimelineJS ↑ */
 /* ↓ D3 ↓ */
 
