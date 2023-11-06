@@ -58,10 +58,9 @@
 }
 
 input::placeholder {
-  color: rgb(27, 27, 27);
+  color: rgba(18, 18, 18, 0.5);
   font-size: 2vh;
   font-family: "Inter", sans-serif;
-  font-weight: 600;
 }
 
 .leaflet-control-geocoder-form-no-error {

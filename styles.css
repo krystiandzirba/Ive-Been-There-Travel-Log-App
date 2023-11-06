@@ -288,7 +288,7 @@ body {
 }
 
 .github {
-  width: 45%;
+  width: 55%;
   height: 4.5%;
   background-color: #2f3c4c;
   border: none;
@@ -297,7 +297,7 @@ body {
 }
 
 .github i {
-  margin-top: 1.5vh;
+  margin-top: 1.25vh;
 }
 
 .sidebar_sub_button {
@@ -897,13 +897,13 @@ body {
 
 .timeline_container {
   position: absolute;
-  min-height: 25vh;
+  height: 17.5vh;
   width: 70.5vw;
   background: linear-gradient(to bottom, rgba(77, 27, 27, 0), rgba(134, 134, 134, 0.65));
   z-index: 750;
   top: 90.1vh;
   left: 39.7vw;
-  transform: translate(-50%, 40%);
+  transform: translate(-50%, 100%);
   transition: top 0.5s ease, width 0.5s ease-in-out, margin-left 0.5s ease-in-out;
   display: flex;
   align-items: center;
@@ -930,7 +930,7 @@ body {
 }
 
 #timeline {
-  height: 25vh;
+  height: 17.5vh;
   width: 100.2%;
   position: absolute;
   z-index: 700;

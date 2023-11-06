@@ -1,4 +1,4 @@
-// ver: 1.4.17
+// ver: 1.4.18
 
 // Bugs:
 
@@ -4555,7 +4555,7 @@ const resourcesToLoad = [
   { url: "assets/data/LeafletMap/leaflet.css", label: "Leaflet CSS" },
   { url: "assets/data/DateRangePicker/daterangepicker.css", label: "DateRangePicker CSS" },
   { url: "assets/data/FontAwesome/css/all.min.css", label: "FontAwesome CSS" },
-  { url: "assets/data/LoadingBar/loading-bar.css", label: "LoadingBar CSS" },
+  { url: "assets/data/LoadingBar/loadingBar.css", label: "LoadingBar CSS" },
   { url: "assets/data/TimelineJS3/timeline.theme.dark.css", label: "TimelineJS3 CSS" },
   { url: "assets/data/LeafletControlGeocoder/Control.Geocoder.css", label: "Leaflet Control Geocoder CSS" },
 
@@ -4568,7 +4568,7 @@ const resourcesToLoad = [
   { url: "assets/data/LeafletEdgeBuffer/leaflet.edgebuffer.js", label: "Leaflet EdgeBuffer JS" },
   { url: "assets/data/LeafletGridLayerFadeOut/Leaflet.GridLayer.FadeOut.js", label: "Leaflet Grid Layer Fade-out JS" },
   { url: "assets/data/SmoothMarkerBouncing/bundle.js", label: "SmoothMarkerBouncing JS" },
-  { url: "assets/data/LoadingBar/loading-bar.js", label: "LoadingBar JS" },
+  { url: "assets/data/LoadingBar/loadingBar.js", label: "LoadingBar JS" },
   { url: "assets/data/TimelineJS3/timeline.js", label: "TimelineJS3 JS" },
 ];
 

@@ -565,10 +565,10 @@
   border-bottom-right-radius: 10px;
   border-top-right-radius: 10px;
   top: 100%;
-  left: 50%;
   left: 0;
   height: 14vh;
   margin-bottom: 5.5vh;
+  margin-top: 0.25vh;
 }
 /* Skinny
 ================================================== */
@@ -3053,7 +3053,6 @@
   -webkit-box-sizing: content-box;
   -moz-box-sizing: content-box;
   box-sizing: content-box;
-  /* background-color: red; */
 }
 .tl-timeline.tl-timeline-embed {
   box-sizing: border-box;
