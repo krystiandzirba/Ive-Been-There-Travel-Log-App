@@ -1153,6 +1153,175 @@ body {
 }
 
 /* ↑ D3 ↑ */
+/* ↓ Tutorial Driver ↓  */
+
+.tutorial_container {
+  position: absolute;
+  width: 20vw;
+  background-color: #2f3c4c;
+  z-index: 999;
+  top: 2.5vh;
+  left: 30%;
+  transform: translate(0%, -40vh);
+  transition: transform 0.5s ease;
+  color: rgb(215, 215, 215);
+  font-size: 1.2vw;
+  font-family: "Inter", sans-serif;
+  padding: 2vh;
+  border-radius: 2vh;
+  text-align: center;
+  box-shadow: 30px 30px 9px rgba(0, 0, 0, 0.4);
+}
+
+.tutorial_first_question_container {
+  height: 20vh;
+}
+
+.tutorial_second_question_container {
+  height: 15vh;
+}
+
+.tutorial_question_buttons_container {
+  margin-top: 1.5vh;
+}
+
+#tutorial_first_question_button_confirm,
+#tutorial_first_question_button_close,
+#tutorial_second_question_button_confirm,
+#tutorial_second_question_button_close {
+  height: 5vh;
+  width: 6.5vw;
+  margin-left: 1.3vw;
+  margin-right: 1.3vw;
+  background-color: rgba(255, 0, 0, 0);
+  border: 1px solid #26303d;
+  color: rgb(215, 215, 215);
+  border-radius: 1.5vh;
+  transition: transform 0.2s;
+}
+
+#tutorial_first_question_button_confirm:hover,
+#tutorial_first_question_button_close:hover,
+#tutorial_second_question_button_confirm:hover,
+#tutorial_second_question_button_close:hover {
+  background-color: #26303d;
+  transform: scale(1.2);
+}
+
+label {
+  display: block;
+  margin-top: 2vh;
+  color: rgb(215, 215, 215);
+  font-size: 1.1vw;
+  font-family: "Inter", sans-serif;
+}
+
+.driver_step {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0);
+  pointer-events: none;
+  z-index: 999;
+}
+
+.travel_log_container_driver_step {
+  height: 95%;
+  width: 26.5vw;
+  top: 1%;
+  left: 72.5%;
+}
+
+.addtravel_driver_step {
+  height: 11.5%;
+  width: 25vw;
+  top: 0%;
+  left: 75%;
+}
+
+.logs_driver_step {
+  height: 85%;
+  width: 25vw;
+  top: 11.5%;
+  left: 75%;
+}
+
+.logs_button_driver_step {
+  height: 6%;
+  width: 2.5vw;
+  top: 2.5%;
+  left: 72.75%;
+}
+
+.sidebar_house_driver_step {
+  height: 10%;
+  width: 29.75vw;
+  top: 0.8%;
+  left: 0%;
+}
+
+.sidebar_maplayers_driver_step {
+  height: 10%;
+  width: 25vw;
+  top: 9.25%;
+  left: 0%;
+}
+
+.sidebar_overlay_driver_step {
+  height: 10%;
+  width: 50vw;
+  top: 18%;
+  left: 0%;
+}
+
+.sidebar_statistics_button_driver_step {
+  height: 8%;
+  width: 4.25vw;
+  top: 27.75%;
+  left: 0%;
+}
+
+.sidebar_statistics_first_driver_step {
+  height: 41.5%;
+  width: 32vw;
+  top: 1%;
+  left: 5%;
+}
+
+.sidebar_statistics_last_driver_step {
+  height: 52.5%;
+  width: 65vw;
+  top: 43.5%;
+  left: 34%;
+}
+
+.sidebar_timeline_button_driver_step {
+  height: 8%;
+  width: 4.25vw;
+  top: 36.5%;
+  left: 0%;
+}
+
+.sidebar_timeline_driver_step {
+  height: 20%;
+  width: 70.65vw;
+  top: 77.5%;
+  left: 4.35%;
+}
+
+.sidebar_timeline_navigator_driver_step {
+  height: 14%;
+  width: 2.25vw;
+  top: 79.5%;
+  left: 4.15%;
+}
+
+.sidebar_settings_driver_step {
+  height: 10%;
+  width: 25vw;
+  top: 62%;
+  left: 0%;
+}
+
+/* ↑ Tutorial Driver ↑  */
 /* ↓ Other ↓  */
 
 .hidden {
@@ -1208,7 +1377,7 @@ body {
   z-index: 899;
   position: fixed;
   top: 7%;
-  left: 52.5%;
+  left: 54%;
   width: 15vw;
   height: 4vh;
   background-color: #2f3c4c;

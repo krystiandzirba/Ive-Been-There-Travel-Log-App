@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>I've been there! - Travel log app v1.4.18</title>
+    <title>I've been there! - Travel log app v1.4.19</title>
     <link rel="icon" type="image/x-icon" href="assets/images/globe_icon_black.png" />
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -34,6 +34,9 @@
     <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css" />
 
     <!-- files to download  -->
 
@@ -560,11 +563,44 @@
       </div>
     </div>
 
+    <div id="tutorial_first_question_container" class="tutorial_container tutorial_first_question_container">
+      <span>Would you like to enable a quick tutorial that will help you walk through the app? </span>
+      <div class="tutorial_question_buttons_container">
+        <button id="tutorial_first_question_button_confirm">Yes</button>
+        <button id="tutorial_first_question_button_close">No</button>
+        <label> <input type="checkbox" id="dont_ask_again_checkbox" /> Don't ask again </label>
+      </div>
+    </div>
+
+    <div id="tutorial_second_question_container" class="tutorial_container tutorial_second_question_container">
+      <span>create 1 (or more) travel log and travel group and press continue to proceed with the tutorial</span>
+      <div class="tutorial_question_buttons_container">
+        <button id="tutorial_second_question_button_confirm">continue</button>
+        <button id="tutorial_second_question_button_close">close</button>
+      </div>
+    </div>
+
+    <div class="travel_log_container_driver_step driver_step"></div>
+    <div class="addtravel_driver_step driver_step"></div>
+    <div class="logs_driver_step driver_step"></div>
+    <div class="logs_button_driver_step driver_step"></div>
+
+    <div class="sidebar_house_driver_step driver_step"></div>
+    <div class="sidebar_maplayers_driver_step driver_step"></div>
+    <div class="sidebar_overlay_driver_step driver_step"></div>
+    <div class="sidebar_statistics_button_driver_step driver_step"></div>
+    <div class="sidebar_statistics_first_driver_step driver_step"></div>
+    <div class="sidebar_statistics_last_driver_step driver_step"></div>
+    <div class="sidebar_timeline_button_driver_step driver_step"></div>
+    <div class="sidebar_timeline_driver_step driver_step"></div>
+    <div class="sidebar_timeline_navigator_driver_step driver_step"></div>
+    <div class="sidebar_settings_driver_step driver_step"></div>
+
     <div id="custom_cursor" class="custom_cursor">
       <img id="custom_cursor_image" src="assets/images/car_icon_small.png" />
     </div>
 
-    <div class="app_version">ver: 1.4.18</div>
+    <div class="app_version">ver: 1.4.19</div>
 
     <div id="info_box">
       <p id="info_box_text"></p>

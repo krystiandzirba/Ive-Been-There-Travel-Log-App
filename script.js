@@ -1,10 +1,8 @@
-// ver: 1.4.18
+// ver: 1.4.19
 
 // Bugs:
 
 // Features to add:
-
-// - Add driver.js
 
 // Variables ↓
 // // Sidebar House ↓
@@ -182,16 +180,6 @@ let distance_unit = "km";
 const sidebar_github_button = document.getElementById("sidebar_github_button");
 
 // // Sidebar Github ↑
-
-// // Info box ↓
-
-const info_box = document.getElementById("info_box");
-const info_box_text = document.getElementById("info_box_text");
-
-let info_box_timeout_show;
-let info_box_timeout_hide;
-
-// // Info box ↑
 // // Travel Log Creator ↓
 
 const add_travel_group_button = document.getElementById("add_travel_group_button");
@@ -400,6 +388,28 @@ let lowest_distance_subset = 0;
 let highest_distance_subset = 0;
 
 // // D3 ↑
+// // Info box ↓
+
+const info_box = document.getElementById("info_box");
+const info_box_text = document.getElementById("info_box_text");
+
+let info_box_timeout_show;
+let info_box_timeout_hide;
+
+// // Info box ↑
+// // Driver Tutorial ↓
+
+let tutorial_first_question_button_confirm = document.getElementById("tutorial_first_question_button_confirm");
+let tutorial_first_question_button_close = document.getElementById("tutorial_first_question_button_close");
+
+const tutorial_second_question_button_confirm = document.getElementById("tutorial_second_question_button_confirm");
+const tutorial_second_question_button_close = document.getElementById("tutorial_second_question_button_close");
+
+let tutorial_first_question_container = document.getElementById("tutorial_first_question_container");
+
+const dont_ask_again_checkbox = document.getElementById("dont_ask_again_checkbox");
+
+// // Driver Tutorial ↑
 // // Storage ↓
 
 // 1 = local storage | 0 = temporary / builded on local storage data
@@ -2591,6 +2601,9 @@ function removeLoadingPageContent() {
     loading_page_container.classList.add("loading_page_fade_out");
 
     toggleMainLogContainerVisibility(true);
+    if (pageSettings.tutorial_enabled) {
+      toggleTutorialFirstQuestion(true);
+    }
   }, 800);
 }
 
@@ -3454,6 +3467,7 @@ function localStorageLoadPageSettings() {
     pageSettings.polyline_visibility = true;
     pageSettings.highlight_visibility = true;
     pageSettings.house_visibility = true;
+    pageSettings.tutorial_enabled = true;
   }
 
   if (marker_settings_index === 1) {
@@ -4639,7 +4653,7 @@ function onLoadingComplete() {
 trackLoadingProgress(resourcesToLoad, progressInfoDisplay, onLoadingComplete);
 
 // Loading progress info ↑
-// Info popup ↓
+// Info box ↓
 
 function displayInfoBox(text, time) {
   clearTimeout(info_box_timeout_show);
@@ -4658,7 +4672,370 @@ function displayInfoBox(text, time) {
   }, time);
 }
 
-// Info popup ↑
+// Info box ↑
+// Driver Tutorial ↓
+
+tutorial_first_question_button_close.addEventListener("click", () => {
+  toggleTutorialFirstQuestion(false);
+});
+
+tutorial_first_question_button_confirm.addEventListener("click", () => {
+  toggleTutorialFirstQuestion(false);
+  const driver = window.driver.js.driver;
+  const driverObj = driver({
+    showProgress: true,
+    steps: [
+      {
+        element: ".travel_log_container_driver_step",
+        popover: {
+          title: "Main logs container",
+          description: "a place where you can create, delete, edit, and browse all your travel logs.",
+          side: "left",
+          align: "start",
+        },
+      },
+      {
+        element: ".addtravel_driver_step",
+        popover: {
+          title: "Add travel / group section",
+          description: "this feature allows you to create individual travel logs or group them together.",
+          side: "left",
+          align: "start",
+        },
+      },
+      {
+        element: ".logs_driver_step",
+        popover: {
+          title: "Travel logs",
+          description: "This section displays all of your created travel logs and groups.",
+          side: "left",
+          align: "start",
+        },
+      },
+      {
+        element: ".logs_button_driver_step",
+        popover: {
+          title: "Travel logs toggle button",
+          description: "Use this button to toggle the visibility of the travel logs.",
+          side: "left",
+          align: "start",
+        },
+      },
+      {
+        element: ".addtravel_driver_step",
+        popover: {
+          title: "First travel log",
+          description: "Lets add your first travel log, for that to happen, you need to click the `add travel` button.",
+          side: "left",
+          align: "start",
+          onNextClick: () => {
+            toggleTravelCreator(true, travel_logs_individual_main_container);
+            driverObj.moveNext();
+          },
+        },
+      },
+      {
+        element: ".travel_log_container_driver_step",
+        popover: {
+          title: "Travel log creator",
+          description:
+            "Here You can name your travel log, specify the date, set highlight colors, define polyline details, and select your travel type. Once you're satisfied, confirm it with the ✓ button, or ✖ button to close the travel log creator (*highlight - when placing a marker on the map, a corresponding country is highlighted, *polyline - a line that is connecting 2 or more markers placed on the map)",
+          side: "left",
+          align: "start",
+          onPrevClick: () => {
+            toggleTravelCreator(false, travel_logs_individual_main_container);
+            driverObj.movePrevious();
+          },
+          onNextClick: () => {
+            toggleTravelCreator(false, travel_logs_individual_main_container);
+            toggleTravelCreator(true, travel_logs_group_main_container);
+            driverObj.moveNext();
+          },
+        },
+      },
+      {
+        element: ".travel_log_container_driver_step",
+        popover: {
+          title: "Group creator",
+          description:
+            "Group acts as a container for multiple travel logs. Simply name your group, set a date, and create it to add, remove, and edit travel logs within that specific group. Also all the created groups are visually represented in the statistics section (few steps ahead)",
+          side: "left",
+          align: "start",
+          onPrevClick: () => {
+            toggleTravelCreator(false, travel_logs_group_main_container);
+            toggleTravelCreator(true, travel_logs_individual_main_container);
+            driverObj.movePrevious();
+          },
+          onNextClick: () => {
+            driverObj.moveNext();
+            toggleTutorialSecondQuestion(true);
+            toggleTravelCreator(false, travel_logs_group_main_container);
+          },
+        },
+      },
+    ],
+    onDestroyStarted: () => {
+      console.log("siema");
+      toggleTravelCreator(false, travel_logs_individual_main_container);
+      toggleTravelCreator(false, travel_logs_group_main_container);
+      driverObj.destroy();
+    },
+  });
+  driverObj.drive();
+});
+
+dont_ask_again_checkbox.addEventListener("change", function () {
+  pageSettings.tutorial_enabled = !dont_ask_again_checkbox.checked;
+  localStorageSavePageSettings();
+  console.log(pageSettings.tutorial_enabled);
+});
+
+tutorial_second_question_button_confirm.addEventListener("click", () => {
+  lineChartDataRetrieve();
+  if (lineChartGroupData.length >= 1 && lineChartTravelLogData.length >= 1) {
+    sidebarButtonsAnimation(sub_house_button_container, true);
+    toggleTutorialSecondQuestion(false);
+    const driver = window.driver.js.driver;
+    const driverObj = driver({
+      showProgress: true,
+      keyboardControl: true,
+      steps: [
+        {
+          element: ".sidebar_house_driver_step",
+          popover: {
+            title: "Sidebar - House",
+            description:
+              "This feature allows you to set your house's location on the map. You can place a marker and a circle around it either using geolocation or do it manually. Customize the circle's color and opacity, zoom in or out, and delete the marker.",
+            side: "right",
+            align: "start",
+            onPrevClick: () => {
+              sidebarButtonsAnimation(sub_house_button_container, false);
+              toggleTravelCreator(true, travel_logs_group_main_container);
+              driverObj.movePrevious();
+            },
+            onNextClick: () => {
+              sidebarButtonsAnimation(sub_house_button_container, false);
+
+              sidebarButtonsAnimation(sub_map_layers_container, true);
+              driverObj.moveNext();
+            },
+          },
+        },
+        {
+          element: ".sidebar_maplayers_driver_step",
+          popover: {
+            title: "Sidebar - Map layers",
+            description: "Select a visual style for the displayed map",
+            side: "right",
+            align: "start",
+            onPrevClick: () => {
+              sidebarButtonsAnimation(sub_map_layers_container, false);
+              sidebarButtonsAnimation(sub_house_button_container, true);
+              driverObj.movePrevious();
+            },
+            onNextClick: () => {
+              sidebarButtonsAnimation(sub_map_layers_container, false);
+
+              sidebarButtonsAnimation(sub_overlay_container, true);
+              driverObj.moveNext();
+            },
+          },
+        },
+        {
+          element: ".sidebar_overlay_driver_step",
+          popover: {
+            title: "Sidebar - Overlay",
+            description:
+              "Toggle the city/country search bar, display bicycle and train trails, show/hide country borders and labels, manage map markers, polylines, country highlights, and the house marker.",
+            side: "right",
+            align: "start",
+            onPrevClick: () => {
+              sidebarButtonsAnimation(sub_overlay_container, false);
+              sidebarButtonsAnimation(sub_map_layers_container, true);
+              driverObj.movePrevious();
+            },
+            onNextClick: () => {
+              sidebarButtonsAnimation(sub_overlay_container, false);
+
+              driverObj.moveNext();
+            },
+          },
+        },
+        {
+          element: ".sidebar_statistics_button_driver_step",
+          popover: {
+            title: "Sidebar - Statistics",
+            description:
+              "One of the key function of this app, here you can view all of the statistics related to your travel logs, such as a variety of different distances, travel types, countries, continents and much more (proceed to next step to learn more)",
+            side: "right",
+            align: "start",
+            onPrevClick: () => {
+              sidebarButtonsAnimation(sub_overlay_container, true);
+              driverObj.movePrevious();
+            },
+            onNextClick: () => {
+              barChartTypeDistanceCreate();
+              pieChartTypeDistributionCreate();
+              lineChartDataRetrieve();
+              lineChartDistanceCreate();
+              findLowestAndHighestSupersetDistance(CRUD);
+              findLowestAndHighestSubsetDistance(CRUD);
+              basicStatisticsChartLowestAndHighestCRUDValue();
+              updateTravelStats();
+              basicStatisticsChartCreate();
+              toggleStatisticsVisibility(true);
+              countUniqueCountries(trueHighlights);
+              getContinentsForHighlights(trueHighlights);
+              updateStatisticsProgressBars();
+
+              driverObj.moveNext();
+            },
+          },
+        },
+        {
+          element: ".sidebar_statistics_first_driver_step",
+          popover: {
+            title: "Countries, continents & territories visits",
+            description:
+              "This statistics section shows you how many countries and continents you visited, tracking your progress on each continent and its related countries.",
+            side: "right",
+            align: "start",
+            onPrevClick: () => {
+              toggleStatisticsVisibility(false);
+              removeChartsData();
+              driverObj.movePrevious();
+            },
+          },
+        },
+        {
+          element: ".bar_chart_type_distance_container",
+          popover: {
+            title: "Distance by travel type",
+            description: "View a breakdown of the distances you've traveled, categorized by travel type.",
+            side: "right",
+            align: "start",
+          },
+        },
+        {
+          element: ".pie_chart_type_count_container",
+          popover: {
+            title: "Travel type distribution",
+            description: "Discover the most and least common travel types used during your travels.",
+            side: "right",
+            align: "start",
+          },
+        },
+        {
+          element: ".bar_chart_basic_statistics_container",
+          popover: {
+            title: "Basic statistics",
+            description:
+              "Find out your total distance traveled, as well as the highest, average, and lowest distances recorded in your travel logs, maximum and minimum distances between A -> B points (markers).",
+            side: "right",
+            align: "start",
+          },
+        },
+        {
+          element: ".sidebar_statistics_last_driver_step",
+          popover: {
+            title: "Distance over time",
+            description:
+              "Access a dynamic chart that displays specific date range along with your travel logs, groups, and total distance over time, providing a visual representation of your travel history.",
+            side: "right",
+            align: "start",
+            onNextClick: () => {
+              toggleStatisticsVisibility(false);
+
+              driverObj.moveNext();
+            },
+          },
+        },
+        {
+          element: ".sidebar_timeline_button_driver_step",
+          popover: {
+            title: "Sidebar - Timeline",
+            description: "Disable or enable the timeline at the bottom of the page.",
+            side: "right",
+            align: "start",
+            onPrevClick: () => {
+              toggleStatisticsVisibility(true);
+              driverObj.movePrevious();
+            },
+          },
+        },
+        {
+          element: ".sidebar_timeline_driver_step",
+          popover: {
+            title: "Timeline",
+            description:
+              "Explore an interactive timeline that visually represents all your travel logs and travel groups. You can use your mouse to navigate the timeline horizontally.",
+            side: "top",
+            align: "start",
+          },
+        },
+        {
+          element: ".sidebar_timeline_navigator_driver_step",
+          popover: {
+            title: "Timeline - Buttons",
+            description:
+              "Use these buttons to zoom in and out on the timeline, or quickly jump to the first or last event.",
+            side: "top",
+            align: "start",
+            onNextClick: () => {
+              sidebarButtonsAnimation(sub_settings_container, false);
+
+              sidebarButtonsAnimation(sub_settings_container, true);
+              driverObj.moveNext();
+            },
+          },
+        },
+        {
+          element: ".sidebar_settings_driver_step",
+          popover: {
+            title: "Sidebar - Settings",
+            description:
+              "Here you can disable all of the UI with photo mode, change the units to kilometres or miles, remove all the app data and report a bug.",
+            side: "right",
+            align: "start",
+            onNextClick: () => {
+              sidebarButtonsAnimation(sub_settings_container, false);
+              driverObj.moveNext();
+            },
+            onPrevClick: () => {
+              sidebarButtonsAnimation(sub_settings_container, false);
+              driverObj.movePrevious();
+            },
+          },
+        },
+      ],
+    });
+    driverObj.drive();
+  } else {
+    displayInfoBox("Please create both travel log and travel group first to continue.", 2500);
+  }
+});
+
+tutorial_second_question_button_close.addEventListener("click", () => {
+  toggleTutorialSecondQuestion(false);
+});
+
+function toggleTutorialFirstQuestion(toggle) {
+  if (toggle) {
+    tutorial_first_question_container.style.transform = "translate(0%, 0vh)";
+  } else {
+    tutorial_first_question_container.style.transform = "translate(0%, -30vh)";
+  }
+}
+
+function toggleTutorialSecondQuestion(toggle) {
+  if (toggle) {
+    tutorial_second_question_container.style.transform = "translate(0%, 0vh)";
+  } else {
+    tutorial_second_question_container.style.transform = "translate(0%, -30vh)";
+  }
+}
+
+// Driver Tutorial ↑
 
 // // ---------- TEST ---------- ↓
 
