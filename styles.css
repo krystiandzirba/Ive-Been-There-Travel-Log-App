@@ -241,7 +241,7 @@ body {
 .sub_container_settings {
   left: 0%;
   top: 62.25vh;
-  width: 20vw;
+  width: 25vw;
 }
 
 .remove_data_confirmation_container {
@@ -1316,7 +1316,7 @@ label {
 
 .sidebar_settings_driver_step {
   height: 10%;
-  width: 25vw;
+  width: 30vw;
   top: 62%;
   left: 0%;
 }

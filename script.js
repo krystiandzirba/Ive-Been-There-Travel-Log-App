@@ -1,4 +1,4 @@
-// ver: 1.4.19
+// ver: 1.5.0
 
 // Bugs:
 
@@ -158,6 +158,7 @@ const settings_icon = document.getElementById("settings_icon");
 const sub_settings_portrait_mode = document.getElementById("sub_settings_portrait_mode");
 const sub_settings_remove_data = document.getElementById("sub_settings_remove_data");
 const sub_settings_report_bug = document.getElementById("sub_settings_report_bug");
+const sub_settings_tutorial = document.getElementById("sub_settings_tutorial");
 
 const unit_display = document.querySelector("#sub_settings_distance_unit p");
 
@@ -1385,6 +1386,10 @@ close_button_delete_data.addEventListener("mouseleave", () =>
 
 sub_settings_report_bug.addEventListener("click", () => {
   displayInfoBox("Feature not yet available.", 1500);
+});
+
+sub_settings_tutorial.addEventListener("click", () => {
+  toggleTutorialFirstQuestion(true);
 });
 
 function toggleRemoveDataContainerVisibility(toggle) {
@@ -4994,7 +4999,7 @@ tutorial_second_question_button_confirm.addEventListener("click", () => {
           popover: {
             title: "Sidebar - Settings",
             description:
-              "Here you can disable all of the UI with photo mode, change the units to kilometres or miles, remove all the app data and report a bug.",
+              "Here you can disable all of the UI with photo mode, change the units to kilometres or miles, remove all the app data, report a bug and toggle the app tutorial.",
             side: "right",
             align: "start",
             onNextClick: () => {
