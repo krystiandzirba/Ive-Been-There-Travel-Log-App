@@ -15,13 +15,9 @@ Start by navigating to the right-side panel and click either the "Individual" or
 <br>
 <br>
 
-![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/a8dedc4d-3c8e-4a7b-99a5-a9663bdcde35)
-
 <br>
 
 ### Add travel <br>
-
-![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/6f10d350-026a-40c3-84f4-66c847b4b82b)
 
 Here you can create a simple log for short/individual travels. (country to country / city to city)
 The travel creator is divided on 3 sections:
