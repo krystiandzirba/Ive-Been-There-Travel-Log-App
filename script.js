@@ -1,4 +1,4 @@
-// ver: 1.5.2
+// ver: 1.5.3
 
 // Bugs:
 
@@ -4576,6 +4576,7 @@ const resourcesToLoad = [
   { url: "assets/data/FontAwesome/css/all.min.css", label: "FontAwesome CSS" },
   { url: "assets/data/LoadingBar/loadingBar.css", label: "LoadingBar CSS" },
   { url: "assets/data/TimelineJS3/timeline.theme.dark.css", label: "TimelineJS3 CSS" },
+  { url: "assets/data/Driverjs/driver.css", label: "Driverjs CSS" },
   { url: "assets/data/LeafletControlGeocoder/Control.Geocoder.css", label: "Leaflet Control Geocoder CSS" },
 
   { url: "script.js", label: "Main JS" },
@@ -4589,6 +4590,8 @@ const resourcesToLoad = [
   { url: "assets/data/SmoothMarkerBouncing/bundle.js", label: "SmoothMarkerBouncing JS" },
   { url: "assets/data/LoadingBar/loadingBar.js", label: "LoadingBar JS" },
   { url: "assets/data/TimelineJS3/timeline.js", label: "TimelineJS3 JS" },
+  { url: "assets/data/D3/d3.v7.min.js", label: "D3 JS" },
+  { url: "assets/data/Driverjs/driver.js", label: "Driverjs JS" },
 ];
 
 function progressInfoDisplay(label, progress) {
