@@ -898,11 +898,11 @@ body {
 .timeline_container {
   position: absolute;
   height: 17.5vh;
-  width: 70.5vw;
+  width: 70.6vw;
   background: linear-gradient(to bottom, rgba(77, 27, 27, 0), rgba(134, 134, 134, 0.65));
   z-index: 750;
   top: 90.1vh;
-  left: 39.7vw;
+  left: 39.8vw;
   transform: translate(-50%, 100%);
   transition: top 0.5s ease, width 0.5s ease-in-out, margin-left 0.5s ease-in-out;
   display: flex;
