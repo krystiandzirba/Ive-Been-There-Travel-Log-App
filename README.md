@@ -3,7 +3,7 @@
 Welcome to "I've Been There!" the app that lets you add, view and modify your travel logs from every corner of the globe.
 Whether you're a seasoned explorer or just starting your adventure journey, this app is your ultimate companion. Explore, remember, and relive your travel tales with ease.
 
-![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/0c5dac14-5518-4395-8ddb-388e690e2698)
+![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/ade59654-2f9e-4bc8-8532-508bb059b724)
 
 ## how it works? 
 
@@ -13,8 +13,6 @@ Whether you're a seasoned explorer or just starting your adventure journey, this
 <br>
 Start by navigating to the right-side panel and click either the "Individual" or "Group" button: 
 <br>
-<br>
-
 <br>
 
 ### Add travel <br>
