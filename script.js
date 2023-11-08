@@ -1,4 +1,4 @@
-// ver: 1.5.1
+// ver: 1.5.2
 
 // Bugs:
 
@@ -1111,8 +1111,8 @@ if (polylines.length <= 1) {
       {label: "high.", type: "(travel)", value: formatDistance(highest_travel_value)},
       {label: "avg.", type: "(travel)", value: formatDistance(average_distance)},
       {label: "low.", type: "(travel)", value: formatDistance(lowest_travel_value)},
-      {label: "max.", type: "(A → B)", value: formatDistance(highest_distance)},
-      {label: "min.", type: "(A → B)", value: formatDistance(lowest_distance)},
+      {label: "max.", type: "(A ⟷ B)", value: formatDistance(highest_distance)},
+      {label: "min.", type: "(A ⟷ B)", value: formatDistance(lowest_distance)},
     ]
 
   } else if (pageSettings.distance_unit == "mil") {
@@ -1133,8 +1133,8 @@ if (polylines.length <= 1) {
       {label: "high.", type: "(travel)", value: formatDistance(highest_travel_value* 0.6213712)},
       {label: "avg.", type: "(travel)", value: formatDistance(average_distance* 0.6213712)},
       {label: "low.", type: "(travel)", value: formatDistance(lowest_travel_value* 0.6213712)},
-      {label: "max.", type: "(A → B)", value: formatDistance(highest_distance* 0.6213712)},
-      {label: "min.", type: "(A → B)", value: formatDistance(lowest_distance* 0.6213712)},
+      {label: "max.", type: "(A ⟷ B)", value: formatDistance(highest_distance* 0.6213712)},
+      {label: "min.", type: "(A ⟷ B)", value: formatDistance(lowest_distance* 0.6213712)},
     ]
 
     type_distance_max_value = type_distance_max_value * 0.6213712;
@@ -4685,6 +4685,9 @@ tutorial_first_question_button_close.addEventListener("click", () => {
 });
 
 tutorial_first_question_button_confirm.addEventListener("click", () => {
+  toggleMainLogContainerVisibility(true);
+  main_logs_container_arrow_clicked = !main_logs_container_arrow_clicked;
+  changeTimelineDimensions(true);
   toggleTutorialFirstQuestion(false);
   const driver = window.driver.js.driver;
   const driverObj = driver({
@@ -4780,7 +4783,6 @@ tutorial_first_question_button_confirm.addEventListener("click", () => {
       },
     ],
     onDestroyStarted: () => {
-      console.log("siema");
       toggleTravelCreator(false, travel_logs_individual_main_container);
       toggleTravelCreator(false, travel_logs_group_main_container);
       driverObj.destroy();
@@ -4792,19 +4794,38 @@ tutorial_first_question_button_confirm.addEventListener("click", () => {
 dont_ask_again_checkbox.addEventListener("change", function () {
   pageSettings.tutorial_enabled = !dont_ask_again_checkbox.checked;
   localStorageSavePageSettings();
-  console.log(pageSettings.tutorial_enabled);
 });
 
 tutorial_second_question_button_confirm.addEventListener("click", () => {
   lineChartDataRetrieve();
   if (lineChartGroupData.length >= 1 && lineChartTravelLogData.length >= 1) {
-    sidebarButtonsAnimation(sub_house_button_container, true);
     toggleTutorialSecondQuestion(false);
     const driver = window.driver.js.driver;
     const driverObj = driver({
       showProgress: true,
       keyboardControl: true,
+      stagePadding: 10,
       steps: [
+        {
+          element: ".logs_driver_step",
+          popover: {
+            title: "Created travel logs and groups",
+            description:
+              "These are all of your created travel logs and groups." +
+              `<br>` +
+              "Starting from the travel logs:" +
+              `<br>` +
+              "each one of them displays the travel name, its distance and travel type. You can edit its name with the pen button and remove it with the delete button. " +
+              `<br>` +
+              " A group has a similar appearance to travel logs but serve a different purpose. As mentioned before, it act as a container for multiple travel logs, allowing you to organize your journeys. To add the travel log to the specific group, simply click the + inside the group. Travel log configuration is exactly the same as without the group. If you added the travel log, it should be displayed inside the specifc group, if there is too much travel logs in your group, you can toggle the travel logs visibility with the last button.",
+            side: "right",
+            align: "start",
+            onNextClick: () => {
+              sidebarButtonsAnimation(sub_house_button_container, true);
+              driverObj.moveNext();
+            },
+          },
+        },
         {
           element: ".sidebar_house_driver_step",
           popover: {
@@ -4815,7 +4836,7 @@ tutorial_second_question_button_confirm.addEventListener("click", () => {
             align: "start",
             onPrevClick: () => {
               sidebarButtonsAnimation(sub_house_button_container, false);
-              toggleTravelCreator(true, travel_logs_group_main_container);
+              // toggleTravelCreator(true, travel_logs_group_main_container);
               driverObj.movePrevious();
             },
             onNextClick: () => {
@@ -4879,6 +4900,7 @@ tutorial_second_question_button_confirm.addEventListener("click", () => {
               driverObj.movePrevious();
             },
             onNextClick: () => {
+              removeChartsData();
               barChartTypeDistanceCreate();
               pieChartTypeDistributionCreate();
               lineChartDataRetrieve();
@@ -4935,7 +4957,7 @@ tutorial_second_question_button_confirm.addEventListener("click", () => {
           popover: {
             title: "Basic statistics",
             description:
-              "Find out your total distance traveled, as well as the highest, average, and lowest distances recorded in your travel logs, maximum and minimum distances between A -> B points (markers).",
+              "Find out your total distance traveled, as well as the highest, average, and lowest distances recorded in your travel logs, maximum and minimum distances between A ⟷ B points (markers).",
             side: "right",
             align: "start",
           },
@@ -5013,6 +5035,14 @@ tutorial_second_question_button_confirm.addEventListener("click", () => {
           },
         },
       ],
+      onDestroyStarted: () => {
+        sidebarButtonsAnimation(sub_house_button_container, false);
+        sidebarButtonsAnimation(sub_map_layers_container, false);
+        sidebarButtonsAnimation(sub_overlay_container, false);
+        sidebarButtonsAnimation(sub_settings_container, false);
+        toggleStatisticsVisibility(false);
+        driverObj.destroy();
+      },
     });
     driverObj.drive();
   } else {

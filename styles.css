@@ -1225,23 +1225,23 @@ label {
 
 .travel_log_container_driver_step {
   height: 95%;
-  width: 26.5vw;
-  top: 1%;
-  left: 72.5%;
+  width: 24vw;
+  top: 1.5%;
+  left: 75.25%;
 }
 
 .addtravel_driver_step {
-  height: 11.5%;
-  width: 25vw;
-  top: 0%;
-  left: 75%;
+  height: 10%;
+  width: 24vw;
+  top: 1.5%;
+  left: 75.25%;
 }
 
 .logs_driver_step {
-  height: 85%;
-  width: 25vw;
-  top: 11.5%;
-  left: 75%;
+  height: 83.5%;
+  width: 24vw;
+  top: 13%;
+  left: 75.25%;
 }
 
 .logs_button_driver_step {
@@ -1252,37 +1252,37 @@ label {
 }
 
 .sidebar_house_driver_step {
-  height: 10%;
-  width: 29.75vw;
-  top: 0.8%;
-  left: 0%;
+  height: 9%;
+  width: 28.75vw;
+  top: 1.5%;
+  left: 0.75%;
 }
 
 .sidebar_maplayers_driver_step {
   height: 10%;
-  width: 25vw;
+  width: 24vw;
   top: 9.25%;
-  left: 0%;
+  left: 0.75%;
 }
 
 .sidebar_overlay_driver_step {
   height: 10%;
-  width: 50vw;
+  width: 49vw;
   top: 18%;
-  left: 0%;
+  left: 0.75%;
 }
 
 .sidebar_statistics_button_driver_step {
   height: 8%;
-  width: 4.25vw;
+  width: 3.1vw;
   top: 27.75%;
-  left: 0%;
+  left: 0.75%;
 }
 
 .sidebar_statistics_first_driver_step {
-  height: 41.5%;
+  height: 40%;
   width: 32vw;
-  top: 1%;
+  top: 2%;
   left: 5%;
 }
 
@@ -1295,9 +1295,9 @@ label {
 
 .sidebar_timeline_button_driver_step {
   height: 8%;
-  width: 4.25vw;
+  width: 3.1vw;
   top: 36.5%;
-  left: 0%;
+  left: 0.75%;
 }
 
 .sidebar_timeline_driver_step {
@@ -1310,7 +1310,7 @@ label {
 .sidebar_timeline_navigator_driver_step {
   height: 14%;
   width: 2.25vw;
-  top: 79.5%;
+  top: 80%;
   left: 4.15%;
 }
 
@@ -1318,7 +1318,7 @@ label {
   height: 10%;
   width: 30vw;
   top: 62%;
-  left: 0%;
+  left: 0.75%;
 }
 
 /* ↑ Tutorial Driver ↑  */
