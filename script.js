@@ -1,4 +1,4 @@
-// ver: 1.5.3.1
+// ver: 1.5.4
 
 // Bugs:
 
@@ -303,7 +303,7 @@ let polyline_width = polyline_width_slider.value;
 let polyline_color = `#DC3125`;
 
 // // Travel log individual ↑
-// // Custom cursor / App version / Page loading ↓
+// // Custom cursor / App version / Page loading / mobile ↓
 
 const custom_cursor = document.getElementById("custom_cursor");
 
@@ -311,6 +311,10 @@ const app_version = document.querySelector(".app_version");
 
 const progress_info = document.getElementById("progress_info");
 const title_screen_background = document.querySelector(".title_screen_background");
+
+const is_mobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+const mobile_alert = document.getElementById("mobile_alert");
+const mobile_alert_close = document.getElementById("mobile_alert_close");
 
 // // Custom cursor / App version / Page loading ↑
 // // Leaflet map ↓
@@ -4649,6 +4653,7 @@ function onLoadingComplete() {
   setTimeout(() => {
     if (timelineData.events.length > 0) {
       toggleTimelineVisibility(true);
+      toggleMobileAlert(is_mobile);
     }
   }, 1500);
 
@@ -5074,6 +5079,22 @@ function toggleTutorialSecondQuestion(toggle) {
 }
 
 // Driver Tutorial ↑
+
+// Mobile
+
+mobile_alert_close.addEventListener("click", () => {
+  toggleMobileAlert(!is_mobile);
+});
+
+function toggleMobileAlert(toggle) {
+  if (toggle) {
+    mobile_alert.style.transform = "translate(0%, 32.5vh)";
+  } else {
+    mobile_alert.style.transform = "translate(0%, -30vh)";
+  }
+}
+
+// Mobile
 
 // // ---------- TEST ---------- ↓
 
