@@ -6,6 +6,10 @@ Whether you're a seasoned explorer or just starting your adventure journey, this
 ![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/ade59654-2f9e-4bc8-8532-508bb059b724)
 ![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/27df7200-b80a-424f-aa5b-8a9f524958b6)
 
+
+https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/6f93a571-4d69-4935-a54a-7db5d0dce65f
+
+
 ## how it works? 
 
 ## **Step 1: Create Your First Travel Log**
@@ -74,7 +78,7 @@ Timeline is located at the bottom of the page, you can hide/show it with the arr
 Timeline is used to showcase all of your groups and travel logs in a visual format, including their names and start/end dates.
 On the left side of the timeline, you'll find a few buttons that allow you to zoom in or out and switch between different travel logs, making it easier to navigate through your travel memories.
 
-![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/9241138b-1915-4a44-82ec-1255a42ae751)
+![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/bde99db2-4c2c-4b53-80ee-fa2870479e57)
 
 ### **Left panel settings** 
 Navigate to the left panel to access a range of options, starting from the top:
@@ -95,19 +99,18 @@ Choose your preferred map visual style from options such as dark, light, earth, 
 Toggle map overlays for better navigation, including train and bicycle paths (especially useful if you used these travel types and need detiled view of its exact location).
 Display the country and city names, enable or disable map markers, polylines (lines connecting markers) and highlights.
 
-## Timeline:
-You can toggle off/on the timeline visibility and rendering.
-
 ## Statistics:
 Toggle off/on the display of the travel logs statistics.
 
+## Timeline:
+You can toggle off/on the timeline visibility and rendering.
+
 ## Language:
-Yup, you guessed it!, you can change the app language here. Choose from a selection of languages to make your experience more accessible and enjoyable.
+Yup, you guessed it!, you can change the app language here. Choose from a selection of languages to make your experience more accessible and enjoyable (feature not yet available).
 
 ## Settings:
-- Portrait mode: This feature is used to hide all of the UI so you can make a screenshot with no interruption, use LMB (left mouse button) to leave  the portrait mode.
+- Photo mode: Use it to hide all of the UI, use LMB (left mouse button) to leave the portrait mode.
 - Units: Here you can choose your preffered distance units (kilometres - miles)
 - Remove data: If you want to start again, use this button to get rid of all the user input data, but remember, this process is irreversible.
-- Report a bug: Form for reporting bugs - not available yet -
-
-...
+- Report a bug: Form for reporting bugs (feature not yet available),
+- Tutorial: If you feel lost, this option allows you to come back to the tutorial.
