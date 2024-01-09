@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>I've been there! - Travel log app v1.5.4</title>
+    <title>I've been there! - Travel log app v.1.5.5</title>
     <link rel="icon" type="image/x-icon" href="assets/images/globe_icon_black.png" />
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -256,7 +256,13 @@
       <div class="travel_logs_group_data_input_container">
         <form id="travel_log_form">
           <p>group name:</p>
-          <input type="text" id="travel_logs_group_input" class="group_input" placeholder="Enter group name" />
+          <input
+            type="text"
+            id="travel_logs_group_input"
+            class="group_input"
+            placeholder="Enter group name"
+            autocomplete="off"
+          />
           <p>group date:</p>
           <input type="text" name="daterange" id="daterange" class="group_input" value="" />
         </form>
@@ -278,7 +284,7 @@
           <p>travel name:</p>
           <p>travel date:</p>
           <!-- prettier-ignore -->
-          <input type="text" id="travel_logs_individual_input" class="individual_input data_input" placeholder="Enter travel name"/>
+          <input type="text" id="travel_logs_individual_input" class="individual_input data_input" placeholder="Enter travel name" autocomplete="off"/>
           <input type="text" name="daterange" id="daterange" class="individual_input date_input" value="" />
         </div>
       </div>
@@ -296,14 +302,14 @@
         </div>
 
         <div class="individual_customization_grid_cell">
-          <p>polyline width:</p>
+          <p>line width:</p>
           <div class="polyline_width_slider_container">
             <input type="range" min="1" max="10" value="5" class="polyline_slider" id="polyline_width_slider" />
           </div>
         </div>
 
         <div class="individual_customization_grid_cell">
-          <p>polyline color:</p>
+          <p>line color:</p>
           <div class="jscolor_polyline_container">
             <p>
               <!-- prettier-ignore -->
@@ -313,7 +319,7 @@
         </div>
 
         <div class="individual_customization_grid_cell">
-          <p>polyline type:</p>
+          <p>line type:</p>
           <div class="polyline_input_container">
             <button id="polyline_solid_button" class="polyline_button polyline_solid">solid</button>
             <button id="polyline_dashed_button" class="polyline_button polyline_dashed">dashed</button>
@@ -610,7 +616,7 @@
       <img id="custom_cursor_image" src="assets/images/car_icon_small.png" />
     </div>
 
-    <div class="app_version">ver: 1.5.4</div>
+    <div class="app_version">v.1.5.5</div>
 
     <div id="info_box">
       <p id="info_box_text"></p>
