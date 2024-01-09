@@ -6,17 +6,13 @@ Whether you're a seasoned explorer or just starting your adventure journey, this
 ![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/ade59654-2f9e-4bc8-8532-508bb059b724)
 ![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/27df7200-b80a-424f-aa5b-8a9f524958b6)
 
-
-https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/6f93a571-4d69-4935-a54a-7db5d0dce65f
-
-
 ## how it works? 
 
 ## **Step 1: Create Your First Travel Log**
 
 
 <br>
-Start by navigating to the right-side panel and click either the "Individual" or "Group" button: 
+Start by navigating to the right-side panel and click the "Add travel" button: 
 <br>
 <br>
 
@@ -31,8 +27,10 @@ The travel creator is divided on 3 sections:
 Now you can start placing a path on the map.
 Once you've finished, just hit the "✔️" button to confirm creating your travel log.
 
-![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/599f3c60-7494-4863-ac02-49b310e8d012)
-![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/3cf861f1-869a-4d7e-9900-961673b1f773)
+
+
+https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/8a1c723a-f4ec-4986-90e3-f758eb379f28
+
 
 And there we go, you created your first travel log!
 
