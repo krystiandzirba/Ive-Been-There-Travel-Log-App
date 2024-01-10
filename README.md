@@ -40,17 +40,15 @@ Here you can create a whole group for much bigger travels, that includes multipl
 - The process is similar, begin with naming your group and set a date. For instance, "Europe Tour 2023 | 10.09.2023 - 20.09.2023". <br />
 - Hit the "✔️" button to confirm your choice.
 
-![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/fd9b1bc5-b325-4e97-8479-8b438724fcd9)
-![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/dbedbfcd-0373-4eca-85df-526ca5d4976f)
+https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/8c43cb4d-eab9-49a4-88d8-22064d152f0c
 
 ## **Step 2: Add Sub Travels to Your Group**
 
 For any present group, you can create sub-travel logs using the ➕ button in the group container we've created before.
 The process is exactly the same as creating non-grouped travel logs (Step: 1), but this time, all the logs you have created will find its way inside this group and will be related to it.
 
-![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/63b7c798-800b-49fd-b660-77d5f2759e49)
 
-![image](https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/f25ea11c-850a-4d4b-90cd-0e4609eaa27d)
+https://github.com/krystiandzirba/Ive_been_there_travel_log_app/assets/120574986/5bd9b9c8-223d-4a71-8388-25d6720e9bad
 
 ## **Step 3: Manage travel logs**
 
@@ -66,8 +64,8 @@ In the same panel, you can manage your logs:
 ## Statistics:
 
 Dive into the details of your travel adventures with the "Statistics" button:
-Discover your Longest, Shortest, and Average travel distances, allowing you to reminisce about your epic journeys.
-Find out your Most Common Travel Type, revealing your preferred mode of exploration.
+Discover your Longest, Shortest, and Average travel distances.
+Find out your most and least common travel type.
 Explore the Distance Divided by Travel Type, giving you a breakdown of distances covered for each travel type used.
 
 ## Timeline:
