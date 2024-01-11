@@ -10,10 +10,8 @@ Whether you're a seasoned explorer or just starting your adventure journey, this
 
 ## **Step 1: Create Your First Travel Log**
 
-
 <br>
 Start by navigating to the right-side panel and click the "Add travel" button: 
-<br>
 <br>
 
 ### Add travel <br>
